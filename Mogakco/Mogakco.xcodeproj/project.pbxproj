@@ -54,14 +54,118 @@
 		D8F880D32918AB7C003F0C4A /* Mogakco */ = {
 			isa = PBXGroup;
 			children = (
-				D8F880D42918AB7C003F0C4A /* AppDelegate.swift */,
-				D8F880D62918AB7C003F0C4A /* SceneDelegate.swift */,
-				D8F880D82918AB7C003F0C4A /* ViewController.swift */,
-				D8F880DD2918AB7F003F0C4A /* Assets.xcassets */,
-				D8F880DF2918AB7F003F0C4A /* LaunchScreen.storyboard */,
-				D8F880E22918AB7F003F0C4A /* Info.plist */,
+				D8F880E82918B224003F0C4A /* App */,
+				D8F880E92918B22A003F0C4A /* Presentation */,
+				D8F880EB2918B234003F0C4A /* Domain */,
+				D8F880EA2918B230003F0C4A /* Data */,
 			);
 			path = Mogakco;
+			sourceTree = "<group>";
+		};
+		D8F880E82918B224003F0C4A /* App */ = {
+			isa = PBXGroup;
+			children = (
+				D8F880E22918AB7F003F0C4A /* Info.plist */,
+				D8F880D42918AB7C003F0C4A /* AppDelegate.swift */,
+				D8F880D62918AB7C003F0C4A /* SceneDelegate.swift */,
+				D8F880DD2918AB7F003F0C4A /* Assets.xcassets */,
+				D8F880DF2918AB7F003F0C4A /* LaunchScreen.storyboard */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		D8F880E92918B22A003F0C4A /* Presentation */ = {
+			isa = PBXGroup;
+			children = (
+				D8F880D82918AB7C003F0C4A /* ViewController.swift */,
+			);
+			path = Presentation;
+			sourceTree = "<group>";
+		};
+		D8F880EA2918B230003F0C4A /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				D8F880F32918B543003F0C4A /* Networks */,
+				D8F880F22918B53E003F0C4A /* Storages */,
+				D8F880F12918B532003F0C4A /* Repositories */,
+			);
+			path = Data;
+			sourceTree = "<group>";
+		};
+		D8F880EB2918B234003F0C4A /* Domain */ = {
+			isa = PBXGroup;
+			children = (
+				D8F880EF2918B37F003F0C4A /* UseCases */,
+				D8F880ED2918B253003F0C4A /* Interfaces */,
+				D8F880EC2918B24C003F0C4A /* Entities */,
+			);
+			path = Domain;
+			sourceTree = "<group>";
+		};
+		D8F880EC2918B24C003F0C4A /* Entities */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Entities;
+			sourceTree = "<group>";
+		};
+		D8F880ED2918B253003F0C4A /* Interfaces */ = {
+			isa = PBXGroup;
+			children = (
+				D8F880EE2918B36A003F0C4A /* Repositories */,
+			);
+			path = Interfaces;
+			sourceTree = "<group>";
+		};
+		D8F880EE2918B36A003F0C4A /* Repositories */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Repositories;
+			sourceTree = "<group>";
+		};
+		D8F880EF2918B37F003F0C4A /* UseCases */ = {
+			isa = PBXGroup;
+			children = (
+				D8F880F02918B388003F0C4A /* Protocol */,
+			);
+			path = UseCases;
+			sourceTree = "<group>";
+		};
+		D8F880F02918B388003F0C4A /* Protocol */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Protocol;
+			sourceTree = "<group>";
+		};
+		D8F880F12918B532003F0C4A /* Repositories */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Repositories;
+			sourceTree = "<group>";
+		};
+		D8F880F22918B53E003F0C4A /* Storages */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Storages;
+			sourceTree = "<group>";
+		};
+		D8F880F32918B543003F0C4A /* Networks */ = {
+			isa = PBXGroup;
+			children = (
+				D8F880F42918B54A003F0C4A /* DataMapping */,
+			);
+			path = Networks;
+			sourceTree = "<group>";
+		};
+		D8F880F42918B54A003F0C4A /* DataMapping */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = DataMapping;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -277,7 +381,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = SPJ3VZVK78;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = Mogakco/Info.plist;
+				INFOPLIST_FILE = Mogakco/App/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -304,7 +408,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = SPJ3VZVK78;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = Mogakco/Info.plist;
+				INFOPLIST_FILE = Mogakco/App/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
