@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D827C484291AA3CB00FF45CB /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D827C483291AA3CB00FF45CB /* GoogleService-Info.plist */; };
+		D827C487291AA58700FF45CB /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = D827C486291AA58700FF45CB /* FirebaseAnalytics */; };
 		D8F880D52918AB7C003F0C4A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8F880D42918AB7C003F0C4A /* AppDelegate.swift */; };
 		D8F880D72918AB7C003F0C4A /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8F880D62918AB7C003F0C4A /* SceneDelegate.swift */; };
 		D8F880D92918AB7C003F0C4A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8F880D82918AB7C003F0C4A /* ViewController.swift */; };
@@ -22,6 +24,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		D827C483291AA3CB00FF45CB /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		D8F880D12918AB7C003F0C4A /* Mogakco.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Mogakco.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D8F880D42918AB7C003F0C4A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D8F880D62918AB7C003F0C4A /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -37,6 +40,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D827C487291AA58700FF45CB /* FirebaseAnalytics in Frameworks */,
 				D8F881062918B862003F0C4A /* Then in Frameworks */,
 				D8F881002918B80D003F0C4A /* RxSwift in Frameworks */,
 				D8F881032918B83F003F0C4A /* SnapKit in Frameworks */,
@@ -81,6 +85,7 @@
 			isa = PBXGroup;
 			children = (
 				D8F880E22918AB7F003F0C4A /* Info.plist */,
+				D827C483291AA3CB00FF45CB /* GoogleService-Info.plist */,
 				D8F880D42918AB7C003F0C4A /* AppDelegate.swift */,
 				D8F880D62918AB7C003F0C4A /* SceneDelegate.swift */,
 				D8F880DD2918AB7F003F0C4A /* Assets.xcassets */,
@@ -207,6 +212,7 @@
 				D8F881022918B83F003F0C4A /* SnapKit */,
 				D8F881052918B862003F0C4A /* Then */,
 				D8F881082918B896003F0C4A /* Alamofire */,
+				D827C486291AA58700FF45CB /* FirebaseAnalytics */,
 			);
 			productName = Mogakco;
 			productReference = D8F880D12918AB7C003F0C4A /* Mogakco.app */;
@@ -241,6 +247,7 @@
 				D8F881012918B83F003F0C4A /* XCRemoteSwiftPackageReference "SnapKit" */,
 				D8F881042918B862003F0C4A /* XCRemoteSwiftPackageReference "Then" */,
 				D8F881072918B896003F0C4A /* XCRemoteSwiftPackageReference "Alamofire" */,
+				D827C485291AA58700FF45CB /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			productRefGroup = D8F880D22918AB7C003F0C4A /* Products */;
 			projectDirPath = "";
@@ -257,6 +264,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D8F8810C2918BC2B003F0C4A /* .swiftlint.yml in Resources */,
+				D827C484291AA3CB00FF45CB /* GoogleService-Info.plist in Resources */,
 				D8F880E12918AB7F003F0C4A /* LaunchScreen.storyboard in Resources */,
 				D8F880DE2918AB7F003F0C4A /* Assets.xcassets in Resources */,
 			);
@@ -501,6 +509,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		D827C485291AA58700FF45CB /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 9.0.0;
+			};
+		};
 		D8F880FA2918B80D003F0C4A /* XCRemoteSwiftPackageReference "RxSwift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ReactiveX/RxSwift";
@@ -536,6 +552,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		D827C486291AA58700FF45CB /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D827C485291AA58700FF45CB /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalytics;
+		};
 		D8F880FB2918B80D003F0C4A /* RxCocoa */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = D8F880FA2918B80D003F0C4A /* XCRemoteSwiftPackageReference "RxSwift" */;
