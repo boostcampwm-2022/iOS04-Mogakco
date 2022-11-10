@@ -12,9 +12,6 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-        // TODO: asdasd
-        let adf: Int? = 3
-        let bsd = adf!
     }
 
 }
