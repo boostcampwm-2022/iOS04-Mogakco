@@ -25,6 +25,7 @@
 		CBA64FFD292378FE000FEEAD /* SetPasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBA64FFC292378FE000FEEAD /* SetPasswordViewController.swift */; };
 		CBA64FFF2923805D000FEEAD /* UILabel+LineSpacing.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBA64FFE2923805D000FEEAD /* UILabel+LineSpacing.swift */; };
 		CBA64FFB292364CA000FEEAD /* SetEmailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBA64FFA292364CA000FEEAD /* SetEmailViewController.swift */; };
+		CBA64FBF2922FC2A000FEEAD /* CountTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBA64FBE2922FC2A000FEEAD /* CountTextField.swift */; };
 		D8244537292244FC005EE8F1 /* UIFont+CustomFont.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8244536292244FC005EE8F1 /* UIFont+CustomFont.swift */; };
 		D824453B29224522005EE8F1 /* SFProDisplay-Regular.OTF in Resources */ = {isa = PBXBuildFile; fileRef = D824453929224522005EE8F1 /* SFProDisplay-Regular.OTF */; };
 		D824453C29224522005EE8F1 /* SFProDisplay-Semibold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D824453A29224522005EE8F1 /* SFProDisplay-Semibold.ttf */; };
@@ -77,6 +78,7 @@
 		CBA64FFC292378FE000FEEAD /* SetPasswordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetPasswordViewController.swift; sourceTree = "<group>"; };
 		CBA64FFE2923805D000FEEAD /* UILabel+LineSpacing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UILabel+LineSpacing.swift"; sourceTree = "<group>"; };
 		CBA64FFA292364CA000FEEAD /* SetEmailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetEmailViewController.swift; sourceTree = "<group>"; };
+		CBA64FBE2922FC2A000FEEAD /* CountTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountTextField.swift; sourceTree = "<group>"; };
 		D8244536292244FC005EE8F1 /* UIFont+CustomFont.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIFont+CustomFont.swift"; sourceTree = "<group>"; };
 		D824453929224522005EE8F1 /* SFProDisplay-Regular.OTF */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SFProDisplay-Regular.OTF"; sourceTree = "<group>"; };
 		D824453A29224522005EE8F1 /* SFProDisplay-Semibold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SFProDisplay-Semibold.ttf"; sourceTree = "<group>"; };
@@ -281,6 +283,7 @@
 				CB148FE6292254D6003E52FF /* MessageTextField.swift */,
 				D8C5D8B22922879E003939CB /* ValidationButton.swift */,
 				34CFD053292280C0007CF0F0 /* RoundProfileImage.swift */,
+				CBA64FBE2922FC2A000FEEAD /* CountTextField.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -582,6 +585,7 @@
 				D8C5D8B729228E87003939CB /* UIView+Shadow.swift in Sources */,
 				CBA64FFB292364CA000FEEAD /* SetEmailViewController.swift in Sources */,
 				D824455829224839005EE8F1 /* Identifiable.swift in Sources */,
+				CBA64FBF2922FC2A000FEEAD /* CountTextField.swift in Sources */,
 				D8244537292244FC005EE8F1 /* UIFont+CustomFont.swift in Sources */,
 				D824455329224839005EE8F1 /* ViewModel.swift in Sources */,
 				CB14900C292295F9003E52FF /* AppCoordinator.swift in Sources */,
