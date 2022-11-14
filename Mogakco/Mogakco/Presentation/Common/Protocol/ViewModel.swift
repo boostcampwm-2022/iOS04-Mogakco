@@ -8,10 +8,11 @@
 import Foundation
 import RxSwift
 
-protocol InputOutput {
+protocol ViewModel {
     associatedtype Input
     associatedtype Output
 
     var disposeBag: DisposeBag { get set }
     func transform(input: Input) -> Output
 }
+
