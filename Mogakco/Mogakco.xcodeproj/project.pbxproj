@@ -154,6 +154,7 @@
 		D8F880E82918B224003F0C4A /* App */ = {
 			isa = PBXGroup;
 			children = (
+				3491536D292224CD0079BB70 /* Fonts */,
 				D8F880E22918AB7F003F0C4A /* Info.plist */,
 				D8F345BD291D42460094CBD3 /* GoogleService-Info.plist */,
 				D8F880D42918AB7C003F0C4A /* AppDelegate.swift */,
@@ -338,9 +339,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				34915371292225A20079BB70 /* SFProDisplay-Semibold.ttf in Resources */,
 				D8F8810C2918BC2B003F0C4A /* .swiftlint.yml in Resources */,
 				D8F345BE291D42460094CBD3 /* GoogleService-Info.plist in Resources */,
 				D8F880E12918AB7F003F0C4A /* LaunchScreen.storyboard in Resources */,
+				3491536F292225940079BB70 /* SFProDisplay-Regular.OTF in Resources */,
 				D8F880DE2918AB7F003F0C4A /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
