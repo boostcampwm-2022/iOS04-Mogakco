@@ -14,10 +14,20 @@ import RxCocoa
 final class StudyDetailViewController: UIViewController {
     
     private lazy var scrollView = UIScrollView()
+    private lazy var contentsView = UIView()
     private lazy var studyTitleLabel = StudyTitleLabel(title: "스터디")
-    private let dateView = StudyInfoView()
-    private let participantsView = StudyInfoView()
-    private let locationView = StudyInfoView()
+    private let dateView = StudyInfoView(
+        image: UIImage(systemName: "calendar"),
+        text: "1월 20일 12시 30분"
+    )
+    private let participantsView = StudyInfoView(
+        image: UIImage(systemName: "person.2"),
+        text: "2/3 참여"
+    )
+    private let locationView = StudyInfoView(
+        image: UIImage(systemName: "scope"),
+        text: "서울특별시 강남구 가페 어딘가"
+    )
     private lazy var studyInfoStackView = UIStackView(
         arrangedSubviews: [dateView, participantsView, locationView]
     ).then {
@@ -73,7 +83,8 @@ final class StudyDetailViewController: UIViewController {
     
     private func layoutSubViews() {
         view.addSubview(scrollView)
-        scrollView.addSubViews([
+        scrollView.addSubview(contentsView)
+        contentsView.addSubViews([
             studyTitleLabel,
             studyInfoStackView,
             studyIntroduceLabel,
@@ -91,29 +102,19 @@ final class StudyDetailViewController: UIViewController {
             $0.edges.equalTo(view.safeAreaLayoutGuide)
         }
         
+        contentsView.snp.makeConstraints {
+            $0.top.bottom.equalToSuperview()
+            $0.leading.trailing.equalTo(view)
+        }
+        
         studyTitleLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(4)
+            $0.top.equalToSuperview().offset(6)
             $0.leading.equalToSuperview().offset(16)
             $0.trailing.equalToSuperview().offset(-16)
         }
         
-        dateView.snp.makeConstraints {
-            $0.height.equalTo(50)
-            $0.width.equalToSuperview()
-        }
-        
-        participantsView.snp.makeConstraints {
-            $0.height.equalTo(50)
-            $0.width.equalToSuperview()
-        }
-        
-        locationView.snp.makeConstraints {
-            $0.height.equalTo(50)
-            $0.width.equalToSuperview()
-        }
-        
         studyInfoStackView.snp.makeConstraints {
-            $0.top.equalTo(studyTitleLabel.snp.bottom) .offset(4)
+            $0.top.equalTo(studyTitleLabel.snp.bottom) .offset(6)
             $0.leading.equalToSuperview().offset(16)
             $0.trailing.equalToSuperview().offset(-16)
         }
@@ -125,7 +126,7 @@ final class StudyDetailViewController: UIViewController {
         }
         
         studyInfoDescription.snp.makeConstraints {
-            $0.top.equalTo(studyIntroduceLabel.snp.bottom).offset(4)
+            $0.top.equalTo(studyIntroduceLabel.snp.bottom).offset(6)
             $0.leading.equalToSuperview().offset(16)
             $0.trailing.equalToSuperview().offset(-16)
         }
@@ -137,7 +138,7 @@ final class StudyDetailViewController: UIViewController {
         }
         
         languageCollectionView.snp.makeConstraints {
-            $0.top.equalTo(laguageLabel.snp.bottom).offset(4)
+            $0.top.equalTo(laguageLabel.snp.bottom).offset(6)
             $0.leading.equalToSuperview().offset(16)
             $0.trailing.equalToSuperview().offset(-16)
             $0.height.equalTo(80)
@@ -150,7 +151,7 @@ final class StudyDetailViewController: UIViewController {
         }
         
         participantsCollectionView.snp.makeConstraints {
-            $0.top.equalTo(participantsInfoLabel.snp.bottom).offset(4)
+            $0.top.equalTo(participantsInfoLabel.snp.bottom).offset(6)
             $0.leading.equalToSuperview().offset(16)
             $0.trailing.equalToSuperview().offset(-16)
             $0.height.equalTo(100)

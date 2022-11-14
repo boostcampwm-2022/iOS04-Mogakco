@@ -11,8 +11,10 @@ import Then
 
 final class StudyInfoView: UIView {
     
-    private lazy var imageView = UIImageView()
-    private lazy var textLabel = UILabel().then {
+    lazy var imageView = UIImageView().then {
+        $0.tintColor = .mogakcoColor.typographySecondary
+    }
+    lazy var textLabel = UILabel().then {
         $0.textColor = .mogakcoColor.typographySecondary
         $0.font = .mogakcoFont.smallRegular
     }
@@ -37,11 +39,13 @@ final class StudyInfoView: UIView {
         
         imageView.snp.makeConstraints {
             $0.top.leading.bottom.equalToSuperview()
+            $0.width.height.equalTo(15)
         }
         
         textLabel.snp.makeConstraints {
-            $0.leading.equalTo(imageView).offset(10)
+            $0.leading.equalTo(imageView.snp.trailing).offset(10)
             $0.top.trailing.bottom.equalToSuperview()
+            $0.height.equalTo(15)
         }
     }
     
