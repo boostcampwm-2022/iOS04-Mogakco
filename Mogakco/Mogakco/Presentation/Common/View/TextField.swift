@@ -12,6 +12,23 @@ import Then
 
 class TextField: UITextField {
     
+    enum Validation {
+        case none
+        case valid
+        case invalid
+        
+        var color: UIColor {
+            switch self {
+            case .none:
+                return UIColor.mogakcoColor.semanticDisabled ?? UIColor.systemGray
+            case .valid:
+                return UIColor.mogakcoColor.semanticSuccess ?? UIColor.systemGreen
+            case .invalid:
+                return UIColor.mogakcoColor.semanticNegative ?? UIColor.systemRed
+            }
+        }
+    }
+    
     // MARK: Public
     
     final var validation: Validation = .none {
