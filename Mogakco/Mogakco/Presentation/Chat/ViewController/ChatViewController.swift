@@ -21,7 +21,7 @@ final class ChatViewController: UIViewController {
     private let chatRoomTableView = UITableView().then {
         $0.register(ChatRoomTableViewCell.self, forCellReuseIdentifier: ChatRoomTableViewCell.identifier)
         $0.rowHeight = ChatRoomTableViewCell.cellHeight
-        $0.backgroundColor = .white
+        $0.backgroundColor = UIColor.mogakcoColor.backgroundDefault
         $0.showsVerticalScrollIndicator = false
         $0.separatorStyle = .none
     }
@@ -30,7 +30,7 @@ final class ChatViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = UIColor.mogakcoColor.backgroundDefault
         bind()
         layout()
     }
