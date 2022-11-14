@@ -12,7 +12,7 @@ import SnapKit
 import RxCocoa
 import RxSwift
 
-class MessageTextField: UIView {
+final class MessageTextField: UIView {
     
     // MARK: Public
     
