@@ -11,10 +11,11 @@ import Then
 
 final class StudyInfoView: UIView {
     
-    lazy var imageView = UIImageView().then {
+    let imageView = UIImageView().then {
         $0.tintColor = .mogakcoColor.typographySecondary
     }
-    lazy var textLabel = UILabel().then {
+
+    let textLabel = UILabel().then {
         $0.textColor = .mogakcoColor.typographySecondary
         $0.font = .mogakcoFont.smallRegular
     }

@@ -15,19 +15,25 @@ final class StudyDetailViewController: UIViewController {
     
     private lazy var scrollView = UIScrollView()
     private lazy var contentsView = UIView()
-    private lazy var studyTitleLabel = StudyTitleLabel(title: "스터디")
-    private let dateView = StudyInfoView(
-        image: UIImage(systemName: "calendar"),
-        text: "1월 20일 12시 30분"
-    )
-    private let participantsView = StudyInfoView(
-        image: UIImage(systemName: "person.2"),
-        text: "2/3 참여"
-    )
-    private let locationView = StudyInfoView(
-        image: UIImage(systemName: "scope"),
-        text: "서울특별시 강남구 가페 어딘가"
-    )
+    private lazy var studyTitleLabel = UILabel().then {
+        $0.textColor = .mogakcoColor.typographyPrimary
+        $0.font = UIFont.mogakcoFont.mediumBold
+        $0.text = "스터디"
+    }
+    private let dateView = StudyInfoView(frame: .zero).then {
+        $0.textLabel.text = "1월 20일 12시 30분"
+        $0.imageView.image = UIImage(systemName: "calendar")
+    }
+    private let participantsView = StudyInfoView(frame: .zero).then {
+        $0.textLabel.text = "2/3 참여"
+        $0.imageView.image = UIImage(systemName: "person.2")
+    }
+    
+    private let locationView = StudyInfoView(frame: .zero).then {
+        $0.textLabel.text = "서울특별시 강남구 가페 어딘가"
+        $0.imageView.image = UIImage(systemName: "scope")
+    }
+    
     private lazy var studyInfoStackView = UIStackView(
         arrangedSubviews: [dateView, participantsView, locationView]
     ).then {
@@ -36,14 +42,22 @@ final class StudyDetailViewController: UIViewController {
         $0.axis = .vertical
     }
     
-    private lazy var studyIntroduceLabel = StudyTitleLabel(title: "스터디 소개")
+    private lazy var studyIntroduceLabel = UILabel().then {
+        $0.textColor = .mogakcoColor.typographyPrimary
+        $0.font = UIFont.mogakcoFont.mediumBold
+        $0.text = "스터디 소개"
+    }
     private lazy var studyInfoDescription = UILabel().then {
         $0.textColor = .mogakcoColor.typographyPrimary
         $0.font = .mogakcoFont.mediumRegular
         $0.text = "모바일에 관심 있으신 분들 함께해요~!"
     }
     
-    private lazy var laguageLabel = StudyTitleLabel(title: "언어")
+    private lazy var laguageLabel = UILabel().then {
+        $0.textColor = .mogakcoColor.typographyPrimary
+        $0.font = UIFont.mogakcoFont.mediumBold
+        $0.text = "언어"
+    }
     private lazy var languageCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.minimumLineSpacing = 10
@@ -53,7 +67,11 @@ final class StudyDetailViewController: UIViewController {
         return UICollectionView(frame: .zero, collectionViewLayout: layout)
     }()
     
-    private lazy var participantsInfoLabel = StudyTitleLabel(title: "참여중인 사람 2/3")
+    private lazy var participantsInfoLabel = UILabel().then {
+        $0.textColor = .mogakcoColor.typographyPrimary
+        $0.font = UIFont.mogakcoFont.mediumBold
+        $0.text = "참여중인 사람 2/3"
+    }
     private lazy var participantsCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.minimumLineSpacing = 10
