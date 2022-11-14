@@ -7,12 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		6AE8C81D292221E2000037C5 /* UIColor+MogakcoColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AE8C81C292221E2000037C5 /* UIColor+MogakcoColor.swift */; };
+		D80DFB9D29223AE200CB5A08 /* AppCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = D80DFB9729223AE100CB5A08 /* AppCoordinator.swift */; };
+		D80DFB9E29223AE200CB5A08 /* CoordinatorFinishDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D80DFB9929223AE100CB5A08 /* CoordinatorFinishDelegate.swift */; };
+		D80DFB9F29223AE200CB5A08 /* AppCoordinatorProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = D80DFB9B29223AE100CB5A08 /* AppCoordinatorProtocol.swift */; };
+		D80DFBA029223AE200CB5A08 /* Coordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = D80DFB9C29223AE100CB5A08 /* Coordinator.swift */; };
 		D8D7FDE8291C04CD00385028 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = D8D7FDE7291C04CD00385028 /* FirebaseAnalytics */; };
 		D8D7FDEA291C04CD00385028 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = D8D7FDE9291C04CD00385028 /* FirebaseAuth */; };
 		D8D7FDEC291C04CD00385028 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = D8D7FDEB291C04CD00385028 /* FirebaseFirestore */; };
 		D8D7FDEE291C04CD00385028 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = D8D7FDED291C04CD00385028 /* FirebaseMessaging */; };
 		D8D7FDF0291C04CD00385028 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = D8D7FDEF291C04CD00385028 /* FirebaseStorage */; };
+		D8E42DF329223BE000E488FA /* UIColor+MogakcoColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8E42DF229223BDF00E488FA /* UIColor+MogakcoColor.swift */; };
 		D8F345BE291D42460094CBD3 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D8F345BD291D42460094CBD3 /* GoogleService-Info.plist */; };
 		D8F880D52918AB7C003F0C4A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8F880D42918AB7C003F0C4A /* AppDelegate.swift */; };
 		D8F880D72918AB7C003F0C4A /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8F880D62918AB7C003F0C4A /* SceneDelegate.swift */; };
@@ -29,7 +33,11 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		6AE8C81C292221E2000037C5 /* UIColor+MogakcoColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "UIColor+MogakcoColor.swift"; path = "../../../../../김신오이/Mogakco/Mogakco/Util/Extension/UIColor+MogakcoColor.swift"; sourceTree = "<group>"; };
+		D80DFB9729223AE100CB5A08 /* AppCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppCoordinator.swift; sourceTree = "<group>"; };
+		D80DFB9929223AE100CB5A08 /* CoordinatorFinishDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoordinatorFinishDelegate.swift; sourceTree = "<group>"; };
+		D80DFB9B29223AE100CB5A08 /* AppCoordinatorProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppCoordinatorProtocol.swift; sourceTree = "<group>"; };
+		D80DFB9C29223AE100CB5A08 /* Coordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Coordinator.swift; sourceTree = "<group>"; };
+		D8E42DF229223BDF00E488FA /* UIColor+MogakcoColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIColor+MogakcoColor.swift"; sourceTree = "<group>"; };
 		D8F345BD291D42460094CBD3 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		D8F880D12918AB7C003F0C4A /* Mogakco.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Mogakco.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D8F880D42918AB7C003F0C4A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -63,18 +71,53 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		6A501B02292216220047756B /* Util */ = {
+		D80DFB9529223AE100CB5A08 /* Common */ = {
 			isa = PBXGroup;
 			children = (
-				6A501B062922184E0047756B /* Extension */,
+				D80DFB9629223AE100CB5A08 /* Coordinator */,
+			);
+			path = Common;
+			sourceTree = "<group>";
+		};
+		D80DFB9629223AE100CB5A08 /* Coordinator */ = {
+			isa = PBXGroup;
+			children = (
+				D80DFB9729223AE100CB5A08 /* AppCoordinator.swift */,
+				D80DFB9829223AE100CB5A08 /* Delegate */,
+				D80DFB9A29223AE100CB5A08 /* Protocol */,
+			);
+			path = Coordinator;
+			sourceTree = "<group>";
+		};
+		D80DFB9829223AE100CB5A08 /* Delegate */ = {
+			isa = PBXGroup;
+			children = (
+				D80DFB9929223AE100CB5A08 /* CoordinatorFinishDelegate.swift */,
+			);
+			path = Delegate;
+			sourceTree = "<group>";
+		};
+		D80DFB9A29223AE100CB5A08 /* Protocol */ = {
+			isa = PBXGroup;
+			children = (
+				D80DFB9B29223AE100CB5A08 /* AppCoordinatorProtocol.swift */,
+				D80DFB9C29223AE100CB5A08 /* Coordinator.swift */,
+			);
+			path = Protocol;
+			sourceTree = "<group>";
+		};
+		D8E42DF029223BDF00E488FA /* Util */ = {
+			isa = PBXGroup;
+			children = (
+				D8E42DF129223BDF00E488FA /* Extension */,
 			);
 			path = Util;
 			sourceTree = "<group>";
 		};
-		6A501B062922184E0047756B /* Extension */ = {
+		D8E42DF129223BDF00E488FA /* Extension */ = {
 			isa = PBXGroup;
 			children = (
-				6AE8C81C292221E2000037C5 /* UIColor+MogakcoColor.swift */,
+				D8E42DF229223BDF00E488FA /* UIColor+MogakcoColor.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -99,7 +142,7 @@
 		D8F880D32918AB7C003F0C4A /* Mogakco */ = {
 			isa = PBXGroup;
 			children = (
-				6A501B02292216220047756B /* Util */,
+				D8E42DF029223BDF00E488FA /* Util */,
 				D8F880E82918B224003F0C4A /* App */,
 				D8F880E92918B22A003F0C4A /* Presentation */,
 				D8F880EB2918B234003F0C4A /* Domain */,
@@ -124,7 +167,7 @@
 		D8F880E92918B22A003F0C4A /* Presentation */ = {
 			isa = PBXGroup;
 			children = (
-				CB9C24FC2922278D00E8240C /* Common */,
+				D80DFB9529223AE100CB5A08 /* Common */,
 				D8F880D82918AB7C003F0C4A /* ViewController.swift */,
 			);
 			path = Presentation;
@@ -329,13 +372,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6AE8C81D292221E2000037C5 /* UIColor+MogakcoColor.swift in Sources */,
+				D80DFB9E29223AE200CB5A08 /* CoordinatorFinishDelegate.swift in Sources */,
+				D80DFB9D29223AE200CB5A08 /* AppCoordinator.swift in Sources */,
+				D80DFB9F29223AE200CB5A08 /* AppCoordinatorProtocol.swift in Sources */,
 				D8F880D92918AB7C003F0C4A /* ViewController.swift in Sources */,
-				CB9C24F02922170B00E8240C /* CoordinatorFinishDelegate.swift in Sources */,
-				CB9C24ED292213B700E8240C /* AppCoordinatorProtocol.swift in Sources */,
 				D8F880D52918AB7C003F0C4A /* AppDelegate.swift in Sources */,
+				D8E42DF329223BE000E488FA /* UIColor+MogakcoColor.swift in Sources */,
 				D8F880D72918AB7C003F0C4A /* SceneDelegate.swift in Sources */,
-				CB9C24F22922187F00E8240C /* AppCoordinator.swift in Sources */,
+				D80DFBA029223AE200CB5A08 /* Coordinator.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
