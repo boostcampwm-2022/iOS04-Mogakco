@@ -15,7 +15,7 @@ final class ChatRoomTableViewCell: UITableViewCell, Identifiable {
     static let cellHeight = 80.0
     
     private lazy var chatRoomImageView = UIImageView().then {
-        $0.backgroundColor = .red
+        $0.image = UIImage(systemName: "person")
     }
     
     private let chatRoomTitleLabel = UILabel().then {
@@ -37,9 +37,10 @@ final class ChatRoomTableViewCell: UITableViewCell, Identifiable {
     }
     
     private let unreadMessageCountLabel = UILabel().then {
-        $0.text = "3"
+        $0.text = "300"
         $0.textAlignment = .center
         $0.backgroundColor = .green
+        $0.font = .systemFont(ofSize: 10.0, weight: .semibold)
     }
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -54,9 +55,8 @@ final class ChatRoomTableViewCell: UITableViewCell, Identifiable {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        chatRoomImageView.layer.cornerRadius = chatRoomImageView.frame.width / 2.0
-        unreadMessageCountLabel.layer.cornerRadius = unreadMessageCountLabel.frame.width / 2.0
-        unreadMessageCountLabel.layer.masksToBounds = true
+        configureChatRoomImageViewCornerRadius()
+        configureUnreadMessageCountLabelCornerRadius()
     }
     
     private func layout() {
@@ -116,4 +116,12 @@ final class ChatRoomTableViewCell: UITableViewCell, Identifiable {
         }
     }
     
+    private func configureChatRoomImageViewCornerRadius() {
+        chatRoomImageView.layer.cornerRadius = chatRoomImageView.frame.width / 2.0
+    }
+    
+    private func configureUnreadMessageCountLabelCornerRadius() {
+        unreadMessageCountLabel.layer.cornerRadius = unreadMessageCountLabel.frame.width / 2.0
+        unreadMessageCountLabel.layer.masksToBounds = true
+    }
 }

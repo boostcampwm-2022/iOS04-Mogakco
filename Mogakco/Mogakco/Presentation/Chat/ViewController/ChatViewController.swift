@@ -14,6 +14,10 @@ import Then
 
 final class ChatViewController: UIViewController {
     
+    private let titleHeaderView = TitleHeaderView().then {
+        $0.setTitle("채팅 목록")
+    }
+    
     private let chatRoomTableView = UITableView().then {
         $0.register(ChatRoomTableViewCell.self, forCellReuseIdentifier: ChatRoomTableViewCell.identifier)
         $0.rowHeight = ChatRoomTableViewCell.cellHeight
@@ -45,14 +49,25 @@ final class ChatViewController: UIViewController {
     }
     
     private func layout() {
+        layoutTitleHeaderView()
         layoutChatRoomTableView()
+    }
+    
+    private func layoutTitleHeaderView() {
+        view.addSubview(titleHeaderView)
+        
+        titleHeaderView.snp.makeConstraints {
+            $0.leading.top.trailing.equalTo(view.safeAreaLayoutGuide)
+            $0.height.equalTo(68.0)
+        }
     }
     
     private func layoutChatRoomTableView() {
         view.addSubview(chatRoomTableView)
         
         chatRoomTableView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
+            $0.top.equalTo(titleHeaderView.snp.bottom)
+            $0.leading.trailing.bottom.equalTo(view.safeAreaLayoutGuide)
         }
     }
     
