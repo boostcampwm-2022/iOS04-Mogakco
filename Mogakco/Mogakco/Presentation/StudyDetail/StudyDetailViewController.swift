@@ -77,8 +77,15 @@ final class StudyDetailViewController: UIViewController {
     }
     
     private func layout() {
+        navigationLayout()
         layoutSubViews()
         layoutConstraints()
+    }
+    
+    private func navigationLayout() {
+        navigationItem.title = "스터디 제목"
+        navigationItem.backButtonTitle = "이전"
+        navigationItem.backBarButtonItem?.tintColor = .mogakcoColor.primaryDefault
     }
     
     private func layoutSubViews() {
