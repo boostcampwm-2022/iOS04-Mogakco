@@ -30,8 +30,15 @@ final class StudyInfoView: UIView {
     }
     
     private func layout() {
+        addSubViews([imageView, textLabel])
+        
         imageView.snp.makeConstraints {
             $0.top.leading.bottom.equalToSuperview()
+        }
+        
+        textLabel.snp.makeConstraints {
+            $0.leading.equalTo(imageView).offset(10)
+            $0.top.trailing.bottom.equalToSuperview()
         }
     }
 }
