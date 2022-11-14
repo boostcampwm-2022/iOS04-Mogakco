@@ -13,8 +13,9 @@ import Then
 final class TitleHeaderView: UIView {
     
     private let titleLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 32.0, weight: .bold)
         $0.textAlignment = .left
+        $0.font = UIFont.mogakcoFont.largeBold
+        $0.textColor = UIColor.mogakcoColor.typographyPrimary
     }
     
     init() {
