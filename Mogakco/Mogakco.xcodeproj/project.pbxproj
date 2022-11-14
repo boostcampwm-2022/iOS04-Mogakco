@@ -204,6 +204,7 @@
 			isa = PBXGroup;
 			children = (
 				D80DFB9529223AE100CB5A08 /* Common */,
+				D8336849292231230051A781 /* Common */,
 				D8336841292214000051A781 /* Chat */,
 				D8F880D82918AB7C003F0C4A /* ViewController.swift */,
 			);
@@ -415,6 +416,7 @@
 				D80DFB9D29223AE200CB5A08 /* AppCoordinator.swift in Sources */,
 				D80DFB9F29223AE200CB5A08 /* AppCoordinatorProtocol.swift in Sources */,
 				D8F880D92918AB7C003F0C4A /* ViewController.swift in Sources */,
+				D833684C292231360051A781 /* Identifiable.swift in Sources */,
 				D8336848292214720051A781 /* ChatRoomTableViewCell.swift in Sources */,
 				D8F880D52918AB7C003F0C4A /* AppDelegate.swift in Sources */,
 				D8E42DF329223BE000E488FA /* UIColor+MogakcoColor.swift in Sources */,
