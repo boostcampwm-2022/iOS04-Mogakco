@@ -109,58 +109,49 @@ final class StudyDetailViewController: UIViewController {
         
         studyTitleLabel.snp.makeConstraints {
             $0.top.equalToSuperview().offset(6)
-            $0.leading.equalToSuperview().offset(16)
-            $0.trailing.equalToSuperview().offset(-16)
+            $0.leading.trailing.equalToSuperview().inset(16)
         }
         
         studyInfoStackView.snp.makeConstraints {
             $0.top.equalTo(studyTitleLabel.snp.bottom) .offset(6)
-            $0.leading.equalToSuperview().offset(16)
-            $0.trailing.equalToSuperview().offset(-16)
+            $0.leading.trailing.equalToSuperview().inset(16)
         }
         
         studyIntroduceLabel.snp.makeConstraints {
             $0.top.equalTo(studyInfoStackView.snp.bottom) .offset(15)
-            $0.leading.equalToSuperview().offset(16)
-            $0.trailing.equalToSuperview().offset(-16)
+            $0.leading.trailing.equalToSuperview().inset(16)
         }
         
         studyInfoDescription.snp.makeConstraints {
             $0.top.equalTo(studyIntroduceLabel.snp.bottom).offset(6)
-            $0.leading.equalToSuperview().offset(16)
-            $0.trailing.equalToSuperview().offset(-16)
+            $0.leading.trailing.equalToSuperview().inset(16)
         }
         
         laguageLabel.snp.makeConstraints {
             $0.top.equalTo(studyInfoDescription.snp.bottom) .offset(15)
-            $0.leading.equalToSuperview().offset(16)
-            $0.trailing.equalToSuperview().offset(-16)
+            $0.leading.trailing.equalToSuperview().inset(16)
         }
         
         languageCollectionView.snp.makeConstraints {
             $0.top.equalTo(laguageLabel.snp.bottom).offset(6)
-            $0.leading.equalToSuperview().offset(16)
-            $0.trailing.equalToSuperview().offset(-16)
+            $0.leading.trailing.equalToSuperview().inset(16)
             $0.height.equalTo(80)
         }
         
         participantsInfoLabel.snp.makeConstraints {
             $0.top.equalTo(languageCollectionView.snp.bottom) .offset(15)
-            $0.leading.equalToSuperview().offset(16)
-            $0.trailing.equalToSuperview().offset(-16)
+            $0.leading.trailing.equalToSuperview().inset(16)
         }
         
         participantsCollectionView.snp.makeConstraints {
             $0.top.equalTo(participantsInfoLabel.snp.bottom).offset(6)
-            $0.leading.equalToSuperview().offset(16)
-            $0.trailing.equalToSuperview().offset(-16)
+            $0.leading.trailing.equalToSuperview().inset(16)
             $0.height.equalTo(100)
         }
         
         studyJoinButton.snp.makeConstraints {
             $0.top.equalTo(participantsCollectionView.snp.bottom).offset(50)
-            $0.leading.equalToSuperview().offset(16)
-            $0.trailing.equalToSuperview().offset(-16)
+            $0.leading.trailing.equalToSuperview().inset(16)
             $0.bottom.equalToSuperview()
         }
     }
