@@ -16,7 +16,7 @@ final class MessageTextField: UIView {
     
     // MARK: Public
     
-    var validation: Validation = .none {
+    var validation: TextField.Validation = .none {
         didSet {
             textField.validation = validation
             label.textColor = validation.color
