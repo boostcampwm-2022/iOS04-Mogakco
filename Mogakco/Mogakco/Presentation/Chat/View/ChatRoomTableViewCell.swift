@@ -10,14 +10,6 @@ import UIKit
 import SnapKit
 import Then
 
-protocol Identifiable {
-    static var identifier: String { get }
-}
-
-extension Identifiable {
-    static var identifier: String { return "\(self)" }
-}
-
 final class ChatRoomTableViewCell: UITableViewCell, Identifiable {
     
     static let cellHeight = 80.0
