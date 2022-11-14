@@ -124,7 +124,7 @@
 		D8F880E92918B22A003F0C4A /* Presentation */ = {
 			isa = PBXGroup;
 			children = (
-				CB9C24E92922139300E8240C /* Coordinator */,
+				CB9C24FC2922278D00E8240C /* Common */,
 				D8F880D82918AB7C003F0C4A /* ViewController.swift */,
 			);
 			path = Presentation;
