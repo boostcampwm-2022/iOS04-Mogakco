@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		6A501B04292216370047756B /* UIColor+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A501B03292216370047756B /* UIColor+.swift */; };
+		6AE8C81D292221E2000037C5 /* UIColor+MogakcoColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AE8C81C292221E2000037C5 /* UIColor+MogakcoColor.swift */; };
 		D8D7FDE8291C04CD00385028 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = D8D7FDE7291C04CD00385028 /* FirebaseAnalytics */; };
 		D8D7FDEA291C04CD00385028 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = D8D7FDE9291C04CD00385028 /* FirebaseAuth */; };
 		D8D7FDEC291C04CD00385028 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = D8D7FDEB291C04CD00385028 /* FirebaseFirestore */; };
@@ -29,7 +29,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		6A501B03292216370047756B /* UIColor+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+.swift"; sourceTree = "<group>"; };
+		6AE8C81C292221E2000037C5 /* UIColor+MogakcoColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "UIColor+MogakcoColor.swift"; path = "../../../../../김신오이/Mogakco/Mogakco/Util/Extension/UIColor+MogakcoColor.swift"; sourceTree = "<group>"; };
 		D8F345BD291D42460094CBD3 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		D8F880D12918AB7C003F0C4A /* Mogakco.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Mogakco.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D8F880D42918AB7C003F0C4A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -74,7 +74,7 @@
 		6A501B062922184E0047756B /* Extension */ = {
 			isa = PBXGroup;
 			children = (
-				6A501B03292216370047756B /* UIColor+.swift */,
+				6AE8C81C292221E2000037C5 /* UIColor+MogakcoColor.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -328,8 +328,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6AE8C81D292221E2000037C5 /* UIColor+MogakcoColor.swift in Sources */,
 				D8F880D92918AB7C003F0C4A /* ViewController.swift in Sources */,
-				6A501B04292216370047756B /* UIColor+.swift in Sources */,
 				D8F880D52918AB7C003F0C4A /* AppDelegate.swift in Sources */,
 				D8F880D72918AB7C003F0C4A /* SceneDelegate.swift in Sources */,
 			);
