@@ -124,6 +124,7 @@
 		D8F880E92918B22A003F0C4A /* Presentation */ = {
 			isa = PBXGroup;
 			children = (
+				CB9C24E92922139300E8240C /* Coordinator */,
 				D8F880D82918AB7C003F0C4A /* ViewController.swift */,
 			);
 			path = Presentation;
@@ -330,8 +331,11 @@
 			files = (
 				6AE8C81D292221E2000037C5 /* UIColor+MogakcoColor.swift in Sources */,
 				D8F880D92918AB7C003F0C4A /* ViewController.swift in Sources */,
+				CB9C24F02922170B00E8240C /* CoordinatorFinishDelegate.swift in Sources */,
+				CB9C24ED292213B700E8240C /* AppCoordinatorProtocol.swift in Sources */,
 				D8F880D52918AB7C003F0C4A /* AppDelegate.swift in Sources */,
 				D8F880D72918AB7C003F0C4A /* SceneDelegate.swift in Sources */,
+				CB9C24F22922187F00E8240C /* AppCoordinator.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
