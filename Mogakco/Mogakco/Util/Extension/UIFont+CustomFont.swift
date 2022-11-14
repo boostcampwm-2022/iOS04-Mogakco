@@ -12,12 +12,13 @@ extension UIFont {
 }
 
 struct MogakcoFont {
-    //Regular
+    
+    // Regular
     let largeRegular = UIFont(name: SFPro.regular.rawValue, size: 30)
     let mediumRegular = UIFont(name: SFPro.regular.rawValue, size: 18)
     let smallRegular = UIFont(name: SFPro.regular.rawValue, size: 14)
 
-    //Bold
+    // Bold
     let largeBold = UIFont(name: SFPro.bold.rawValue, size: 30)
     let title1Bold = UIFont(name: SFPro.bold.rawValue, size: 24)
     let title2Bold = UIFont(name: SFPro.bold.rawValue, size: 22)
