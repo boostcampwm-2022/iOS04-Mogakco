@@ -22,7 +22,7 @@ struct MogakcoColor {
     let typopraphyDisabled = UIColor(named: "TypopraphyDisabled")
     
     // Semantic
-    let segmanticSuccess = UIColor(named: "SegmanticSuccess")
+    let semanticSuccess = UIColor(named: "SemanticSuccess")
     let semanticNegative = UIColor(named: "SemanticNegative")
     let semanticDisabled = UIColor(named: "SemanticDisabled")
     
