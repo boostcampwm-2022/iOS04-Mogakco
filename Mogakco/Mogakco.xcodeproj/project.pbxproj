@@ -135,6 +135,19 @@
 			isa = PBXGroup;
 			children = (
 				348E2F39292369A800516AC9 /* HalfModalViewController.swift */,
+		3482A33529224E93001142E7 /* ViewController */ = {
+			isa = PBXGroup;
+			children = (
+				D8F880D82918AB7C003F0C4A /* ViewController.swift */,
+			);
+			path = ViewController;
+			sourceTree = "<group>";
+		};
+		6AE8A2D429223B1900C8384F /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				3482A33529224E93001142E7 /* ViewController */,
+				6AE8A2D529223B1F00C8384F /* Protocol */,
 			);
 			path = HalfModal;
 		6A7019A92923738700B42900 /* StudyDetail */ = {
@@ -388,6 +401,7 @@
 				D824453D29224823005EE8F1 /* Chat */,
 				D824454429224839005EE8F1 /* Common */,
 				D8F880D82918AB7C003F0C4A /* ViewController.swift */,
+				D80DFB9529223AE100CB5A08 /* Common */,
 			);
 			path = Presentation;
 			sourceTree = "<group>";
