@@ -14,6 +14,8 @@
 		D8244537292244FC005EE8F1 /* UIFont+CustomFont.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8244536292244FC005EE8F1 /* UIFont+CustomFont.swift */; };
 		D824453B29224522005EE8F1 /* SFProDisplay-Regular.OTF in Resources */ = {isa = PBXBuildFile; fileRef = D824453929224522005EE8F1 /* SFProDisplay-Regular.OTF */; };
 		D824453C29224522005EE8F1 /* SFProDisplay-Semibold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D824453A29224522005EE8F1 /* SFProDisplay-Semibold.ttf */; };
+		6AE8A2D729223B3700C8384F /* InputOutput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AE8A2D629223B3700C8384F /* InputOutput.swift */; };
+		6AE8C81D292221E2000037C5 /* UIColor+MogakcoColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AE8C81C292221E2000037C5 /* UIColor+MogakcoColor.swift */; };
 		D8D7FDE8291C04CD00385028 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = D8D7FDE7291C04CD00385028 /* FirebaseAnalytics */; };
 		D8D7FDEA291C04CD00385028 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = D8D7FDE9291C04CD00385028 /* FirebaseAuth */; };
 		D8D7FDEC291C04CD00385028 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = D8D7FDEB291C04CD00385028 /* FirebaseFirestore */; };
@@ -44,6 +46,8 @@
 		D824453929224522005EE8F1 /* SFProDisplay-Regular.OTF */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SFProDisplay-Regular.OTF"; sourceTree = "<group>"; };
 		D824453A29224522005EE8F1 /* SFProDisplay-Semibold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SFProDisplay-Semibold.ttf"; sourceTree = "<group>"; };
 		D8E42DF229223BDF00E488FA /* UIColor+MogakcoColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIColor+MogakcoColor.swift"; sourceTree = "<group>"; };
+		6AE8A2D629223B3700C8384F /* InputOutput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputOutput.swift; sourceTree = "<group>"; };
+		6AE8C81C292221E2000037C5 /* UIColor+MogakcoColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "UIColor+MogakcoColor.swift"; path = "../../../../../김신오이/Mogakco/Mogakco/Util/Extension/UIColor+MogakcoColor.swift"; sourceTree = "<group>"; };
 		D8F345BD291D42460094CBD3 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		D8F880D12918AB7C003F0C4A /* Mogakco.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Mogakco.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D8F880D42918AB7C003F0C4A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -138,6 +142,30 @@
 			path = Extension;
 			sourceTree = "<group>";
 		};
+		6AE8A2D329223B1200C8384F /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				6AE8A2D429223B1900C8384F /* ViewModel */,
+			);
+			path = Common;
+			sourceTree = "<group>";
+		};
+		6AE8A2D429223B1900C8384F /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				6AE8A2D529223B1F00C8384F /* Protocol */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		6AE8A2D529223B1F00C8384F /* Protocol */ = {
+			isa = PBXGroup;
+			children = (
+				6AE8A2D629223B3700C8384F /* InputOutput.swift */,
+			);
+			path = Protocol;
+			sourceTree = "<group>";
+		};
 		D8F880C82918AB7C003F0C4A = {
 			isa = PBXGroup;
 			children = (
@@ -185,6 +213,7 @@
 			isa = PBXGroup;
 			children = (
 				D80DFB9529223AE100CB5A08 /* Common */,
+				6AE8A2D329223B1200C8384F /* Common */,
 				D8F880D82918AB7C003F0C4A /* ViewController.swift */,
 			);
 			path = Presentation;
@@ -400,6 +429,7 @@
 				D8244537292244FC005EE8F1 /* UIFont+CustomFont.swift in Sources */,
 				D8F880D72918AB7C003F0C4A /* SceneDelegate.swift in Sources */,
 				D80DFBA029223AE200CB5A08 /* Coordinator.swift in Sources */,
+				6AE8A2D729223B3700C8384F /* InputOutput.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
