@@ -13,8 +13,11 @@ final class AppCoordinator: AppCoordinatorProtocol {
     var navigationController: UINavigationController
     var childCoordinators: [Coordinator] = []
     
-    init(navigationController: UINavigationController) {
-        self.navigationController = navigationController
+    init(window: UIWindow?) {
+        self.navigationController = UINavigationController()
+        self.navigationController.view.backgroundColor = .white
+        window?.rootViewController = navigationController
+        window?.makeKeyAndVisible()
     }
     
     func start() {

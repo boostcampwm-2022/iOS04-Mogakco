@@ -18,15 +18,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         options connectionOptions: UIScene.ConnectionOptions
     ) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
-        
-        let navigationController = UINavigationController()
-        navigationController.view.backgroundColor = .white
-        
         window = UIWindow(windowScene: windowScene)
-        window?.rootViewController = navigationController
-        window?.makeKeyAndVisible()
-
-        appCoordinator = AppCoordinator(navigationController: navigationController)
+        appCoordinator = AppCoordinator(window: window)
         appCoordinator?.start()
     }
 
