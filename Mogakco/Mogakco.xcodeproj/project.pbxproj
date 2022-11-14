@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3491537F292234760079BB70 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3491537E292234760079BB70 /* ViewController.swift */; };
 		6AE8C81D292221E2000037C5 /* UIColor+MogakcoColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AE8C81C292221E2000037C5 /* UIColor+MogakcoColor.swift */; };
 		D8D7FDE8291C04CD00385028 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = D8D7FDE7291C04CD00385028 /* FirebaseAnalytics */; };
 		D8D7FDEA291C04CD00385028 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = D8D7FDE9291C04CD00385028 /* FirebaseAuth */; };
@@ -16,7 +17,6 @@
 		D8F345BE291D42460094CBD3 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D8F345BD291D42460094CBD3 /* GoogleService-Info.plist */; };
 		D8F880D52918AB7C003F0C4A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8F880D42918AB7C003F0C4A /* AppDelegate.swift */; };
 		D8F880D72918AB7C003F0C4A /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8F880D62918AB7C003F0C4A /* SceneDelegate.swift */; };
-		D8F880D92918AB7C003F0C4A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8F880D82918AB7C003F0C4A /* ViewController.swift */; };
 		D8F880DE2918AB7F003F0C4A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D8F880DD2918AB7F003F0C4A /* Assets.xcassets */; };
 		D8F880E12918AB7F003F0C4A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D8F880DF2918AB7F003F0C4A /* LaunchScreen.storyboard */; };
 		D8F880FC2918B80D003F0C4A /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = D8F880FB2918B80D003F0C4A /* RxCocoa */; };
@@ -29,12 +29,12 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		3491537E292234760079BB70 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		6AE8C81C292221E2000037C5 /* UIColor+MogakcoColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "UIColor+MogakcoColor.swift"; path = "../../../../../김신오이/Mogakco/Mogakco/Util/Extension/UIColor+MogakcoColor.swift"; sourceTree = "<group>"; };
 		D8F345BD291D42460094CBD3 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		D8F880D12918AB7C003F0C4A /* Mogakco.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Mogakco.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D8F880D42918AB7C003F0C4A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D8F880D62918AB7C003F0C4A /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		D8F880D82918AB7C003F0C4A /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		D8F880DD2918AB7F003F0C4A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D8F880E02918AB7F003F0C4A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		D8F880E22918AB7F003F0C4A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -63,6 +63,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		3491537C292234420079BB70 /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				3491537D292234480079BB70 /* ViewController */,
+			);
+			path = Common;
+			sourceTree = "<group>";
+		};
+		3491537D292234480079BB70 /* ViewController */ = {
+			isa = PBXGroup;
+			children = (
+				3491537E292234760079BB70 /* ViewController.swift */,
+			);
+			path = ViewController;
+			sourceTree = "<group>";
+		};
 		6A501B02292216220047756B /* Util */ = {
 			isa = PBXGroup;
 			children = (
@@ -124,7 +140,7 @@
 		D8F880E92918B22A003F0C4A /* Presentation */ = {
 			isa = PBXGroup;
 			children = (
-				D8F880D82918AB7C003F0C4A /* ViewController.swift */,
+				3491537C292234420079BB70 /* Common */,
 			);
 			path = Presentation;
 			sourceTree = "<group>";
@@ -328,8 +344,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3491537F292234760079BB70 /* ViewController.swift in Sources */,
 				6AE8C81D292221E2000037C5 /* UIColor+MogakcoColor.swift in Sources */,
-				D8F880D92918AB7C003F0C4A /* ViewController.swift in Sources */,
 				D8F880D52918AB7C003F0C4A /* AppDelegate.swift in Sources */,
 				D8F880D72918AB7C003F0C4A /* SceneDelegate.swift in Sources */,
 			);
