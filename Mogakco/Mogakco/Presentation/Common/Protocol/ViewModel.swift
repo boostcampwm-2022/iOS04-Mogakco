@@ -15,4 +15,3 @@ protocol ViewModel {
     var disposeBag: DisposeBag { get set }
     func transform(input: Input) -> Output
 }
-
