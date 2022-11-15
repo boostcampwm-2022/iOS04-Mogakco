@@ -98,7 +98,6 @@ final class StudyDetailViewController: UIViewController {
     private func layout() {
         navigationLayout()
         layoutSubViews()
-        layoutConstraints()
     }
     
     private func navigationLayout() {
@@ -121,9 +120,16 @@ final class StudyDetailViewController: UIViewController {
             participantsCollectionView,
             studyJoinButton
         ])
+        
+        layoutContentScroll()
+        layoutStudyInfo()
+        layoutStudyIntroduce()
+        layoutLanguage()
+        layoutParticipants()
+        layoutStudyJoinButton()
     }
     
-    private func layoutConstraints() {
+    private func layoutContentScroll() {
         scrollView.snp.makeConstraints {
             $0.edges.equalTo(view.safeAreaLayoutGuide)
         }
@@ -132,7 +138,9 @@ final class StudyDetailViewController: UIViewController {
             $0.top.bottom.equalToSuperview()
             $0.leading.trailing.equalTo(view)
         }
-        
+    }
+    
+    private func layoutStudyInfo() {
         studyTitleLabel.snp.makeConstraints {
             $0.top.equalToSuperview().offset(6)
             $0.leading.trailing.equalToSuperview().inset(16)
@@ -142,7 +150,9 @@ final class StudyDetailViewController: UIViewController {
             $0.top.equalTo(studyTitleLabel.snp.bottom) .offset(6)
             $0.leading.trailing.equalToSuperview().inset(16)
         }
-        
+    }
+    
+    private func layoutStudyIntroduce() {
         studyIntroduceLabel.snp.makeConstraints {
             $0.top.equalTo(studyInfoStackView.snp.bottom) .offset(15)
             $0.leading.trailing.equalToSuperview().inset(16)
@@ -152,7 +162,9 @@ final class StudyDetailViewController: UIViewController {
             $0.top.equalTo(studyIntroduceLabel.snp.bottom).offset(6)
             $0.leading.trailing.equalToSuperview().inset(16)
         }
-        
+    }
+    
+    private func layoutLanguage() {
         laguageLabel.snp.makeConstraints {
             $0.top.equalTo(studyInfoDescription.snp.bottom) .offset(15)
             $0.leading.trailing.equalToSuperview().inset(16)
@@ -163,7 +175,9 @@ final class StudyDetailViewController: UIViewController {
             $0.leading.trailing.equalToSuperview().inset(16)
             $0.height.equalTo(80)
         }
-        
+    }
+    
+    private func layoutParticipants() {
         participantsInfoLabel.snp.makeConstraints {
             $0.top.equalTo(languageCollectionView.snp.bottom) .offset(15)
             $0.leading.trailing.equalToSuperview().inset(16)
@@ -174,7 +188,9 @@ final class StudyDetailViewController: UIViewController {
             $0.leading.trailing.equalToSuperview().inset(16)
             $0.height.equalTo(100)
         }
-        
+    }
+    
+    private func layoutStudyJoinButton() {
         studyJoinButton.snp.makeConstraints {
             $0.top.equalTo(participantsCollectionView.snp.bottom).offset(50)
             $0.leading.trailing.equalToSuperview().inset(16)
