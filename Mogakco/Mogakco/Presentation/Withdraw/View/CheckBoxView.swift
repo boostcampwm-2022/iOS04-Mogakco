@@ -20,7 +20,7 @@ final class CheckBoxView: UIView {
         $0.layer.borderColor = UIColor.mogakcoColor.borderDefault?.cgColor
     }
     
-    private let bodyLabel = UILabel().then {
+    private let textLabel = UILabel().then {
         $0.text = "text"
         $0.numberOfLines = 0
         $0.textAlignment = .left
@@ -28,18 +28,18 @@ final class CheckBoxView: UIView {
         $0.textColor = UIColor.mogakcoColor.typographyPrimary
     }
     
-    init(_ body: String) {
+    init(_ text: String) {
         super.init(frame: .zero)
-        layout(body)
+        layout(text)
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private func layout(_ body: String) {
+    private func layout(_ text: String) {
         layoutCheckButton()
-        layoutBodyLabel(body)
+        layoutBodyLabel(text)
     }
     
     private func layoutCheckButton() {
@@ -51,14 +51,29 @@ final class CheckBoxView: UIView {
         }
     }
     
-    private func layoutBodyLabel(_ body: String) {
-        addSubview(bodyLabel)
+    private func layoutBodyLabel(_ text: String) {
+        addSubview(textLabel)
         
-        bodyLabel.snp.makeConstraints {
+        textLabel.snp.makeConstraints {
             $0.left.equalTo(checkButton.snp.right).offset(10)
             $0.right.equalToSuperview()
         }
         
-        bodyLabel.text = body
+        textLabel.text = text
+    }
+}
+
+enum withdrawReason: String {
+    
+    case deleteInformation = "개인정보 삭제 목적"
+    case inconvenience = "이용이 불편하고 장애가 많아서"
+    case otherApp = "다른 앱이 더 좋아서"
+    case duplicateAccount = "중복 계정이 있어서"
+    case lowUsage = "사용 빈도가 낮아서"
+    case dissatisfaction = "콘텐츠 불만이 있어서"
+    case etc = "기타"
+    
+    var checkBox: CheckBoxView {
+        get{ return CheckBoxView(self.rawValue)}
     }
 }
