@@ -14,6 +14,7 @@
 		CB14900C292295F9003E52FF /* AppCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB14900B292295F9003E52FF /* AppCoordinator.swift */; };
 		CB14900E2922964D003E52FF /* AppCoordinatorProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB14900D2922964D003E52FF /* AppCoordinatorProtocol.swift */; };
 		34CFD054292280C0007CF0F0 /* RoundProfileImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34CFD053292280C0007CF0F0 /* RoundProfileImage.swift */; };
+		CBA64FFB292364CA000FEEAD /* SetEmailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBA64FFA292364CA000FEEAD /* SetEmailViewController.swift */; };
 		D8244537292244FC005EE8F1 /* UIFont+CustomFont.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8244536292244FC005EE8F1 /* UIFont+CustomFont.swift */; };
 		D824453B29224522005EE8F1 /* SFProDisplay-Regular.OTF in Resources */ = {isa = PBXBuildFile; fileRef = D824453929224522005EE8F1 /* SFProDisplay-Regular.OTF */; };
 		D824453C29224522005EE8F1 /* SFProDisplay-Semibold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D824453A29224522005EE8F1 /* SFProDisplay-Semibold.ttf */; };
@@ -55,6 +56,7 @@
 		CB14900B292295F9003E52FF /* AppCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinator.swift; sourceTree = "<group>"; };
 		CB14900D2922964D003E52FF /* AppCoordinatorProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinatorProtocol.swift; sourceTree = "<group>"; };
 		34CFD053292280C0007CF0F0 /* RoundProfileImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundProfileImage.swift; sourceTree = "<group>"; };
+		CBA64FFA292364CA000FEEAD /* SetEmailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetEmailViewController.swift; sourceTree = "<group>"; };
 		D8244536292244FC005EE8F1 /* UIFont+CustomFont.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIFont+CustomFont.swift"; sourceTree = "<group>"; };
 		D824453929224522005EE8F1 /* SFProDisplay-Regular.OTF */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SFProDisplay-Regular.OTF"; sourceTree = "<group>"; };
 		D824453A29224522005EE8F1 /* SFProDisplay-Semibold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SFProDisplay-Semibold.ttf"; sourceTree = "<group>"; };
@@ -106,6 +108,22 @@
 			children = (
 			);
 			path = Constant;
+			sourceTree = "<group>";
+		};
+		CBA64FF8292364B8000FEEAD /* Signup */ = {
+			isa = PBXGroup;
+			children = (
+				CBA64FF9292364BE000FEEAD /* ViewController */,
+			);
+			path = Signup;
+			sourceTree = "<group>";
+		};
+		CBA64FF9292364BE000FEEAD /* ViewController */ = {
+			isa = PBXGroup;
+			children = (
+				CBA64FFA292364CA000FEEAD /* SetEmailViewController.swift */,
+			);
+			path = ViewController;
 			sourceTree = "<group>";
 		};
 		D824453829224522005EE8F1 /* Fonts */ = {
@@ -267,6 +285,7 @@
 		D8F880E92918B22A003F0C4A /* Presentation */ = {
 			isa = PBXGroup;
 			children = (
+				CBA64FF8292364B8000FEEAD /* Signup */,
 				D824453D29224823005EE8F1 /* Chat */,
 				D824454429224839005EE8F1 /* Common */,
 				D8F880D82918AB7C003F0C4A /* ViewController.swift */,
@@ -487,6 +506,7 @@
 				D8C5D8B32922879E003939CB /* ValidationButton.swift in Sources */,
 				D824454229224823005EE8F1 /* ChatRoomTableViewCell.swift in Sources */,
 				D8C5D8B729228E87003939CB /* UIView+Shadow.swift in Sources */,
+				CBA64FFB292364CA000FEEAD /* SetEmailViewController.swift in Sources */,
 				D824455829224839005EE8F1 /* Identifiable.swift in Sources */,
 				D8244537292244FC005EE8F1 /* UIFont+CustomFont.swift in Sources */,
 				D824455329224839005EE8F1 /* ViewModel.swift in Sources */,
