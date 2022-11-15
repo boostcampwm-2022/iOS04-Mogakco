@@ -9,6 +9,10 @@
 /* Begin PBXBuildFile section */
 		348E2F3A292369A800516AC9 /* HalfModalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 348E2F39292369A800516AC9 /* HalfModalViewController.swift */; };
 		348E2F3F29237C9E00516AC9 /* UIViewController+HalfModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 348E2F3E29237C9E00516AC9 /* UIViewController+HalfModal.swift */; };
+		6A7019A82923736200B42900 /* UIView+AddSubViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A7019A72923736200B42900 /* UIView+AddSubViews.swift */; };
+		6A7019AD2923738700B42900 /* StudyDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A7019AA2923738700B42900 /* StudyDetailViewController.swift */; };
+		6A7019AE2923738700B42900 /* StudyTitleLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A7019AC2923738700B42900 /* StudyTitleLabel.swift */; };
+		6A7019B0292373C700B42900 /* StudyInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A7019AF292373C700B42900 /* StudyInfoView.swift */; };
 		CB148FE02922520B003E52FF /* TextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB148FDF2922520B003E52FF /* TextField.swift */; };
 		CB148FE4292252A9003E52FF /* SecureTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB148FE3292252A9003E52FF /* SecureTextField.swift */; };
 		CB148FE7292254D6003E52FF /* MessageTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB148FE6292254D6003E52FF /* MessageTextField.swift */; };
@@ -55,6 +59,10 @@
 /* Begin PBXFileReference section */
 		348E2F39292369A800516AC9 /* HalfModalViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HalfModalViewController.swift; sourceTree = "<group>"; };
 		348E2F3E29237C9E00516AC9 /* UIViewController+HalfModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+HalfModal.swift"; sourceTree = "<group>"; };
+		6A7019A72923736200B42900 /* UIView+AddSubViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+AddSubViews.swift"; sourceTree = "<group>"; };
+		6A7019AA2923738700B42900 /* StudyDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StudyDetailViewController.swift; sourceTree = "<group>"; };
+		6A7019AC2923738700B42900 /* StudyTitleLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StudyTitleLabel.swift; sourceTree = "<group>"; };
+		6A7019AF292373C700B42900 /* StudyInfoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StudyInfoView.swift; sourceTree = "<group>"; };
 		CB148FDF2922520B003E52FF /* TextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextField.swift; sourceTree = "<group>"; };
 		CB148FE3292252A9003E52FF /* SecureTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureTextField.swift; sourceTree = "<group>"; };
 		CB148FE6292254D6003E52FF /* MessageTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageTextField.swift; sourceTree = "<group>"; };
@@ -117,6 +125,21 @@
 				348E2F39292369A800516AC9 /* HalfModalViewController.swift */,
 			);
 			path = HalfModal;
+		6A7019A92923738700B42900 /* StudyDetail */ = {
+			isa = PBXGroup;
+			children = (
+				6A7019AA2923738700B42900 /* StudyDetailViewController.swift */,
+				6A7019AB2923738700B42900 /* View */,
+			);
+			path = StudyDetail;
+			sourceTree = "<group>";
+		};
+		6A7019AB2923738700B42900 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				6A7019AC2923738700B42900 /* StudyTitleLabel.swift */,
+			);
+			path = View;
 			sourceTree = "<group>";
 		};
 		CB148FE5292254B6003E52FF /* Constant */ = {
@@ -229,6 +252,7 @@
 				348E2F382923699600516AC9 /* HalfModal */,
 				D824455229224839005EE8F1 /* TitleHeaderView.swift */,
 				CB148FDF2922520B003E52FF /* TextField.swift */,
+				6A7019AF292373C700B42900 /* StudyInfoView.swift */,
 				CB148FE3292252A9003E52FF /* SecureTextField.swift */,
 				CB148FE6292254D6003E52FF /* MessageTextField.swift */,
 				D8C5D8B22922879E003939CB /* ValidationButton.swift */,
@@ -255,6 +279,7 @@
 				D8C5D8B629228E87003939CB /* UIView+Shadow.swift */,
 				CBA64FFE2923805D000FEEAD /* UILabel+LineSpacing.swift */,
 				348E2F3E29237C9E00516AC9 /* UIViewController+HalfModal.swift */,
+				6A7019A72923736200B42900 /* UIView+AddSubViews.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -306,6 +331,7 @@
 			isa = PBXGroup;
 			children = (
 				CBA64FF8292364B8000FEEAD /* Signup */,
+				6A7019A92923738700B42900 /* StudyDetail */,
 				D824453D29224823005EE8F1 /* Chat */,
 				D824454429224839005EE8F1 /* Common */,
 				D8F880D82918AB7C003F0C4A /* ViewController.swift */,
@@ -522,6 +548,7 @@
 				D8C5D8B529228DA5003939CB /* UIButton+BackgroundColor.swift in Sources */,
 				D8F880D92918AB7C003F0C4A /* ViewController.swift in Sources */,
 				34CFD054292280C0007CF0F0 /* RoundProfileImage.swift in Sources */,
+				6A7019B0292373C700B42900 /* StudyInfoView.swift in Sources */,
 				D8F880D52918AB7C003F0C4A /* AppDelegate.swift in Sources */,
 				D8E42DF329223BE000E488FA /* UIColor+MogakcoColor.swift in Sources */,
 				D8C5D8B32922879E003939CB /* ValidationButton.swift in Sources */,
@@ -532,13 +559,16 @@
 				D8244537292244FC005EE8F1 /* UIFont+CustomFont.swift in Sources */,
 				D824455329224839005EE8F1 /* ViewModel.swift in Sources */,
 				CB14900C292295F9003E52FF /* AppCoordinator.swift in Sources */,
+				6A7019AD2923738700B42900 /* StudyDetailViewController.swift in Sources */,
 				CB14900A292295D3003E52FF /* Coordinator.swift in Sources */,
 				348E2F3F29237C9E00516AC9 /* UIViewController+HalfModal.swift in Sources */,
 				CB14900E2922964D003E52FF /* AppCoordinatorProtocol.swift in Sources */,
 				CBA64FFD292378FE000FEEAD /* SetPasswordViewController.swift in Sources */,
 				D8F880D72918AB7C003F0C4A /* SceneDelegate.swift in Sources */,
 				348E2F3A292369A800516AC9 /* HalfModalViewController.swift in Sources */,
+				6A7019AE2923738700B42900 /* StudyTitleLabel.swift in Sources */,
 				D824454329224823005EE8F1 /* ChatViewController.swift in Sources */,
+				6A7019A82923736200B42900 /* UIView+AddSubViews.swift in Sources */,
 				CB148FE4292252A9003E52FF /* SecureTextField.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
