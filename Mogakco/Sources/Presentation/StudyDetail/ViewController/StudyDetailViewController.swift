@@ -12,7 +12,7 @@ import Then
 import RxSwift
 import RxCocoa
 
-final class StudyDetailViewController: UIViewController {
+final class StudyDetailViewController: ViewController {
     
     private lazy var scrollView = UIScrollView()
     private lazy var contentsView = UIView()
@@ -59,28 +59,37 @@ final class StudyDetailViewController: UIViewController {
         $0.font = UIFont.mogakcoFont.mediumBold
         $0.text = "언어"
     }
-    private lazy var languageCollectionView: UICollectionView = {
+    
+    private let languageCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.minimumLineSpacing = 10
-        layout.scrollDirection = .vertical
+        layout.scrollDirection = .horizontal
         layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         
-        return UICollectionView(frame: .zero, collectionViewLayout: layout)
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.register(BadgeCell.self, forCellWithReuseIdentifier: BadgeCell.identifier)
+        
+        return collectionView
     }()
     
-    private lazy var participantsInfoLabel = UILabel().then {
+    private let participantsInfoLabel = UILabel().then {
         $0.textColor = .mogakcoColor.typographyPrimary
         $0.font = UIFont.mogakcoFont.mediumBold
         $0.text = "참여중인 사람 2/3"
     }
-    private lazy var participantsCollectionView: UICollectionView = {
+    
+    private let participantsCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.minimumLineSpacing = 10
-        layout.scrollDirection = .vertical
+        layout.scrollDirection = .horizontal
         layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         
-        return UICollectionView(frame: .zero, collectionViewLayout: layout)
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.register(ParticipantCell.self, forCellWithReuseIdentifier: ParticipantCell.identifier)
+        
+        return collectionView
     }()
+    
     // TODO: 커스텀 버튼으로 변경 필요
     private lazy var studyJoinButton = UIButton().then {
         $0.backgroundColor = .mogakcoColor.primaryDefault
@@ -92,12 +101,24 @@ final class StudyDetailViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        layout()
+        configDelegate()
     }
     
-    private func layout() {
+    private func configDelegate() {
+        languageCollectionView.delegate = self
+        languageCollectionView.dataSource = self
+        
+        participantsCollectionView.delegate = self
+        participantsCollectionView.dataSource = self
+    }
+    
+    override func layout() {
         navigationLayout()
         layoutSubViews()
+    }
+    
+    override func bind() {
+        //
     }
     
     private func navigationLayout() {
@@ -186,7 +207,7 @@ final class StudyDetailViewController: UIViewController {
         participantsCollectionView.snp.makeConstraints {
             $0.top.equalTo(participantsInfoLabel.snp.bottom).offset(6)
             $0.leading.trailing.equalToSuperview().inset(16)
-            $0.height.equalTo(100)
+            $0.height.equalTo(150)
         }
     }
     
@@ -196,5 +217,55 @@ final class StudyDetailViewController: UIViewController {
             $0.leading.trailing.equalToSuperview().inset(16)
             $0.bottom.equalToSuperview()
         }
+    }
+}
+
+extension StudyDetailViewController: UICollectionViewDataSource {
+    
+    enum CellType {
+        case language
+        case participant
+    }
+    
+    func collectionView(
+        _ collectionView: UICollectionView,
+        numberOfItemsInSection section: Int)
+    -> Int {
+        return 5
+    }
+    
+    func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath)
+    -> UICollectionViewCell {
+        if collectionView == participantsCollectionView {
+            guard let cell = participantsCollectionView.dequeueReusableCell(
+                withReuseIdentifier: ParticipantCell.identifier,
+                for: indexPath) as? ParticipantCell
+            else { return UICollectionViewCell() }
+            
+            cell.prepareForReuse()
+            cell.setInfo(imageURLString: "", name: "김신오이", description: "iOS 개발자들")
+            
+            return cell
+        }
+        
+        return participantsCollectionView.dequeueReusableCell(
+            withReuseIdentifier: BadgeCell.identifier,
+            for: indexPath)
+    }
+}
+
+extension StudyDetailViewController: UICollectionViewDelegateFlowLayout {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        sizeForItemAt indexPath: IndexPath)
+    -> CGSize {
+        if collectionView == participantsCollectionView {
+            return CGSize(width: ParticipantCell.width, height: ParticipantCell.height)
+        }
+        
+        return CGSize(width: 0, height: 0)
     }
 }
