@@ -52,6 +52,8 @@ final class SetEmailViewController: UIViewController { // TODO: UIViewController
         $0.clipsToBounds = true
     }
     
+    let disposeBag = DisposeBag() // TODO: 수정
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         bind()
