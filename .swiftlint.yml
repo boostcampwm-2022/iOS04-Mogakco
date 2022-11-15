@@ -1,0 +1,16 @@
+excluded:
+  - Derived
+  - Plugins
+  - Scripts
+  - Tuist
+  - ./Mogakco/Sources/AppDelegate.swift
+  - ./Mogakco/Sources/SceneDelegate.swift
+  - Project.swift
+
+opt_in_rules:
+  - force_cast
+  - force_unwrapping
+disabled_rules:
+  - leading_whitespace
+  - trailing_whitespace
+  - todo
