@@ -3,8 +3,8 @@ excluded:
   - Plugins
   - Scripts
   - Tuist
-  - ./Mogakco/Sources/AppDelegate.swift
-  - ./Mogakco/Sources/SceneDelegate.swift
+  - ./Mogakco/Sources/App/AppDelegate.swift
+  - ./Mogakco/Sources/App/SceneDelegate.swift
   - Project.swift
 
 opt_in_rules:
