@@ -13,6 +13,7 @@
 		6A7019AD2923738700B42900 /* StudyDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A7019AA2923738700B42900 /* StudyDetailViewController.swift */; };
 		6A7019AE2923738700B42900 /* StudyTitleLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A7019AC2923738700B42900 /* StudyTitleLabel.swift */; };
 		6A7019B0292373C700B42900 /* StudyInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A7019AF292373C700B42900 /* StudyInfoView.swift */; };
+		348E2F35292358D700516AC9 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 348E2F34292358D700516AC9 /* LoginViewController.swift */; };
 		CB148FE02922520B003E52FF /* TextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB148FDF2922520B003E52FF /* TextField.swift */; };
 		CB148FE4292252A9003E52FF /* SecureTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB148FE3292252A9003E52FF /* SecureTextField.swift */; };
 		CB148FE7292254D6003E52FF /* MessageTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB148FE6292254D6003E52FF /* MessageTextField.swift */; };
@@ -64,6 +65,7 @@
 		6A7019AA2923738700B42900 /* StudyDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StudyDetailViewController.swift; sourceTree = "<group>"; };
 		6A7019AC2923738700B42900 /* StudyTitleLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StudyTitleLabel.swift; sourceTree = "<group>"; };
 		6A7019AF292373C700B42900 /* StudyInfoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StudyInfoView.swift; sourceTree = "<group>"; };
+		348E2F34292358D700516AC9 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		CB148FDF2922520B003E52FF /* TextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextField.swift; sourceTree = "<group>"; };
 		CB148FE3292252A9003E52FF /* SecureTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureTextField.swift; sourceTree = "<group>"; };
 		CB148FE6292254D6003E52FF /* MessageTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageTextField.swift; sourceTree = "<group>"; };
@@ -140,6 +142,26 @@
 			isa = PBXGroup;
 			children = (
 				6A7019AC2923738700B42900 /* StudyTitleLabel.swift */,
+		348E2F302923584300516AC9 /* Login */ = {
+			isa = PBXGroup;
+			children = (
+				348E2F322923588B00516AC9 /* View */,
+				348E2F312923588100516AC9 /* ViewController */,
+			);
+			path = Login;
+			sourceTree = "<group>";
+		};
+		348E2F312923588100516AC9 /* ViewController */ = {
+			isa = PBXGroup;
+			children = (
+				348E2F34292358D700516AC9 /* LoginViewController.swift */,
+			);
+			path = ViewController;
+			sourceTree = "<group>";
+		};
+		348E2F322923588B00516AC9 /* View */ = {
+			isa = PBXGroup;
+			children = (
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -334,6 +356,7 @@
 			children = (
 				CBA64FF8292364B8000FEEAD /* Signup */,
 				6A7019A92923738700B42900 /* StudyDetail */,
+				348E2F302923584300516AC9 /* Login */,
 				D824453D29224823005EE8F1 /* Chat */,
 				D824454429224839005EE8F1 /* Common */,
 				D8F880D82918AB7C003F0C4A /* ViewController.swift */,
@@ -542,6 +565,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				348E2F35292358D700516AC9 /* LoginViewController.swift in Sources */,
 				D824455529224839005EE8F1 /* CoordinatorFinishDelegate.swift in Sources */,
 				D824455929224839005EE8F1 /* TitleHeaderView.swift in Sources */,
 				CBA64FFF2923805D000FEEAD /* UILabel+LineSpacing.swift in Sources */,
