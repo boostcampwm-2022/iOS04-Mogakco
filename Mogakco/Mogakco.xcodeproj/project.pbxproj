@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		348E2F3A292369A800516AC9 /* HalfModalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 348E2F39292369A800516AC9 /* HalfModalViewController.swift */; };
+		348E2F3F29237C9E00516AC9 /* UIViewController+HalfModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 348E2F3E29237C9E00516AC9 /* UIViewController+HalfModal.swift */; };
 		CB148FE02922520B003E52FF /* TextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB148FDF2922520B003E52FF /* TextField.swift */; };
 		CB148FE4292252A9003E52FF /* SecureTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB148FE3292252A9003E52FF /* SecureTextField.swift */; };
 		CB148FE7292254D6003E52FF /* MessageTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB148FE6292254D6003E52FF /* MessageTextField.swift */; };
@@ -51,6 +53,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		348E2F39292369A800516AC9 /* HalfModalViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HalfModalViewController.swift; sourceTree = "<group>"; };
+		348E2F3E29237C9E00516AC9 /* UIViewController+HalfModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+HalfModal.swift"; sourceTree = "<group>"; };
 		CB148FDF2922520B003E52FF /* TextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextField.swift; sourceTree = "<group>"; };
 		CB148FE3292252A9003E52FF /* SecureTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureTextField.swift; sourceTree = "<group>"; };
 		CB148FE6292254D6003E52FF /* MessageTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageTextField.swift; sourceTree = "<group>"; };
@@ -107,6 +111,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		348E2F382923699600516AC9 /* HalfModal */ = {
+			isa = PBXGroup;
+			children = (
+				348E2F39292369A800516AC9 /* HalfModalViewController.swift */,
+			);
+			path = HalfModal;
+			sourceTree = "<group>";
+		};
 		CB148FE5292254B6003E52FF /* Constant */ = {
 			isa = PBXGroup;
 			children = (
@@ -214,6 +226,7 @@
 		D824455129224839005EE8F1 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				348E2F382923699600516AC9 /* HalfModal */,
 				D824455229224839005EE8F1 /* TitleHeaderView.swift */,
 				CB148FDF2922520B003E52FF /* TextField.swift */,
 				CB148FE3292252A9003E52FF /* SecureTextField.swift */,
@@ -241,6 +254,7 @@
 				D8C5D8B429228DA5003939CB /* UIButton+BackgroundColor.swift */,
 				D8C5D8B629228E87003939CB /* UIView+Shadow.swift */,
 				CBA64FFE2923805D000FEEAD /* UILabel+LineSpacing.swift */,
+				348E2F3E29237C9E00516AC9 /* UIViewController+HalfModal.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -519,9 +533,11 @@
 				D824455329224839005EE8F1 /* ViewModel.swift in Sources */,
 				CB14900C292295F9003E52FF /* AppCoordinator.swift in Sources */,
 				CB14900A292295D3003E52FF /* Coordinator.swift in Sources */,
+				348E2F3F29237C9E00516AC9 /* UIViewController+HalfModal.swift in Sources */,
 				CB14900E2922964D003E52FF /* AppCoordinatorProtocol.swift in Sources */,
 				CBA64FFD292378FE000FEEAD /* SetPasswordViewController.swift in Sources */,
 				D8F880D72918AB7C003F0C4A /* SceneDelegate.swift in Sources */,
+				348E2F3A292369A800516AC9 /* HalfModalViewController.swift in Sources */,
 				D824454329224823005EE8F1 /* ChatViewController.swift in Sources */,
 				CB148FE4292252A9003E52FF /* SecureTextField.swift in Sources */,
 			);
