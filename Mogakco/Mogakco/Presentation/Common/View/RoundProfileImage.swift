@@ -10,13 +10,8 @@ import UIKit
 import SnapKit
 import Then
 
-final class RoundProfileImage: UIView {
-    
-    private let imageView = UIImageView().then {
-        $0.contentMode = .scaleAspectFill
-        $0.image = UIImage(systemName: "person")
-    }
-    
+final class RoundProfileImageView: UIImageView {
+
     init(_ size: Int) {
         super.init(frame: .zero)
         layout(size)
@@ -27,24 +22,20 @@ final class RoundProfileImage: UIView {
     }
     
     func setPhoto(_ image: UIImage) {
-        imageView.image = image
+        self.image = image
     }
     
     private func layout(_ size: Int) {
-        layoutImageView(size)
-    }
-    
-    private func layoutImageView(_ size: Int) {
-        addSubview(imageView)
+        contentMode = .scaleAspectFill
+        image = UIImage(systemName: "person")
         
-        imageView.snp.makeConstraints {
+        snp.makeConstraints {
             $0.width.height.equalTo(size)
         }
         
-        imageView.layer.cornerRadius = CGFloat(size/2)
-        imageView.layer.borderWidth = 1
-        imageView.layer.borderColor = UIColor.mogakcoColor.backgroundSecondary?.cgColor
-        imageView.clipsToBounds = true
+        layer.cornerRadius = CGFloat(size/2)
+        layer.borderWidth = 1
+        layer.borderColor = UIColor.mogakcoColor.backgroundSecondary?.cgColor
+        clipsToBounds = true
     }
-    
 }
