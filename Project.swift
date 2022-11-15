@@ -56,7 +56,7 @@ class BaseProjectFactory: ProjectFactory {
                 platform: .iOS,
                 product: .app,
                 bundleId: "com.kimshinohlee.\(projectName)",
-                deploymentTarget: .iOS(targetVersion: "15.0", devices: [.iphone]),
+                deploymentTarget: .iOS(targetVersion: "16.0", devices: [.iphone]),
                 infoPlist: .extendingDefault(with: infoPlist),
                 sources: ["\(projectName)/Sources/**"],
                 resources: "\(projectName)/Resources/**",

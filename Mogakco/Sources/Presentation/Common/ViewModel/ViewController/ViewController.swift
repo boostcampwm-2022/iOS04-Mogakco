@@ -7,10 +7,18 @@
 
 import UIKit
 
+import RxSwift
+
 class ViewController: UIViewController {
+    
+    let disposeBag = DisposeBag()
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        layout()
+        bind()
     }
-
+    
+    func layout() {}
+    func bind() {}
 }
