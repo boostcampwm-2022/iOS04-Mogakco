@@ -14,6 +14,8 @@
 		6A7019AE2923738700B42900 /* StudyTitleLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A7019AC2923738700B42900 /* StudyTitleLabel.swift */; };
 		6A7019B0292373C700B42900 /* StudyInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A7019AF292373C700B42900 /* StudyInfoView.swift */; };
 		348E2F35292358D700516AC9 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 348E2F34292358D700516AC9 /* LoginViewController.swift */; };
+		348E2F2E29230B3100516AC9 /* CheckBoxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 348E2F2D29230B3100516AC9 /* CheckBoxView.swift */; };
+		34CFD0602922A64F007CF0F0 /* WithdrawViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34CFD05F2922A64F007CF0F0 /* WithdrawViewController.swift */; };
 		CB148FE02922520B003E52FF /* TextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB148FDF2922520B003E52FF /* TextField.swift */; };
 		CB148FE4292252A9003E52FF /* SecureTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB148FE3292252A9003E52FF /* SecureTextField.swift */; };
 		CB148FE7292254D6003E52FF /* MessageTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB148FE6292254D6003E52FF /* MessageTextField.swift */; };
@@ -67,6 +69,8 @@
 		6A7019AC2923738700B42900 /* StudyTitleLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StudyTitleLabel.swift; sourceTree = "<group>"; };
 		6A7019AF292373C700B42900 /* StudyInfoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StudyInfoView.swift; sourceTree = "<group>"; };
 		348E2F34292358D700516AC9 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
+		348E2F2D29230B3100516AC9 /* CheckBoxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckBoxView.swift; sourceTree = "<group>"; };
+		34CFD05F2922A64F007CF0F0 /* WithdrawViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WithdrawViewController.swift; sourceTree = "<group>"; };
 		CB148FDF2922520B003E52FF /* TextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextField.swift; sourceTree = "<group>"; };
 		CB148FE3292252A9003E52FF /* SecureTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureTextField.swift; sourceTree = "<group>"; };
 		CB148FE6292254D6003E52FF /* MessageTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageTextField.swift; sourceTree = "<group>"; };
@@ -157,6 +161,19 @@
 			isa = PBXGroup;
 			children = (
 				348E2F34292358D700516AC9 /* LoginViewController.swift */,
+		34CFD05C2922A5EE007CF0F0 /* Withdraw */ = {
+			isa = PBXGroup;
+			children = (
+				34CFD05E2922A633007CF0F0 /* View */,
+				34CFD05D2922A62D007CF0F0 /* ViewController */,
+			);
+			path = Withdraw;
+			sourceTree = "<group>";
+		};
+		34CFD05D2922A62D007CF0F0 /* ViewController */ = {
+			isa = PBXGroup;
+			children = (
+				34CFD05F2922A64F007CF0F0 /* WithdrawViewController.swift */,
 			);
 			path = ViewController;
 			sourceTree = "<group>";
@@ -164,6 +181,10 @@
 		348E2F322923588B00516AC9 /* View */ = {
 			isa = PBXGroup;
 			children = (
+		34CFD05E2922A633007CF0F0 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				348E2F2D29230B3100516AC9 /* CheckBoxView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -360,6 +381,7 @@
 				CBA64FF8292364B8000FEEAD /* Signup */,
 				6A7019A92923738700B42900 /* StudyDetail */,
 				348E2F302923584300516AC9 /* Login */,
+				34CFD05C2922A5EE007CF0F0 /* Withdraw */,
 				D824453D29224823005EE8F1 /* Chat */,
 				D824454429224839005EE8F1 /* Common */,
 				D8F880D82918AB7C003F0C4A /* ViewController.swift */,
@@ -599,6 +621,8 @@
 				6A7019AE2923738700B42900 /* StudyTitleLabel.swift in Sources */,
 				D824454329224823005EE8F1 /* ChatViewController.swift in Sources */,
 				6A7019A82923736200B42900 /* UIView+AddSubViews.swift in Sources */,
+				348E2F2E29230B3100516AC9 /* CheckBoxView.swift in Sources */,
+				34CFD0602922A64F007CF0F0 /* WithdrawViewController.swift in Sources */,
 				CB148FE4292252A9003E52FF /* SecureTextField.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
