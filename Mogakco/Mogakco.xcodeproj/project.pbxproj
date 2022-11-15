@@ -15,6 +15,8 @@
 		CB14900E2922964D003E52FF /* AppCoordinatorProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB14900D2922964D003E52FF /* AppCoordinatorProtocol.swift */; };
 		34CFD054292280C0007CF0F0 /* RoundProfileImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34CFD053292280C0007CF0F0 /* RoundProfileImage.swift */; };
 		CBA64FFB292364CA000FEEAD /* SetEmailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBA64FFA292364CA000FEEAD /* SetEmailViewController.swift */; };
+		CBA64FFD292378FE000FEEAD /* SetPasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBA64FFC292378FE000FEEAD /* SetPasswordViewController.swift */; };
+		CBA64FFF2923805D000FEEAD /* UILabel+LineSpacing.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBA64FFE2923805D000FEEAD /* UILabel+LineSpacing.swift */; };
 		D8244537292244FC005EE8F1 /* UIFont+CustomFont.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8244536292244FC005EE8F1 /* UIFont+CustomFont.swift */; };
 		D824453B29224522005EE8F1 /* SFProDisplay-Regular.OTF in Resources */ = {isa = PBXBuildFile; fileRef = D824453929224522005EE8F1 /* SFProDisplay-Regular.OTF */; };
 		D824453C29224522005EE8F1 /* SFProDisplay-Semibold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D824453A29224522005EE8F1 /* SFProDisplay-Semibold.ttf */; };
@@ -57,6 +59,8 @@
 		CB14900D2922964D003E52FF /* AppCoordinatorProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinatorProtocol.swift; sourceTree = "<group>"; };
 		34CFD053292280C0007CF0F0 /* RoundProfileImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundProfileImage.swift; sourceTree = "<group>"; };
 		CBA64FFA292364CA000FEEAD /* SetEmailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetEmailViewController.swift; sourceTree = "<group>"; };
+		CBA64FFC292378FE000FEEAD /* SetPasswordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetPasswordViewController.swift; sourceTree = "<group>"; };
+		CBA64FFE2923805D000FEEAD /* UILabel+LineSpacing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UILabel+LineSpacing.swift"; sourceTree = "<group>"; };
 		D8244536292244FC005EE8F1 /* UIFont+CustomFont.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIFont+CustomFont.swift"; sourceTree = "<group>"; };
 		D824453929224522005EE8F1 /* SFProDisplay-Regular.OTF */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SFProDisplay-Regular.OTF"; sourceTree = "<group>"; };
 		D824453A29224522005EE8F1 /* SFProDisplay-Semibold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SFProDisplay-Semibold.ttf"; sourceTree = "<group>"; };
@@ -122,6 +126,7 @@
 			isa = PBXGroup;
 			children = (
 				CBA64FFA292364CA000FEEAD /* SetEmailViewController.swift */,
+				CBA64FFC292378FE000FEEAD /* SetPasswordViewController.swift */,
 			);
 			path = ViewController;
 			sourceTree = "<group>";
@@ -235,6 +240,7 @@
 				D8E42DF229223BDF00E488FA /* UIColor+MogakcoColor.swift */,
 				D8C5D8B429228DA5003939CB /* UIButton+BackgroundColor.swift */,
 				D8C5D8B629228E87003939CB /* UIView+Shadow.swift */,
+				CBA64FFE2923805D000FEEAD /* UILabel+LineSpacing.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -496,6 +502,7 @@
 			files = (
 				D824455529224839005EE8F1 /* CoordinatorFinishDelegate.swift in Sources */,
 				D824455929224839005EE8F1 /* TitleHeaderView.swift in Sources */,
+				CBA64FFF2923805D000FEEAD /* UILabel+LineSpacing.swift in Sources */,
 				CB148FE02922520B003E52FF /* TextField.swift in Sources */,
 				CB148FE7292254D6003E52FF /* MessageTextField.swift in Sources */,
 				D8C5D8B529228DA5003939CB /* UIButton+BackgroundColor.swift in Sources */,
@@ -513,6 +520,7 @@
 				CB14900C292295F9003E52FF /* AppCoordinator.swift in Sources */,
 				CB14900A292295D3003E52FF /* Coordinator.swift in Sources */,
 				CB14900E2922964D003E52FF /* AppCoordinatorProtocol.swift in Sources */,
+				CBA64FFD292378FE000FEEAD /* SetPasswordViewController.swift in Sources */,
 				D8F880D72918AB7C003F0C4A /* SceneDelegate.swift in Sources */,
 				D824454329224823005EE8F1 /* ChatViewController.swift in Sources */,
 				CB148FE4292252A9003E52FF /* SecureTextField.swift in Sources */,
