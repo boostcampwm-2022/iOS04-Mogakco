@@ -13,7 +13,7 @@ import Then
 final class RoundProfileImage: UIView {
     
     private let imageView = UIImageView().then {
-        $0.contentMode = .scaleAspectFit
+        $0.contentMode = .scaleAspectFill
         $0.image = UIImage(systemName: "person")
     }
     
