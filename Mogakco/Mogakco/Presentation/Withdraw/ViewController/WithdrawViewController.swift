@@ -41,15 +41,15 @@ final class WithdrawViewController: UIViewController {
         $0.axis = .vertical
     }
     
-    private let checkBox1 = CheckBoxView("기록 삭제 목적")
-    private let checkBox2 = CheckBoxView("이용이 불편하고 장애가 많아서")
-    private let checkBox3 = CheckBoxView("다른 사이트가 더 좋아서")
-    private let checkBox4 = CheckBoxView("삭제하고 싶은 내용이 있어서")
-    private let checkBox5 = CheckBoxView("사용빈도가 낮아서")
-    private let checkBox6 = CheckBoxView("콘텐츠 불만")
-    private let checkBox7 = CheckBoxView("기타")
+    private let deleteInfoIssue = withdrawReason.deleteInformation.checkBox
+    private let inconvenienceIssue = withdrawReason.inconvenience.checkBox
+    private let otherSiteIssue = withdrawReason.otherApp.checkBox
+    private let duplicateAccountIssue = withdrawReason.duplicateAccount.checkBox
+    private let lowUsageIssue = withdrawReason.lowUsage.checkBox
+    private let dissatisfactionIssue = withdrawReason.dissatisfaction.checkBox
+    private let etcIssue = withdrawReason.etc.checkBox
     
-    private let passwordTextFiled = SecureTextField()
+    private let secureTextField = SecureTextField()
     
     private let withdrawButton = UIButton().then {
         $0.setTitle("탈퇴하기", for: .normal)
@@ -73,7 +73,7 @@ final class WithdrawViewController: UIViewController {
         layoutStackView()
         layoutCheckBoxs()
         layoutPasswordTitleLabel()
-        layoutPasswordTextFiled()
+        layoutSecureTextFiled()
         layoutWithdrawButton()
     }
     
@@ -81,8 +81,7 @@ final class WithdrawViewController: UIViewController {
         view.addSubview(titleLabel)
         
         titleLabel.snp.makeConstraints {
-            $0.left.equalToSuperview().inset(16)
-            $0.top.equalToSuperview().offset(132)
+            $0.left.top.equalTo(view.safeAreaLayoutGuide).inset(16)
         }
     }
     
@@ -96,9 +95,9 @@ final class WithdrawViewController: UIViewController {
     }
     
     private func layoutCheckBoxs() {
-        [checkBox1, checkBox2, checkBox3,
-         checkBox4, checkBox5, checkBox6,
-         checkBox7].forEach {
+        [deleteInfoIssue, inconvenienceIssue, otherSiteIssue,
+         duplicateAccountIssue, lowUsageIssue, dissatisfactionIssue,
+         etcIssue].forEach {
             $0.snp.makeConstraints {
                 $0.left.right.equalToSuperview().inset(16)
             }
@@ -108,9 +107,9 @@ final class WithdrawViewController: UIViewController {
     }
     
     private func layoutStackView() {
-        [checkBox1, checkBox2, checkBox3,
-         checkBox4, checkBox5, checkBox6,
-         checkBox7].forEach {
+        [deleteInfoIssue, inconvenienceIssue, otherSiteIssue,
+         duplicateAccountIssue, lowUsageIssue, dissatisfactionIssue,
+         etcIssue].forEach {
             stackView.addArrangedSubview($0)
         }
         
@@ -130,10 +129,10 @@ final class WithdrawViewController: UIViewController {
         }
     }
     
-    private func layoutPasswordTextFiled() {
-        view.addSubview(passwordTextFiled)
+    private func layoutSecureTextFiled() {
+        view.addSubview(secureTextField)
         
-        passwordTextFiled.snp.makeConstraints {
+        secureTextField.snp.makeConstraints {
             $0.left.right.equalToSuperview().inset(16)
             $0.top.equalTo(passwordTitleLabel.snp.bottom).offset(16)
         }
@@ -144,7 +143,7 @@ final class WithdrawViewController: UIViewController {
         
         withdrawButton.snp.makeConstraints {
             $0.right.equalToSuperview().inset(16)
-            $0.top.equalTo(passwordTextFiled.snp.bottom).offset(16)
+            $0.top.equalTo(secureTextField.snp.bottom).offset(16)
             $0.width.equalTo(120)
         }
     }
