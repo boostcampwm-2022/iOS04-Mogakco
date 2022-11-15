@@ -47,9 +47,10 @@ final class SetEmailViewController: UIViewController { // TODO: UIViewController
     
     private let button = ValidationButton().then {
         $0.setTitle(Constant.buttonTitle, for: .normal)
+        $0.titleLabel?.font = UIFont.mogakcoFont.mediumBold
+        $0.layer.cornerRadius = 8
+        $0.clipsToBounds = true
     }
-    
-    let disposeBag = DisposeBag() // TODO: 수정
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -99,6 +100,7 @@ final class SetEmailViewController: UIViewController { // TODO: UIViewController
         button.snp.makeConstraints {
             $0.left.right.equalToSuperview().inset(16)
             $0.bottom.equalTo(view.safeAreaLayoutGuide).offset(-16)
+            $0.height.equalTo(52)
         }
     }
     
