@@ -23,6 +23,7 @@
 		CBA64FFB292364CA000FEEAD /* SetEmailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBA64FFA292364CA000FEEAD /* SetEmailViewController.swift */; };
 		CBA64FFD292378FE000FEEAD /* SetPasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBA64FFC292378FE000FEEAD /* SetPasswordViewController.swift */; };
 		CBA64FFF2923805D000FEEAD /* UILabel+LineSpacing.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBA64FFE2923805D000FEEAD /* UILabel+LineSpacing.swift */; };
+		CBA64FFB292364CA000FEEAD /* SetEmailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBA64FFA292364CA000FEEAD /* SetEmailViewController.swift */; };
 		D8244537292244FC005EE8F1 /* UIFont+CustomFont.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8244536292244FC005EE8F1 /* UIFont+CustomFont.swift */; };
 		D824453B29224522005EE8F1 /* SFProDisplay-Regular.OTF in Resources */ = {isa = PBXBuildFile; fileRef = D824453929224522005EE8F1 /* SFProDisplay-Regular.OTF */; };
 		D824453C29224522005EE8F1 /* SFProDisplay-Semibold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D824453A29224522005EE8F1 /* SFProDisplay-Semibold.ttf */; };
@@ -73,6 +74,7 @@
 		CBA64FFA292364CA000FEEAD /* SetEmailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetEmailViewController.swift; sourceTree = "<group>"; };
 		CBA64FFC292378FE000FEEAD /* SetPasswordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetPasswordViewController.swift; sourceTree = "<group>"; };
 		CBA64FFE2923805D000FEEAD /* UILabel+LineSpacing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UILabel+LineSpacing.swift"; sourceTree = "<group>"; };
+		CBA64FFA292364CA000FEEAD /* SetEmailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetEmailViewController.swift; sourceTree = "<group>"; };
 		D8244536292244FC005EE8F1 /* UIFont+CustomFont.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIFont+CustomFont.swift"; sourceTree = "<group>"; };
 		D824453929224522005EE8F1 /* SFProDisplay-Regular.OTF */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SFProDisplay-Regular.OTF"; sourceTree = "<group>"; };
 		D824453A29224522005EE8F1 /* SFProDisplay-Semibold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SFProDisplay-Semibold.ttf"; sourceTree = "<group>"; };
