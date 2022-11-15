@@ -24,7 +24,7 @@ final class ValidationButton: UIButton {
     }
     
     private func configureEnableColor() {
-        setBackgroundColor(UIColor.mogakcoColor.segmanticSuccess ?? .systemGreen, for: .normal)
+        setBackgroundColor(UIColor.mogakcoColor.semanticSuccess ?? .systemGreen, for: .normal)
         setTitleColor(UIColor.white, for: .normal)
     }
     
