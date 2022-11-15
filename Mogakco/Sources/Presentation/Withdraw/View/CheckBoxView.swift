@@ -74,6 +74,6 @@ enum WithdrawReason: String {
     case etc = "기타"
     
     var checkBox: CheckBoxView {
-        get{ return CheckBoxView(self.rawValue)}
+        return CheckBoxView(self.rawValue)
     }
 }
