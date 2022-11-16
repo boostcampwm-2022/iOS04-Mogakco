@@ -15,9 +15,13 @@ struct FBSignupDataSource: SignupDataSourceProtocol {
     
     func signup(_ request: SignupRequestDTO) -> Single<Result<SignupResponseDTO, Error>> {
         return Single.create { single in
+            
             // TODO: REST API, SerialBackgroundThread
-            firebaseAuth.createUser(withEmail: request.email,
-                                   password: request.password) { _, error in
+            
+            firebaseAuth.createUser(
+                withEmail: request.email,
+                password: request.password
+            ) { _, error in
                 if let error = error {
                     single(.failure(error)) // TODO: 모각코 오류 케이스로 변환
                 }
