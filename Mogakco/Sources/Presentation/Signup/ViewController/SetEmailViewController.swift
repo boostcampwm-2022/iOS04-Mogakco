@@ -167,23 +167,25 @@ final class SetEmailViewController: ViewController {
     @objc func keyboardWillShow(_ notification: Notification) {
         if let userInfo = notification.userInfo,
            let keyboardFrame = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect {
+            self.button.snp.remakeConstraints {
+                $0.height.equalTo(52)
+                $0.left.right.equalToSuperview().inset(16)
+                $0.bottom.equalTo(view.safeAreaLayoutGuide).offset(-keyboardFrame.height)
+            }
             UIView.animate(withDuration: 1) { [weak self] in
-                guard let self = self else { return }
-                self.button.snp.updateConstraints {
-                    $0.bottom.equalTo(self.view.safeAreaLayoutGuide).offset(-keyboardFrame.height)
-                }
-                self.view.layoutIfNeeded()
+                self?.view.layoutIfNeeded()
             }
         }
     }
     
     @objc func keyboardWillHide(_ notification: Notification) {
+        self.button.snp.remakeConstraints {
+            $0.height.equalTo(52)
+            $0.left.right.equalToSuperview().inset(16)
+            $0.bottom.equalTo(self.view.safeAreaLayoutGuide).offset(-16)
+        }
         UIView.animate(withDuration: 1) { [weak self] in
-            guard let self = self else { return }
-            self.button.snp.updateConstraints {
-                $0.bottom.equalTo(self.view.safeAreaLayoutGuide).offset(-16)
-            }
-            self.view.layoutIfNeeded()
+            self?.view.layoutIfNeeded()
         }
     }
 }
