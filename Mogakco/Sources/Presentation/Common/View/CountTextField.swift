@@ -123,4 +123,8 @@ extension Reactive where Base: CountTextField {
     var text: ControlProperty<String?> {
         return base.textField.rx.text
     }
+    
+    func controlEvent(_ controlEvents: UIControl.Event) -> ControlEvent<()> {
+        return base.textField.rx.controlEvent(controlEvents)
+    }
 }
