@@ -7,10 +7,14 @@
 
 import UIKit
 
+import RxCocoa
+import RxSwift
 import SnapKit
 import Then
 
-final class SetPasswordViewController: UIViewController { // TODO: UIViewController -> ViewController
+final class SetPasswordViewController: ViewController {
+    
+    private let viewModel: SetPasswordViewModel
     
     enum Constant {
         static let navigationTitle = "회원가입"
@@ -47,12 +51,24 @@ final class SetPasswordViewController: UIViewController { // TODO: UIViewControl
         $0.setTitle(Constant.buttonTitle, for: .normal)
         $0.layer.cornerRadius = 8
         $0.clipsToBounds = true
+        $0.isEnabled = false
     }
+    
+    // MARK: - Inits
+    
+    init(viewModel: SetPasswordViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    // MARK: - Methods
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        bind()
-        layout()
         keyboardEvent()
     }
     
@@ -65,9 +81,40 @@ final class SetPasswordViewController: UIViewController { // TODO: UIViewControl
          self.view.endEditing(true)
     }
     
-    func bind() { }
+    override func bind() {
+        
+        let input = SetPasswordViewModel.Input(
+            password: passwordTextField.rx.text.orEmpty.asObservable(),
+            passwordCheck: passwordCheckTextField.rx.text.orEmpty.asObservable(),
+            nextButtonTapped: button.rx.tap.asObservable()
+        )
+        
+        let output = viewModel.transform(input: input)
+        
+        output.passwordState
+            .subscribe(onNext: { [weak self] in
+                let state: TextField.Validation = $0 ? .valid : .invalid
+                self?.passwordTextField.validation = state
+            })
+            .disposed(by: disposeBag)
+        
+        output.passwordCheckState
+            .subscribe(onNext: { [weak self] in
+                let state: TextField.Validation = $0 ? .valid : .invalid
+                self?.passwordCheckTextField.validation = state
+            })
+            .disposed(by: disposeBag)
+        
+        output.nextButtonEnabled
+            .subscribe(onNext: { [weak self] enabled in
+                self?.button.isEnabled = enabled
+            })
+            .disposed(by: disposeBag)
+    }
     
-    func layout() {
+    // MARK: - Layout
+    
+    override func layout() {
         layoutTitleLabel()
         layoutStackView()
         layoutButton()
@@ -101,6 +148,8 @@ final class SetPasswordViewController: UIViewController { // TODO: UIViewControl
         }
     }
     
+    // MARK: - Keyboard
+    
     func keyboardEvent() {
         NotificationCenter.default.addObserver(
             self,
@@ -119,23 +168,25 @@ final class SetPasswordViewController: UIViewController { // TODO: UIViewControl
     @objc func keyboardWillShow(_ notification: Notification) {
         if let userInfo = notification.userInfo,
            let keyboardFrame = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect {
+            self.button.snp.remakeConstraints {
+                $0.height.equalTo(52)
+                $0.left.right.equalToSuperview().inset(16)
+                $0.bottom.equalTo(view.safeAreaLayoutGuide).offset(-keyboardFrame.height)
+            }
             UIView.animate(withDuration: 1) { [weak self] in
-                guard let self = self else { return }
-                self.button.snp.updateConstraints {
-                    $0.bottom.equalTo(self.view.safeAreaLayoutGuide).offset(-keyboardFrame.height)
-                }
-                self.view.layoutIfNeeded()
+                self?.view.layoutIfNeeded()
             }
         }
     }
     
     @objc func keyboardWillHide(_ notification: Notification) {
+        self.button.snp.remakeConstraints {
+            $0.height.equalTo(52)
+            $0.left.right.equalToSuperview().inset(16)
+            $0.bottom.equalTo(self.view.safeAreaLayoutGuide).offset(-16)
+        }
         UIView.animate(withDuration: 1) { [weak self] in
-            guard let self = self else { return }
-            self.button.snp.updateConstraints {
-                $0.bottom.equalTo(self.view.safeAreaLayoutGuide).offset(-16)
-            }
-            self.view.layoutIfNeeded()
+            self?.view.layoutIfNeeded()
         }
     }
 }
