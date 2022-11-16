@@ -21,12 +21,14 @@ final class AppCoordinator: AppCoordinatorProtocol {
     }
     
     func start() {
-        let viewController = StudyDetailViewController()
-        navigationController.pushViewController(viewController, animated: true)
+        showAuthFlow()
     }
     
     func showAuthFlow() {
-        
+        let authCoordinator = AuthCoordinator(navigationController)
+        childCoordinators.append(authCoordinator)
+        authCoordinator.finishDelegate = self
+        authCoordinator.start()
     }
     
     func showMainFlow() {

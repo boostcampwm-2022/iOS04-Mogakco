@@ -8,7 +8,6 @@
 import Foundation
 
 protocol AppCoordinatorProtocol: Coordinator {
-    
     func showAuthFlow()
     func showMainFlow()
 }
