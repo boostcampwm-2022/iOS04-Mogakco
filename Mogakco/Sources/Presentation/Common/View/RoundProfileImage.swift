@@ -12,9 +12,9 @@ import Then
 
 final class RoundProfileImageView: UIImageView {
 
-    init(_ size: Int) {
+    init(_ length: Double) {
         super.init(frame: .zero)
-        layout(size)
+        layout(length)
     }
     
     required init?(coder: NSCoder) {
@@ -25,15 +25,15 @@ final class RoundProfileImageView: UIImageView {
         self.image = image
     }
     
-    private func layout(_ size: Int) {
+    private func layout(_ length: Double) {
         contentMode = .scaleAspectFill
         image = UIImage(systemName: "person")
         
         snp.makeConstraints {
-            $0.width.height.equalTo(size)
+            $0.width.height.equalTo(length)
         }
         
-        layer.cornerRadius = CGFloat(size/2)
+        layer.cornerRadius = length / 2
         layer.borderWidth = 1
         layer.borderColor = UIColor.mogakcoColor.backgroundSecondary?.cgColor
         clipsToBounds = true
