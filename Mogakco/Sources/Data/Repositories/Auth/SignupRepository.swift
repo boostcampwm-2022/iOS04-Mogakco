@@ -1,5 +1,5 @@
 //
-//  DefaultSignupRepository.swift
+//  SignupRepository.swift
 //  Mogakco
 //
 //  Created by 김범수 on 2022/11/16.
@@ -8,12 +8,12 @@
 
 import RxSwift
 
-struct DefaultSignupRepository: SignupRepository {
+struct SignupRepository: SignupRepositoryProtocol {
     
-    private var signupDataSource: SignupDataSource?
+    private var signupDataSource: SignupDataSourceProtocol?
     private let disposeBag = DisposeBag()
     
-    init(signupDataSource: SignupDataSource) {
+    init(signupDataSource: SignupDataSourceProtocol) {
         self.signupDataSource = signupDataSource
     }
     
