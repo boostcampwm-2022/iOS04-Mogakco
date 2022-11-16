@@ -19,7 +19,11 @@ final class AuthCoordinator: Coordinator, AuthCoordinatorProtocol {
     }
     
     func start() {
-        showSignup()
+        showLogin()
+    }
+    
+    func showAutoLogin() {
+        
     }
     
     func showLogin() {
