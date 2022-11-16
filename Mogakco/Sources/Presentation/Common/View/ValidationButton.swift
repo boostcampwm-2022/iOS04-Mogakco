@@ -19,13 +19,8 @@ final class ValidationButton: UIButton {
     }
     
     private func configure() {
-        configureRadius()
         configureEnableColor()
         configureDisableColor()
-    }
-    
-    private func configureRadius() {
-        layer.cornerRadius = 5
     }
     
     private func configureEnableColor() {
