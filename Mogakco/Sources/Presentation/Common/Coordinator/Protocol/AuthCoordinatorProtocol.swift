@@ -8,7 +8,7 @@
 
 import Foundation
 
-protocol AuthCoordinatorProtocol {
+protocol AuthCoordinatorProtocol: AnyObject {
     func showLogin()
     func showSignup()
     func showSocialSignup(email: String?, password: String?)

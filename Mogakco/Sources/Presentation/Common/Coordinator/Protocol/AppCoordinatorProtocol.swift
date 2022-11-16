@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol AppCoordinatorProtocol {
+protocol AppCoordinatorProtocol: AnyObject {
     func showAuthFlow()
     func showMainFlow()
 }
