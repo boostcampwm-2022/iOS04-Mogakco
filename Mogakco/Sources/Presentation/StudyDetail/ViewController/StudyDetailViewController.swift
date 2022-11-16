@@ -263,7 +263,7 @@ extension StudyDetailViewController: UICollectionViewDelegateFlowLayout {
         sizeForItemAt indexPath: IndexPath)
     -> CGSize {
         if collectionView == participantsCollectionView {
-            return CGSize(width: ParticipantCell.width, height: ParticipantCell.height)
+            return CGSize(width: ParticipantCell.size.width, height: ParticipantCell.size.height)
         }
         
         return CGSize(width: 0, height: 0)
