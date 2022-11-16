@@ -10,9 +10,7 @@ import UIKit
 
 import Then
 
-final class ChatCell: UICollectionViewCell {
-    
-    static let reuseIdentifier = "chatCell"
+final class ChatCell: UICollectionViewCell, Identifiable {
     
     private let profileImageView = RoundProfileImageView(32)
     
