@@ -8,12 +8,14 @@
 
 import UIKit
 
+import RxCocoa
 import RxSwift
+import SnapKit
 import Then
 
 final class CustomInputAccessoryView: UIView {
     
-    private let bag = DisposeBag()
+    private let disposeBag = DisposeBag()
     
     private let messageInputTextView = UITextView().then {
         $0.font = .mogakcoFont.smallRegular
@@ -41,6 +43,7 @@ final class CustomInputAccessoryView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         layout()
+        configureUI()
     }
     
     required init?(coder: NSCoder) {
@@ -52,14 +55,16 @@ final class CustomInputAccessoryView: UIView {
     }
     
     private func layout() {
-        backgroundColor = .white
-        addShadow(offset: .init(width: 1, height: 1))
-        autoresizingMask = .flexibleHeight
-        
         layoutMessageInputView()
         layoutSendButton()
         configureMessageInputView()
         layoutPlaceholder()
+    }
+    
+    private func configureUI() {
+        backgroundColor = .white
+        addShadow(offset: .init(width: 1, height: 1))
+        autoresizingMask = .flexibleHeight
     }
     
     private func layoutMessageInputView() {
@@ -83,11 +88,10 @@ final class CustomInputAccessoryView: UIView {
     }
     
     private func configureMessageInputView() {
-        messageInputTextView.rx.text.changed
-            .subscribe { [weak self] _ in
-                self?.placeholderLabel.isHidden = true
-            }
-            .disposed(by: bag)
+        messageInputTextView.rx.text.orEmpty
+            .map { $0 == "" ? false:true}
+            .bind(to: placeholderLabel.rx.isHidden)
+            .disposed(by: disposeBag)
     }
     
     private func layoutPlaceholder() {
