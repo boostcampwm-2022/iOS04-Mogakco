@@ -7,11 +7,14 @@
 
 import UIKit
 
+import RxCocoa
 import RxSwift
 import SnapKit
 import Then
 
-final class SetEmailViewController: UIViewController { // TODO: UIViewController -> ViewController
+final class SetEmailViewController: ViewController {
+    
+    private let viewModel: SetEmailViewModel
     
     enum Constant {
         static let navigationTitle = "회원가입"
@@ -47,13 +50,25 @@ final class SetEmailViewController: UIViewController { // TODO: UIViewController
     }
     
     private let button = ValidationButton().then {
-        $0.setTitle(Constant.buttonTitle, for: .normal)
         $0.titleLabel?.font = UIFont.mogakcoFont.mediumBold
+        $0.setTitle(Constant.buttonTitle, for: .normal)
         $0.layer.cornerRadius = 8
         $0.clipsToBounds = true
+        $0.isEnabled = false
     }
     
-    let disposeBag = DisposeBag() // TODO: 수정
+    // MARK: - Inits
+    
+    init(viewModel: SetEmailViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    // MARK: - Methods
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -71,9 +86,34 @@ final class SetEmailViewController: UIViewController { // TODO: UIViewController
          self.view.endEditing(true)
     }
     
-    func bind() { }
+    override func bind() {
+        
+        let input = SetEmailViewModel.Input(
+            email: textField.rx.text.orEmpty.asObservable(),
+            nextButtonTapped: button.rx.tap.asObservable()
+        )
+        
+        let output = viewModel.transform(input: input)
+        
+        output.textFieldState
+            .subscribe { [weak self] in
+                let state: TextField.Validation = $0 ? .valid : .invalid
+                let message = $0 ? Constant.validMessage : Constant.invalidMessage
+                self?.textField.validation = state
+                self?.textField.message = message
+            }
+            .disposed(by: disposeBag)
+        
+        output.nextButtonEnabled
+            .subscribe { [weak self] enabled in
+                self?.button.isEnabled = enabled
+            }
+            .disposed(by: disposeBag)
+    }
     
-    func layout() {
+    // MARK: - Layout
+    
+    override func layout() {
         layoutStackView()
         layoutTextField()
         layoutButton()
@@ -106,6 +146,8 @@ final class SetEmailViewController: UIViewController { // TODO: UIViewController
             $0.height.equalTo(52)
         }
     }
+    
+    // MARK: - Keyboard
     
     func keyboardEvent() {
         NotificationCenter.default.addObserver(
