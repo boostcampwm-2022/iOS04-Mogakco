@@ -13,16 +13,14 @@ import SnapKit
 import Then
 
 final class ParticipantCell: UICollectionViewCell, Identifiable {
-    static let width = 110
-    static let height = 130
+    
+    static let size: CGSize = CGSize(width: 110, height: 130)
     
     override func prepareForReuse() {
         layout()
     }
     
-    private let imageView = UIImageView().then {
-        $0.contentMode = .scaleAspectFit
-    }
+    private let imageView = RoundProfileImageView(50)
     
     private let userNameLabel = UILabel().then {
         $0.font = .mogakcoFont.mediumBold
@@ -31,12 +29,19 @@ final class ParticipantCell: UICollectionViewCell, Identifiable {
     }
     
     private let userDescriptionLabel = UILabel().then {
-        $0.font = .mogakcoFont.smallRegular
+        $0.font = MogakcoFontFamily.SFProDisplay.semibold.font(size: 14)
         $0.textColor = .mogakcoColor.typographySecondary
         $0.text = "default user desctiption"
     }
     
     private func layout() {
+        layoutView()
+        layoutImageView()
+        layoutNameLabel()
+        layoutDescriptionLabel()
+    }
+    
+    private func layoutView() {
         backgroundColor = .mogakcoColor.backgroundDefault
         layer.cornerRadius = 10
         layer.borderWidth = 0.2
@@ -48,10 +53,6 @@ final class ParticipantCell: UICollectionViewCell, Identifiable {
             offset: CGSize(width: 3, height: 3),
             color: .gray
         )
-        
-        layoutImageView()
-        layoutNameLabel()
-        layoutDescriptionLabel()
     }
     
     private func layoutImageView() {
@@ -59,7 +60,7 @@ final class ParticipantCell: UICollectionViewCell, Identifiable {
         imageView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
             $0.top.equalToSuperview().offset(15)
-            $0.width.height.equalTo(50)
+//            $0.width.height.equalTo(50)
         }
     }
     
@@ -82,7 +83,8 @@ final class ParticipantCell: UICollectionViewCell, Identifiable {
     func setInfo(imageURLString: String, name: String, description: String) {
         
         // TODO: Image 처리 필요
-        imageView.image = UIImage(systemName: "person.crop.circle")
+        guard let image = UIImage(systemName: "person.crop.circle") else { return }
+        imageView.setPhoto(image)
         userNameLabel.text = name
         userDescriptionLabel.text = description
     }
