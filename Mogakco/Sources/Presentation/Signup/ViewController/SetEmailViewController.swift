@@ -8,6 +8,7 @@
 import UIKit
 
 import RxCocoa
+import RxKeyboard
 import RxSwift
 import SnapKit
 import Then
@@ -72,9 +73,6 @@ final class SetEmailViewController: ViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        bind()
-        layout()
-        keyboardEvent()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -108,6 +106,21 @@ final class SetEmailViewController: ViewController {
             .subscribe { [weak self] enabled in
                 self?.button.isEnabled = enabled
             }
+            .disposed(by: disposeBag)
+        
+        RxKeyboard.instance.visibleHeight
+            .skip(1)
+            .drive(onNext: { [weak self] keyboardVisibleHeight in
+                guard let self = self else { return }
+                self.button.snp.remakeConstraints {
+                    $0.height.equalTo(52)
+                    $0.left.right.equalToSuperview().inset(16)
+                    $0.bottom.equalTo(self.view.safeAreaLayoutGuide).offset(-keyboardVisibleHeight)
+                }
+                UIView.animate(withDuration: 1) {
+                    self.view.layoutIfNeeded()
+                }
+            })
             .disposed(by: disposeBag)
     }
     
@@ -144,48 +157,6 @@ final class SetEmailViewController: ViewController {
             $0.left.right.equalToSuperview().inset(16)
             $0.bottom.equalTo(view.safeAreaLayoutGuide).offset(-16)
             $0.height.equalTo(52)
-        }
-    }
-    
-    // MARK: - Keyboard
-    
-    func keyboardEvent() {
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(keyboardWillShow),
-            name: UIResponder.keyboardWillShowNotification,
-            object: nil
-        )
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(keyboardWillHide),
-            name: UIResponder.keyboardWillHideNotification,
-            object: nil
-        )
-    }
-    
-    @objc func keyboardWillShow(_ notification: Notification) {
-        if let userInfo = notification.userInfo,
-           let keyboardFrame = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect {
-            self.button.snp.remakeConstraints {
-                $0.height.equalTo(52)
-                $0.left.right.equalToSuperview().inset(16)
-                $0.bottom.equalTo(view.safeAreaLayoutGuide).offset(-keyboardFrame.height)
-            }
-            UIView.animate(withDuration: 1) { [weak self] in
-                self?.view.layoutIfNeeded()
-            }
-        }
-    }
-    
-    @objc func keyboardWillHide(_ notification: Notification) {
-        self.button.snp.remakeConstraints {
-            $0.height.equalTo(52)
-            $0.left.right.equalToSuperview().inset(16)
-            $0.bottom.equalTo(self.view.safeAreaLayoutGuide).offset(-16)
-        }
-        UIView.animate(withDuration: 1) { [weak self] in
-            self?.view.layoutIfNeeded()
         }
     }
 }
