@@ -28,8 +28,6 @@ final class SetPasswordViewModel: ViewModel {
     }
 
     func transform(input: Input) -> Output {
-        let passwordStorage = BehaviorSubject<String>(value: "")
-        let passwordCheckStorage = BehaviorSubject<String>(value: "")
         let passwordState = PublishSubject<Bool>()
         let passwordCheckState = PublishSubject<Bool>()
         let nextButtonEnabled = Observable
@@ -40,26 +38,25 @@ final class SetPasswordViewModel: ViewModel {
             .distinctUntilChanged()
             .subscribe(onNext: { [weak self] text in
                 let result = self?.validate(password: text) ?? false
-                passwordStorage.onNext(text)
                 passwordState.onNext(result)
             })
             .disposed(by: disposeBag)
         
         input.passwordCheck
             .distinctUntilChanged()
-            .subscribe(onNext: { text in
-                let result = text == (try? passwordStorage.value())
-                passwordCheckStorage.onNext(text)
+            .withLatestFrom(Observable.combineLatest(input.password, input.passwordCheck))
+            .subscribe(onNext: { (password, passwordCheck) in
+                guard !password.isEmpty else { return }
+                let result = password == passwordCheck
                 passwordCheckState.onNext(result)
             })
             .disposed(by: disposeBag)
         
         input.nextButtonTapped
-            .subscribe { _ in
-                if let password = try? passwordStorage.value() {
-                    // TODO: 코디네이터 필요
-                    print("그 다음 화면으로", password)
-                }
+            .withLatestFrom(input.password)
+            .subscribe { password in
+                // TODO: 코디네이터 필요
+                print("그 다음 화면으로", password)
             }
             .disposed(by: disposeBag)
         
