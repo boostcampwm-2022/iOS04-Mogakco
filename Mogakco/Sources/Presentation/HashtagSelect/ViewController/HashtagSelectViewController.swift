@@ -24,7 +24,7 @@ final class HashtagSelectViewController: ViewController {
     }
     private let secondaryTitleLabel = UILabel().then {
         $0.textColor = .mogakcoColor.typographySecondary
-        $0.font = .mogakcoFont.mediumRegular
+        $0.font = .mogakcoFont.smallRegular
         $0.numberOfLines = 2
         $0.text = "다중 선택 가능(최대 5개)\n첫 번째 언어가 주 언어가 됩니다."
     }
@@ -35,7 +35,7 @@ final class HashtagSelectViewController: ViewController {
     ).then {
         let layout = UICollectionViewFlowLayout()
         layout.minimumInteritemSpacing = 5
-        layout.minimumLineSpacing = 2
+        layout.minimumLineSpacing = 5
         layout.scrollDirection = .vertical
 //        layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         $0.collectionViewLayout = layout
@@ -51,6 +51,7 @@ final class HashtagSelectViewController: ViewController {
         collectionViewLayout: UICollectionViewFlowLayout()
     ).then {
         let layout = UICollectionViewFlowLayout()
+        layout.minimumInteritemSpacing = 5
         layout.minimumLineSpacing = 5
         layout.scrollDirection = .vertical
         layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
@@ -142,7 +143,7 @@ final class HashtagSelectViewController: ViewController {
         selectedCollectionView.snp.makeConstraints {
             $0.top.equalTo(secondaryTitleLabel.snp.bottom).offset(5)
             $0.leading.trailing.equalToSuperview().inset(16)
-            $0.height.equalTo(200)
+            $0.height.equalTo(100)
         }
     }
     
@@ -195,9 +196,10 @@ extension HashtagSelectViewController: UICollectionViewDataSource {
         
         if indexPath.row % 2 == 0 {
             cell.setInfo(iconImage: UIImage(named: "swift"), title: "Swift")
+            return cell
         }
         
-        cell.setInfo(iconImage: UIImage(named: "swift"), title: "javascriptasdf")
+        cell.setInfo(iconImage: UIImage(named: "swift"), title: "javascript")
         
         return cell
     }
@@ -209,6 +211,7 @@ extension HashtagSelectViewController: UICollectionViewDelegateFlowLayout {
         layout collectionViewLayout: UICollectionViewLayout,
         sizeForItemAt indexPath: IndexPath
     ) -> CGSize {
+        
         if indexPath.row % 2 == 0 {
             return CGSize(
                 width: "Swift".size(
