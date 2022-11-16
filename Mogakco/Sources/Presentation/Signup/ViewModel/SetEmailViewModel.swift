@@ -26,7 +26,6 @@ final class SetEmailViewModel: ViewModel {
     }
 
     func transform(input: Input) -> Output {
-        let emailStorage = BehaviorSubject<String>(value: "")
         let textFieldState = PublishSubject<Bool>()
         let nextButtonEnabled = PublishSubject<Bool>()
         
@@ -34,7 +33,6 @@ final class SetEmailViewModel: ViewModel {
             .distinctUntilChanged()
             .subscribe { [weak self] text in
                 if let result = self?.validate(email: text) {
-                    emailStorage.onNext(text)
                     textFieldState.onNext(result)
                     nextButtonEnabled.onNext(result)
                 }
@@ -42,11 +40,10 @@ final class SetEmailViewModel: ViewModel {
             .disposed(by: disposeBag)
         
         input.nextButtonTapped
-            .subscribe { _ in
-                if let email = try? emailStorage.value() {
-                    // TODO: 비밀번호 화면으로 전환하기
-                    print("비밀번호 화면으로", email)
-                }
+            .withLatestFrom(input.email)
+            .subscribe { email in
+                // TODO: 비밀번호 화면으로 전환하기
+                print("비밀번호 화면으로", email)
             }
             .disposed(by: disposeBag)
         
