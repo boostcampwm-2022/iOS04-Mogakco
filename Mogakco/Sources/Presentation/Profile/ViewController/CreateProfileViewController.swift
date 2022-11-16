@@ -10,6 +10,7 @@ import UIKit
 
 import RxCocoa
 import RxSwift
+import RxKeyboard
 
 final class CreateProfileViewController: ViewController {
     
@@ -63,6 +64,7 @@ final class CreateProfileViewController: ViewController {
         super.viewDidLoad()
         configureUI()
         configureImagePicker()
+        hideKeyboardWhenTappedAround()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -95,6 +97,12 @@ final class CreateProfileViewController: ViewController {
         output.profileImage
             .drive(roundProfileImageView.rx.image)
             .disposed(by: disposeBag)
+        
+        RxKeyboard.instance.visibleHeight
+          .drive(onNext: { keyboardVisibleHeight in
+              self.scrollView.contentInset.bottom = keyboardVisibleHeight
+          })
+          .disposed(by: disposeBag)
     }
     
     func configureUI() {
@@ -195,7 +203,6 @@ private extension CreateProfileViewController {
 }
 
 // MARK: Picker Delegate
-// TODO: RxExtension
 
 extension CreateProfileViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController,
