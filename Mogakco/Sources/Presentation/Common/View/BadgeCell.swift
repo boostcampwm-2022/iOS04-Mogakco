@@ -12,7 +12,7 @@ import SnapKit
 import Then
 
 final class BadgeCell: UICollectionViewCell, Identifiable {
-    static let addWidth = CGFloat(70)
+    static let addWidth = CGFloat(60)
     static let height = CGFloat(35)
     
     private let iconimageView = UIImageView(image: UIImage(systemName: "questionmark.app")).then {
@@ -50,8 +50,8 @@ final class BadgeCell: UICollectionViewCell, Identifiable {
         addSubview(iconimageView)
         iconimageView.snp.makeConstraints {
             $0.centerY.equalToSuperview()
-            $0.leading.equalToSuperview().offset(15)
-            $0.width.height.equalTo(30)
+            $0.leading.equalToSuperview().offset(10)
+            $0.width.height.equalTo(20)
         }
     }
     
@@ -60,7 +60,7 @@ final class BadgeCell: UICollectionViewCell, Identifiable {
         titleLabel.snp.makeConstraints {
             $0.centerY.equalToSuperview()
             $0.leading.equalTo(iconimageView.snp.trailing).offset(10)
-            $0.trailing.equalToSuperview().inset(15)
+            $0.trailing.equalToSuperview().inset(10)
         }
     }
     
