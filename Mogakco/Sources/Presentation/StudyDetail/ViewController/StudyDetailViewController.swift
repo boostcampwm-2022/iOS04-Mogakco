@@ -49,9 +49,16 @@ final class StudyDetailViewController: ViewController {
         $0.text = "스터디 소개"
     }
     private lazy var studyInfoDescription = UILabel().then {
+        $0.numberOfLines = 0
         $0.textColor = .mogakcoColor.typographyPrimary
         $0.font = .mogakcoFont.mediumRegular
-        $0.text = "모바일에 관심 있으신 분들 함께해요~!"
+        $0.text = """
+        모바일에 관심 있으신 분들 함께해요~!
+        모바일에 관심 있으신 분들 함께해요~!
+        모바일에 관심 있으신 분들 함께해요~!
+        모바일에 관심 있으신 분들 함께해요~!
+        모바일에 관심 있으신 분들 함께해요~!
+        """
     }
     
     private lazy var laguageLabel = UILabel().then {
@@ -90,10 +97,7 @@ final class StudyDetailViewController: ViewController {
         $0.register(ParticipantCell.self, forCellWithReuseIdentifier: ParticipantCell.identifier)
     }
 
-    // TODO: 커스텀 버튼으로 변경 필요
-    private lazy var studyJoinButton = UIButton().then {
-        $0.backgroundColor = .mogakcoColor.primaryDefault
-        $0.tintColor = .mogakcoColor.typographyPrimary
+    private lazy var studyJoinButton = ValidationButton().then {
         $0.setTitle("스터디 참여", for: .normal)
     }
     
@@ -168,7 +172,7 @@ final class StudyDetailViewController: ViewController {
         }
         
         studyInfoStackView.snp.makeConstraints {
-            $0.top.equalTo(studyTitleLabel.snp.bottom) .offset(6)
+            $0.top.equalTo(studyTitleLabel.snp.bottom) .offset(10)
             $0.leading.trailing.equalToSuperview().inset(16)
         }
     }
@@ -180,7 +184,7 @@ final class StudyDetailViewController: ViewController {
         }
         
         studyInfoDescription.snp.makeConstraints {
-            $0.top.equalTo(studyIntroduceLabel.snp.bottom).offset(6)
+            $0.top.equalTo(studyIntroduceLabel.snp.bottom).offset(10)
             $0.leading.trailing.equalToSuperview().inset(16)
         }
     }
@@ -192,9 +196,9 @@ final class StudyDetailViewController: ViewController {
         }
         
         languageCollectionView.snp.makeConstraints {
-            $0.top.equalTo(laguageLabel.snp.bottom).offset(6)
+            $0.top.equalTo(laguageLabel.snp.bottom).offset(10)
             $0.leading.trailing.equalToSuperview().inset(16)
-            $0.height.equalTo(80)
+            $0.height.equalTo(40)
         }
     }
     
@@ -205,7 +209,7 @@ final class StudyDetailViewController: ViewController {
         }
         
         participantsCollectionView.snp.makeConstraints {
-            $0.top.equalTo(participantsInfoLabel.snp.bottom).offset(6)
+            $0.top.equalTo(participantsInfoLabel.snp.bottom).offset(10)
             $0.leading.trailing.equalToSuperview().inset(16)
             $0.height.equalTo(150)
         }
@@ -216,9 +220,12 @@ final class StudyDetailViewController: ViewController {
             $0.top.equalTo(participantsCollectionView.snp.bottom).offset(50)
             $0.leading.trailing.equalToSuperview().inset(16)
             $0.bottom.equalToSuperview()
+            $0.height.equalTo(40)
         }
     }
 }
+
+// MARK: - CollectionView
 
 extension StudyDetailViewController: UICollectionViewDataSource {
     
@@ -233,7 +240,18 @@ extension StudyDetailViewController: UICollectionViewDataSource {
         _ collectionView: UICollectionView,
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
-        if collectionView == participantsCollectionView {
+        switch collectionView {
+        case languageCollectionView:
+            guard let cell = languageCollectionView.dequeueReusableCell(
+                withReuseIdentifier: BadgeCell.identifier,
+                for: indexPath) as? BadgeCell
+            else { return UICollectionViewCell() }
+            
+            cell.prepareForReuse()
+            cell.setInfo(iconImage: nil, title: "Default")
+            
+            return cell
+        case participantsCollectionView:
             guard let cell = participantsCollectionView.dequeueReusableCell(
                 withReuseIdentifier: ParticipantCell.identifier,
                 for: indexPath) as? ParticipantCell
@@ -243,11 +261,10 @@ extension StudyDetailViewController: UICollectionViewDataSource {
             cell.setInfo(imageURLString: "", name: "김신오이", description: "iOS 개발자들")
             
             return cell
-        }
         
-        return participantsCollectionView.dequeueReusableCell(
-            withReuseIdentifier: BadgeCell.identifier,
-            for: indexPath)
+        default:
+            return UICollectionViewCell()
+        }
     }
 }
 
@@ -257,10 +274,18 @@ extension StudyDetailViewController: UICollectionViewDelegateFlowLayout {
         layout collectionViewLayout: UICollectionViewLayout,
         sizeForItemAt indexPath: IndexPath
     ) -> CGSize {
-        if collectionView == participantsCollectionView {
+        switch collectionView {
+        case languageCollectionView:
+            return CGSize(
+                width: "Default".size(
+                    withAttributes: [NSAttributedString.Key.font: UIFont.mogakcoFont.mediumRegular]
+                ).width + BadgeCell.addWidth,
+                height: BadgeCell.height
+            )
+        case participantsCollectionView:
             return CGSize(width: ParticipantCell.size.width, height: ParticipantCell.size.height)
+        default:
+            return CGSize(width: 0, height: 0)
         }
-        
-        return CGSize(width: 0, height: 0)
     }
 }
