@@ -14,18 +14,18 @@ extension UIFont {
 struct MogakcoFont {
     
     // Regular
-    let largeRegular = UIFont(name: SFPro.regular.rawValue, size: 30)
-    let mediumRegular = UIFont(name: SFPro.regular.rawValue, size: 18)
-    let smallRegular = UIFont(name: SFPro.regular.rawValue, size: 14)
+    let largeReular = MogakcoFontFamily.SFProDisplay.regular.font(size: 30)
+    let mediumRegular = MogakcoFontFamily.SFProDisplay.regular.font(size: 18)
+    let smallRegular = MogakcoFontFamily.SFProDisplay.regular.font(size: 14)
 
     // Bold
-    let largeBold = UIFont(name: SFPro.bold.rawValue, size: 30)
-    let title1Bold = UIFont(name: SFPro.bold.rawValue, size: 24)
-    let title2Bold = UIFont(name: SFPro.bold.rawValue, size: 22)
-    let title3Bold = UIFont(name: SFPro.bold.rawValue, size: 20)
-    let mediumBold = UIFont(name: SFPro.bold.rawValue, size: 18)
-    let smallBold = UIFont(name: SFPro.bold.rawValue, size: 14)
-    let caption = UIFont(name: SFPro.bold.rawValue, size: 12)
+    let largeBold = MogakcoFontFamily.SFProDisplay.semibold.font(size: 30)
+    let title1Bold = MogakcoFontFamily.SFProDisplay.semibold.font(size: 24)
+    let title2Bold = MogakcoFontFamily.SFProDisplay.semibold.font(size: 22)
+    let title3Bold = MogakcoFontFamily.SFProDisplay.semibold.font(size: 20)
+    let mediumBold = MogakcoFontFamily.SFProDisplay.semibold.font(size: 18)
+    let smallBold = MogakcoFontFamily.SFProDisplay.semibold.font(size: 14)
+    let caption = MogakcoFontFamily.SFProDisplay.semibold.font(size: 12)
 }
 
 enum SFPro: String {
