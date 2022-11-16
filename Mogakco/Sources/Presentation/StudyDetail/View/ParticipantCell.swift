@@ -50,8 +50,7 @@ final class ParticipantCell: UICollectionViewCell, Identifiable {
         clipsToBounds = false
         
         addShadow(
-            offset: CGSize(width: 3, height: 3),
-            color: .gray
+            offset: CGSize(width: 1, height: 1)
         )
     }
     
