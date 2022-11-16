@@ -18,4 +18,4 @@
 ### 참고 사항
 
 ### Screenshots(Optional)
-<img src="" width="70%" height="70%">
+<img src="" width="50%">
