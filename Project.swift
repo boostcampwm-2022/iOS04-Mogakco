@@ -17,6 +17,7 @@ class BaseProjectFactory: ProjectFactory {
     let dependencies: [TargetDependency] = [
         .external(name: "RxSwift"),
         .external(name: "RxCocoa"),
+        .external(name: "RxKeyboard"),
         .external(name: "SnapKit"),
         .external(name: "Alamofire"),
         .external(name: "Then"),
