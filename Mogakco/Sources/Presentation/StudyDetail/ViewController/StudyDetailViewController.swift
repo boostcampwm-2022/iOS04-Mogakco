@@ -222,7 +222,6 @@ final class StudyDetailViewController: ViewController {
             $0.top.equalTo(participantsCollectionView.snp.bottom).offset(50)
             $0.leading.trailing.equalToSuperview().inset(16)
             $0.bottom.equalToSuperview()
-            $0.height.equalTo(40)
         }
     }
 }
