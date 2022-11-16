@@ -77,6 +77,7 @@ final class StudyDetailViewController: ViewController {
         layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         $0.collectionViewLayout = layout
         $0.register(BadgeCell.self, forCellWithReuseIdentifier: BadgeCell.identifier)
+        $0.showsHorizontalScrollIndicator = false
     }
     
     private let participantsInfoLabel = UILabel().then {
@@ -95,6 +96,7 @@ final class StudyDetailViewController: ViewController {
         layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         $0.collectionViewLayout = layout
         $0.register(ParticipantCell.self, forCellWithReuseIdentifier: ParticipantCell.identifier)
+        $0.showsHorizontalScrollIndicator = false
     }
 
     private lazy var studyJoinButton = ValidationButton().then {
