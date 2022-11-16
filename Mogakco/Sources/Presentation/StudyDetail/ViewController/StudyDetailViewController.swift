@@ -60,17 +60,17 @@ final class StudyDetailViewController: ViewController {
         $0.text = "언어"
     }
     
-    private let languageCollectionView: UICollectionView = {
+    private let languageCollectionView = UICollectionView(
+        frame: .zero,
+        collectionViewLayout: UICollectionViewFlowLayout()
+    ).then {
         let layout = UICollectionViewFlowLayout()
         layout.minimumLineSpacing = 10
         layout.scrollDirection = .horizontal
         layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-        
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collectionView.register(BadgeCell.self, forCellWithReuseIdentifier: BadgeCell.identifier)
-        
-        return collectionView
-    }()
+        $0.collectionViewLayout = layout
+        $0.register(BadgeCell.self, forCellWithReuseIdentifier: BadgeCell.identifier)
+    }
     
     private let participantsInfoLabel = UILabel().then {
         $0.textColor = .mogakcoColor.typographyPrimary
@@ -78,18 +78,18 @@ final class StudyDetailViewController: ViewController {
         $0.text = "참여중인 사람 2/3"
     }
     
-    private let participantsCollectionView: UICollectionView = {
+    private let participantsCollectionView = UICollectionView(
+        frame: .zero,
+        collectionViewLayout: UICollectionViewFlowLayout()
+    ).then {
         let layout = UICollectionViewFlowLayout()
         layout.minimumLineSpacing = 10
         layout.scrollDirection = .horizontal
         layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-        
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collectionView.register(ParticipantCell.self, forCellWithReuseIdentifier: ParticipantCell.identifier)
-        
-        return collectionView
-    }()
-    
+        $0.collectionViewLayout = layout
+        $0.register(ParticipantCell.self, forCellWithReuseIdentifier: ParticipantCell.identifier)
+    }
+
     // TODO: 커스텀 버튼으로 변경 필요
     private lazy var studyJoinButton = UIButton().then {
         $0.backgroundColor = .mogakcoColor.primaryDefault
@@ -118,7 +118,7 @@ final class StudyDetailViewController: ViewController {
     }
     
     override func bind() {
-        //
+        // TODO:
     }
     
     private func navigationLayout() {
@@ -222,22 +222,17 @@ final class StudyDetailViewController: ViewController {
 
 extension StudyDetailViewController: UICollectionViewDataSource {
     
-    enum CellType {
-        case language
-        case participant
-    }
-    
     func collectionView(
         _ collectionView: UICollectionView,
-        numberOfItemsInSection section: Int)
-    -> Int {
+        numberOfItemsInSection section: Int
+    ) -> Int {
         return 5
     }
     
     func collectionView(
         _ collectionView: UICollectionView,
-        cellForItemAt indexPath: IndexPath)
-    -> UICollectionViewCell {
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
         if collectionView == participantsCollectionView {
             guard let cell = participantsCollectionView.dequeueReusableCell(
                 withReuseIdentifier: ParticipantCell.identifier,
@@ -260,8 +255,8 @@ extension StudyDetailViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(
         _ collectionView: UICollectionView,
         layout collectionViewLayout: UICollectionViewLayout,
-        sizeForItemAt indexPath: IndexPath)
-    -> CGSize {
+        sizeForItemAt indexPath: IndexPath
+    ) -> CGSize {
         if collectionView == participantsCollectionView {
             return CGSize(width: ParticipantCell.size.width, height: ParticipantCell.size.height)
         }
