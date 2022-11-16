@@ -1,5 +1,5 @@
 //
-//  SignupRepository.swift
+//  SignupRepositoryProtocol.swift
 //  Mogakco
 //
 //  Created by 김범수 on 2022/11/16.
@@ -8,6 +8,6 @@
 
 import RxSwift
 
-protocol SignupRepository {
+protocol SignupRepositoryProtocol {
     func signup(email: String, password: String) -> Single<Result<Void, Error>>
 }
