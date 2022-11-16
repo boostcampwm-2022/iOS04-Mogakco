@@ -72,7 +72,7 @@ final class StudyDetailViewController: ViewController {
         collectionViewLayout: UICollectionViewFlowLayout()
     ).then {
         let layout = UICollectionViewFlowLayout()
-        layout.minimumLineSpacing = 5
+        layout.minimumLineSpacing = 8
         layout.scrollDirection = .horizontal
         layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         $0.collectionViewLayout = layout
