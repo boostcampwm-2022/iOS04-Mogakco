@@ -8,7 +8,7 @@
 
 import UIKit
 
-protocol SocialSignupCoordinatorProtocol {
+protocol SocialSignupCoordinatorProtocol: AnyObject {
     var name: String? { get set }
     var introduce: String? { get set }
     var profile: UIImage? { get set }

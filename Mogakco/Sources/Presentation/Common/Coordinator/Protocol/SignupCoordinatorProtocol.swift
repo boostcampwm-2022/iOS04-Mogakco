@@ -8,7 +8,7 @@
 
 import Foundation
 
-protocol SignupCoordinatorProtocol {
+protocol SignupCoordinatorProtocol: AnyObject {
     var email: String? { get set }
     var password: String? { get set }
     
