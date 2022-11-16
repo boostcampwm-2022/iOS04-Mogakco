@@ -2,7 +2,8 @@
 //  ChatViewController.swift
 //  Mogakco
 //
-//  Created by 김범수 on 2022/11/14.
+//  Created by 오국원 on 2022/11/16.
+//  Copyright © 2022 Mogakco. All rights reserved.
 //
 
 import UIKit
@@ -12,63 +13,113 @@ import RxSwift
 import SnapKit
 import Then
 
-final class ChatViewController: UIViewController {
+final class ChatViewController: UICollectionViewController {
     
-    private let titleHeaderView = TitleHeaderView().then {
-        $0.setTitle("채팅 목록")
+    private lazy var customInputView = CustomInputAccessoryView(frame: CGRect(x: 0,
+                                                                              y: 0,
+                                                                              width: view.frame.width,
+                                                                              height: 90))
+    
+    init() {
+        super.init(collectionViewLayout: UICollectionViewFlowLayout())
     }
     
-    private let chatRoomTableView = UITableView().then {
-        $0.register(ChatRoomTableViewCell.self, forCellReuseIdentifier: ChatRoomTableViewCell.identifier)
-        $0.rowHeight = ChatRoomTableViewCell.cellHeight
-        $0.backgroundColor = UIColor.mogakcoColor.backgroundDefault
-        $0.showsVerticalScrollIndicator = false
-        $0.separatorStyle = .none
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
-    
-    private let disposeBag = DisposeBag()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor.mogakcoColor.backgroundDefault
-        bind()
         layout()
+        configureNavigationBar()
     }
     
-    func bind() {
-        Driver<[Int]>.just([1, 2, 3, 4])
-            .drive(chatRoomTableView.rx.items) { tableView, index, _ in
-                guard let cell = tableView.dequeueReusableCell(
-                    withIdentifier: ChatRoomTableViewCell.identifier,
-                    for: IndexPath(row: index, section: 0)) as? ChatRoomTableViewCell else {
-                    return UITableViewCell()
-                }
-                return cell
-            }
-            .disposed(by: disposeBag)
+    override var inputAccessoryView: UIView? {
+        return customInputView
+    }
+    
+    override var canBecomeFirstResponder: Bool {
+        return true
     }
     
     private func layout() {
-        layoutTitleHeaderView()
-        layoutChatRoomTableView()
+        layoutCollectionView()
     }
     
-    private func layoutTitleHeaderView() {
-        view.addSubview(titleHeaderView)
+    private func configureNavigationBar() {
+        navigationItem.title = "채팅"
         
-        titleHeaderView.snp.makeConstraints {
-            $0.leading.top.trailing.equalTo(view.safeAreaLayoutGuide)
-            $0.height.equalTo(68.0)
-        }
-    }
-    
-    private func layoutChatRoomTableView() {
-        view.addSubview(chatRoomTableView)
+        let backButton = UIBarButtonItem(title: "이전",
+                                         style: .plain,
+                                         target: self,
+                                         action: #selector(backButtonDidTap))
+        backButton.tintColor = UIColor.mogakcoColor.primaryDefault
         
-        chatRoomTableView.snp.makeConstraints {
-            $0.top.equalTo(titleHeaderView.snp.bottom)
-            $0.leading.trailing.bottom.equalTo(view.safeAreaLayoutGuide)
+        let studyInfoButton = UIBarButtonItem(image: UIImage(systemName: "line.horizontal.3"),
+                                              style: .plain,
+                                              target: self,
+                                              action: #selector(studyInfoDidTap))
+        [backButton, studyInfoButton].forEach {
+            $0.tintColor = UIColor.mogakcoColor.primaryDefault
         }
+        
+        navigationItem.leftBarButtonItem = backButton
+        navigationItem.rightBarButtonItem = studyInfoButton
     }
     
+    private func layoutCollectionView() {
+        collectionView.snp.makeConstraints {
+            $0.top.left.right.equalToSuperview()
+            $0.bottom.equalToSuperview().inset(90)
+        }
+        collectionView.register(ChatCell.self, forCellWithReuseIdentifier: ChatCell.identifier)
+        collectionView.alwaysBounceVertical = true
+    }
+    
+    @objc private func backButtonDidTap() {
+        
+    }
+    
+    @objc private func studyInfoDidTap() {
+        
+    }
+    
+}
+
+extension ChatViewController {
+    
+    override func collectionView(
+        _ collectionView: UICollectionView,
+        numberOfItemsInSection section: Int
+    ) -> Int {
+        return 15
+    }
+    
+    override func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ChatCell.identifier,
+                                                            for: indexPath) as? ChatCell else { return ChatCell() }
+        return cell
+    }
+}
+
+extension ChatViewController: UICollectionViewDelegateFlowLayout {
+    
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        insetForSectionAt section: Int
+    ) -> UIEdgeInsets {
+        return .init(top: 16, left: 0, bottom: 16, right: 0)
+    }
+    
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        sizeForItemAt indexPath: IndexPath
+    ) -> CGSize {
+        return .init(width: view.frame.width, height: 50)
+    }
 }
