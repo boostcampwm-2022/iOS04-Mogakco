@@ -9,7 +9,7 @@
 import FirebaseAuth
 import RxSwift
 
-struct FBSignupDataSource: SignupDataSource {
+struct FBSignupDataSource: SignupDataSourceProtocol {
     
     private let firebaseAuth = Auth.auth()
     

@@ -1,5 +1,5 @@
 //
-//  SignupDataSource.swift
+//  SignupDataSourceProtocol.swift
 //  Mogakco
 //
 //  Created by 김범수 on 2022/11/16.
@@ -8,6 +8,6 @@
 
 import RxSwift
 
-protocol SignupDataSource {
+protocol SignupDataSourceProtocol {
     func signup(_ request: SignupRequestDTO) -> Single<Result<SignupResponseDTO, Error>>
 }
