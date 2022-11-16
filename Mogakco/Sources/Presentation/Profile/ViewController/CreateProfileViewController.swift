@@ -99,10 +99,10 @@ final class CreateProfileViewController: ViewController {
             .disposed(by: disposeBag)
         
         RxKeyboard.instance.visibleHeight
-          .drive(onNext: { keyboardVisibleHeight in
-              self.scrollView.contentInset.bottom = keyboardVisibleHeight
-          })
-          .disposed(by: disposeBag)
+            .drive(onNext: { keyboardVisibleHeight in
+                self.scrollView.contentInset.bottom = keyboardVisibleHeight
+            })
+            .disposed(by: disposeBag)
     }
     
     func configureUI() {
