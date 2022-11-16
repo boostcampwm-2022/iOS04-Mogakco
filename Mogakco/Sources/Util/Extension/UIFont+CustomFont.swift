@@ -14,7 +14,7 @@ extension UIFont {
 struct MogakcoFont {
     
     // Regular
-    let largeReular = MogakcoFontFamily.SFProDisplay.regular.font(size: 30)
+    let largeRegular = MogakcoFontFamily.SFProDisplay.regular.font(size: 30)
     let mediumRegular = MogakcoFontFamily.SFProDisplay.regular.font(size: 18)
     let smallRegular = MogakcoFontFamily.SFProDisplay.regular.font(size: 14)
 
