@@ -7,6 +7,8 @@
 
 import UIKit
 
+import SnapKit
+
 final class ValidationButton: UIButton {
     
     init() {
@@ -19,8 +21,26 @@ final class ValidationButton: UIButton {
     }
     
     private func configure() {
+        configureDefaultheight()
+        configureFont()
+        configureRadius()
         configureEnableColor()
         configureDisableColor()
+    }
+    
+    private func configureDefaultheight() {
+        snp.makeConstraints {
+            $0.height.equalTo(45)
+        }
+    }
+    
+    private func configureFont() {
+        
+    }
+    
+    private func configureRadius() {
+        clipsToBounds = true
+        layer.cornerRadius = 8
     }
     
     private func configureEnableColor() {
