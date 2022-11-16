@@ -8,6 +8,9 @@
 
 import UIKit
 
+import RxCocoa
+import RxSwift
+
 final class CreateProfileViewController: ViewController {
     
     private let scrollView = UIScrollView().then {
@@ -42,10 +45,14 @@ final class CreateProfileViewController: ViewController {
         $0.layer.masksToBounds = true
         $0.setTitle("완료", for: .normal)
     }
-
+    
+    private let imagePicker = UIImagePickerController()
+    private let selectedImage = PublishRelay<UIImage>()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         configureUI()
+        configureImagePicker()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -58,7 +65,15 @@ final class CreateProfileViewController: ViewController {
         super.viewWillDisappear(animated)
         navigationController?.navigationBar.isHidden = true
     }
-
+    
+    override func bind() {
+        addImageButton.rx.tap
+            .subscribe(onNext: {
+                self.presentImagePicker()
+            })
+            .disposed(by: disposeBag)
+    }
+    
     func configureUI() {
         configureNavigationBar()
     }
@@ -141,4 +156,39 @@ final class CreateProfileViewController: ViewController {
         }
     }
     
+}
+
+// MARK: Picker
+
+private extension CreateProfileViewController {
+    func configureImagePicker() {
+        imagePicker.allowsEditing = true
+        imagePicker.delegate = self
+    }
+    
+    func presentImagePicker() {
+        present(imagePicker, animated: true)
+    }
+}
+
+// MARK: Picker Delegate
+// TODO: RxExtension
+
+extension CreateProfileViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    func imagePickerController(_ picker: UIImagePickerController,
+                               didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
+        var newImage: UIImage?
+        
+        if let possibleImage = info[.editedImage] as? UIImage { // 수정된 이미지가 있을 경우
+            newImage = possibleImage
+        } else if let possibleImage = info[.originalImage] as? UIImage { // 오리지널 이미지가 있을 경우
+            newImage = possibleImage
+        }
+        
+        if let image = newImage {
+            selectedImage.accept(image)
+        }
+        
+        picker.dismiss(animated: true)
+    }
 }
