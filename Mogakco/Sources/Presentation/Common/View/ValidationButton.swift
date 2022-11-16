@@ -35,7 +35,7 @@ final class ValidationButton: UIButton {
     }
     
     private func configureFont() {
-        
+        titleLabel?.font = .mogakcoFont.title3Bold
     }
     
     private func configureRadius() {
