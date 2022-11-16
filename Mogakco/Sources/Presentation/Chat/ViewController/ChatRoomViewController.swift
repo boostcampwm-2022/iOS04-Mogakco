@@ -72,7 +72,7 @@ final class ChatRoomViewController: UICollectionViewController {
             $0.top.left.right.equalToSuperview()
             $0.bottom.equalToSuperview().inset(90)
         }
-        collectionView.register(ChatCell.self, forCellWithReuseIdentifier: ChatCell.reuseIdentifier)
+        collectionView.register(ChatCell.self, forCellWithReuseIdentifier: ChatCell.identifier)
         collectionView.alwaysBounceVertical = true
     }
     
@@ -94,7 +94,7 @@ extension ChatRoomViewController {
     
     override func collectionView(_ collectionView: UICollectionView,
                                  cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ChatCell.reuseIdentifier,
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ChatCell.identifier,
                                                             for: indexPath) as? ChatCell else { return ChatCell() }
         return cell
     }
