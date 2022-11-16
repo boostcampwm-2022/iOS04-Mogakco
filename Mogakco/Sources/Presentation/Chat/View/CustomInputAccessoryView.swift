@@ -16,7 +16,7 @@ final class CustomInputAccessoryView: UIView {
     private let bag = DisposeBag()
     
     private let messageInputTextView = UITextView().then {
-        $0.font = UIFont.systemFont(ofSize: 16)
+        $0.font = .mogakcoFont.smallRegular
         $0.textAlignment = .left
         $0.layer.cornerRadius = 15
         $0.layer.borderWidth = 1
@@ -27,6 +27,7 @@ final class CustomInputAccessoryView: UIView {
     
     private let sendButton = UIButton().then {
         $0.setImage(UIImage(systemName: "arrow.up"), for: .normal)
+        $0.tintColor = .white
         $0.backgroundColor = .mogakcoColor.primaryDefault
         $0.layer.cornerRadius = 12
     }
@@ -94,7 +95,7 @@ final class CustomInputAccessoryView: UIView {
         
         placeholderLabel.snp.makeConstraints {
             $0.centerY.equalTo(messageInputTextView)
-            $0.left.equalTo(messageInputTextView.snp.left).inset(8)
+            $0.left.equalTo(messageInputTextView.snp.left).inset(15)
         }
     }
 }
