@@ -21,7 +21,7 @@ final class AppCoordinator: AppCoordinatorProtocol {
     }
     
     func start() {
-        let viewController = LoginViewController()
+        let viewController = StudyDetailViewController()
         navigationController.pushViewController(viewController, animated: true)
     }
     
