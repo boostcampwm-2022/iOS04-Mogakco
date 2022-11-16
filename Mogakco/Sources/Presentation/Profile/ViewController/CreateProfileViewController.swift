@@ -46,8 +46,18 @@ final class CreateProfileViewController: ViewController {
         $0.setTitle("완료", for: .normal)
     }
     
+    private var viewModel: CreateProfiileViewModel
     private let imagePicker = UIImagePickerController()
-    private let selectedImage = PublishRelay<UIImage>()
+    private let selectedProfileImage = PublishRelay<UIImage>()
+    
+    init(viewModel: CreateProfiileViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -67,10 +77,23 @@ final class CreateProfileViewController: ViewController {
     }
     
     override func bind() {
+        let input = CreateProfiileViewModel.Input(
+            name: nameCountTextField.rx.text.orEmpty.asObservable(),
+            introduce: introuceCountTextField.rx.text.orEmpty.asObservable(),
+            selectedProfileImage: selectedProfileImage.asObservable(),
+            completeButtonTapped: completeButton.rx.tap.asObservable()
+        )
+        
+        let output = viewModel.transform(input: input)
+        
         addImageButton.rx.tap
             .subscribe(onNext: {
                 self.presentImagePicker()
             })
+            .disposed(by: disposeBag)
+        
+        output.profileImage
+            .drive(roundProfileImageView.rx.image)
             .disposed(by: disposeBag)
     }
     
@@ -186,7 +209,7 @@ extension CreateProfileViewController: UIImagePickerControllerDelegate, UINaviga
         }
         
         if let image = newImage {
-            selectedImage.accept(image)
+            selectedProfileImage.accept(image)
         }
         
         picker.dismiss(animated: true)
