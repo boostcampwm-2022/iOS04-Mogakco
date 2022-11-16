@@ -7,9 +7,8 @@
 
 import UIKit
 
-final class AppCoordinator: AppCoordinatorProtocol {
+final class AppCoordinator: Coordinator, AppCoordinatorProtocol {
     
-    weak var finishDelegate: CoordinatorFinishDelegate?
     var navigationController: UINavigationController
     var childCoordinators: [Coordinator] = []
     
@@ -27,7 +26,7 @@ final class AppCoordinator: AppCoordinatorProtocol {
     func showAuthFlow() {
         let authCoordinator = AuthCoordinator(navigationController)
         childCoordinators.append(authCoordinator)
-        authCoordinator.finishDelegate = self
+        authCoordinator.delegate = self
         authCoordinator.start()
     }
     
@@ -37,8 +36,8 @@ final class AppCoordinator: AppCoordinatorProtocol {
 }
 
 extension AppCoordinator: CoordinatorFinishDelegate {
-    
-    func coordinatorDidFinish(childCoordinator: Coordinator) {
-        childCoordinators = childCoordinators.filter { !($0 === childCoordinator) }
+
+    func coordinatorDidFinish(child: Coordinator) {
+        finish(child)
     }
 }

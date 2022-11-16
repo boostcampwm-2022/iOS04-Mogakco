@@ -10,7 +10,7 @@ import UIKit
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
-    var appCoordinator: AppCoordinatorProtocol?
+    var appCoordinator: Coordinator?
 
     func scene(
         _ scene: UIScene,

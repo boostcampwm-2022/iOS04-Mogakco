@@ -8,5 +8,5 @@
 import Foundation
 
 protocol CoordinatorFinishDelegate: AnyObject {
-    func coordinatorDidFinish(childCoordinator: Coordinator)
+    func coordinatorDidFinish(child: Coordinator)
 }
