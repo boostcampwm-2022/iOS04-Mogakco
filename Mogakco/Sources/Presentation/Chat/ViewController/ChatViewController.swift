@@ -77,7 +77,7 @@ final class ChatViewController: UICollectionViewController {
     }
     
     @objc private func backButtonDidTap() {
-        
+        self.navigationController?.popViewController(animated: true)
     }
     
     @objc private func studyInfoDidTap() {
