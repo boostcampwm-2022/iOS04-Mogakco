@@ -66,6 +66,7 @@ final class BadgeCell: UICollectionViewCell, Identifiable {
     }
     
     override func prepareForReuse() {
+        super.prepareForReuse()
         iconimageView.image = UIImage(systemName: "questionmark.app")
         titleLabel.text = "Default"
     }

@@ -30,5 +30,4 @@ struct FBSignupDataSource: SignupDataSourceProtocol {
             return Disposables.create()
         }
     }
-    
 }

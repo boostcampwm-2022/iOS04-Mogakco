@@ -95,9 +95,15 @@ final class WithdrawViewController: UIViewController {
     }
     
     private func layoutCheckBoxs() {
-        [deleteInfoIssue, inconvenienceIssue, otherSiteIssue,
-         duplicateAccountIssue, lowUsageIssue, dissatisfactionIssue,
-         etcIssue].forEach {
+        [
+            deleteInfoIssue,
+            inconvenienceIssue,
+            otherSiteIssue,
+            duplicateAccountIssue,
+            lowUsageIssue,
+            dissatisfactionIssue,
+            etcIssue
+        ].forEach {
             $0.snp.makeConstraints {
                 $0.left.right.equalToSuperview().inset(16)
             }
@@ -107,9 +113,15 @@ final class WithdrawViewController: UIViewController {
     }
     
     private func layoutStackView() {
-        [deleteInfoIssue, inconvenienceIssue, otherSiteIssue,
-         duplicateAccountIssue, lowUsageIssue, dissatisfactionIssue,
-         etcIssue].forEach {
+        [
+            deleteInfoIssue,
+            inconvenienceIssue,
+            otherSiteIssue,
+            duplicateAccountIssue,
+            lowUsageIssue,
+            dissatisfactionIssue,
+            etcIssue
+        ].forEach {
             stackView.addArrangedSubview($0)
         }
         

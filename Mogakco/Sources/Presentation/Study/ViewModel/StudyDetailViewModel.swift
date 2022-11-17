@@ -18,7 +18,6 @@ final class StudyDetailViewModel: ViewModel {
     }
     
     struct Output {
-        
     }
     
     func transform(input: Input) -> Output {

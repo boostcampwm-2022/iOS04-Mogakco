@@ -120,7 +120,6 @@ final class CreateProfileViewController: ViewController {
     
     private func configureNavigationBar() {
         navigationController?.navigationBar.topItem?.title = "프로필 생성"
-        
     }
     
     private func layoutScrollView() {
@@ -185,7 +184,6 @@ final class CreateProfileViewController: ViewController {
             $0.height.equalTo(56.0)
         }
     }
-    
 }
 
 // MARK: Picker
@@ -204,8 +202,10 @@ private extension CreateProfileViewController {
 // MARK: Picker Delegate
 
 extension CreateProfileViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-    func imagePickerController(_ picker: UIImagePickerController,
-                               didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
+    func imagePickerController(
+        _ picker: UIImagePickerController,
+        didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]
+    ) {
         var newImage: UIImage?
         
         if let possibleImage = info[.editedImage] as? UIImage { // 수정된 이미지가 있을 경우

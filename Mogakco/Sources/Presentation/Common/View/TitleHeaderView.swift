@@ -42,5 +42,4 @@ final class TitleHeaderView: UIView {
             $0.edges.equalToSuperview().inset(16.0)
         }
     }
-    
 }

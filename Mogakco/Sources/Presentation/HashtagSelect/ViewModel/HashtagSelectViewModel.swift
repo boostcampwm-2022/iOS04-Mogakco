@@ -37,7 +37,6 @@ final class HashtagSelectViewModel: ViewModel {
     }
     
     init() {
-        
     }
     
     func transform(input: Input) -> Output {
@@ -65,8 +64,9 @@ final class HashtagSelectViewModel: ViewModel {
     
     func isSelected(title: String?) -> Bool {
         guard let selected = try? selectedBadges.value(),
-                let title
-        else { return false }
+              let title else {
+            return false
+        }
         if selected.contains(title) { return true }
         
         return false
@@ -74,8 +74,9 @@ final class HashtagSelectViewModel: ViewModel {
     
     func selectBadge(title: String) {
         guard var selected = try? selectedBadges.value(),
-              !selected.contains(title)
-        else { return }
+              !selected.contains(title) else {
+            return
+        }
         
         selected.append(title)
         selectedBadges.onNext(selected)
@@ -83,8 +84,9 @@ final class HashtagSelectViewModel: ViewModel {
     
     func deselectBadge(title: String) {
         guard var selected = try? selectedBadges.value(),
-              let removeIndex = selected.firstIndex(of: title)
-        else { return }
+              let removeIndex = selected.firstIndex(of: title) else {
+            return
+        }
         
         selected.remove(at: removeIndex)
         selectedBadges.onNext(selected)

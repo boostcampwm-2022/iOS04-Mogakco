@@ -68,7 +68,8 @@ final class TabCoordinator: Coordinator {
            let navigationController = rootViewController as? UINavigationController {
             return navigationController
         }
-        fatalError()
+        // TODO: Error
+        return UINavigationController()
     }
 }
 
