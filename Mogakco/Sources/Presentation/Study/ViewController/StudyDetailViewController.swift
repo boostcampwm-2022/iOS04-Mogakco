@@ -103,7 +103,18 @@ final class StudyDetailViewController: ViewController {
         $0.setTitle("스터디 참여", for: .normal)
     }
     
+    // MARK: - Property
+    var viewModel: StudyDetailViewModel
     var disposebag = DisposeBag()
+    
+    init(viewModel: StudyDetailViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -124,7 +135,9 @@ final class StudyDetailViewController: ViewController {
     }
     
     override func bind() {
-        // TODO:
+        let tapJoinButton = studyJoinButton.rx.tap.asObservable()
+        let output = StudyDetailViewModel.Input(studyJoinButtonTapped: tapJoinButton)
+         
     }
     
     private func navigationLayout() {
