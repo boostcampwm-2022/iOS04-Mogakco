@@ -23,7 +23,8 @@ final class StudyTabCoordinator: Coordinator, StudyTabCoordinatorProtocol {
     }
     
     func showStudyList() {
-
+        let viewController = StudyListViewController(coordinator: self)
+        navigationController.pushViewController(viewController, animated: true)
     }
     
     func showStudyDetail() {
