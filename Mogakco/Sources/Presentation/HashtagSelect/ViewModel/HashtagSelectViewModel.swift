@@ -30,13 +30,18 @@ final class HashtagSelectViewModel: ViewModel {
         return Output(collectionReloadObservable: collectionReloadObservable.asObservable())
     }
     
-    init(useCase: ) {
-        badgeList.onNext(["swift", "javascript", "python", "Hello", "python", "python"])
-    }
-    
     var disposeBag = DisposeBag()
     let selectedBadges = BehaviorSubject<[String]>(value: [])
     let badgeList = BehaviorSubject<[String]>(value: [])
+    
+    var collectionViewCount: Int {
+        guard let count = try? badgeList.value().count else { return 0 }
+        return count
+    }
+    
+    init() {
+        
+    }
     
     func cellTitle(index: Int) -> String {
         guard let list = try? badgeList.value() else { return "?" }

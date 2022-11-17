@@ -119,8 +119,7 @@ final class HashtagSelectViewController: ViewController {
 
 extension HashtagSelectViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        guard let count = try? viewModel.badgeList.value().count else { return 0 }
-        return count
+        return viewModel.collectionViewCount
     }
     
     func collectionView(
