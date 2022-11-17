@@ -26,16 +26,14 @@ final class RequiredSignupCoordinator: Coordinator, RequiredSignupCoordinatorPro
     }
     
     func showEmail() {
-        // TODO: 뷰 컨트롤러에서 코디네이터로 이메일 데이터 넘겨줘야 함
-        let setEmailViewModel = SetEmailViewModel()
-        let emailViewController = SetEmailViewController(viewModel: setEmailViewModel)
+        let emailViewModel = SetEmailViewModel(coordinator: self)
+        let emailViewController = SetEmailViewController(viewModel: emailViewModel)
         navigationController.pushViewController(emailViewController, animated: true)
     }
     
     func showPassword() {
-        // TODO: 뷰 컨트롤러에서 코디네이터로 패스워드 데이터 넘겨줘야 함
-        let setPasswordViewModel = SetPasswordViewModel()
-        let passwordViewController = SetPasswordViewController(viewModel: setPasswordViewModel)
+        let passwordViewModel = SetPasswordViewModel(coordinator: self)
+        let passwordViewController = SetPasswordViewController(viewModel: passwordViewModel)
         navigationController.pushViewController(passwordViewController, animated: true)
     }
     
