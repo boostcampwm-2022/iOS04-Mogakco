@@ -38,6 +38,7 @@ final class HashtagSelectViewController: ViewController {
         $0.collectionViewLayout = layout
         $0.showsHorizontalScrollIndicator = false
         $0.clipsToBounds = false
+        $0.allowsMultipleSelection = true
         $0.register(BadgeCell.self, forCellWithReuseIdentifier: BadgeCell.identifier)
         $0.register(
             HashtagSelectHeader.self,
@@ -134,6 +135,22 @@ extension HashtagSelectViewController: UICollectionViewDataSource {
         cell.setInfo(iconImage: UIImage(named: "swift"), title: "javascript")
         
         return cell
+    }
+    
+    func collectionView(
+        _ collectionView: UICollectionView,
+        didSelectItemAt indexPath: IndexPath
+    ) {
+        let cell = collectionView.cellForItem(at: indexPath) as? BadgeCell
+        cell?.select()
+    }
+    
+    func collectionView(
+        _ collectionView: UICollectionView,
+        didDeselectItemAt indexPath: IndexPath
+    ) {
+        let cell = collectionView.cellForItem(at: indexPath) as? BadgeCell
+        cell?.deselect()
     }
 }
 
