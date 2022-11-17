@@ -7,10 +7,10 @@
 
 import UIKit
 
-import Then
-import SnapKit
 import RxCocoa
 import RxSwift
+import SnapKit
+import Then
 
 final class MessageTextField: UIView {
     
@@ -83,5 +83,11 @@ extension Reactive where Base: MessageTextField {
     
     var text: ControlProperty<String?> {
         return base.textField.rx.text
+    }
+    
+    var validation: Binder<TextField.Validation> {
+        return Binder(self.base) { view, validation in
+            view.validation = validation
+        }
     }
 }
