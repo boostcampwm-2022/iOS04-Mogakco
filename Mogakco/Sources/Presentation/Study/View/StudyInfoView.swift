@@ -14,6 +14,7 @@ final class StudyInfoView: UIView {
     
     let imageView = UIImageView().then {
         $0.tintColor = .mogakcoColor.typographySecondary
+        $0.contentMode = .scaleAspectFit
     }
 
     let textLabel = UILabel().then {
