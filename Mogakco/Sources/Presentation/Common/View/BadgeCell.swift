@@ -43,7 +43,7 @@ final class BadgeCell: UICollectionViewCell, Identifiable {
     private func layoutView() {
         backgroundColor = .mogakcoColor.backgroundDefault
         layer.cornerRadius = CGFloat(10)
-        addShadow(offset: CGSize(width: 2, height: 2))
+        addShadow(offset: CGSize(width: 4, height: 2))
     }
     
     private func layoutIconImage() {
@@ -72,5 +72,15 @@ final class BadgeCell: UICollectionViewCell, Identifiable {
     func setInfo(iconImage: UIImage?, title: String) {
         iconimageView.image = iconImage ?? UIImage(systemName: "questionmark.app")
         titleLabel.text = title
+    }
+    
+    func select() {
+        backgroundColor = .mogakcoColor.backgroundSecondary
+        removeShadow()
+    }
+    
+    func deselect() {
+        backgroundColor = .mogakcoColor.backgroundDefault
+        addShadow(offset: CGSize(width: 4, height: 2))
     }
 }
