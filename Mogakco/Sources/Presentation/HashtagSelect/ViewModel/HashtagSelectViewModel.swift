@@ -13,7 +13,7 @@ import RxCocoa
 
 enum KindHashtag {
     case language
-    case company
+    case career
     case category
 }
 
@@ -36,6 +36,7 @@ final class HashtagSelectViewModel: ViewModel {
         return Output(collectionReloadObservable: collectionReloadObservable.asObservable())
     }
     
+    weak var coordinator: AdditionalSignupCoordinatorProtocol?
     var disposeBag = DisposeBag()
     let selectedBadges = BehaviorSubject<[String]>(value: [])
     let badgeList = BehaviorSubject<[String]>(value: [])
