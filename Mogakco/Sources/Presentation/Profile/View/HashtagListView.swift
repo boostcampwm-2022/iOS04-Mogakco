@@ -68,7 +68,7 @@ final class HashtagListView: UIView {
                     for: IndexPath(row: index, section: 0)) as? BadgeCell else {
                     return UICollectionViewCell()
                 }
-                cell.setInfo(iconImage: MogakcoAsset.swift.image, title: data)
+                cell.setInfo(iconName: nil, title: data)
                 return cell
             }
             .disposed(by: disposeBag)
