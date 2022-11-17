@@ -25,7 +25,12 @@ final class SetPasswordViewModel: ViewModel {
         let nextButtonEnabled: Observable<Bool>
     }
     
+    private weak var coordinator: RequiredSignupCoordinatorProtocol?
     var disposeBag = DisposeBag()
+    
+    init(coordinator: RequiredSignupCoordinatorProtocol?) {
+        self.coordinator = coordinator
+    }
 
     func transform(input: Input) -> Output {
         let passwordState = PublishSubject<Bool>()
@@ -56,9 +61,9 @@ final class SetPasswordViewModel: ViewModel {
         
         input.nextButtonTapped
             .withLatestFrom(input.password)
-            .subscribe { password in
-                // TODO: 코디네이터 필요
-                print("그 다음 화면으로", password)
+            .subscribe { [weak self] password in
+                self?.coordinator?.password = password
+                self?.coordinator?.finish()
             }
             .disposed(by: disposeBag)
         
