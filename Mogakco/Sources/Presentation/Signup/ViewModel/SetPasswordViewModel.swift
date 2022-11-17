@@ -36,19 +36,21 @@ final class SetPasswordViewModel: ViewModel {
         
         input.password
             .distinctUntilChanged()
-            .subscribe(onNext: { [weak self] text in
-                let result = self?.validate(password: text) ?? false
-                passwordState.onNext(result)
+            .compactMap { [weak self] in
+                self?.validate(password: $0)
+            }
+            .subscribe(onNext: {
+                passwordState.onNext($0)
             })
             .disposed(by: disposeBag)
         
         input.passwordCheck
             .distinctUntilChanged()
             .withLatestFrom(Observable.combineLatest(input.password, input.passwordCheck))
-            .subscribe(onNext: { (password, passwordCheck) in
-                guard !password.isEmpty else { return }
-                let result = password == passwordCheck
-                passwordCheckState.onNext(result)
+            .filter { !$0.0.isEmpty && !$0.1.isEmpty }
+            .map { $0.0 == $0.1 }
+            .subscribe(onNext: {
+                passwordCheckState.onNext($0)
             })
             .disposed(by: disposeBag)
         
