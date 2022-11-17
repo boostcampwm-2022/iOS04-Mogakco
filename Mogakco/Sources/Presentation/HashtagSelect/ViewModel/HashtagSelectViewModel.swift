@@ -11,6 +11,12 @@ import UIKit
 import RxSwift
 import RxCocoa
 
+enum KindHashtag {
+    case language
+    case company
+    case category
+}
+
 final class HashtagSelectViewModel: ViewModel {
     
     struct Input {}
