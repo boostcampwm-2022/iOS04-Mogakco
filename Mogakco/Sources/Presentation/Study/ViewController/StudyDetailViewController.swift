@@ -135,9 +135,10 @@ final class StudyDetailViewController: ViewController {
     }
     
     override func bind() {
-        let tapJoinButton = studyJoinButton.rx.tap.asObservable()
-        let output = StudyDetailViewModel.Input(studyJoinButtonTapped: tapJoinButton)
-         
+        let input = StudyDetailViewModel.Input(
+            studyJoinButtonTapped: studyJoinButton.rx.tap.asObservable()
+        )
+        _ = viewModel.transform(input: input)
     }
     
     private func navigationLayout() {

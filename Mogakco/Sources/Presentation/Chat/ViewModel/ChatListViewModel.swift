@@ -38,4 +38,3 @@ final class ChatListViewModel: ViewModel {
         return Output()
     }
 }
-
