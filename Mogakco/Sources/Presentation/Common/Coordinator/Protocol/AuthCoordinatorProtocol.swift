@@ -12,4 +12,5 @@ protocol AuthCoordinatorProtocol: AnyObject {
     func showLogin()
     func showRequiredSignup()
     func showAdditionalSignup(email: String?, password: String?)
+    func finish()
 }

@@ -106,12 +106,8 @@ final class SetPasswordViewController: ViewController {
             .disposed(by: disposeBag)
         
         RxKeyboard.instance.visibleHeight
-            .skip(1)
             .drive(onNext: { [weak self] keyboardVisibleHeight in
                 self?.updateButtonLayout(height: keyboardVisibleHeight)
-                UIView.animate(withDuration: 1) {
-                    self?.view.layoutIfNeeded()
-                }
             })
             .disposed(by: disposeBag)
     }

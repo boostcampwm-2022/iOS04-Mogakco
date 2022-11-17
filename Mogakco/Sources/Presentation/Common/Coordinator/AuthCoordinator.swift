@@ -27,7 +27,7 @@ final class AuthCoordinator: Coordinator, AuthCoordinatorProtocol {
     }
     
     func showLogin() {
-        let loginViewController = LoginViewController()
+        let loginViewController = LoginViewController(coordinator: self)
         navigationController.viewControllers = [loginViewController]
     }
     
@@ -43,6 +43,10 @@ final class AuthCoordinator: Coordinator, AuthCoordinatorProtocol {
         childCoordinators.append(socialSignupCoordinator)
         socialSignupCoordinator.delegate = self
         socialSignupCoordinator.start()
+    }
+    
+    func finish() {
+        delegate?.coordinatorDidFinish(child: self)
     }
 }
 
