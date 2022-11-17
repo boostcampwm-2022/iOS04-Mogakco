@@ -12,8 +12,6 @@ import RxCocoa
 import RxSwift
 
 final class SetPasswordViewModel: ViewModel {
-
-    var disposeBag = DisposeBag()
     
     struct Input {
         let password: Observable<String>
@@ -26,6 +24,8 @@ final class SetPasswordViewModel: ViewModel {
         let passwordCheckState: PublishSubject<Bool>
         let nextButtonEnabled: Observable<Bool>
     }
+    
+    var disposeBag = DisposeBag()
 
     func transform(input: Input) -> Output {
         let passwordState = PublishSubject<Bool>()
