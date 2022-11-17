@@ -1,5 +1,5 @@
 //
-//  SignupCoordinator.swift
+//  RequiredSignupCoordinator.swift
 //  Mogakco
 //
 //  Created by 신소민 on 2022/11/16.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-final class SignupCoordinator: Coordinator, SignupCoordinatorProtocol {
+final class RequiredSignupCoordinator: Coordinator, RequiredSignupCoordinatorProtocol {
     
     weak var delegate: AuthCoordinatorFinishDelegate?
     var navigationController: UINavigationController
@@ -38,6 +38,6 @@ final class SignupCoordinator: Coordinator, SignupCoordinatorProtocol {
     }
     
     func finish() {
-        delegate?.signupCoordinatorDidFinish(child: self, email: email, password: password)
+        delegate?.requiredSignupCoordinatorDidFinish(child: self, email: email, password: password)
     }
 }
