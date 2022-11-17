@@ -73,7 +73,10 @@ final class HashtagSelectViewController: ViewController {
     }
     
     override func bind() {
-        let output = viewModel.transform(input: HashtagSelectViewModel.Input())
+        let input = HashtagSelectViewModel.Input(
+            nextButtonTapped: nextButton.rx.tap.asObservable()
+        )
+        let output = viewModel.transform(input: input)
 
         output.collectionReloadObservable
             .observe(on: MainScheduler.instance)

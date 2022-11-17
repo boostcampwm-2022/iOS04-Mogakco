@@ -19,21 +19,11 @@ enum KindHashtag {
 
 final class HashtagSelectViewModel: ViewModel {
     
-    struct Input {}
+    struct Input {
+        let nextButtonTapped: Observable<Void>
+    }
     struct Output {
         let collectionReloadObservable: Observable<Void>
-    }
-    
-    func transform(input: Input) -> Output {
-        let collectionReloadObservable = PublishSubject<Void>()
-        
-        badgeList
-            .subscribe { _ in
-                collectionReloadObservable.onNext(())
-            }
-            .disposed(by: disposeBag)
-        
-        return Output(collectionReloadObservable: collectionReloadObservable.asObservable())
     }
     
     weak var coordinator: AdditionalSignupCoordinatorProtocol?
@@ -48,6 +38,24 @@ final class HashtagSelectViewModel: ViewModel {
     
     init() {
         
+    }
+    
+    func transform(input: Input) -> Output {
+        let collectionReloadObservable = PublishSubject<Void>()
+        
+        input.nextButtonTapped
+            .subscribe(onNext: {
+                self.coordinator?.finish(success: true)
+            })
+            .disposed(by: disposeBag)
+        
+        badgeList
+            .subscribe { _ in
+                collectionReloadObservable.onNext(())
+            }
+            .disposed(by: disposeBag)
+        
+        return Output(collectionReloadObservable: collectionReloadObservable.asObservable())
     }
     
     func cellTitle(index: Int) -> String {

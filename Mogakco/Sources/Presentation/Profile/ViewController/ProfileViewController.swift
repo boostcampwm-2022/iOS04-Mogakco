@@ -86,7 +86,7 @@ final class ProfileViewController: ViewController {
         let input = ProfileViewModel.Input(
             editProfileButtonTapped: profileView.editProfileButton.rx.tap.asObservable()
         )
-        let output = viewModel.transform(input: input)
+        _ = viewModel.transform(input: input)
     }
     
     override func layout() {
