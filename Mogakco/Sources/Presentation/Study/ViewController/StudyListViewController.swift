@@ -28,6 +28,17 @@ final class StudyListViewController: ViewController {
         $0.dataSource = self
     }
     
+    private weak var coordinator: StudyTabCoordinatorProtocol?
+    
+    init(coordinator: StudyTabCoordinatorProtocol) {
+        self.coordinator = coordinator
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
     }
@@ -80,6 +91,6 @@ extension StudyListViewController: UITableViewDataSource {
 extension StudyListViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
+        coordinator?.showStudyDetail()
     }
 }
