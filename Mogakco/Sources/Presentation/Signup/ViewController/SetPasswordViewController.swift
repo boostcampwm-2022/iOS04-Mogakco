@@ -92,23 +92,17 @@ final class SetPasswordViewController: ViewController {
         let output = viewModel.transform(input: input)
         
         output.passwordState
-            .subscribe(onNext: { [weak self] in
-                let state: TextField.Validation = $0 ? .valid : .invalid
-                self?.passwordTextField.validation = state
-            })
+            .map { $0 ? TextField.Validation.valid : TextField.Validation.invalid }
+            .bind(to: passwordTextField.rx.validation)
             .disposed(by: disposeBag)
         
         output.passwordCheckState
-            .subscribe(onNext: { [weak self] in
-                let state: TextField.Validation = $0 ? .valid : .invalid
-                self?.passwordCheckTextField.validation = state
-            })
+            .map { $0 ? TextField.Validation.valid : TextField.Validation.invalid }
+            .bind(to: passwordCheckTextField.rx.validation)
             .disposed(by: disposeBag)
         
         output.nextButtonEnabled
-            .subscribe(onNext: { [weak self] enabled in
-                self?.button.isEnabled = enabled
-            })
+            .bind(to: button.rx.isEnabled)
             .disposed(by: disposeBag)
         
         RxKeyboard.instance.visibleHeight
