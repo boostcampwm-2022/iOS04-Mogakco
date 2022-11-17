@@ -12,7 +12,7 @@ import RxSwift
 import SnapKit
 import Then
 
-final class LoginViewController: UIViewController {
+final class LoginViewController: ViewController {
     
     private let emailTextField = MessageTextField()
     
@@ -34,19 +34,43 @@ final class LoginViewController: UIViewController {
         $0.clipsToBounds = true
     }
     
-    private let disposeBag = DisposeBag()
+    private var coordinator: AuthCoordinatorProtocol?
+    
+    init(coordinator: AuthCoordinatorProtocol?) {
+        self.coordinator = coordinator
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        bind()
-        layout()
+        addActions()
     }
     
-    func bind() {
+    func addActions() {
+        signupButton.addAction(
+            UIAction { [weak self] _ in
+                self?.coordinator?.showRequiredSignup()
+            },
+            for: .touchUpInside
+        )
+        
+        loginButton.addAction(
+            UIAction { [weak self] _ in
+                self?.coordinator?.finish()
+            },
+            for: .touchUpInside
+        )
+    }
+    
+    override func bind() {
         
     }
     
-    func layout() {
+    override func layout() {
         layoutEmailTextField()
         layoutSecureTextField()
         layoutSignupButton()
