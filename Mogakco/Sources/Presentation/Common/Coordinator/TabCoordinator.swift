@@ -72,24 +72,27 @@ final class TabCoordinator: Coordinator {
     }
 }
 
-enum TabBarType: Int, CaseIterable {
-    case study
-    case chat
-    case profile
+extension TabCoordinator {
     
-    var title: String {
-        switch self {
-        case .study: return "홈"
-        case .chat: return "채팅"
-        case .profile: return "프로필"
+    enum TabBarType: Int, CaseIterable {
+        case study
+        case chat
+        case profile
+        
+        var title: String {
+            switch self {
+            case .study: return "홈"
+            case .chat: return "채팅"
+            case .profile: return "프로필"
+            }
         }
-    }
-    
-    var image: String {
-        switch self {
-        case .study: return "house.fill"
-        case .chat: return "bubble.right.fill"
-        case .profile: return "person.crop.circle"
+        
+        var image: String {
+            switch self {
+            case .study: return "house.fill"
+            case .chat: return "bubble.right.fill"
+            case .profile: return "person.crop.circle"
+            }
         }
     }
 }
