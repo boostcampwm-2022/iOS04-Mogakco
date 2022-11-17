@@ -71,7 +71,22 @@ final class ProfileViewController: ViewController {
         }
     }
     
+    private var viewModel: ProfileViewModel
+    
+    init(viewModel: ProfileViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func bind() {
+        let input = ProfileViewModel.Input(
+            editProfileButtonTapped: profileView.editProfileButton.rx.tap.asObservable()
+        )
+        let output = viewModel.transform(input: input)
     }
     
     override func layout() {
