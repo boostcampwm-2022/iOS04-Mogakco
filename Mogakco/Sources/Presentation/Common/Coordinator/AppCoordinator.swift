@@ -21,7 +21,8 @@ final class AppCoordinator: Coordinator, AppCoordinatorProtocol {
     }
     
     func start() {
-        showAuthFlow()
+        // showAuthFlow()
+        showMainFlow()
     }
     
     func showAuthFlow() {

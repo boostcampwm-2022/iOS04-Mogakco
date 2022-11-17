@@ -25,11 +25,13 @@ final class AdditionalSignupCoordinator: Coordinator, AdditionalSignupCoordinato
     }
     
     func start() {
-        showProfile()
+        showCreateProfile()
     }
     
-    func showProfile() {
-        
+    func showCreateProfile() {
+        let viewModel = CreateProfiileViewModel(coordinator: self)
+        let viewController = CreateProfileViewController(viewModel: viewModel)
+        navigationController.pushViewController(viewController, animated: true)
     }
     
     func showLanguage() {

@@ -25,6 +25,11 @@ final class CreateProfiileViewModel: ViewModel {
     }
     
     var disposeBag = DisposeBag()
+    weak var coordinator: Coordinator?
+    
+    init(coordinator: Coordinator) {
+        self.coordinator = coordinator
+    }
     
     func transform(input: Input) -> Output {
         
@@ -33,6 +38,9 @@ final class CreateProfiileViewModel: ViewModel {
             .subscribe(onNext: { _ in
                 // TODO: UseCase - CreateProfile
                 // TODO: AppDelegate - Push
+                if let coordinator = self.coordinator as? AdditionalSignupCoordinator {
+                    coordinator.showLanguage()
+                }
             })
             .disposed(by: disposeBag)
         
