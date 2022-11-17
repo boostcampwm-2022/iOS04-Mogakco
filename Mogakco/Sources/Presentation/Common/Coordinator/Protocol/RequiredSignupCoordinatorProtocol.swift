@@ -1,5 +1,5 @@
 //
-//  SignupCoordinatorProtocol.swift
+//  RequiredSignupCoordinatorProtocol.swift
 //  Mogakco
 //
 //  Created by 신소민 on 2022/11/16.
@@ -8,7 +8,7 @@
 
 import Foundation
 
-protocol SignupCoordinatorProtocol: AnyObject {
+protocol RequiredSignupCoordinatorProtocol: AnyObject {
     var email: String? { get set }
     var password: String? { get set }
     
