@@ -14,9 +14,10 @@ import Then
 
 final class ParticipantCell: UICollectionViewCell, Identifiable {
     
-    static let size: CGSize = CGSize(width: 110, height: 130)
+    static let size = CGSize(width: 110, height: 130)
     
     override func prepareForReuse() {
+        super.prepareForReuse()
         layout()
     }
     

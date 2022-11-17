@@ -54,7 +54,7 @@ final class ChatListViewController: UIViewController {
         let input = ChatListViewModel.Input(
             selectedChatRoom: chatRoomTableView.rx.itemSelected.map { _ in }.asObservable()
         )
-        let output = viewModel.transform(input: input)
+        _ = viewModel.transform(input: input)
         
         Driver<[Int]>.just([1, 2, 3, 4])
             .drive(chatRoomTableView.rx.items) { tableView, index, _ in
@@ -66,7 +66,6 @@ final class ChatListViewController: UIViewController {
                 return cell
             }
             .disposed(by: disposeBag)
-
     }
     
     private func layout() {
@@ -91,5 +90,4 @@ final class ChatListViewController: UIViewController {
             $0.leading.trailing.bottom.equalTo(view.safeAreaLayoutGuide)
         }
     }
-    
 }

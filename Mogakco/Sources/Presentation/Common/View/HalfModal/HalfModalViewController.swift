@@ -25,8 +25,10 @@ final class HalfModalViewController: UIViewController {
     private let cancelButton = UIButton().then {
         $0.setTitle("취소", for: .normal)
         $0.backgroundColor = UIColor.mogakcoColor.primarySecondary
-        $0.setTitleColor(UIColor.mogakcoColor.typopraphyDisabled,
-                         for: .normal)
+        $0.setTitleColor(
+            UIColor.mogakcoColor.typopraphyDisabled,
+            for: .normal
+        )
         $0.layer.cornerRadius = 8
     }
     
