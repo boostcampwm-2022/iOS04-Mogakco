@@ -15,7 +15,7 @@ protocol AdditionalSignupCoordinatorProtocol: AnyObject {
     var language: String? { get set }
     var career: String? { get set }
     
-    func showProfile()
+    func showCreateProfile()
     func showLanguage()
     func showCareer()
     func finish(success: Bool)

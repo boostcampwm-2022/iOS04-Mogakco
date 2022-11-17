@@ -47,7 +47,7 @@ final class ProfileView: UIView {
         $0.setBackgroundColor(.white, for: .normal)
     }
     
-    private let editProfileButton = UIButton().then {
+    let editProfileButton = UIButton().then {
         $0.addShadow(offset: .init(width: 5.0, height: 5.0))
         $0.layer.cornerRadius = 12.0
         $0.setTitle("프로필 편집", for: .normal)
