@@ -1,5 +1,5 @@
 //
-//  SocialSignupCoordinator.swift
+//  AdditionalSignupCoordinator.swift
 //  Mogakco
 //
 //  Created by 신소민 on 2022/11/16.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-final class SocialSignupCoordinator: Coordinator, SocialSignupCoordinatorProtocol {
+final class AdditionalSignupCoordinator: Coordinator, AdditionalSignupCoordinatorProtocol {
 
     weak var delegate: AuthCoordinatorFinishDelegate?
     var navigationController: UINavigationController
@@ -41,6 +41,6 @@ final class SocialSignupCoordinator: Coordinator, SocialSignupCoordinatorProtoco
     }
     
     func finish(success: Bool) {
-        delegate?.socialSignupCoordinatorDidFinish(child: self, success: success)
+        delegate?.additionalSignupCoordinatorDidFinish(child: self, success: success)
     }
 }
