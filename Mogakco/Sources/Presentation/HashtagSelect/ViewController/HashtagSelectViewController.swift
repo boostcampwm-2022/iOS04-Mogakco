@@ -36,8 +36,8 @@ final class HashtagSelectViewController: ViewController {
         layout.minimumLineSpacing = 5
         layout.scrollDirection = .vertical
         $0.collectionViewLayout = layout
-        $0.isScrollEnabled = false
         $0.showsHorizontalScrollIndicator = false
+        $0.clipsToBounds = false
         $0.register(BadgeCell.self, forCellWithReuseIdentifier: BadgeCell.identifier)
         $0.register(
             HashtagSelectHeader.self,

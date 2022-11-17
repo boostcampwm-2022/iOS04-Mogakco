@@ -16,4 +16,8 @@ extension UIView {
         layer.shadowOpacity = opacity
         layer.shadowRadius = radius
     }
+    
+    func removeShadow() {
+        layer.shadowOpacity = Float(0.0)
+    }
 }
