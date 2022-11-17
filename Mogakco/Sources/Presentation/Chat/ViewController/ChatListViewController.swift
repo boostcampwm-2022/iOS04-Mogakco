@@ -14,8 +14,13 @@ import Then
 
 final class ChatListViewController: UIViewController {
     
-    private let titleHeaderView = TitleHeaderView().then {
-        $0.setTitle("채팅 목록")
+    enum Constant {
+        static let headerViewTitle = "채팅 목록"
+        static let headerViewHeight = 68.0
+    }
+    
+    private let headerView = TitleHeaderView().then {
+        $0.setTitle(Constant.headerViewTitle)
     }
     
     private let chatRoomTableView = UITableView().then {
@@ -49,16 +54,16 @@ final class ChatListViewController: UIViewController {
     }
     
     private func layout() {
-        layoutTitleHeaderView()
+        layoutHeaderView()
         layoutChatRoomTableView()
     }
     
-    private func layoutTitleHeaderView() {
-        view.addSubview(titleHeaderView)
+    private func layoutHeaderView() {
+        view.addSubview(headerView)
         
-        titleHeaderView.snp.makeConstraints {
+        headerView.snp.makeConstraints {
             $0.leading.top.trailing.equalTo(view.safeAreaLayoutGuide)
-            $0.height.equalTo(68.0)
+            $0.height.equalTo(Constant.headerViewHeight)
         }
     }
     
@@ -66,7 +71,7 @@ final class ChatListViewController: UIViewController {
         view.addSubview(chatRoomTableView)
         
         chatRoomTableView.snp.makeConstraints {
-            $0.top.equalTo(titleHeaderView.snp.bottom)
+            $0.top.equalTo(headerView.snp.bottom)
             $0.leading.trailing.bottom.equalTo(view.safeAreaLayoutGuide)
         }
     }
