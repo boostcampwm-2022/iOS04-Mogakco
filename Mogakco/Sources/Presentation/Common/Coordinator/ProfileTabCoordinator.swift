@@ -23,10 +23,14 @@ final class ProfileTabCoordinator: Coordinator, ProfileTabCoordinatorProtocol {
     }
     
     func showProfile() {
-
+        let viewModel = ProfileViewModel(coordinator: self)
+        let viewController = ProfileViewController(viewModel: viewModel)
+        navigationController.pushViewController(viewController, animated: false)
     }
     
     func showEditProfile() {
-        
+        let viewModel = CreateProfiileViewModel(coordinator: self)
+        let viewController = CreateProfileViewController(viewModel: viewModel)
+        navigationController.pushViewController(viewController, animated: false)
     }
 }
