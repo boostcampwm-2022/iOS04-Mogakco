@@ -67,7 +67,6 @@ final class LoginViewController: ViewController {
     }
     
     override func bind() {
-        
     }
     
     override func layout() {
