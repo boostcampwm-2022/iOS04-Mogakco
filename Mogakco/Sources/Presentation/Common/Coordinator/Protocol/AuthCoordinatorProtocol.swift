@@ -10,6 +10,6 @@ import Foundation
 
 protocol AuthCoordinatorProtocol: AnyObject {
     func showLogin()
-    func showSignup()
-    func showSocialSignup(email: String?, password: String?)
+    func showRequiredSignup()
+    func showAdditionalSignup(email: String?, password: String?)
 }
