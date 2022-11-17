@@ -23,13 +23,14 @@ final class ProfileViewController: ViewController {
         $0.bounces = true
     }
     
-    private lazy var contentStackView = UIStackView(arrangedSubviews: [self.headerView,
-                                                                       self.profileView,
-                                                                       self.languageListView,
-                                                                       self.careerListView,
-                                                                       self.categoryListView,
-                                                                       self.studyRatingListView
-                                                                      ]).then {
+    private lazy var contentStackView = UIStackView(arrangedSubviews: [
+        self.headerView,
+        self.profileView,
+        self.languageListView,
+        self.careerListView,
+        self.categoryListView,
+        self.studyRatingListView
+    ]).then {
         $0.spacing = 4.0
         $0.axis = .vertical
     }

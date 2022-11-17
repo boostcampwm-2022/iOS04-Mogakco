@@ -33,7 +33,8 @@ final class CreateProfiileViewModel: ViewModel {
     
     func transform(input: Input) -> Output {
         
-        input.completeButtonTapped
+        input
+            .completeButtonTapped
             .withLatestFrom(Observable.combineLatest(input.name, input.introduce, input.selectedProfileImage))
             .subscribe(onNext: { _ in
                 // TODO: UseCase - CreateProfile
@@ -46,5 +47,4 @@ final class CreateProfiileViewModel: ViewModel {
         
         return Output(profileImage: input.selectedProfileImage.asDriver(onErrorJustReturn: UIImage()))
     }
-    
 }

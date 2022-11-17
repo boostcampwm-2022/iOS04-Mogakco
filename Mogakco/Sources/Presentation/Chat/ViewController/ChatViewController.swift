@@ -15,10 +15,12 @@ import Then
 
 final class ChatViewController: UICollectionViewController {
     
-    private lazy var customInputView = CustomInputAccessoryView(frame: CGRect(x: 0,
-                                                                              y: 0,
-                                                                              width: view.frame.width,
-                                                                              height: 90))
+    private lazy var customInputView = CustomInputAccessoryView(frame: CGRect(
+        x: 0,
+        y: 0,
+        width: view.frame.width,
+        height: 90)
+    )
     
     init() {
         super.init(collectionViewLayout: UICollectionViewFlowLayout())
@@ -59,16 +61,20 @@ final class ChatViewController: UICollectionViewController {
     private func configureNavigationBar() {
         navigationItem.title = "채팅"
         
-        let backButton = UIBarButtonItem(title: "이전",
-                                         style: .plain,
-                                         target: self,
-                                         action: #selector(backButtonDidTap))
+        let backButton = UIBarButtonItem(
+            title: "이전",
+            style: .plain,
+            target: self,
+            action: #selector(backButtonDidTap)
+        )
         backButton.tintColor = UIColor.mogakcoColor.primaryDefault
         
-        let studyInfoButton = UIBarButtonItem(image: UIImage(systemName: "line.horizontal.3"),
-                                              style: .plain,
-                                              target: self,
-                                              action: #selector(studyInfoDidTap))
+        let studyInfoButton = UIBarButtonItem(
+            image: UIImage(systemName: "line.horizontal.3"),
+            style: .plain,
+            target: self,
+            action: #selector(studyInfoDidTap)
+        )
         [backButton, studyInfoButton].forEach {
             $0.tintColor = UIColor.mogakcoColor.primaryDefault
         }
@@ -91,9 +97,7 @@ final class ChatViewController: UICollectionViewController {
     }
     
     @objc private func studyInfoDidTap() {
-        
     }
-    
 }
 
 extension ChatViewController {
@@ -109,8 +113,10 @@ extension ChatViewController {
         _ collectionView: UICollectionView,
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ChatCell.identifier,
-                                                            for: indexPath) as? ChatCell else { return ChatCell() }
+        guard let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: ChatCell.identifier,
+            for: indexPath
+        ) as? ChatCell else { return ChatCell() }
         return cell
     }
 }

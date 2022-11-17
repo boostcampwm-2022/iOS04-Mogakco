@@ -89,7 +89,7 @@ final class CustomInputAccessoryView: UIView {
     
     private func configureMessageInputView() {
         messageInputTextView.rx.text.orEmpty
-            .map { $0 == "" ? false:true}
+            .map { !$0.isEmpty }
             .bind(to: placeholderLabel.rx.isHidden)
             .disposed(by: disposeBag)
     }
