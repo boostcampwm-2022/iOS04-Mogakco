@@ -14,13 +14,14 @@ final class AppCoordinator: Coordinator, AppCoordinatorProtocol {
     
     init(window: UIWindow?) {
         self.navigationController = UINavigationController()
-        self.navigationController.view.backgroundColor = .white
+        navigationController.isNavigationBarHidden = true
         window?.rootViewController = navigationController
+        window?.backgroundColor = .mogakcoColor.backgroundDefault
         window?.makeKeyAndVisible()
     }
     
     func start() {
-        showAuthFlow()
+        showMainFlow()
     }
     
     func showAuthFlow() {
@@ -31,7 +32,10 @@ final class AppCoordinator: Coordinator, AppCoordinatorProtocol {
     }
     
     func showMainFlow() {
-        
+        let tabCoordinator = TabCoordinator(navigationController)
+        childCoordinators.append(tabCoordinator)
+        tabCoordinator.delegate = self
+        tabCoordinator.start()
     }
 }
 
@@ -39,5 +43,15 @@ extension AppCoordinator: CoordinatorFinishDelegate {
 
     func coordinatorDidFinish(child: Coordinator) {
         finish(child)
+        switch child {
+        case is AuthCoordinator:
+            navigationController.viewControllers.removeAll()
+            showMainFlow()
+        case is TabCoordinator:
+            navigationController.viewControllers.removeAll()
+            showAuthFlow()
+        default:
+            break
+        }
     }
 }
