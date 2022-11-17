@@ -18,7 +18,8 @@ final class BadgeCell: UICollectionViewCell, Identifiable {
     private let iconimageView = UIImageView(image: UIImage(systemName: "questionmark.app")).then {
         $0.contentMode = .scaleAspectFit
     }
-    private let titleLabel = UILabel().then {
+    
+    let titleLabel = UILabel().then {
         $0.textColor = .mogakcoColor.typographyPrimary
         $0.font = .mogakcoFont.mediumRegular
         $0.textAlignment = .left
@@ -69,9 +70,9 @@ final class BadgeCell: UICollectionViewCell, Identifiable {
         titleLabel.text = "Default"
     }
     
-    func setInfo(iconImage: UIImage?, title: String) {
-        iconimageView.image = iconImage ?? UIImage(systemName: "questionmark.app")
-        titleLabel.text = title
+    func setInfo(iconName: String?, title: String?) {
+        iconimageView.image = UIImage(named: iconName ?? "" ) ?? UIImage(systemName: "questionmark.app")
+        titleLabel.text = title ?? "??"
     }
     
     func select() {

@@ -249,7 +249,7 @@ extension StudyDetailViewController: UICollectionViewDataSource {
             else { return UICollectionViewCell() }
             
             cell.prepareForReuse()
-            cell.setInfo(iconImage: nil, title: "Default")
+            cell.setInfo(iconName: nil, title: "Default")
             
             return cell
         case participantsCollectionView:

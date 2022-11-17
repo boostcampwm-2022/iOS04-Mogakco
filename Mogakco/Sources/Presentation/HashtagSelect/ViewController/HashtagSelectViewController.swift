@@ -39,7 +39,20 @@ final class HashtagSelectViewController: ViewController {
         $0.setTitle("선택 완료!", for: .normal)
     }
     
+    // MARK: - Property
+    
+    var viewModel: HashtagSelectViewModel
+    
     // MARK: - function
+    
+    init(viewModel: HashtagSelectViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     func setViewController(
         navigaionTitle: String,
@@ -60,7 +73,14 @@ final class HashtagSelectViewController: ViewController {
     }
     
     override func bind() {
-        //
+        let output = viewModel.transform(input: HashtagSelectViewModel.Input())
+
+        output.collectionReloadObservable
+            .observe(on: MainScheduler.instance)
+            .subscribe { [weak self] _ in
+                self?.hashtagListCollectionView.reloadData()
+            }
+            .disposed(by: disposeBag)
     }
     
     override func layout() {
@@ -99,7 +119,8 @@ final class HashtagSelectViewController: ViewController {
 
 extension HashtagSelectViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        5
+        guard let count = try? viewModel.badgeList.value().count else { return 0 }
+        return count
     }
     
     func collectionView(
@@ -113,12 +134,11 @@ extension HashtagSelectViewController: UICollectionViewDataSource {
         
         cell.prepareForReuse()
         
-        if indexPath.row % 2 == 0 {
-            cell.setInfo(iconImage: UIImage(named: "swift"), title: "Swift")
-            return cell
+        let cellTitle = try? viewModel.badgeList.value()[indexPath.row]
+        if viewModel.isSelected(title: cellTitle) {
+            cell.select()
         }
-        
-        cell.setInfo(iconImage: UIImage(named: "swift"), title: "javascript")
+        cell.setInfo(iconName: cellTitle, title: cellTitle)
         
         return cell
     }
@@ -127,16 +147,20 @@ extension HashtagSelectViewController: UICollectionViewDataSource {
         _ collectionView: UICollectionView,
         didSelectItemAt indexPath: IndexPath
     ) {
-        let cell = collectionView.cellForItem(at: indexPath) as? BadgeCell
-        cell?.select()
+        guard let cell = collectionView.cellForItem(at: indexPath) as? BadgeCell,
+            let title = cell.titleLabel.text else { return }
+        viewModel.selectBadge(title: title)
+        cell.select()
     }
     
     func collectionView(
         _ collectionView: UICollectionView,
         didDeselectItemAt indexPath: IndexPath
     ) {
-        let cell = collectionView.cellForItem(at: indexPath) as? BadgeCell
-        cell?.deselect()
+        guard let cell = collectionView.cellForItem(at: indexPath) as? BadgeCell,
+            let title = cell.titleLabel.text else { return }
+        viewModel.deselectBadge(title: title)
+        cell.deselect()
     }
 }
 
@@ -146,18 +170,10 @@ extension HashtagSelectViewController: UICollectionViewDelegateFlowLayout {
         layout collectionViewLayout: UICollectionViewLayout,
         sizeForItemAt indexPath: IndexPath
     ) -> CGSize {
-        
-        if indexPath.row % 2 == 0 {
-            return CGSize(
-                width: "Swift".size(
-                    withAttributes: [NSAttributedString.Key.font: UIFont.mogakcoFont.mediumRegular]
-                ).width + BadgeCell.addWidth,
-                height: BadgeCell.height
-            )
-        }
+        let title = viewModel.cellTitle(index: indexPath.row)
         
         return CGSize(
-            width: "JavaScript".size(
+            width: title.size(
                 withAttributes: [NSAttributedString.Key.font: UIFont.mogakcoFont.mediumRegular]
             ).width + BadgeCell.addWidth,
             height: BadgeCell.height
