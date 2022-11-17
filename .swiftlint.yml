@@ -8,10 +8,6 @@ excluded:
   - Project.swift
 
 disabled_rules:
-  - discarded_notification_center_observer
-  - notification_center_detachment
-  - orphaned_doc_comment
-  - unused_capture_list
   - trailing_whitespace
   - todo
 
