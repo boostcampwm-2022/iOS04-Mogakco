@@ -15,18 +15,6 @@ import Then
 
 final class HashtagSelectViewController: ViewController {
     
-    private let mainTitleLabel = UILabel().then {
-        $0.textColor = .mogakcoColor.typographyPrimary
-        $0.font = .mogakcoFont.mediumBold
-        $0.text = "사용하시는 언어를 선택해주세요!"
-    }
-    private let secondaryTitleLabel = UILabel().then {
-        $0.textColor = .mogakcoColor.typographySecondary
-        $0.font = .mogakcoFont.smallRegular
-        $0.numberOfLines = 2
-        $0.text = "다중 선택 가능(최대 5개)\n첫 번째 언어가 주 언어가 됩니다."
-    }
-    
     private let hashtagListCollectionView = UICollectionView(
         frame: .zero,
         collectionViewLayout: UICollectionViewFlowLayout()
@@ -59,8 +47,6 @@ final class HashtagSelectViewController: ViewController {
         secondaryDescriptionTitle: String
     ) {
         navigationItem.title = navigaionTitle
-        mainTitleLabel.text = descriptionTitle
-        secondaryTitleLabel.text = secondaryDescriptionTitle
     }
     
     override func viewDidLoad() {
