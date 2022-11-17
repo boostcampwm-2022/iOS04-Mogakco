@@ -23,7 +23,9 @@ final class ChatTabCoordinator: Coordinator, ChatTabCoordinatorProtocol {
     }
     
     func showChatList() {
-        
+        let viewModel = ChatListViewModel(coordinator: self)
+        let viewController = ChatListViewController(viewModel: viewModel)
+        navigationController.pushViewController(viewController, animated: false)
     }
     
     func showChatDetail() {

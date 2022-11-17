@@ -32,6 +32,16 @@ final class ChatListViewController: UIViewController {
     }
     
     private let disposeBag = DisposeBag()
+    private let viewModel: ChatListViewModel
+    
+    init(viewModel: ChatListViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -41,6 +51,11 @@ final class ChatListViewController: UIViewController {
     }
     
     func bind() {
+        let input = ChatListViewModel.Input(
+            selectedChatRoom: chatRoomTableView.rx.itemSelected.map { _ in }.asObservable()
+        )
+        let output = viewModel.transform(input: input)
+        
         Driver<[Int]>.just([1, 2, 3, 4])
             .drive(chatRoomTableView.rx.items) { tableView, index, _ in
                 guard let cell = tableView.dequeueReusableCell(
@@ -51,6 +66,7 @@ final class ChatListViewController: UIViewController {
                 return cell
             }
             .disposed(by: disposeBag)
+
     }
     
     private func layout() {
