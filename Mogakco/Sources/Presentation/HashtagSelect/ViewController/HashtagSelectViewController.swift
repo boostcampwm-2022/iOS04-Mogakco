@@ -45,7 +45,7 @@ final class HashtagSelectViewController: ViewController {
     
     // MARK: - function
     
-    init(viewModel: HashtagSelectViewModel) {
+    init(kind: KindHashtag, viewModel: HashtagSelectViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
