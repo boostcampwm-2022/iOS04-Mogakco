@@ -37,7 +37,7 @@ final class HashtagListView: UIView {
         frame: .zero,
         collectionViewLayout: UICollectionViewFlowLayout()).then {
         let layout = UICollectionViewFlowLayout()
-        layout.estimatedItemSize =  UICollectionViewFlowLayout.automaticSize
+        layout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
         layout.sectionInset = UIEdgeInsets(top: 0.0, left: 8.0, bottom: 0.0, right: 8.0)
 
         $0.collectionViewLayout = layout

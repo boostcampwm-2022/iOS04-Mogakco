@@ -13,9 +13,11 @@ extension UIViewController {
         let modalVC = HalfModalViewController(title, subTitle)
         modalVC.modalPresentationStyle = .pageSheet
         guard let sheet = modalVC.sheetPresentationController else { return }
-        sheet.detents = [.custom(resolver: { _ in
-            return 180
-        })]
+        sheet.detents = [
+            .custom(resolver: { _ in
+                return 180
+            })
+        ]
         sheet.prefersGrabberVisible = true
         
         present(modalVC, animated: true)

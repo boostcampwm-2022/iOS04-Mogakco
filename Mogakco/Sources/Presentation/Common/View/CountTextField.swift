@@ -123,5 +123,4 @@ extension Reactive where Base: CountTextField {
     var text: ControlProperty<String?> {
         return base.textField.rx.text
     }
-
 }

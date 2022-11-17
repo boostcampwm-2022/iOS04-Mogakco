@@ -28,8 +28,9 @@ final class ChatListViewModel: ViewModel {
     }
     
     func transform(input: Input) -> Output {
-        
-        input.selectedChatRoom
+
+        input
+            .selectedChatRoom
             .subscribe(onNext: {
                 self.coordinator?.showChatDetail()
             })

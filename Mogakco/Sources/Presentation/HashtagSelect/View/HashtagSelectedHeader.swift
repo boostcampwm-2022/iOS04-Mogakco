@@ -14,5 +14,4 @@ import SnapKit
 import Then
 
 final class HashtagSelectedHeader: UIView {
-    
 }
