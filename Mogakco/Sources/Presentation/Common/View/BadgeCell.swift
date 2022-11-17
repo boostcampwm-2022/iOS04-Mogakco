@@ -41,9 +41,9 @@ final class BadgeCell: UICollectionViewCell, Identifiable {
     }
     
     private func layoutView() {
-        backgroundColor = .mogakcoColor.backgroundDefault
-        layer.cornerRadius = CGFloat(10)
-        addShadow(offset: CGSize(width: 4, height: 2))
+        layer.cornerRadius = 10
+        layer.borderColor = UIColor.gray.cgColor
+        deselect()
     }
     
     private func layoutIconImage() {
@@ -76,11 +76,13 @@ final class BadgeCell: UICollectionViewCell, Identifiable {
     
     func select() {
         backgroundColor = .mogakcoColor.backgroundSecondary
+        layer.borderWidth = 0.5
         removeShadow()
     }
     
     func deselect() {
         backgroundColor = .mogakcoColor.backgroundDefault
+        layer.borderWidth = 0
         addShadow(offset: CGSize(width: 4, height: 2))
     }
 }
