@@ -35,11 +35,17 @@ final class AdditionalSignupCoordinator: Coordinator, AdditionalSignupCoordinato
     }
     
     func showLanguage() {
-        
+        let viewModel = HashtagSelectViewModel()
+        viewModel.coordinator = self
+        let hashtagSelectViewController = HashtagSelectViewController(kind: .language, viewModel: viewModel)
+        navigationController.pushViewController(hashtagSelectViewController, animated: true)
     }
     
     func showCareer() {
-        
+        let viewModel = HashtagSelectViewModel()
+        viewModel.coordinator = self
+        let hashtagSelectViewController = HashtagSelectViewController(kind: .career, viewModel: viewModel)
+        navigationController.pushViewController(hashtagSelectViewController, animated: true)
     }
     
     func finish(success: Bool) {

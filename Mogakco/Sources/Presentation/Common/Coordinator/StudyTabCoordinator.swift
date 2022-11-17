@@ -28,6 +28,14 @@ final class StudyTabCoordinator: Coordinator, StudyTabCoordinatorProtocol {
     }
     
     func showStudyDetail() {
-        
+        let viewModel = StudyDetailViewModel()
+        viewModel.coordinator = self
+        let studyDetailViewController = StudyDetailViewController(viewModel: viewModel)
+        navigationController.pushViewController(studyDetailViewController, animated: true)
+    }
+    
+    func showChatDetail() {
+        let chatViewController = ChatViewController()
+        navigationController.pushViewController(chatViewController, animated: true)
     }
 }
