@@ -12,8 +12,6 @@ import RxCocoa
 import RxSwift
 
 final class SetEmailViewModel: ViewModel {
-
-    var disposeBag = DisposeBag()
     
     struct Input {
         let email: Observable<String>
@@ -23,6 +21,13 @@ final class SetEmailViewModel: ViewModel {
     struct Output {
         let textFieldState: PublishSubject<Bool>
         let nextButtonEnabled: PublishSubject<Bool>
+    }
+    
+    private weak var coordinator: RequiredSignupCoordinatorProtocol?
+    var disposeBag = DisposeBag()
+    
+    init(coordinator: RequiredSignupCoordinatorProtocol?) {
+        self.coordinator = coordinator
     }
 
     func transform(input: Input) -> Output {
@@ -41,9 +46,9 @@ final class SetEmailViewModel: ViewModel {
         
         input.nextButtonTapped
             .withLatestFrom(input.email)
-            .subscribe { email in
-                // TODO: 비밀번호 화면으로 전환하기
-                print("비밀번호 화면으로", email)
+            .subscribe { [weak self] email in
+                self?.coordinator?.email = email
+                self?.coordinator?.showPassword()
             }
             .disposed(by: disposeBag)
         

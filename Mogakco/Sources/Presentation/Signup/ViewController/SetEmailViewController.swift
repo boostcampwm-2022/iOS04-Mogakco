@@ -78,6 +78,7 @@ final class SetEmailViewController: ViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         title = Constant.navigationTitle
+        navigationController?.isNavigationBarHidden = false
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -109,16 +110,12 @@ final class SetEmailViewController: ViewController {
             .disposed(by: disposeBag)
         
         RxKeyboard.instance.visibleHeight
-            .skip(1)
             .drive(onNext: { [weak self] keyboardVisibleHeight in
                 guard let self = self else { return }
                 self.button.snp.remakeConstraints {
                     $0.height.equalTo(52)
                     $0.left.right.equalToSuperview().inset(16)
                     $0.bottom.equalTo(self.view.safeAreaLayoutGuide).offset(-keyboardVisibleHeight)
-                }
-                UIView.animate(withDuration: 1) {
-                    self.view.layoutIfNeeded()
                 }
             })
             .disposed(by: disposeBag)
