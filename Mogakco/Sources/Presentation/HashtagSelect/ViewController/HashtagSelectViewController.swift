@@ -15,8 +15,6 @@ import Then
 
 final class HashtagSelectViewController: ViewController {
     
-    private let scrollView = UIScrollView()
-    private let contentsView = UIView()
     private let mainTitleLabel = UILabel().then {
         $0.textColor = .mogakcoColor.typographyPrimary
         $0.font = .mogakcoFont.mediumBold
@@ -29,23 +27,6 @@ final class HashtagSelectViewController: ViewController {
         $0.text = "다중 선택 가능(최대 5개)\n첫 번째 언어가 주 언어가 됩니다."
     }
     
-    private let selectedCollectionView = UICollectionView(
-        frame: .zero,
-        collectionViewLayout: UICollectionViewFlowLayout()
-    ).then {
-        let layout = UICollectionViewFlowLayout()
-        layout.minimumInteritemSpacing = 5
-        layout.minimumLineSpacing = 5
-        layout.scrollDirection = .vertical
-//        layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-        $0.collectionViewLayout = layout
-        $0.register(BadgeCell.self, forCellWithReuseIdentifier: BadgeCell.identifier)
-        $0.isScrollEnabled = false
-        $0.showsHorizontalScrollIndicator = false
-    }
-    
-    private let searchBar = UISearchBar()
-    
     private let hashtagListCollectionView = UICollectionView(
         frame: .zero,
         collectionViewLayout: UICollectionViewFlowLayout()
@@ -54,11 +35,15 @@ final class HashtagSelectViewController: ViewController {
         layout.minimumInteritemSpacing = 5
         layout.minimumLineSpacing = 5
         layout.scrollDirection = .vertical
-        layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         $0.collectionViewLayout = layout
-        $0.register(BadgeCell.self, forCellWithReuseIdentifier: BadgeCell.identifier)
         $0.isScrollEnabled = false
         $0.showsHorizontalScrollIndicator = false
+        $0.register(BadgeCell.self, forCellWithReuseIdentifier: BadgeCell.identifier)
+        $0.register(
+            HashtagSelectHeader.self,
+            forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+            withReuseIdentifier: HashtagSelectHeader.identifier
+        )
     }
     
     private let nextButton = ValidationButton().then {
@@ -83,9 +68,6 @@ final class HashtagSelectViewController: ViewController {
     }
     
     private func configDelegate() {
-        selectedCollectionView.delegate = self
-        selectedCollectionView.dataSource = self
-        
         hashtagListCollectionView.delegate = self
         hashtagListCollectionView.dataSource = self
     }
@@ -96,10 +78,6 @@ final class HashtagSelectViewController: ViewController {
     
     override func layout() {
         layoutNavigation()
-        layoutScrollView()
-        layoutTitleLabels()
-        layoutSelectedCollectionView()
-        layoutSearchBar()
         layoutHashtagListCollectionView()
         layoutNextButton()
     }
@@ -110,65 +88,19 @@ final class HashtagSelectViewController: ViewController {
         navigationItem.backBarButtonItem?.tintColor = .mogakcoColor.primaryDefault
     }
     
-    private func layoutScrollView() {
-        view.addSubview(scrollView)
-        scrollView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
-        }
-        
-        scrollView.addSubview(contentsView)
-        contentsView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
-            $0.width.equalToSuperview()
-        }
-    }
-    
-    private func layoutTitleLabels() {
-        contentsView.addSubViews([mainTitleLabel, secondaryTitleLabel])
-        
-        mainTitleLabel.snp.makeConstraints {
-            $0.top.equalToSuperview()
-            $0.leading.trailing.equalToSuperview().inset(16)
-        }
-        
-        secondaryTitleLabel.snp.makeConstraints {
-            $0.top.equalTo(mainTitleLabel.snp.bottom)
-            $0.leading.trailing.equalToSuperview().inset(16)
-        }
-    }
-    
-    private func layoutSelectedCollectionView() {
-        contentsView.addSubview(selectedCollectionView)
-        
-        selectedCollectionView.snp.makeConstraints {
-            $0.top.equalTo(secondaryTitleLabel.snp.bottom).offset(5)
-            $0.leading.trailing.equalToSuperview().inset(16)
-            $0.height.equalTo(100)
-        }
-    }
-    
-    private func layoutSearchBar() {
-        contentsView.addSubview(searchBar)
-        
-        searchBar.snp.makeConstraints {
-            $0.top.equalTo(selectedCollectionView.snp.bottom).offset(5)
-            $0.leading.trailing.equalToSuperview()
-        }
-    }
-    
     private func layoutHashtagListCollectionView() {
-        contentsView.addSubview(hashtagListCollectionView)
+        view.addSubview(hashtagListCollectionView)
         
         hashtagListCollectionView.snp.makeConstraints {
-            $0.top.equalTo(searchBar.snp.bottom).offset(5)
+            $0.top.equalToSuperview().offset(10)
             $0.leading.trailing.equalToSuperview().inset(16)
             $0.bottom.equalToSuperview()
-            $0.height.equalTo(500)
         }
     }
     
     private func layoutNextButton() {
         view.addSubview(nextButton)
+        
         nextButton.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(16)
             $0.bottom.equalTo(view.safeAreaLayoutGuide)
@@ -227,5 +159,30 @@ extension HashtagSelectViewController: UICollectionViewDelegateFlowLayout {
             ).width + BadgeCell.addWidth,
             height: BadgeCell.height
         )
+    }
+    
+    func collectionView(
+        _ collectionView: UICollectionView,
+        viewForSupplementaryElementOfKind kind: String,
+        at indexPath: IndexPath
+    ) -> UICollectionReusableView {
+        
+        guard kind == UICollectionView.elementKindSectionHeader,
+              let header = hashtagListCollectionView.dequeueReusableSupplementaryView(
+                  ofKind: kind,
+                  withReuseIdentifier: HashtagSelectHeader.identifier,
+                  for: indexPath
+              ) as? HashtagSelectHeader
+        else { return UICollectionReusableView()}
+        
+        return header
+    }
+    
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        referenceSizeForHeaderInSection section: Int
+    ) -> CGSize {
+        return CGSize(width: view.frame.width, height: HashtagSelectHeader.height)
     }
 }
