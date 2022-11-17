@@ -15,8 +15,6 @@ import Then
 
 final class SetPasswordViewController: ViewController {
     
-    private let viewModel: SetPasswordViewModel
-    
     enum Constant {
         static let navigationTitle = "회원가입"
         static let title = "안전한 계정을 위한\n비밀번호를 설정해주세요"
@@ -54,6 +52,8 @@ final class SetPasswordViewController: ViewController {
         $0.clipsToBounds = true
         $0.isEnabled = false
     }
+    
+    private let viewModel: SetPasswordViewModel
     
     // MARK: - Inits
     
