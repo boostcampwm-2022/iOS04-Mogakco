@@ -109,7 +109,6 @@ final class LoginViewController: ViewController {
         loginButton.snp.makeConstraints {
             $0.left.right.equalToSuperview().inset(16)
             $0.top.equalTo(signupButton.snp.bottom).offset(32)
-            $0.height.equalTo(emailTextField.snp.height)
         }
     }
 }
