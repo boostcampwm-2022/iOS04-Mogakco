@@ -1,5 +1,5 @@
 //
-//  LocalUserDataSource.swift
+//  LocalUserDataSourceProtocol.swift
 //  Mogakco
 //
 //  Created by 김범수 on 2022/11/17.
@@ -8,7 +8,7 @@
 
 import RxSwift
 
-protocol LocalUserDataSource {
+protocol LocalUserDataSourceProtocol {
     func save(user: User) -> Observable<Void>
     func load() -> Observable<User>
     func remove() -> Observable<Void>
