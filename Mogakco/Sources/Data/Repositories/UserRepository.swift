@@ -10,10 +10,10 @@ import RxSwift
 
 struct UserRepository: UserRepositoryProtocol {
 
-    private var localUserDataSource: LocalUserDataSource
+    private var localUserDataSource: LocalUserDataSourceProtocol
     private let disposeBag = DisposeBag()
     
-    init(localUserDataSource: LocalUserDataSource) {
+    init(localUserDataSource: LocalUserDataSourceProtocol) {
         self.localUserDataSource = localUserDataSource
     }
 

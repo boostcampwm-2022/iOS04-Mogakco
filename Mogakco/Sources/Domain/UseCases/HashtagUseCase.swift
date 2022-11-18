@@ -8,5 +8,8 @@
 
 import Foundation
 
-struct HashtagUsecase {
+protocol HashtagUseCaseProtocol {
+}
+
+struct HashtagUseCase {
 }
