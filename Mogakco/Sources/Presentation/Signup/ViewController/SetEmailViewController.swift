@@ -111,12 +111,7 @@ final class SetEmailViewController: ViewController {
         
         RxKeyboard.instance.visibleHeight
             .drive(onNext: { [weak self] keyboardVisibleHeight in
-                guard let self = self else { return }
-                self.button.snp.remakeConstraints {
-                    $0.height.equalTo(52)
-                    $0.left.right.equalToSuperview().inset(16)
-                    $0.bottom.equalTo(self.view.safeAreaLayoutGuide).offset(-keyboardVisibleHeight)
-                }
+                self?.updateButtonLayout(height: keyboardVisibleHeight)
             })
             .disposed(by: disposeBag)
     }
@@ -153,6 +148,15 @@ final class SetEmailViewController: ViewController {
         button.snp.makeConstraints {
             $0.left.right.equalToSuperview().inset(16)
             $0.bottom.equalTo(view.safeAreaLayoutGuide)
+            $0.height.equalTo(Layout.buttonHeight)
+        }
+    }
+    
+    private func updateButtonLayout(height: CGFloat) {
+        button.snp.makeConstraints {
+            $0.left.right.equalToSuperview().inset(16)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide).offset(-height)
+            $0.height.equalTo(Layout.buttonHeight)
         }
     }
 }
