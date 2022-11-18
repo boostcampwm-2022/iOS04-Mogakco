@@ -7,7 +7,7 @@ protocol ProjectFactory {
     var dependencies: [TargetDependency] { get }
     
     func generateTarget() -> [Target]
-    // func generateConfigurations() -> Settings
+    func generateConfigurations() -> Settings
 }
 
 // MARK: - Base Project Factory
@@ -27,28 +27,46 @@ class BaseProjectFactory: ProjectFactory {
     ]
     
     let infoPlist: [String: InfoPlist.Value] = [
-               "CFBundleShortVersionString": "1.0",
-               "CFBundleVersion": "1",
-               "UILaunchStoryboardName": "LaunchScreen",
-               "UIApplicationSceneManifest": [
-                   "UIApplicationSupportsMultipleScenes": false,
-                   "UISceneConfigurations": [
-                       "UIWindowSceneSessionRoleApplication": [
-                           [
-                               "UISceneConfigurationName": "Default Configuration",
-                               "UISceneDelegateClassName": "$(PRODUCT_MODULE_NAME).SceneDelegate"
-                           ],
-                       ]
-                   ]
-               ],
-           ]
+        "CFBundleShortVersionString": "1.0",
+        "CFBundleVersion": "1",
+        "UILaunchStoryboardName": "LaunchScreen",
+        "UIApplicationSceneManifest": [
+            "UIApplicationSupportsMultipleScenes": false,
+            "UISceneConfigurations": [
+                "UIWindowSceneSessionRoleApplication": [
+                    [
+                        "UISceneConfigurationName": "Default Configuration",
+                        "UISceneDelegateClassName": "$(PRODUCT_MODULE_NAME).SceneDelegate"
+                    ],
+                ]
+            ]
+        ],
+    ]
     
-    // func generateConfigurations() -> Settings {
-    //     return Settings.settings(configurations: [
-    //         .debug(name: "Debug", xcconfig: .relativeToRoot("\(projectName)/Sources/Config/Debug.xcconfig")),
-    //         .release(name: "Release", xcconfig: .relativeToRoot("\(projectName)/Sources/Config/Release.xcconfig")),
-    //     ])
-    // }
+    let baseSettings: [String: SettingValue] = [
+      "OTHER_LDFLAGS": "-ObjC",
+    ]
+    
+    let releaseSetting: [String: SettingValue] = [:]
+    
+    let debugSetting: [String: SettingValue] = [:]
+    
+    func generateConfigurations() -> Settings {
+        return Settings.settings(
+            base: baseSettings,
+            configurations: [
+              .release(
+                name: "Release",
+                settings: releaseSetting
+              ),
+              .debug(
+                name: "Debug",
+                settings: debugSetting
+              )
+            ],
+            defaultSettings: .recommended
+          )
+    }
     
     func generateTarget() -> [Target] {
         [
@@ -75,6 +93,6 @@ let factory = BaseProjectFactory()
 let project: Project = .init(
     name: factory.projectName,
     organizationName: factory.projectName,
-    // settings: factory.generateConfigurations(),
+    settings: factory.generateConfigurations(),
     targets: factory.generateTarget()
 )
