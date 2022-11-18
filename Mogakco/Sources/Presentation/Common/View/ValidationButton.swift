@@ -21,17 +21,10 @@ final class ValidationButton: UIButton {
     }
     
     private func configure() {
-        configureDefaultheight()
         configureFont()
         configureRadius()
         configureEnableColor()
         configureDisableColor()
-    }
-    
-    private func configureDefaultheight() {
-        snp.makeConstraints {
-            $0.height.equalTo(45)
-        }
     }
     
     private func configureFont() {
