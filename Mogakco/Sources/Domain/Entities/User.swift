@@ -1,17 +1,19 @@
 //
-//  SignupRequestDTO.swift
+//  User.swift
 //  Mogakco
 //
 //  Created by 김범수 on 2022/11/16.
 //  Copyright © 2022 Mogakco. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
-struct SignupRequestDTO: Encodable {
+struct User: Codable {
+    let id: String?
     let email: String
-    let password: String
+    let password: String?
     let name: String
     let languages: [String]
     let careers: [String]
+    // TODO: Image
 }
