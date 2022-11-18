@@ -9,4 +9,20 @@
 import Foundation
 
 struct SignupResponseDTO: Decodable {
+    let id: String
+    let email: String
+    let name: String
+    let languages: [String]
+    let careers: [String]
+    
+    func toDomain() -> User {
+        return User(
+            id: id,
+            email: email,
+            password: nil,
+            name: name,
+            languages: languages,
+            careers: careers
+        )
+    }
 }
