@@ -10,7 +10,7 @@ import Foundation
 
 import RxSwift
 
-struct UserDefaultsUserDataSource: LocalUserDataSource {
+struct UserDefaultsUserDataSource: LocalUserDataSourceProtocol {
     private let userKey = "user"
 
     func save(user: User) -> Observable<Void> {
