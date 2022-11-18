@@ -104,7 +104,7 @@ final class CountTextField: UIView {
         stackView.snp.makeConstraints { make in
             make.top.equalToSuperview()
             make.left.right.equalToSuperview().inset(4)
-            make.height.equalTo(52.0)
+            make.height.equalTo(30.0)
         }
     }
     
@@ -112,8 +112,7 @@ final class CountTextField: UIView {
         addSubview(textField)
         textField.snp.makeConstraints { make in
             make.bottom.left.right.equalToSuperview()
-            make.top.equalTo(stackView.snp.bottom).offset(15)
-            make.height.greaterThanOrEqualTo(56.0)
+            make.top.equalTo(stackView.snp.bottom).offset(8)
         }
     }
 }
