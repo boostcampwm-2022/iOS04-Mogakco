@@ -273,7 +273,7 @@ extension StudyDetailViewController: UICollectionViewDataSource {
             else { return UICollectionViewCell() }
             
             cell.prepareForReuse()
-            cell.setInfo(imageURLString: "", name: "김신오이", description: "iOS 개발자들")
+            cell.setInfo(imageURLString: "person", name: "김신오이", description: "iOS 개발자들")
             
             return cell
         
