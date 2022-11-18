@@ -72,7 +72,7 @@ final class BadgeCell: UICollectionViewCell, Identifiable {
     }
     
     func setInfo(iconName: String?, title: String?) {
-        iconimageView.image = UIImage(named: iconName ?? "" ) ?? UIImage(systemName: "questionmark.app")
+        iconimageView.image = UIImage(named: iconName ?? "Default" ) ?? UIImage(systemName: "questionmark.app")
         titleLabel.text = title ?? "??"
     }
     
