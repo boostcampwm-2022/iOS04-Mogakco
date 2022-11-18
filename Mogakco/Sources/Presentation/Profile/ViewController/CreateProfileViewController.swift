@@ -163,6 +163,7 @@ final class CreateProfileViewController: ViewController {
         introuceCountTextField.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(16.0)
             $0.top.equalTo(nameCountTextField.snp.bottom).offset(8.0)
+            $0.height.equalTo(240.0)
         }
     }
     
@@ -179,6 +180,7 @@ final class CreateProfileViewController: ViewController {
         view.addSubview(completeButton)
         completeButton.snp.makeConstraints {
             $0.leading.trailing.bottom.equalTo(view.safeAreaLayoutGuide).inset(16.0)
+            $0.height.equalTo(Layout.buttonHeight)
         }
     }
 }
