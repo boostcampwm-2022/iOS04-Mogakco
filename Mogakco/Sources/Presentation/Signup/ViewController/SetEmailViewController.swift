@@ -153,7 +153,6 @@ final class SetEmailViewController: ViewController {
         button.snp.makeConstraints {
             $0.left.right.equalToSuperview().inset(16)
             $0.bottom.equalTo(view.safeAreaLayoutGuide)
-            $0.height.equalTo(52)
         }
     }
 }
