@@ -64,7 +64,7 @@ class TextField: UITextField {
     
     private func layout() {
         snp.makeConstraints { make in
-            make.height.equalTo(56)
+            make.height.greaterThanOrEqualTo(Layout.textFieldHeight)
         }
     }
 }
