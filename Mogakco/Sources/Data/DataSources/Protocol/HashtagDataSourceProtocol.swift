@@ -8,6 +8,8 @@
 
 import Foundation
 
+import RxSwift
+
 protocol HashtagDataSourceProtocol {
-    func loadTagList(kind: KindHashtag) -> [String]
+    func loadTagList(kind: KindHashtag) -> Observable<[String]>
 }
