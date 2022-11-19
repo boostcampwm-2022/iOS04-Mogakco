@@ -1,5 +1,5 @@
 //
-//  HashtagRepositoryProtocol.swift
+//  HashtagUsecaseProtocol.swift
 //  Mogakco
 //
 //  Created by 이주훈 on 2022/11/17.
@@ -10,6 +10,6 @@ import Foundation
 
 import RxSwift
 
-protocol HashtagRepositoryProtocol {
+protocol HashtagUsecaseProtocol {
     func loadTagList(kind: KindHashtag) -> Observable<[String]>
 }

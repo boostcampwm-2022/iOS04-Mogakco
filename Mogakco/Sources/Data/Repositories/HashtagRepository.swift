@@ -8,12 +8,17 @@
 
 import Foundation
 
+import RxSwift
+
 struct HashtagRepository: HashtagRepositoryProtocol {
     
     let localHashtagDataSource: HashtagDataSourceProtocol
     
-    func loadTagList(kind: KindHashtag) -> [String] {
-        let tagList = localHashtagDataSource.loadTagList(kind: kind)
-        return tagList
+    init(localHashtagDataSource: HashtagDataSourceProtocol) {
+        self.localHashtagDataSource = localHashtagDataSource
+    }
+    
+    func loadTagList(kind: KindHashtag) -> Observable<[String]> {
+        return localHashtagDataSource.loadTagList(kind: kind)
     }
 }

@@ -8,8 +8,17 @@
 
 import Foundation
 
-protocol HashtagUseCaseProtocol {
-}
+import RxSwift
 
-struct HashtagUseCase {
+struct HashtagUsecase: HashtagUsecaseProtocol {
+    
+    let hashtagRepository: HashtagRepositoryProtocol
+    
+    init(hashtagRepository: HashtagRepositoryProtocol) {
+        self.hashtagRepository = hashtagRepository
+    }
+    
+    func loadTagList(kind: KindHashtag) -> Observable<[String]> {
+        return hashtagRepository.loadTagList(kind: kind)
+    }
 }
