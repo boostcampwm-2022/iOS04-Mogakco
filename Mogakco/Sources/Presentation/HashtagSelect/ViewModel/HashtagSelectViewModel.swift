@@ -30,13 +30,16 @@ final class HashtagSelectViewModel: ViewModel {
     var disposeBag = DisposeBag()
     var selectedBadges: [String] = []
     let badgeList = BehaviorSubject<[String]>(value: [])
+    let hashTagUsecase: HashtagUsecaseProtocol
     
     var collectionViewCount: Int {
         guard let count = try? badgeList.value().count else { return 0 }
         return count
     }
     
-    init() {
+    init(coordinator: AdditionalSignupCoordinatorProtocol, hashTagUsecase: HashtagUsecaseProtocol) {
+        self.coordinator = coordinator
+        self.hashTagUsecase = hashTagUsecase
     }
     
     func transform(input: Input) -> Output {
