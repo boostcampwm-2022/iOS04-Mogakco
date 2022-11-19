@@ -35,15 +35,19 @@ final class AdditionalSignupCoordinator: Coordinator, AdditionalSignupCoordinato
     }
     
     func showLanguage() {
-        let viewModel = HashtagSelectViewModel()
-        viewModel.coordinator = self
+        let hashtagDataSource = HashtagDataSource()
+        let hashtagRepository = HashtagRepository(localHashtagDataSource: hashtagDataSource)
+        let hashtagUsecase = HashtagUsecase(hashtagRepository: hashtagRepository)
+        let viewModel = HashtagSelectViewModel(coordinator: self, hashTagUsecase: hashtagUsecase)
         let hashtagSelectViewController = HashtagSelectViewController(kind: .language, viewModel: viewModel)
         navigationController.pushViewController(hashtagSelectViewController, animated: true)
     }
     
     func showCareer() {
-        let viewModel = HashtagSelectViewModel()
-        viewModel.coordinator = self
+        let hashtagDataSource = HashtagDataSource()
+        let hashtagRepository = HashtagRepository(localHashtagDataSource: hashtagDataSource)
+        let hashtagUsecase = HashtagUsecase(hashtagRepository: hashtagRepository)
+        let viewModel = HashtagSelectViewModel(coordinator: self, hashTagUsecase: hashtagUsecase)
         let hashtagSelectViewController = HashtagSelectViewController(kind: .career, viewModel: viewModel)
         navigationController.pushViewController(hashtagSelectViewController, animated: true)
     }
