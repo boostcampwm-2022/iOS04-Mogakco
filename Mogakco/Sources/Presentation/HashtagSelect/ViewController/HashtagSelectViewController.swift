@@ -42,10 +42,12 @@ final class HashtagSelectViewController: ViewController {
     // MARK: - Property
     
     let viewModel: HashtagSelectViewModel
+    let kind: KindHashtag
     
     // MARK: - function
     
     init(kind: KindHashtag, viewModel: HashtagSelectViewModel) {
+        self.kind = kind
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
@@ -74,6 +76,7 @@ final class HashtagSelectViewController: ViewController {
     
     override func bind() {
         let input = HashtagSelectViewModel.Input(
+            kindHashtag: Observable.just(kind),
             nextButtonTapped: nextButton.rx.tap.asObservable()
         )
         let output = viewModel.transform(input: input)
