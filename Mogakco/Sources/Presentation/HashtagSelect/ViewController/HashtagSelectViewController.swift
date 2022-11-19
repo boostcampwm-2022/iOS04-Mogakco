@@ -117,6 +117,7 @@ final class HashtagSelectViewController: ViewController {
         nextButton.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(16)
             $0.bottom.equalTo(view.safeAreaLayoutGuide)
+            $0.height.equalTo(Layout.buttonHeight)
         }
     }
 }
