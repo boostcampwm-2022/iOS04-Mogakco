@@ -20,6 +20,7 @@ enum KindHashtag {
 final class HashtagSelectViewModel: ViewModel {
     
     struct Input {
+        let kindHashtag: Observable<KindHashtag>
         let nextButtonTapped: Observable<Void>
     }
     struct Output {
@@ -27,10 +28,10 @@ final class HashtagSelectViewModel: ViewModel {
     }
     
     weak var coordinator: AdditionalSignupCoordinatorProtocol?
+    let hashTagUsecase: HashtagUsecaseProtocol
     var disposeBag = DisposeBag()
     var selectedBadges: [String] = []
     let badgeList = BehaviorSubject<[String]>(value: [])
-    let hashTagUsecase: HashtagUsecaseProtocol
     
     var collectionViewCount: Int {
         guard let count = try? badgeList.value().count else { return 0 }
@@ -45,8 +46,15 @@ final class HashtagSelectViewModel: ViewModel {
     func transform(input: Input) -> Output {
         let collectionReloadObservable = PublishSubject<Void>()
         
+        input.kindHashtag
+            .subscribe { [weak self] in
+                self?.loadTagList(kind: $0)
+            }
+            .disposed(by: disposeBag)
+        
         input.nextButtonTapped
             .subscribe(onNext: {
+                // TODO: 분기처리 필요
                 self.coordinator?.finish(success: true)
             })
             .disposed(by: disposeBag)
@@ -58,6 +66,14 @@ final class HashtagSelectViewModel: ViewModel {
             .disposed(by: disposeBag)
         
         return Output(collectionReloadObservable: collectionReloadObservable.asObservable())
+    }
+    
+    private func loadTagList(kind: KindHashtag) {
+        hashTagUsecase.loadTagList(kind: kind)
+            .subscribe { [weak self] in
+                self?.badgeList.onNext($0)
+            }
+            .disposed(by: disposeBag)
     }
     
     func cellTitle(index: Int) -> String {
