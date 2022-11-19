@@ -28,7 +28,7 @@ final class HashtagSelectViewModel: ViewModel {
     
     weak var coordinator: AdditionalSignupCoordinatorProtocol?
     var disposeBag = DisposeBag()
-    let selectedBadges = BehaviorSubject<[String]>(value: [])
+    var selectedBadges: [String] = []
     let badgeList = BehaviorSubject<[String]>(value: [])
     
     var collectionViewCount: Int {
@@ -63,32 +63,41 @@ final class HashtagSelectViewModel: ViewModel {
     }
     
     func isSelected(title: String?) -> Bool {
-        guard let selected = try? selectedBadges.value(),
-              let title else {
-            return false
+//        guard let selected = try? selectedBadges.value(),
+//              let title else {
+//            return false
+//        }
+        
+        if let title {
+            if selectedBadges.contains(title) { return true }
         }
-        if selected.contains(title) { return true }
         
         return false
     }
     
     func selectBadge(title: String) {
-        guard var selected = try? selectedBadges.value(),
-              !selected.contains(title) else {
+//        guard var selected = try? selectedBadges.value(),
+//              !selected.contains(title) else {
+//            return
+//        }
+        
+        if !selectedBadges.contains(title) {
+            selectedBadges.append(title)
             return
         }
-        
-        selected.append(title)
-        selectedBadges.onNext(selected)
     }
     
     func deselectBadge(title: String) {
-        guard var selected = try? selectedBadges.value(),
-              let removeIndex = selected.firstIndex(of: title) else {
+//        guard var selected = try? selectedBadges.value(),
+//              let removeIndex = selected.firstIndex(of: title) else {
+//            return
+//        }
+        
+        guard selectedBadges.contains(title),
+              let removeIndex = selectedBadges.firstIndex(of: title) else {
             return
         }
         
-        selected.remove(at: removeIndex)
-        selectedBadges.onNext(selected)
+        selectedBadges.remove(at: removeIndex)
     }
 }
