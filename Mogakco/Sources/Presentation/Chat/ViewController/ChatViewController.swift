@@ -15,7 +15,7 @@ import Then
 
 final class ChatViewController: UICollectionViewController, ChatSidebarViewDelegate {
     
-    private lazy var customInputView = CustomInputAccessoryView(
+    private lazy var messageInputView = MessageInputView(
         frame: CGRect(
             x: 0,
             y: 0,
@@ -51,7 +51,7 @@ final class ChatViewController: UICollectionViewController, ChatSidebarViewDeleg
     }
     
     override var inputAccessoryView: UIView? {
-        return customInputView
+        return messageInputView
     }
     
     override var canBecomeFirstResponder: Bool {
