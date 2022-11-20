@@ -13,7 +13,7 @@ import RxSwift
 import SnapKit
 import Then
 
-final class CustomInputAccessoryView: UIView {
+final class MessageInputView: UIView {
     
     private let disposeBag = DisposeBag()
     
