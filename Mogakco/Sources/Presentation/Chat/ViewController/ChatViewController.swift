@@ -132,6 +132,29 @@ final class ChatViewController: UICollectionViewController, ChatSidebarViewDeleg
         collectionView.alwaysBounceVertical = true
     }
     
+    func sidebarDidSelectRow(row: ChatSidebarMenu) {
+        blackScreen.isHidden = true
+        blackScreen.frame = self.view.bounds
+        
+        UIView.animate(withDuration: 0.3) {
+            self.sidebarView.frame = CGRect(
+                x: self.view.frame.width,
+                y: 0,
+                width: 0,
+                height: self.sidebarView.frame.height
+            )
+        }
+        
+        switch row {
+        case .studyInfo:
+            print("1")
+        case .exitStudy:
+            print("2")
+        case .showMember:
+            print("3")
+        }
+    }
+    
     @objc private func backButtonDidTap() {
         self.navigationController?.popViewController(animated: true)
     }
