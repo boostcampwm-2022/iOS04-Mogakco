@@ -160,6 +160,39 @@ final class ChatViewController: UICollectionViewController, ChatSidebarViewDeleg
     }
     
     @objc private func studyInfoDidTap() {
+        blackScreen.isHidden = false
+        
+        UIView.animate(
+            withDuration: 0.3,
+            animations: {
+                self.sidebarView.frame = CGRect(
+                    x: self.view.frame.width * (2 / 3),
+                    y: 0,
+                    width: 250,
+                    height: self.sidebarView.frame.height)
+            },
+            completion: { _ in
+                self.blackScreen.frame = CGRect(
+                    x: 0,
+                    y: 0,
+                    width: 300,
+                    height: self.view.bounds.height)
+            }
+        )
+    }
+    
+    @objc func blackScreenTapAction(sender: UITapGestureRecognizer) {
+        blackScreen.isHidden = true
+        blackScreen.frame = view.bounds
+        
+        UIView.animate(withDuration: 0.3) {
+            self.sidebarView.frame = CGRect(
+                x: self.view.frame.width,
+                y: 0,
+                width: 0,
+                height: self.sidebarView.frame.height
+            )
+        }
     }
 }
 
