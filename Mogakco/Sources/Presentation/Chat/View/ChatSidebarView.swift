@@ -14,7 +14,7 @@ import SnapKit
 import Then
 
 protocol ChatSidebarViewDelegate: AnyObject {
-    func sidebarDidSelectRow(row: ChatSidebarMenu)
+    func sidebarDidTap(row: ChatSidebarMenu)
 }
 
 enum ChatSidebarMenu: String, CaseIterable {
@@ -101,7 +101,7 @@ extension ChatSidebarView: UITableViewDataSource {
 extension ChatSidebarView: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        self.delegate?.sidebarDidSelectRow(row: ChatSidebarMenu(row: indexPath.row))
+        self.delegate?.sidebarDidTap(row: ChatSidebarMenu(row: indexPath.row))
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
