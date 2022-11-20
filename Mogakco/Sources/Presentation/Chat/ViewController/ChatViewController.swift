@@ -13,14 +13,18 @@ import RxSwift
 import SnapKit
 import Then
 
-final class ChatViewController: UICollectionViewController {
+final class ChatViewController: UICollectionViewController, ChatSidebarViewDelegate {
     
-    private lazy var customInputView = CustomInputAccessoryView(frame: CGRect(
-        x: 0,
-        y: 0,
-        width: view.frame.width,
-        height: 90)
+    private lazy var customInputView = CustomInputAccessoryView(
+        frame: CGRect(
+            x: 0,
+            y: 0,
+            width: view.frame.width,
+            height: 0)
     )
+    
+    var sidebarView: ChatSidebarView!
+    var blackScreen: UIView!
     
     init() {
         super.init(collectionViewLayout: UICollectionViewFlowLayout())
