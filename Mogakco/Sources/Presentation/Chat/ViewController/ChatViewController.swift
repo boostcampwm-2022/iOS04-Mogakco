@@ -36,8 +36,8 @@ final class ChatViewController: UICollectionViewController, ChatSidebarViewDeleg
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        configure()
         layout()
-        configureNavigationBar()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -58,8 +58,45 @@ final class ChatViewController: UICollectionViewController, ChatSidebarViewDeleg
         return true
     }
     
+    private func configure() {
+        configureSideBar()
+        configureBlackScreen()
+        configureNavigationBar()
+    }
+    
     private func layout() {
         layoutCollectionView()
+        layoutSideBar()
+        layoutBlackScreen()
+    }
+    
+    private func configureSideBar() {
+        sidebarView = ChatSidebarView(frame: CGRect(
+            x: view.frame.width,
+            y: 0,
+            width: 0,
+            height: view.frame.height)
+        )
+        sidebarView.delegate = self
+        sidebarView.layer.zPosition = 100
+        self.view.isUserInteractionEnabled = true
+    }
+    
+    private func layoutSideBar() {
+        self.navigationController?.view.addSubview(sidebarView)
+    }
+    
+    private func configureBlackScreen() {
+        blackScreen = UIView(frame: self.view.bounds)
+        blackScreen.backgroundColor = .black.withAlphaComponent(0.5)
+        blackScreen.isHidden = true
+        let tapGestRecognizer = UITapGestureRecognizer(target: self, action: #selector(blackScreenTapAction(sender:)))
+        blackScreen.addGestureRecognizer(tapGestRecognizer)
+    }
+    
+    private func layoutBlackScreen() {
+        view.addSubview(blackScreen)
+        blackScreen.layer.zPosition = 100
     }
     
     private func configureNavigationBar() {
@@ -89,8 +126,7 @@ final class ChatViewController: UICollectionViewController, ChatSidebarViewDeleg
     
     private func layoutCollectionView() {
         collectionView.snp.makeConstraints {
-            $0.top.left.right.equalToSuperview()
-            $0.bottom.equalToSuperview().inset(90)
+            $0.top.left.bottom.right.equalToSuperview()
         }
         collectionView.register(ChatCell.self, forCellWithReuseIdentifier: ChatCell.identifier)
         collectionView.alwaysBounceVertical = true
