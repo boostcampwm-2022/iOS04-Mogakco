@@ -132,7 +132,7 @@ final class ChatViewController: UICollectionViewController, ChatSidebarViewDeleg
         collectionView.alwaysBounceVertical = true
     }
     
-    func sidebarDidSelectRow(row: ChatSidebarMenu) {
+    func sidebarDidTap(row: ChatSidebarMenu) {
         blackScreen.isHidden = true
         blackScreen.frame = self.view.bounds
         
@@ -216,6 +216,8 @@ extension ChatViewController {
         return cell
     }
 }
+
+// MARK: - UICollectionViewDelegateFlowLayout
 
 extension ChatViewController: UICollectionViewDelegateFlowLayout {
     
