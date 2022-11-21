@@ -8,7 +8,11 @@
 
 import Foundation
 
-enum Languages: String, CaseIterable {
+protocol Hashtag {
+    func hashtagTitle() -> String
+}
+
+enum Languages: String, CaseIterable, Hashtag {
     case cLang = "c"
     case cShop
     case cpp
