@@ -22,6 +22,10 @@ enum Category: String, CaseIterable, Hashtag {
     case interview
     case machineLearning
     
+    var title: String {
+        return self.rawValue
+    }
+    
     func hashtagTitle() -> String {
         switch self {
         case .artificialIntelligence: return "AI"

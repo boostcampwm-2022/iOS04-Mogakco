@@ -18,7 +18,7 @@ struct HashtagUsecase: HashtagUseCaseProtocol {
         self.hashtagRepository = hashtagRepository
     }
     
-    func loadTagList(kind: KindHashtag) -> Observable<[Languages]> {
+    func loadTagList(kind: KindHashtag) -> Observable<[Hashtag]> {
         return hashtagRepository.loadTagList(kind: kind)
     }
 }

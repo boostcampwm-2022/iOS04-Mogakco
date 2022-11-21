@@ -11,7 +11,7 @@ import Foundation
 import RxSwift
 
 struct HashtagDataSource: HashtagDataSourceProtocol {
-    func loadTagList(kind: KindHashtag) -> Observable<[Languages]> {
+    func loadTagList(kind: KindHashtag) -> Observable<[Hashtag]> {
         return Observable.create { emitter in
             switch kind {
             case .language: emitter.onNext(loadLanguage())
@@ -23,7 +23,9 @@ struct HashtagDataSource: HashtagDataSourceProtocol {
         }
     }
     
-    private func loadLanguage() -> [Languages] {
+    private func loadLanguage() -> [Hashtag] {
         return Languages.allCases
     }
+    
+    private func loadCareer() {}
 }

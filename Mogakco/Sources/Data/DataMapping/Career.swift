@@ -18,6 +18,10 @@ enum Career: String, CaseIterable, Hashtag {
     case toss
     case worksMobile
     
+    var title: String {
+        return self.rawValue
+    }
+    
     func hashtagTitle() -> String {
         switch self {
         case .baemin: return "배달의민족"

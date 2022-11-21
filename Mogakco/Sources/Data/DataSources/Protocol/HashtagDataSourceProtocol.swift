@@ -11,5 +11,5 @@ import Foundation
 import RxSwift
 
 protocol HashtagDataSourceProtocol {
-    func loadTagList(kind: KindHashtag) -> Observable<[Languages]>
+    func loadTagList(kind: KindHashtag) -> Observable<[Hashtag]>
 }
