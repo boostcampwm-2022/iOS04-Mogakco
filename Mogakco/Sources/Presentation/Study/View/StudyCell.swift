@@ -11,7 +11,7 @@ import UIKit
 import SnapKit
 import Then
 
-final class StudyCell: UITableViewCell, Identifiable {
+final class StudyCell: UICollectionViewCell, Identifiable {
     
     enum StudyState: String {
         case open = "모집중"
@@ -27,12 +27,16 @@ final class StudyCell: UITableViewCell, Identifiable {
         }
     }
     
+    // MARK: - Public
+    
     var state: StudyState = .open {
         didSet {
             stateLabel.text = state.rawValue
             stateLabel.textColor = state.color
         }
     }
+    
+    // MARK: - Private
     
     private let hashtagStackView = UIStackView().then {
         $0.spacing = 5
@@ -52,7 +56,7 @@ final class StudyCell: UITableViewCell, Identifiable {
     }
     
     private lazy var topStackView = UIStackView().then { stack in
-        [stateLabel, titleLabel, UIView()].forEach {
+        [stateLabel, titleLabel].forEach {
             stack.addArrangedSubview($0)
         }
         stack.spacing = 5
@@ -74,7 +78,7 @@ final class StudyCell: UITableViewCell, Identifiable {
         [dateView, participantsView].forEach {
             stack.addArrangedSubview($0)
         }
-        stack.spacing = 6
+        stack.spacing = 7
         stack.alignment = .fill
         stack.axis = .vertical
     }
@@ -82,21 +86,23 @@ final class StudyCell: UITableViewCell, Identifiable {
     private let contentLabel = UILabel().then {
         $0.font = .mogakcoFont.smallRegular
         $0.text = "오늘 강남역에서 모여서 모각코 하실분들 있을까요?"
+        $0.numberOfLines = 1
         $0.textColor = .mogakcoColor.typographyPrimary
     }
     
     private let totalStackView = UIStackView().then {
         $0.spacing = 7
-        $0.alignment = .fill
+        $0.alignment = .leading
         $0.axis = .vertical
     }
     
     // MARK: - Inits
     
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
+    override init(frame: CGRect) {
+        super.init(frame: frame)
         layout()
         configure()
+        setupHashtag(titles: ["알고리즘", "Swift"])
     }
     
     required init?(coder: NSCoder) {
@@ -105,22 +111,38 @@ final class StudyCell: UITableViewCell, Identifiable {
     
     // MARK: - Methods
     
+    func setupHashtag(titles: [String]) {
+        titles.forEach {
+            let label = UILabel()
+            label.font = UIFont(name: SFPro.regular.rawValue, size: 12)
+            label.text = $0
+            hashtagStackView.addArrangedSubview(label)
+        }
+    }
+    
     private func layout() {
         [hashtagStackView, topStackView, midStackView, contentLabel].forEach {
             totalStackView.addArrangedSubview($0)
         }
-        addSubview(totalStackView)
+        contentView.addSubview(totalStackView)
         totalStackView.snp.makeConstraints { make in
-            make.left.right.equalToSuperview().inset(8)
-            make.centerY.equalToSuperview()
+            make.edges.equalToSuperview().inset(16)
         }
     }
     
     private func configure() {
-        selectionStyle = .none
+        backgroundColor = .mogakcoColor.backgroundDefault
         layer.cornerRadius = 10
         layer.borderWidth = 0.2
         layer.borderColor = UIColor.mogakcoColor.borderDefault?.cgColor
-        addShadow(offset: CGSize(width: 1, height: 1))
+        clipsToBounds = false
+        addShadow(offset: CGSize(width: 1, height: 1), opacity: 0.3, radius: 5)
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        hashtagStackView.subviews.forEach {
+            $0.removeFromSuperview()
+        }
     }
 }
