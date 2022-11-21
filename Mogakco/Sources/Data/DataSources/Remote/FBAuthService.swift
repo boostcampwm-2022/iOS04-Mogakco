@@ -72,4 +72,20 @@ struct FBAuthService: AuthServiceProtocol {
             return Disposables.create()
         }
     }
+    
+    func login(_ request: EmailLoginData) -> Observable<String> {
+        return Observable.create { emmiter in
+            Auth.auth().signIn(withEmail: request.email, password: request.password) { result, error in
+                if let id = result?.user.uid,
+                   error == nil {
+                    emmiter.onNext(id)
+                } else {
+                    if let error {
+                        emmiter.onError(error)
+                    }
+                }
+            }
+            return Disposables.create()
+        }
+    }
 }

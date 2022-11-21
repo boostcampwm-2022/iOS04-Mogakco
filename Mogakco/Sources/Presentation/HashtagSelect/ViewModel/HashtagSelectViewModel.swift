@@ -75,7 +75,6 @@ final class HashtagSelectViewModel: ViewModel {
         input.nextButtonTapped
             .subscribe(onNext: {
                 // TODO: 분기처리 필요
-                self.coordinator?.finish(success: true)
             })
             .disposed(by: disposeBag)
         
