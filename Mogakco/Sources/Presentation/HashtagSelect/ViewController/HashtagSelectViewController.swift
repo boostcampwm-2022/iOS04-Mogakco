@@ -75,14 +75,6 @@ final class HashtagSelectViewController: ViewController {
     }
     
     override func bind() {
-        hashtagListCollectionView.rx.itemSelected
-            .subscribe(onNext: {
-                print($0)
-            })
-            .disposed(by: disposeBag)
-        
-        let cellSelected = hashtagListCollectionView.rx.itemSelected
-        
         let input = HashtagSelectViewModel.Input(
             kindHashtag: Observable.just(kind),
             cellSelected: cellSelected,
