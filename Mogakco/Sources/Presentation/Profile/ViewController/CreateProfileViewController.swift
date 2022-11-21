@@ -35,7 +35,7 @@ final class CreateProfileViewController: ViewController {
         $0.placeholder = "이름을 입력해주세요."
     }
     
-    private let introuceCountTextField = CountTextField().then {
+    private let introuceCountTextField = CountTextView().then {
         $0.title = "소개"
         $0.maxCount = 100
         $0.placeholder = "자신을 소개해주세요."
