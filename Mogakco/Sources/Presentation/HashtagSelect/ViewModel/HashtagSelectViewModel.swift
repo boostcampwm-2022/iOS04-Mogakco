@@ -31,7 +31,7 @@ final class HashtagSelectViewModel: ViewModel {
     let hashTagUsecase: HashtagUseCaseProtocol
     var disposeBag = DisposeBag()
     var selectedBadges: [String] = []
-    let badgeList = BehaviorSubject<[String]>(value: [])
+    let badgeList = BehaviorSubject<[Languages]>(value: [])
     
     var collectionViewCount: Int {
         guard let count = try? badgeList.value().count else { return 0 }
@@ -76,8 +76,8 @@ final class HashtagSelectViewModel: ViewModel {
             .disposed(by: disposeBag)
     }
     
-    func cellTitle(index: Int) -> String {
-        guard let list = try? badgeList.value() else { return "?" }
+    func cellTitle(index: Int) -> Languages? {
+        guard let list = try? badgeList.value() else { return nil }
         return list[index]
     }
     
