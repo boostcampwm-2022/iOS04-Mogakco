@@ -40,12 +40,12 @@ struct FBAuthService: AuthServiceProtocol {
     
     private func createUser(request: SignupRequestDTO, id: String) -> Observable<SignupResponseDTO> {
         return Observable.create { emitter in
-            
+            // TODO: RestAPI
             let data = [
                 "id": id,
                 "email": request.email,
                 "password": request.password,
-                "name": request.name,
+                "name": request.name
                 // "languages": request.languages,
                 // "careers": request.careers
             ]
