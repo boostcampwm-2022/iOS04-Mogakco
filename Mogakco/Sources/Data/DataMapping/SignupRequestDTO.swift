@@ -13,14 +13,18 @@ struct SignupRequestDTO: Encodable {
     let email: String
     let password: String
     let name: String
+    let introduce: String
     let languages: [String]
     let careers: [String]
+    let categorys: [String]
     
     init(user: User) {
         self.email = user.email
         self.password = user.password ?? ""
         self.name = user.name
+        self.introduce = user.introduce
         self.languages = user.languages
         self.careers = user.careers
+        self.categorys = user.categorys
     }
 }
