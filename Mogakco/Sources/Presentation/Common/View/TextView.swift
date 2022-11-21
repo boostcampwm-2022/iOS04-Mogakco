@@ -26,7 +26,7 @@ final class TextView: UITextView {
     // MARK: Private
     
     private let label = UILabel().then {
-        $0.font = UIFont(name: SFPro.regular.rawValue, size: 16)
+        $0.font = UIFont.mogakcoFont.mediumRegular
         $0.textColor = UIColor(red: 0.78, green: 0.78, blue: 0.80, alpha: 1.0)
         $0.numberOfLines = 0
     }
