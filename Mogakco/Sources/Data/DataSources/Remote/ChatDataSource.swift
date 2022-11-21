@@ -1,5 +1,5 @@
 //
-//  UserDataSource.swift
+//  ChatDataSource.swift
 //  Mogakco
 //
 //  Created by 김범수 on 2022/11/21.
@@ -9,37 +9,38 @@
 import Alamofire
 import RxSwift
 
-struct UserDataSource: UserDataSourceProtocol {
+struct ChatDataSource: ChatDataSourceProtocol {
+
     let provider: ProviderProtocol
     
     init(provider: ProviderProtocol) {
         self.provider = provider
     }
     
-    func user(request: UserRequestDTO) -> Observable<UserResponseDTO> {
-        return provider.request(UserTarget.user(request))
+    func all(chatRoomID: String) -> Observable<Documents<[ChatResponseDTO]>> {
+        return provider.request(ChatTarget.all(chatRoomID))
     }
 }
 
-enum UserTarget {
-    case user(UserRequestDTO)
+enum ChatTarget {
+    case all(String)
 }
 
-extension UserTarget: TargetType {
+extension ChatTarget: TargetType {
     var baseURL: String {
-        return "https://firestore.googleapis.com/v1/projects/mogakco-72df7/databases/(default)/documents/User"
+        return "https://firestore.googleapis.com/v1/projects/mogakco-72df7/databases/(default)/documents/ChatRoom"
     }
     
     var method: HTTPMethod {
         switch self {
-        case .user:
+        case .all:
             return .get
         }
     }
     
     var header: HTTPHeaders {
         switch self {
-        case .user:
+        case .all:
             return [
                 "Content-Type": "application/json"
             ]
@@ -48,21 +49,21 @@ extension UserTarget: TargetType {
     
     var path: String {
         switch self {
-        case .user(let request):
-            return "/\(request.id)"
+        case .all(let chatRoomID):
+            return "/\(chatRoomID)/chats"
         }
     }
     
     var parameters: RequestParams? {
         switch self {
-        case .user:
+        case .all:
             return nil
         }
     }
     
     var encoding: ParameterEncoding {
         switch self {
-        case .user:
+        case .all:
             return JSONEncoding.default
         }
     }
