@@ -54,15 +54,17 @@ final class ChatListViewController: UIViewController {
         let input = ChatListViewModel.Input(
             selectedChatRoom: chatRoomTableView.rx.itemSelected.map { _ in }.asObservable()
         )
-        _ = viewModel.transform(input: input)
+        let output = viewModel.transform(input: input)
         
-        Driver<[Int]>.just([1, 2, 3, 4])
-            .drive(chatRoomTableView.rx.items) { tableView, index, _ in
+        output.chatRoomList
+            .asDriver(onErrorJustReturn: [])
+            .drive(chatRoomTableView.rx.items) { tableView, index, chatRoom in
                 guard let cell = tableView.dequeueReusableCell(
                     withIdentifier: ChatRoomTableViewCell.identifier,
                     for: IndexPath(row: index, section: 0)) as? ChatRoomTableViewCell else {
                     return UITableViewCell()
                 }
+                cell.configure(chatRoom: chatRoom)
                 return cell
             }
             .disposed(by: disposeBag)
