@@ -10,7 +10,7 @@ import Foundation
 
 import RxSwift
 
-struct HashtagUsecase: HashtagUsecaseProtocol {
+struct HashtagUsecase: HashtagUseCaseProtocol {
     
     let hashtagRepository: HashtagRepositoryProtocol
     
