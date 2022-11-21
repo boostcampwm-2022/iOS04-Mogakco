@@ -101,14 +101,14 @@ final class HashtagSelectViewModel: ViewModel {
     }
     
     func isSelected(index: Int) -> Bool {
-        guard let hashtag = try? badgeList.value()[index] else { return false }
+        guard let hashtag = cellInfo(index: index) else { return false }
         if selectedHashtag.contains(where: { $0.title == hashtag.title }) { return true }
         
         return false
     }
     
     func selectBadge(index: Int) {
-        guard let hashTag = try? badgeList.value()[index] else { return }
+        guard let hashTag = cellInfo(index: index) else { return }
         
         if !selectedHashtag.contains(where: { $0.title == hashTag.title }) {
             selectedHashtag.append(hashTag)
@@ -117,7 +117,7 @@ final class HashtagSelectViewModel: ViewModel {
     }
     
     func deselectBadge(index: Int) {
-        guard let hashTag = try? badgeList.value()[index] else { return }
+        guard let hashTag = cellInfo(index: index) else { return }
         
         if let removeIndex = selectedHashtag.firstIndex(where: { $0.title == hashTag.title }) {
             selectedHashtag.remove(at: removeIndex)
