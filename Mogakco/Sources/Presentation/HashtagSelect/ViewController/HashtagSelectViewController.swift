@@ -75,6 +75,8 @@ final class HashtagSelectViewController: ViewController {
     }
     
     override func bind() {
+        let cellSelected = hashtagListCollectionView.rx.itemSelected
+        
         let input = HashtagSelectViewModel.Input(
             kindHashtag: Observable.just(kind),
             cellSelected: cellSelected,
