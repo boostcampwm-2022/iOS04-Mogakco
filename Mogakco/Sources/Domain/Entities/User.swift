@@ -11,9 +11,11 @@ import UIKit
 struct User: Codable {
     let id: String?
     let email: String
+    let introduce: String
     let password: String?
     let name: String
     let languages: [String]
     let careers: [String]
+    let categorys: [String]
     // TODO: Image
 }

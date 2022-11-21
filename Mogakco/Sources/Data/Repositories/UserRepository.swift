@@ -31,4 +31,8 @@ struct UserRepository: UserRepositoryProtocol {
         return userDataSource.user(request: request)
             .map { $0.toDomain() }
     }
+    
+    func load() -> Observable<User> {
+        return localUserDataSource.load()
+    }
 }
