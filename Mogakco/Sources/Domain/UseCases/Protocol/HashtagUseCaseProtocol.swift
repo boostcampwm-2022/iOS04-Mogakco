@@ -10,6 +10,6 @@ import Foundation
 
 import RxSwift
 
-protocol HashtagUsecaseProtocol {
+protocol HashtagUseCaseProtocol {
     func loadTagList(kind: KindHashtag) -> Observable<[String]>
 }
