@@ -15,7 +15,6 @@ import Then
 final class LoginViewController: ViewController {
     
     private let emailTextField = MessageTextField()
-    
     private let secureTextField = SecureTextField()
     
     private let signupButton = UIButton().then {
@@ -67,6 +66,7 @@ final class LoginViewController: ViewController {
     }
     
     override func bind() {
+        //
     }
     
     override func layout() {
