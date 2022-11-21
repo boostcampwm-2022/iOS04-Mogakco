@@ -28,7 +28,7 @@ final class HashtagSelectViewModel: ViewModel {
     }
     
     weak var coordinator: AdditionalSignupCoordinatorProtocol?
-    let hashTagUsecase: HashtagUsecaseProtocol
+    let hashTagUsecase: HashtagUseCaseProtocol
     var disposeBag = DisposeBag()
     var selectedBadges: [String] = []
     let badgeList = BehaviorSubject<[String]>(value: [])
@@ -38,7 +38,7 @@ final class HashtagSelectViewModel: ViewModel {
         return count
     }
     
-    init(coordinator: AdditionalSignupCoordinatorProtocol, hashTagUsecase: HashtagUsecaseProtocol) {
+    init(coordinator: AdditionalSignupCoordinatorProtocol, hashTagUsecase: HashtagUseCaseProtocol) {
         self.coordinator = coordinator
         self.hashTagUsecase = hashTagUsecase
     }
