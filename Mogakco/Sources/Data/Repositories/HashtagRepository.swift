@@ -18,7 +18,7 @@ struct HashtagRepository: HashtagRepositoryProtocol {
         self.localHashtagDataSource = localHashtagDataSource
     }
     
-    func loadTagList(kind: KindHashtag) -> Observable<[Languages]> {
+    func loadTagList(kind: KindHashtag) -> Observable<[Hashtag]> {
         return localHashtagDataSource.loadTagList(kind: kind)
     }
 }

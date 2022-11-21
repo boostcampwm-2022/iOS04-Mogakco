@@ -17,28 +17,37 @@ enum KindHashtag {
     case category
 }
 
+protocol Hashtag {
+    var title: String { get }
+    func hashtagTitle() -> String
+}
+
 final class HashtagSelectViewModel: ViewModel {
     
     struct Input {
         let kindHashtag: Observable<KindHashtag>
+        let cellSelected: ControlEvent<IndexPath>
         let nextButtonTapped: Observable<Void>
     }
     struct Output {
-        let collectionReloadObservable: Observable<Void>
+        let hashtagReload: Observable<Void>
     }
     
     weak var coordinator: AdditionalSignupCoordinatorProtocol?
     let hashTagUsecase: HashtagUseCaseProtocol
     var disposeBag = DisposeBag()
-    var selectedBadges: [String] = []
-    let badgeList = BehaviorSubject<[Languages]>(value: [])
+    var selectedHashtag: [Hashtag] = []
+    let badgeList = BehaviorSubject<[Hashtag]>(value: [])
     
     var collectionViewCount: Int {
         guard let count = try? badgeList.value().count else { return 0 }
         return count
     }
     
-    init(coordinator: AdditionalSignupCoordinatorProtocol, hashTagUsecase: HashtagUseCaseProtocol) {
+    init(
+        coordinator: AdditionalSignupCoordinatorProtocol,
+        hashTagUsecase: HashtagUseCaseProtocol
+    ) {
         self.coordinator = coordinator
         self.hashTagUsecase = hashTagUsecase
     }
@@ -49,6 +58,17 @@ final class HashtagSelectViewModel: ViewModel {
         input.kindHashtag
             .subscribe { [weak self] in
                 self?.loadTagList(kind: $0)
+            }
+            .disposed(by: disposeBag)
+        
+        input.cellSelected
+            .map { $0.row }
+            .subscribe { [weak self] in
+                print("선택..")
+                self?.selectBadge(index: $0)
+                self?.selectedHashtag.forEach {
+                    print($0.hashtagTitle())
+                }
             }
             .disposed(by: disposeBag)
         
@@ -65,7 +85,7 @@ final class HashtagSelectViewModel: ViewModel {
             }
             .disposed(by: disposeBag)
         
-        return Output(collectionReloadObservable: collectionReloadObservable.asObservable())
+        return Output(hashtagReload: collectionReloadObservable.asObservable())
     }
     
     private func loadTagList(kind: KindHashtag) {
@@ -76,32 +96,38 @@ final class HashtagSelectViewModel: ViewModel {
             .disposed(by: disposeBag)
     }
     
-    func cellTitle(index: Int) -> Languages? {
-        guard let list = try? badgeList.value() else { return nil }
-        return list[index]
+    func cellInfo(index: Int) -> Hashtag? {
+        return try? badgeList.value()[index]
     }
     
-    func isSelected(title: String?) -> Bool {
-        if let title {
-            if selectedBadges.contains(title) { return true }
-        }
+    func cellTitle(index: Int) -> String? {
+        guard let list = try? badgeList.value() else { return nil }
+        return list[index].hashtagTitle()
+    }
+    
+    func isSelected(index: Int) -> Bool {
+        guard let hashtag = try? badgeList.value()[index] else { return false }
+        if selectedHashtag.contains(where: { $0.title == hashtag.title }) { return true }
         
         return false
     }
     
-    func selectBadge(title: String) {
-        if !selectedBadges.contains(title) {
-            selectedBadges.append(title)
+    func selectBadge(index: Int) {
+        guard let hashTag = try? badgeList.value()[index] else { return }
+        
+        if !selectedHashtag.contains(where: { $0.title == hashTag.title }) {
+            selectedHashtag.append(hashTag)
+            print(selectedHashtag.count)
             return
         }
     }
     
-    func deselectBadge(title: String) {
-        guard selectedBadges.contains(title),
-              let removeIndex = selectedBadges.firstIndex(of: title) else {
-            return
-        }
+    func deselectBadge(index: Int) {
+        guard let hashTag = try? badgeList.value()[index] else { return }
         
-        selectedBadges.remove(at: removeIndex)
+        if let removeIndex = selectedHashtag.firstIndex(where: { $0.title == hashTag.title }) {
+            selectedHashtag.remove(at: removeIndex)
+            print(selectedHashtag.count)
+        }
     }
 }
