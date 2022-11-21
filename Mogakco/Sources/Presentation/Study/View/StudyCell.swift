@@ -78,7 +78,7 @@ final class StudyCell: UICollectionViewCell, Identifiable {
         [dateView, participantsView].forEach {
             stack.addArrangedSubview($0)
         }
-        stack.spacing = 7
+        stack.spacing = 8
         stack.alignment = .fill
         stack.axis = .vertical
     }
@@ -86,12 +86,13 @@ final class StudyCell: UICollectionViewCell, Identifiable {
     private let contentLabel = UILabel().then {
         $0.font = .mogakcoFont.smallRegular
         $0.text = "오늘 강남역에서 모여서 모각코 하실분들 있을까요?"
-        $0.numberOfLines = 1
+        $0.numberOfLines = 2
         $0.textColor = .mogakcoColor.typographyPrimary
+        $0.setLineSpacing(spacing: 4)
     }
     
     private let totalStackView = UIStackView().then {
-        $0.spacing = 7
+        $0.spacing = 8
         $0.alignment = .leading
         $0.axis = .vertical
     }
