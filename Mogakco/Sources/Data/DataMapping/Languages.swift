@@ -8,10 +8,6 @@
 
 import Foundation
 
-protocol Hashtag {
-    func hashtagTitle() -> String
-}
-
 enum Languages: String, CaseIterable, Hashtag {
     case cLang = "c"
     case cShop
@@ -39,6 +35,10 @@ enum Languages: String, CaseIterable, Hashtag {
         }
         
         return names
+    }
+    
+    var title: String {
+        return self.rawValue
     }
     
     func hashtagTitle() -> String {
