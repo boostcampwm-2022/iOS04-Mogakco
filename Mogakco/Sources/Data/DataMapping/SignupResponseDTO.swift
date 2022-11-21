@@ -13,17 +13,21 @@ struct SignupResponseDTO: Decodable {
     let id: String
     let email: String
     let name: String
+    let introduce: String
     let languages: [String]
     let careers: [String]
+    let categorys: [String]
     
     func toDomain() -> User {
         return User(
             id: id,
             email: email,
+            introduce: introduce,
             password: nil,
             name: name,
             languages: languages,
-            careers: careers
+            careers: careers,
+            categorys: categorys
         )
     }
 }
