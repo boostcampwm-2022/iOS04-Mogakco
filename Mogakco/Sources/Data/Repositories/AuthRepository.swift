@@ -18,13 +18,7 @@ struct AuthRepository: AuthRepositoryProtocol {
     }
     
     func signup(user: User) -> Observable<User> {
-        let request = SignupRequestDTO(
-            email: user.email,
-            password: user.password ?? "", // TODO: handling
-            name: user.name,
-            languages: user.languages,
-            careers: user.careers
-        )
+        let request = SignupRequestDTO(user: user)
         return authService
             .signup(request)
             .map { $0.toDomain() }

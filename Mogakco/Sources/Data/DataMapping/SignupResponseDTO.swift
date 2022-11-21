@@ -9,6 +9,7 @@
 import Foundation
 
 struct SignupResponseDTO: Decodable {
+    // TODO: private
     let id: String
     let email: String
     let name: String
