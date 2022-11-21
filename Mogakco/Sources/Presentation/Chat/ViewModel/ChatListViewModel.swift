@@ -18,13 +18,19 @@ final class ChatListViewModel: ViewModel {
     }
     
     struct Output {
+        let chatRoomList: Observable<[ChatRoom]>
     }
     
     var disposeBag = DisposeBag()
     weak var coordinator: ChatTabCoordinator?
+    let chatRoomListUseCase: ChatRoomListUseCaseProtocol
  
-    init(coordinator: ChatTabCoordinator) {
+    init(
+        coordinator: ChatTabCoordinator,
+        chatRoomListUseCase: ChatRoomListUseCaseProtocol
+    ) {
         self.coordinator = coordinator
+        self.chatRoomListUseCase = chatRoomListUseCase
     }
     
     func transform(input: Input) -> Output {
@@ -36,6 +42,12 @@ final class ChatListViewModel: ViewModel {
             })
             .disposed(by: disposeBag)
         
-        return Output()
+        let chatRoomList = Observable.just(())
+            .withUnretained(self)
+            .flatMap { $0.0.chatRoomListUseCase.list() }
+        
+        return Output(
+            chatRoomList: chatRoomList.asObservable()
+        )
     }
 }

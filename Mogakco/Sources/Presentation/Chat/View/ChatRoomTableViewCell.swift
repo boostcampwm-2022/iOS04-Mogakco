@@ -19,28 +19,24 @@ final class ChatRoomTableViewCell: UITableViewCell, Identifiable {
     }
     
     private let chatRoomTitleLabel = UILabel().then {
-        $0.text = "Swift 공부방"
         $0.textAlignment = .left
         $0.font = UIFont.mogakcoFont.mediumBold
         $0.textColor = UIColor.mogakcoColor.typographyPrimary
     }
     
     private let latestMessageLabel = UILabel().then {
-        $0.text = "언제 만날까요"
         $0.textAlignment = .left
         $0.font = UIFont.mogakcoFont.smallRegular
         $0.textColor = UIColor.mogakcoColor.typographySecondary
     }
     
     private let latestMessageDateLabel = UILabel().then {
-        $0.text = "오후 2:09"
         $0.textAlignment = .right
         $0.font = UIFont.mogakcoFont.smallRegular
         $0.textColor = UIColor.mogakcoColor.typographySecondary
     }
     
     private let unreadMessageCountLabel = UILabel().then {
-        $0.text = "30"
         $0.textAlignment = .center
         $0.backgroundColor = UIColor.mogakcoColor.primarySecondary
         $0.font = UIFont.mogakcoFont.caption
@@ -60,6 +56,10 @@ final class ChatRoomTableViewCell: UITableViewCell, Identifiable {
         super.layoutSubviews()
         configureChatRoomImageViewCornerRadius()
         configureUnreadMessageCountLabelCornerRadius()
+    }
+    
+    func configure(chatRoom: ChatRoom) {
+        chatRoomTitleLabel.text = chatRoom.userIDs.joined()
     }
     
     private func layout() {
