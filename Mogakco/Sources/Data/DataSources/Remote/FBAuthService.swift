@@ -45,7 +45,8 @@ struct FBAuthService: AuthServiceProtocol {
                 "id": id,
                 "email": request.email,
                 "password": request.password,
-                "name": request.name
+                "name": request.name,
+                "introduce": request.introduce
                 // "languages": request.languages,
                 // "careers": request.careers
             ]
@@ -59,8 +60,10 @@ struct FBAuthService: AuthServiceProtocol {
                         id: id,
                         email: request.email,
                         name: request.name,
+                        introduce: request.introduce,
                         languages: request.languages,
-                        careers: request.careers
+                        careers: request.careers,
+                        categorys: request.categorys
                     )
                     emitter.onNext(response)
                 }
