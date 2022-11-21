@@ -26,6 +26,8 @@ struct UserRepository: UserRepositoryProtocol {
         return localUserDataSource.save(user: user)
     }
     
+    func save(userUID: String) -> Observable<Void> {
+        return localUserDataSource.saveUID(userUID: userUID)
     func user(id: String) -> Observable<User> {
         let request = UserRequestDTO(id: id)
         return userDataSource.user(request: request)
