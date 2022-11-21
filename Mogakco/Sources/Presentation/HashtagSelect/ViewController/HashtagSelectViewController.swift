@@ -41,8 +41,8 @@ final class HashtagSelectViewController: ViewController {
     
     // MARK: - Property
     
-    let viewModel: HashtagSelectViewModel
-    let kind: KindHashtag
+    private let viewModel: HashtagSelectViewModel
+    private let kind: KindHashtag
     
     // MARK: - function
     
