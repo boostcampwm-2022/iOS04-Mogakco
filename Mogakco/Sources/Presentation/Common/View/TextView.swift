@@ -49,7 +49,6 @@ final class TextView: UITextView {
     // MARK: Methods
     
     private func setup() {
-        font = UIFont.mogakcoFont.mediumRegular
         layer.borderWidth = 1
         layer.cornerRadius = 8
         layer.borderColor = (UIColor.mogakcoColor.semanticDisabled ?? .systemGray).cgColor
@@ -57,11 +56,22 @@ final class TextView: UITextView {
         textContainer.lineFragmentPadding = 0
         showsHorizontalScrollIndicator = false
         showsVerticalScrollIndicator = false
+        setupFont()
+    }
+    
+    private func setupFont() {
+        let style = NSMutableParagraphStyle()
+        style.lineSpacing = 4
+        let attributes = [
+            NSAttributedString.Key.paragraphStyle: style,
+            NSAttributedString.Key.font: UIFont.mogakcoFont.mediumRegular
+        ]
+        typingAttributes = attributes
     }
     
     private func layout() {
         self.snp.makeConstraints {
-            $0.height.greaterThanOrEqualTo(56)
+            $0.height.greaterThanOrEqualTo(Layout.textViewHeight)
         }
         addSubview(label)
         label.snp.makeConstraints {
