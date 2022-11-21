@@ -23,14 +23,14 @@ final class ProfileView: UIView {
         $0.setPhoto(MogakcoAsset.swift.image)
     }
     
-    private let nameLabel = UILabel().then {
+    let nameLabel = UILabel().then {
         $0.font = UIFont.mogakcoFont.smallBold
         $0.text = "옹심이"
         $0.textColor = .mogakcoColor.typographyPrimary
         $0.textAlignment = .left
     }
     
-    private let introduceLabel = UILabel().then {
+    let introduceLabel = UILabel().then {
         $0.font = UIFont.mogakcoFont.caption
         $0.text = "안녕하세요!! iOS 개발자 옹심이입니다."
         $0.textColor = .mogakcoColor.typographySecondary

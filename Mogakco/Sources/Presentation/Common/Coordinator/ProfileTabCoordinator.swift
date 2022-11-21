@@ -23,7 +23,15 @@ final class ProfileTabCoordinator: Coordinator, ProfileTabCoordinatorProtocol {
     }
     
     func showProfile() {
-        let viewModel = ProfileViewModel(coordinator: self)
+        let viewModel = ProfileViewModel(
+            coordinator: self,
+            profileUseCase: ProfileUseCase(
+                userRepository: UserRepository(
+                    localUserDataSource: UserDefaultsUserDataSource(),
+                    userDataSource: UserDataSource(provider: Provider.default)
+                )
+            )
+        )
         let viewController = ProfileViewController(viewModel: viewModel)
         navigationController.pushViewController(viewController, animated: false)
     }
