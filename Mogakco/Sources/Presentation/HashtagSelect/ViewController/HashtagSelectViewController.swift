@@ -75,13 +75,23 @@ final class HashtagSelectViewController: ViewController {
     }
     
     override func bind() {
+        hashtagListCollectionView.rx.itemSelected
+            .subscribe(onNext: {
+                print($0)
+            })
+            .disposed(by: disposeBag)
+        
+        let cellSelected = hashtagListCollectionView.rx.itemSelected
+        
         let input = HashtagSelectViewModel.Input(
             kindHashtag: Observable.just(kind),
+            cellSelected: cellSelected,
             nextButtonTapped: nextButton.rx.tap.asObservable()
         )
+        
         let output = viewModel.transform(input: input)
 
-        output.collectionReloadObservable
+        output.hashtagReload
             .observe(on: MainScheduler.instance)
             .subscribe { [weak self] _ in
                 self?.hashtagListCollectionView.reloadData()
@@ -140,11 +150,11 @@ extension HashtagSelectViewController: UICollectionViewDataSource {
         
         cell.prepareForReuse()
         
-        let cellInfo = try? viewModel.badgeList.value()[indexPath.row]
-        if viewModel.isSelected(title: cellInfo?.rawValue) {
+        let cellInfo = viewModel.cellInfo(index: indexPath.row)
+        if viewModel.isSelected(index: indexPath.row) {
             cell.select()
         }
-        cell.setInfo(iconName: cellInfo?.rawValue, title: cellInfo?.hashtagTitle())
+        cell.setInfo(iconName: cellInfo?.title, title: cellInfo?.hashtagTitle())
         
         return cell
     }
@@ -153,9 +163,8 @@ extension HashtagSelectViewController: UICollectionViewDataSource {
         _ collectionView: UICollectionView,
         didSelectItemAt indexPath: IndexPath
     ) {
-        guard let cell = collectionView.cellForItem(at: indexPath) as? BadgeCell,
-            let title = cell.titleLabel.text else { return }
-        viewModel.selectBadge(title: title)
+        guard let cell = collectionView.cellForItem(at: indexPath) as? BadgeCell else { return }
+        viewModel.selectBadge(index: indexPath.row)
         cell.select()
     }
     
@@ -163,9 +172,8 @@ extension HashtagSelectViewController: UICollectionViewDataSource {
         _ collectionView: UICollectionView,
         didDeselectItemAt indexPath: IndexPath
     ) {
-        guard let cell = collectionView.cellForItem(at: indexPath) as? BadgeCell,
-            let title = cell.titleLabel.text else { return }
-        viewModel.deselectBadge(title: title)
+        guard let cell = collectionView.cellForItem(at: indexPath) as? BadgeCell else { return }
+        viewModel.deselectBadge(index: indexPath.row)
         cell.deselect()
     }
 }
@@ -176,7 +184,7 @@ extension HashtagSelectViewController: UICollectionViewDelegateFlowLayout {
         layout collectionViewLayout: UICollectionViewLayout,
         sizeForItemAt indexPath: IndexPath
     ) -> CGSize {
-        guard let title = viewModel.cellTitle(index: indexPath.row)?.hashtagTitle() else {
+        guard let title = viewModel.cellTitle(index: indexPath.row) else {
             return CGSize(width: BadgeCell.addWidth, height: BadgeCell.height)
         }
         
@@ -200,7 +208,7 @@ extension HashtagSelectViewController: UICollectionViewDelegateFlowLayout {
                   withReuseIdentifier: HashtagSelectHeader.identifier,
                   for: indexPath
               ) as? HashtagSelectHeader
-        else { return UICollectionReusableView()}
+        else { return UICollectionReusableView() }
         
         return header
     }
