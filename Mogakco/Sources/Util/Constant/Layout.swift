@@ -11,4 +11,5 @@ import Foundation
 enum Layout {
     static let buttonHeight: CGFloat = 52
     static let textFieldHeight: CGFloat = 56
+    static let textViewHeight: CGFloat = 56
 }
