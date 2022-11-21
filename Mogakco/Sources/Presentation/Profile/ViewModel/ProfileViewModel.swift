@@ -18,23 +18,42 @@ final class ProfileViewModel: ViewModel {
     }
     
     struct Output {
+        let name: Observable<String>
+        let introduce: Observable<String>
+        let languages: Observable<[String]>
+        let careers: Observable<[String]>
+        let categorys: Observable<[String]>
     }
     
     var disposeBag = DisposeBag()
     weak var coordinator: ProfileTabCoordinator?
+    let profileUseCase: ProfileUseCase
  
-    init(coordinator: ProfileTabCoordinator) {
+    init(
+        coordinator: ProfileTabCoordinator,
+        profileUseCase: ProfileUseCase
+    ) {
         self.coordinator = coordinator
+        self.profileUseCase = profileUseCase
     }
     
     func transform(input: Input) -> Output {
-        
         input.editProfileButtonTapped
             .subscribe(onNext: {
                 self.coordinator?.showEditProfile()
             })
             .disposed(by: disposeBag)
         
-        return Output()
+        let profile = Observable.just(())
+            .withUnretained(self)
+            .flatMap { $0.0.profileUseCase.profile() }
+        
+        return Output(
+            name: profile.map { $0.name }.asObservable(),
+            introduce: profile.map { $0.introduce }.asObservable(),
+            languages: profile.map { $0.languages }.asObservable(),
+            careers: profile.map { $0.careers }.asObservable(),
+            categorys: profile.map { $0.categorys }.asObservable()
+        )
     }
 }
