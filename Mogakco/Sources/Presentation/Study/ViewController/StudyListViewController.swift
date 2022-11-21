@@ -15,20 +15,21 @@ import Then
 
 final class StudyListViewController: ViewController {
     
-    private let headerView = TitleHeaderView().then {
-        $0.setTitle("모각코")
-    }
-    
     private lazy var collectionView = UICollectionView(
         frame: .zero,
         collectionViewLayout: collectionViewLayout()
     ).then {
-        $0.register(StudyCell.self, forCellWithReuseIdentifier: StudyCell.identifier)
         $0.showsVerticalScrollIndicator = false
         $0.delegate = self
         $0.dataSource = self
         $0.showsHorizontalScrollIndicator = false
         $0.showsVerticalScrollIndicator = false
+        $0.register(StudyCell.self, forCellWithReuseIdentifier: StudyCell.identifier)
+        $0.register(
+            StudyListHeader.self,
+            forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+            withReuseIdentifier: StudyListHeader.identifier
+        )
     }
     
     private weak var coordinator: StudyTabCoordinatorProtocol?
@@ -47,23 +48,9 @@ final class StudyListViewController: ViewController {
     }
     
     override func layout() {
-        layoutHeaderView()
-        layoutCollectionView()
-    }
-    
-    private func layoutHeaderView() {
-        view.addSubview(headerView)
-        headerView.snp.makeConstraints {
-            $0.top.left.right.equalTo(view.safeAreaLayoutGuide)
-            $0.height.equalTo(68.0)
-        }
-    }
-    
-    private func layoutCollectionView() {
         view.addSubview(collectionView)
         collectionView.snp.makeConstraints {
-            $0.top.equalTo(headerView.snp.bottom)
-            $0.left.right.bottom.equalTo(view.safeAreaLayoutGuide)
+            $0.edges.equalTo(view.safeAreaLayoutGuide)
         }
     }
     
@@ -82,9 +69,18 @@ final class StudyListViewController: ViewController {
                 ),
                 subitems: [item]
             )
+            let header = NSCollectionLayoutBoundarySupplementaryItem(
+                layoutSize: .init(
+                    widthDimension: .fractionalWidth(1),
+                    heightDimension: .estimated(100)
+                ),
+                elementKind: UICollectionView.elementKindSectionHeader,
+                alignment: .topLeading
+            )
             let section = NSCollectionLayoutSection(group: group)
             section.interGroupSpacing = 16
             section.contentInsets = .init(top: 16, leading: 16, bottom: 16, trailing: 16)
+            section.boundarySupplementaryItems = [header]
             return section
         }
     }
@@ -113,6 +109,24 @@ extension StudyListViewController: UICollectionViewDataSource {
         
         cell.state = .open
         return cell
+    }
+    
+    func collectionView(
+        _ collectionView: UICollectionView,
+        viewForSupplementaryElementOfKind kind: String,
+        at indexPath: IndexPath
+    ) -> UICollectionReusableView {
+        
+        guard kind == UICollectionView.elementKindSectionHeader,
+              let header = collectionView.dequeueReusableSupplementaryView(
+                ofKind: kind,
+                withReuseIdentifier: StudyListHeader.identifier,
+                for: indexPath) as? StudyListHeader
+        else {
+            return UICollectionReusableView()
+        }
+        
+        return header
     }
 }
 
