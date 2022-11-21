@@ -34,7 +34,7 @@ struct HashtagDataSource: HashtagDataSourceProtocol {
         case dart
         case goLang = "go"
         case haskell
-        case javaStript
+        case javaScript
         case kotlin
         case matlab
         case objectC
