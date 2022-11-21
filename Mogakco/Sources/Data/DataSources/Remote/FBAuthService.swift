@@ -46,8 +46,8 @@ struct FBAuthService: AuthServiceProtocol {
                 "email": request.email,
                 "password": request.password,
                 "name": request.name,
-                "languages": request.languages,
-                "careers": request.careers
+                // "languages": request.languages,
+                // "careers": request.careers
             ]
             
             firestore.collection("User").document(id).setData(data) { error in
