@@ -18,12 +18,6 @@ struct ProfileUseCase: ProfileUseCaseProtocol {
     }
     
     func profile() -> Observable<User> {
-        
-        userRepository.load()
-            .subscribe(onNext: { user in
-                dump(user)
-            }) 
-        
         return userRepository.load()
             .compactMap { $0.id }
             .flatMap { userRepository.user(id: $0) }

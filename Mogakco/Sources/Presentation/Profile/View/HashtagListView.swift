@@ -33,7 +33,7 @@ final class HashtagListView: UIView {
         }
     }
 
-    private let hashtagCollectionView = UICollectionView(
+    let hashtagCollectionView = UICollectionView(
         frame: .zero,
         collectionViewLayout: UICollectionViewFlowLayout()).then {
         let layout = UICollectionViewFlowLayout()
@@ -48,30 +48,13 @@ final class HashtagListView: UIView {
         $0.isPagingEnabled = false
     }
 
-    private let disposeBag = DisposeBag()
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
-        bind()
         layout()
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-    
-    func bind() {
-        Driver.just(["Swift", "Python", "Kotlin", "C++", "C"])
-            .drive(hashtagCollectionView.rx.items) { collectionView, index, data in
-                guard let cell = collectionView.dequeueReusableCell(
-                    withReuseIdentifier: BadgeCell.identifier,
-                    for: IndexPath(row: index, section: 0)) as? BadgeCell else {
-                    return UICollectionViewCell()
-                }
-                cell.setInfo(iconName: nil, title: data)
-                return cell
-            }
-            .disposed(by: disposeBag)
     }
     
     private func layout() {

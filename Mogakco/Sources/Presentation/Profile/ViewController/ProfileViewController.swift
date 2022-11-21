@@ -87,7 +87,56 @@ final class ProfileViewController: ViewController {
         let input = ProfileViewModel.Input(
             editProfileButtonTapped: profileView.editProfileButton.rx.tap.asObservable()
         )
-        _ = viewModel.transform(input: input)
+        let output = viewModel.transform(input: input)
+        
+        output.name
+            .asDriver(onErrorJustReturn: "")
+            .drive(profileView.nameLabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        output.introduce
+            .asDriver(onErrorJustReturn: "")
+            .drive(profileView.introduceLabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        output.languages
+            .asDriver(onErrorJustReturn: [])
+            .drive(languageListView.hashtagCollectionView.rx.items) { collectionView, index, language in
+                guard let cell = collectionView.dequeueReusableCell(
+                    withReuseIdentifier: BadgeCell.identifier,
+                    for: IndexPath(row: index, section: 0)) as? BadgeCell else {
+                    return UICollectionViewCell()
+                }
+                cell.setInfo(iconName: language, title: language)
+                return cell
+            }
+            .disposed(by: disposeBag)
+        
+        output.careers
+            .asDriver(onErrorJustReturn: [])
+            .drive(careerListView.hashtagCollectionView.rx.items) { collectionView, index, career in
+                guard let cell = collectionView.dequeueReusableCell(
+                    withReuseIdentifier: BadgeCell.identifier,
+                    for: IndexPath(row: index, section: 0)) as? BadgeCell else {
+                    return UICollectionViewCell()
+                }
+                cell.setInfo(iconName: career, title: career)
+                return cell
+            }
+            .disposed(by: disposeBag)
+        
+        output.categorys
+            .asDriver(onErrorJustReturn: [])
+            .drive(categoryListView.hashtagCollectionView.rx.items) { collectionView, index, category in
+                guard let cell = collectionView.dequeueReusableCell(
+                    withReuseIdentifier: BadgeCell.identifier,
+                    for: IndexPath(row: index, section: 0)) as? BadgeCell else {
+                    return UICollectionViewCell()
+                }
+                cell.setInfo(iconName: category, title: category)
+                return cell
+            }
+            .disposed(by: disposeBag)
     }
     
     override func layout() {
