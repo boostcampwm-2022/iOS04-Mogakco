@@ -8,10 +8,6 @@
 
 import RxSwift
 
-protocol SignupUseCaseProtocol {
-    func signup(user: User) -> Observable<Void>
-}
-
 struct SignupUseCase: SignupUseCaseProtocol {
     
     private let authRepository: AuthRepositoryProtocol
