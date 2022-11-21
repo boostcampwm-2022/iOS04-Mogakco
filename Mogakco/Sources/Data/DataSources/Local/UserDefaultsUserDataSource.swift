@@ -11,8 +11,10 @@ import Foundation
 import RxSwift
 
 struct UserDefaultsUserDataSource: LocalUserDataSourceProtocol {
+    
     private let userKey = "user"
-
+    private let userUIDKey = "userUID"
+    
     func save(user: User) -> Observable<Void> {
         return Observable.create { emitter in
             do {
@@ -41,6 +43,14 @@ struct UserDefaultsUserDataSource: LocalUserDataSourceProtocol {
     func remove() -> Observable<Void> {
         return Observable.create { emitter in
             UserDefaults.standard.removeObject(forKey: userKey)
+            emitter.onNext(())
+            return Disposables.create()
+        }
+    }
+    
+    func saveUID(userUID: String) -> RxSwift.Observable<Void> {
+        return Observable.create { emitter in
+            UserDefaults.standard.set(userUID, forKey: userUIDKey)
             emitter.onNext(())
             return Disposables.create()
         }

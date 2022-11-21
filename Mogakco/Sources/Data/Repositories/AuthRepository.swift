@@ -9,7 +9,7 @@
 import RxSwift
 
 struct AuthRepository: AuthRepositoryProtocol {
-
+    
     private var authService: AuthServiceProtocol
     private let disposeBag = DisposeBag()
     
@@ -22,5 +22,9 @@ struct AuthRepository: AuthRepositoryProtocol {
         return authService
             .signup(request)
             .map { $0.toDomain() }
+    }
+    
+    func login(emailLoginData: EmailLoginData) -> Observable<String> {
+        return authService.login(emailLoginData)
     }
 }
