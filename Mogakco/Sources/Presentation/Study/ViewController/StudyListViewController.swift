@@ -19,13 +19,16 @@ final class StudyListViewController: ViewController {
         $0.setTitle("모각코")
     }
     
-    private lazy var tableView = UITableView().then {
-        $0.register(StudyCell.self, forCellReuseIdentifier: StudyCell.identifier)
-        $0.rowHeight = 120
+    private lazy var collectionView = UICollectionView(
+        frame: .zero,
+        collectionViewLayout: collectionViewLayout()
+    ).then {
+        $0.register(StudyCell.self, forCellWithReuseIdentifier: StudyCell.identifier)
         $0.showsVerticalScrollIndicator = false
-        $0.separatorStyle = .none
         $0.delegate = self
         $0.dataSource = self
+        $0.showsHorizontalScrollIndicator = false
+        $0.showsVerticalScrollIndicator = false
     }
     
     private weak var coordinator: StudyTabCoordinatorProtocol?
@@ -45,7 +48,7 @@ final class StudyListViewController: ViewController {
     
     override func layout() {
         layoutHeaderView()
-        layoutTableView()
+        layoutCollectionView()
     }
     
     private func layoutHeaderView() {
@@ -56,31 +59,56 @@ final class StudyListViewController: ViewController {
         }
     }
     
-    private func layoutTableView() {
-        view.addSubview(tableView)
-        tableView.snp.makeConstraints {
+    private func layoutCollectionView() {
+        view.addSubview(collectionView)
+        collectionView.snp.makeConstraints {
             $0.top.equalTo(headerView.snp.bottom)
-            $0.left.right.bottom.equalToSuperview().inset(16)
+            $0.left.right.bottom.equalTo(view.safeAreaLayoutGuide)
+        }
+    }
+    
+    private func collectionViewLayout() -> UICollectionViewCompositionalLayout {
+        return UICollectionViewCompositionalLayout { _, _ in
+            let item = NSCollectionLayoutItem(
+                layoutSize: .init(
+                    widthDimension: .fractionalWidth(1),
+                    heightDimension: .estimated(100)
+                )
+            )
+            let group = NSCollectionLayoutGroup.vertical(
+                layoutSize: .init(
+                    widthDimension: .fractionalWidth(1),
+                    heightDimension: .estimated(100)
+                ),
+                subitems: [item]
+            )
+            let section = NSCollectionLayoutSection(group: group)
+            section.interGroupSpacing = 16
+            section.contentInsets = .init(top: 16, leading: 16, bottom: 16, trailing: 16)
+            return section
         }
     }
 }
 
-extension StudyListViewController: UITableViewDataSource {
+extension StudyListViewController: UICollectionViewDataSource {
     
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        numberOfItemsInSection section: Int
+    ) -> Int {
         return 5
     }
-
-    func tableView(
-        _ tableView: UITableView,
-        cellForRowAt indexPath: IndexPath
-    ) -> UITableViewCell {
+    
+    func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
         
-        guard let cell = tableView.dequeueReusableCell(
-            withIdentifier: StudyCell.identifier,
+        guard let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: StudyCell.identifier,
             for: indexPath
         ) as? StudyCell else {
-            return UITableViewCell()
+            return UICollectionViewCell()
         }
         
         cell.state = .open
@@ -88,9 +116,9 @@ extension StudyListViewController: UITableViewDataSource {
     }
 }
 
-extension StudyListViewController: UITableViewDelegate {
+extension StudyListViewController: UICollectionViewDelegate {
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         coordinator?.showStudyDetail()
     }
 }
