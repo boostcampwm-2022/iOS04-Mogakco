@@ -12,4 +12,6 @@ protocol LocalUserDataSourceProtocol {
     func save(user: User) -> Observable<Void>
     func load() -> Observable<User>
     func remove() -> Observable<Void>
+    
+    func saveUID(userUID: String) -> Observable<Void>
 }
