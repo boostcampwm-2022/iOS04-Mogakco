@@ -1,0 +1,33 @@
+//
+//  LoginUseCase.swift
+//  Mogakco
+//
+//  Created by 이주훈 on 2022/11/21.
+//  Copyright © 2022 Mogakco. All rights reserved.
+//
+
+import Foundation
+
+import RxSwift
+
+struct LoginUseCase: LoginUseCaseProtocol {
+    
+    private let authRepository: AuthRepositoryProtocol
+    private let userRepository: UserRepositoryProtocol
+    private let disposeBag = DisposeBag()
+    
+    init(
+        authRepository: AuthRepositoryProtocol,
+        userRepository: UserRepositoryProtocol
+    ) {
+        self.authRepository = authRepository
+        self.userRepository = userRepository
+    }
+    
+    func login(emailLoginData: EmailLoginData) -> Observable<Void> {
+        let isLoginSuccess = PublishSubject<Void>()
+        
+        return authRepository.login(emailLoginData: emailLoginData)
+            .flatMap { userRepository.save(userUID: $0) }
+    }
+}
