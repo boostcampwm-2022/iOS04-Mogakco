@@ -22,13 +22,7 @@ final class AppCoordinator: Coordinator, AppCoordinatorProtocol {
 
     
     func start() {
-        let hashtagDataSource = HashtagDataSource()
-        let hashtagRepository = HashtagRepository(localHashtagDataSource: hashtagDataSource)
-        let hashtagUsecase = HashtagUsecase(hashtagRepository: hashtagRepository)
-        let viewModel = HashtagSelectViewModel(coordinator: AdditionalSignupCoordinator(navigationController), hashTagUsecase: hashtagUsecase)
-        let hashtagSelectViewController = HashtagSelectViewController(kind: .language, viewModel: viewModel)
-        navigationController.pushViewController(hashtagSelectViewController, animated: true)
-//        showAuthFlow()
+        showAuthFlow()
     }
     
     func showAuthFlow() {

@@ -184,7 +184,7 @@ extension HashtagSelectViewController: UICollectionViewDelegateFlowLayout {
         layout collectionViewLayout: UICollectionViewLayout,
         sizeForItemAt indexPath: IndexPath
     ) -> CGSize {
-        guard let title = viewModel.cellTitle(index: indexPath.row) else {
+        guard let title = viewModel.cellInfo(index: indexPath.row)?.hashtagTitle() else {
             return CGSize(width: BadgeCell.addWidth, height: BadgeCell.height)
         }
         
