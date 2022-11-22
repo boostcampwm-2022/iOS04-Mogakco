@@ -10,7 +10,7 @@ import UIKit
 
 final class ProfileView: UIView {
     
-    private let roundProfileImageView = RoundProfileImageView(120.0).then {
+    let roundProfileImageView = RoundProfileImageView(120.0).then {
         $0.snp.makeConstraints {
             $0.size.equalTo(120.0)
         }
