@@ -24,7 +24,7 @@ struct AuthRepository: AuthRepositoryProtocol {
             .map { $0.toDomain() }
     }
     
-    func login(emailLoginData: EmailLogin) -> Observable<String> {
-        return authService.login(emailLoginData)
+    func login(emailLoginUser: EmailLogin) -> Observable<String> {
+        return authService.login(emailLoginUser)
     }
 }

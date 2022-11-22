@@ -26,7 +26,20 @@ final class AuthCoordinator: Coordinator, AuthCoordinatorProtocol {
     }
     
     func showLogin() {
-        let loginViewController = LoginViewController(coordinator: self)
+        let localUserDataSource = UserDefaultsUserDataSource()
+        let remoteUserDataSource = RemoteUserDataSource(provider: Provider.default)
+        let authService = FBAuthService()
+        let authRepository = AuthRepository(authService: authService)
+        let userRepository = UserRepository(
+            localUserDataSource: localUserDataSource,
+            retmoteUserDataSource: remoteUserDataSource
+        )
+        let loginUseCase = LoginUseCase(
+            authRepository: authRepository,
+            userRepository: userRepository
+        )
+        let viewModel = LoginViewModel(coordinator: self, loginUseCase: loginUseCase)
+        let loginViewController = LoginViewController(viewModel: viewModel)
         navigationController.viewControllers = [loginViewController]
     }
     
