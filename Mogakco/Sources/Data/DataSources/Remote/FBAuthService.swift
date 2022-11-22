@@ -58,6 +58,7 @@ struct FBAuthService: AuthServiceProtocol {
                     // TODO: Save User Image
                     let response = SignupResponseDTO(
                         id: id,
+                        profileImageURLString: request.profileImageURLString,
                         email: request.email,
                         name: request.name,
                         introduce: request.introduce,

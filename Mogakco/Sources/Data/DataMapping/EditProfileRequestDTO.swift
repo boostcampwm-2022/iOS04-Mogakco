@@ -11,18 +11,20 @@ import Foundation
 struct EditProfileRequestDTO: Encodable {
     private let name: StringValue
     private let introduce: StringValue
+    private let profileImageURLString: StringValue
     
     private enum RootKey: String, CodingKey {
         case fields
     }
     
     private enum FieldKeys: String, CodingKey {
-        case name, introduce
+        case name, introduce, profileImageURLString
     }
     
-    init(name: String, introduce: String) {
+    init(name: String, introduce: String, profileImageURLString: String) {
         self.name = StringValue(value: name)
         self.introduce = StringValue(value: introduce)
+        self.profileImageURLString = StringValue(value: profileImageURLString)
     }
 
     func encode(to encoder: Encoder) throws {
@@ -30,5 +32,6 @@ struct EditProfileRequestDTO: Encodable {
         var fieldContainer = container.nestedContainer(keyedBy: FieldKeys.self, forKey: .fields)
         try fieldContainer.encode(self.name, forKey: .name)
         try fieldContainer.encode(self.introduce, forKey: .introduce)
+        try fieldContainer.encode(self.profileImageURLString, forKey: .profileImageURLString)
     }
 }
