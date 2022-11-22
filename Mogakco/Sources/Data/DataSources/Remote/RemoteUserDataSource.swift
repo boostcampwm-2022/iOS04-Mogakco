@@ -79,8 +79,8 @@ extension UserTarget: TargetType {
         case let .user(request):
             return "/\(request.id)"
         case let .editProfile(id, _):
-            return "/\(id)/"
-            + "updateMask.fieldPaths=name"
+            return "/\(id)"
+            + "/?updateMask.fieldPaths=name"
             + "&updateMask.fieldPaths=introduce"
             + "&updateMask.fieldPaths=profileImageURLString"
         }
