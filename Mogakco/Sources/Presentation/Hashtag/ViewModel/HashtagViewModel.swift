@@ -22,7 +22,6 @@ class HashtagViewModel: ViewModel {
         let hashtagReload: Observable<Void>
     }
     
-    weak var coordinator: AdditionalSignupCoordinatorProtocol?
     let hashTagUsecase: HashtagUseCaseProtocol
     var disposeBag = DisposeBag()
     var selectedHashtag: [Hashtag] = []
@@ -35,10 +34,8 @@ class HashtagViewModel: ViewModel {
     }
     
     init(
-        coordinator: AdditionalSignupCoordinatorProtocol,
         hashTagUsecase: HashtagUseCaseProtocol
     ) {
-        self.coordinator = coordinator
         self.hashTagUsecase = hashTagUsecase
     }
     
@@ -94,14 +91,6 @@ class HashtagViewModel: ViewModel {
             selectedHashtag.remove(at: removeIndex)
         } else {
             selectedHashtag.append(hashTag)
-        }
-    }
-    
-    private func moveToNext() {
-        switch kind {
-        case .language: coordinator?.showCareer()
-        case .career: break // 회원가입 후 성공 여부 전달
-        case .category: break
         }
     }
 }
