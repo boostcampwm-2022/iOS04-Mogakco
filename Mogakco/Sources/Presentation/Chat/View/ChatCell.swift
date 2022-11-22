@@ -12,21 +12,27 @@ import Then
 
 final class ChatCell: UICollectionViewCell, Identifiable {
     
-    private let profileImageView = RoundProfileImageView(32)
+    private let profileImageView = RoundProfileImageView(35)
     
-    private let textView = UITextView().then {
+    let textView = UITextView().then {
         $0.backgroundColor = .clear
-        $0.text = "HelloWorldHelloWorldHelloWorldHelloWorldHelloWorldHelloWorld"
         $0.font = UIFont.mogakcoFont.smallBold
         $0.textColor = UIColor.mogakcoColor.typographyPrimary
         $0.isScrollEnabled = false
         $0.isEditable = false
     }
     
-    private let bubbleContainer = UIView().then {
-        $0.backgroundColor = UIColor.mogakcoColor.primarySecondary
+    let bubbleContainer = UIView().then {
+        $0.backgroundColor = .mogakcoColor.backgroundSecondary
         $0.layer.cornerRadius = 8
     }
+    
+    var message: Message? {
+        didSet { configureMessage() }
+    }
+    
+    var bubbleLeftAnchor: NSLayoutConstraint!
+    var bubbleRightAnchor: NSLayoutConstraint!
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -47,8 +53,8 @@ final class ChatCell: UICollectionViewCell, Identifiable {
         addSubview(profileImageView)
         
         profileImageView.snp.makeConstraints {
-            $0.left.equalToSuperview().offset(16)
-            $0.bottom.equalToSuperview().offset(-4)
+            $0.left.equalToSuperview().offset(12)
+            $0.top.equalToSuperview().offset(4)
         }
     }
     
