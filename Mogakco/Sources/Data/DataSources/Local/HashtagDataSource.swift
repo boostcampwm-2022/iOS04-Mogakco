@@ -15,8 +15,8 @@ struct HashtagDataSource: HashtagDataSourceProtocol {
         return Observable.create { emitter in
             switch kind {
             case .language: emitter.onNext(loadLanguage())
-            case .career: break
-            case .category: break
+            case .career: emitter.onNext(loadCareer())
+            case .category: emitter.onNext(loadCategory())
             }
             
             return Disposables.create()
@@ -27,5 +27,11 @@ struct HashtagDataSource: HashtagDataSourceProtocol {
         return Languages.allCases
     }
     
-    private func loadCareer() {}
+    private func loadCareer() -> [Hashtag] {
+        return Career.allCases
+    }
+    
+    private func loadCategory() -> [Hashtag] {
+        return Category.allCases
+    }
 }
