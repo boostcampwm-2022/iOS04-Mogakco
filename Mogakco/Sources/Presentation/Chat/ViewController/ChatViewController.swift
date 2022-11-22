@@ -49,8 +49,11 @@ final class ChatViewController: ViewController {
     var sidebarView: ChatSidebarView!
     var blackScreen: UIView!
     
-    init() {
-        super.init(collectionViewLayout: UICollectionViewFlowLayout())
+    private let viewModel: ChatViewModel
+    
+    init(viewModel: ChatViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
     }
     
     required init?(coder: NSCoder) {
