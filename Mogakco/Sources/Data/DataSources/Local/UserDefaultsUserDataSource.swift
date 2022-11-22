@@ -12,6 +12,11 @@ import RxSwift
 
 struct UserDefaultsUserDataSource: LocalUserDataSourceProtocol {
     
+    enum UserDefaultsError: Error, LocalizedError {
+        case json
+    }
+    
+    private let userKey = "user"
     private let userIDKey = "userID"
     private let userUIDKey = "userUID"
     
@@ -32,7 +37,7 @@ struct UserDefaultsUserDataSource: LocalUserDataSourceProtocol {
         return Observable.create { emitter in
             guard let jsonData = UserDefaults.standard.value(forKey: userIDKey) as? Data,
                   let user = try? JSONDecoder().decode(User.self, from: jsonData) else {
-                // TODO: onError
+                emitter.onError(UserDefaultsError.json)
                 return Disposables.create()
             }
             emitter.onNext(user)

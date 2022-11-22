@@ -9,5 +9,5 @@
 import RxSwift
 
 protocol ChatRoomListUseCaseProtocol {
-    func list() -> Observable<[ChatRoom]>
+    func chatRooms() -> Observable<[ChatRoom]>
 }
