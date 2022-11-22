@@ -1,5 +1,5 @@
 //
-//  CreateProfiileViewModel.swift
+//  EditProfiileViewModel.swift
 //  Mogakco
 //
 //  Created by 김범수 on 2022/11/16.
@@ -11,9 +11,9 @@ import UIKit
 import RxCocoa
 import RxSwift
 
-final class CreateProfiileViewModel: ViewModel {
+final class EditProfiileViewModel: ViewModel {
     
-    enum ProfileType {
+    enum EditType {
         case create, edit
     }
     
@@ -32,13 +32,13 @@ final class CreateProfiileViewModel: ViewModel {
     }
     
     var disposeBag = DisposeBag()
-    private let type: ProfileType
+    private let type: EditType
     private weak var coordinator: Coordinator?
     private let profileUseCase: ProfileUseCase
     private let editProfileUseCase: EditProfileUseCase
     
     init(
-        type: ProfileType,
+        type: EditType,
         coordinator: Coordinator,
         profileUseCase: ProfileUseCase,
         editProfileUseCase: EditProfileUseCase
@@ -50,7 +50,7 @@ final class CreateProfiileViewModel: ViewModel {
     }
     
     func transform(input: Input) -> Output {
-        let profileType = BehaviorSubject<ProfileType>(value: type)
+        let type = BehaviorSubject<EditType>(value: type)
         let user = BehaviorSubject<User?>(value: nil)
   
         let name = Observable.merge(
@@ -64,13 +64,14 @@ final class CreateProfiileViewModel: ViewModel {
         )
         
         let profileImage = Observable.merge(
+            Observable.just(MogakcoAsset.swift.image), // TODO: 기본 이미지
             // user.compactMap { $0?.profileImage },
             input.selectedProfileImage
         )
         
         let inputValidation = name.map { (2...10).contains($0.count) }
         
-        profileType
+        type
             .filter { $0 == .edit }
             .withUnretained(self)
             .flatMap { $0.0.profileUseCase.profile() }
@@ -81,7 +82,7 @@ final class CreateProfiileViewModel: ViewModel {
         
         let profileEdit = input
             .completeButtonTapped
-            .withLatestFrom(profileType)
+            .withLatestFrom(type)
             .filter { $0 == .edit }
         
         profileEdit
@@ -91,9 +92,9 @@ final class CreateProfiileViewModel: ViewModel {
             .flatMap { name, introduce, _ in
                 self.editProfileUseCase.editProfile(name: name, introduce: introduce)
             }
-            .subscribe(onNext: { _ in
-                print("Edit Success")
-                // TODO: Pop
+            .withUnretained(self)
+            .subscribe(onNext: { viewModel, _ in
+                viewModel.coordinator?.pop(animated: true)
             }, onError: { error in
                 print("Edit Error \(error.localizedDescription)")
             })
@@ -101,7 +102,7 @@ final class CreateProfiileViewModel: ViewModel {
         
         let profileCreate = input
             .completeButtonTapped
-            .withLatestFrom(profileType)
+            .withLatestFrom(type)
             .filter { $0 == .create }
         
         profileCreate

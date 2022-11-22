@@ -33,13 +33,13 @@ final class AdditionalSignupCoordinator: Coordinator, AdditionalSignupCoordinato
             localUserDataSource: UserDefaultsUserDataSource(),
             retmoteUserDataSource: RemoteUserDataSource(provider: Provider.default)
         )
-        let viewModel = CreateProfiileViewModel(
+        let viewModel = EditProfiileViewModel(
             type: .create,
             coordinator: self,
             profileUseCase: ProfileUseCase(userRepository: userRepository),
             editProfileUseCase: EditProfileUseCase(userRepository: userRepository)
         )
-        let viewController = CreateProfileViewController(viewModel: viewModel)
+        let viewController = EditProfileViewController(viewModel: viewModel)
         navigationController.pushViewController(viewController, animated: true)
     }
     
