@@ -24,15 +24,21 @@ final class ChatViewController: ViewController {
         )
     }
     
-    private let collectionView = UICollectionView(
+    private lazy var collectionView = UICollectionView(
         frame: .zero,
         collectionViewLayout: UICollectionViewFlowLayout()
     ).then {
         let layout = UICollectionViewFlowLayout()
-        layout.sectionInset = UIEdgeInsets(top: 16, left: 0, bottom: 16, right: 0)
+        layout.scrollDirection = .vertical
+        layout.sectionInset = UIEdgeInsets(
+            top: 16,
+            left: 0,
+            bottom: 0,
+            right: 0)
+        layout.itemSize = CGSize(width: view.frame.width, height: 60)
+        layout.minimumLineSpacing = 8.0
         $0.collectionViewLayout = layout
         $0.register(ChatCell.self, forCellWithReuseIdentifier: ChatCell.identifier)
-        $0.showsHorizontalScrollIndicator = false
         $0.alwaysBounceVertical = true
     }
     
@@ -46,8 +52,15 @@ final class ChatViewController: ViewController {
         $0.tintColor = .mogakcoColor.primaryDefault
     }
     
-    var sidebarView: ChatSidebarView!
-    var blackScreen: UIView!
+    lazy var sidebarView = ChatSidebarView().then {
+        $0.frame = CGRect(
+            x: view.frame.width,
+            y: 0,
+            width: view.frame.width,
+            height: view.frame.height)
+    }
+    
+    lazy var blackScreen = UIView(frame: self.view.bounds)
     
     private let viewModel: ChatViewModel
     
@@ -195,12 +208,6 @@ final class ChatViewController: ViewController {
     }
     
     private func configureSideBar() {
-        sidebarView = ChatSidebarView(frame: CGRect(
-            x: view.frame.width,
-            y: 0,
-            width: view.frame.width,
-            height: view.frame.height)
-        )
         sidebarView.layer.zPosition = 100
         sidebarView.tableView.delegate = nil
         sidebarView.tableView.dataSource = nil
@@ -212,7 +219,6 @@ final class ChatViewController: ViewController {
     }
     
     private func configureBlackScreen() {
-        blackScreen = UIView(frame: self.view.bounds)
         blackScreen.backgroundColor = .black.withAlphaComponent(0.5)
         blackScreen.isHidden = true
         let tapGestRecognizer = UITapGestureRecognizer(target: self, action: #selector(blackScreenTapAction(sender:)))
@@ -234,7 +240,7 @@ final class ChatViewController: ViewController {
     
     private func layoutCollectionView() {
         view.addSubview(collectionView)
-        
+
         collectionView.snp.makeConstraints {
             $0.top.left.bottom.right.equalToSuperview()
         }
