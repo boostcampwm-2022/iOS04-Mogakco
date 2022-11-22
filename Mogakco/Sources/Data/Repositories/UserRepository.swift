@@ -6,20 +6,22 @@
 //  Copyright © 2022 Mogakco. All rights reserved.
 //
 
+import Foundation
+
 import RxSwift
 
 struct UserRepository: UserRepositoryProtocol {
-
+  
     private var localUserDataSource: LocalUserDataSourceProtocol
-    private var retmoteUserDataSource: RemoteUserDataSourceProtocol
+    private var remoteUserDataSource: RemoteUserDataSourceProtocol
     private let disposeBag = DisposeBag()
     
     init(
         localUserDataSource: LocalUserDataSourceProtocol,
-        retmoteUserDataSource: RemoteUserDataSourceProtocol
+        remoteUserDataSource: RemoteUserDataSourceProtocol
     ) {
         self.localUserDataSource = localUserDataSource
-        self.retmoteUserDataSource = retmoteUserDataSource
+        self.remoteUserDataSource = remoteUserDataSource
     }
 
     func save(user: User) -> Observable<Void> {
@@ -32,7 +34,7 @@ struct UserRepository: UserRepositoryProtocol {
     
     func user(id: String) -> Observable<User> {
         let request = UserRequestDTO(id: id)
-        return retmoteUserDataSource.user(request: request)
+        return remoteUserDataSource.user(request: request)
             .map { $0.toDomain() }
     }
     
@@ -40,9 +42,11 @@ struct UserRepository: UserRepositoryProtocol {
         return localUserDataSource.load()
     }
     
-    func editProfile(id: String, name: String, introduce: String) -> Observable<User> {
-        let request = EditProfileRequestDTO(name: name, introduce: introduce)
-        return retmoteUserDataSource.editProfile(id: id, request: request)
+    func editProfile(id: String, name: String, introduce: String, imageData: Data) -> Observable<User> {
+        return remoteUserDataSource.uploadProfileImage(id: id, imageData: imageData)
+            .map { $0.absoluteString }
+            .map { EditProfileRequestDTO(name: name, introduce: introduce, profileImageURLString: $0) }
+            .flatMap { remoteUserDataSource.editProfile(id: id, request: $0) }
             .map { $0.toDomain() }
     }
 }
