@@ -11,13 +11,9 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-protocol Hashtag {
-    var title: String { get }
-    func hashtagTitle() -> String
-}
-
 class HashtagSelectedViewModel: HashtagViewModel {
     
+    weak var coordinator: AdditionalSignupCoordinatorProtocol?
     let signUseCase: SignupUseCaseProtocol?
     
     init(
@@ -26,21 +22,22 @@ class HashtagSelectedViewModel: HashtagViewModel {
         signUpUseCase: SignupUseCaseProtocol? = nil
     ) {
         self.signUseCase = signUpUseCase
-        super.init(coordinator: coordinator, hashTagUsecase: hashTagUsecase)
+        self.coordinator = coordinator
+        super.init(hashTagUsecase: hashTagUsecase)
     }
     
     override func transform(input: Input) -> Output {
         
         input.nextButtonTapped
-            .subscribe { [weak self] in
-                self?.moveToNext()
-            }
+            .subscribe(onNext: { [weak self]  in
+                self?.tapButton()
+            })
             .disposed(by: disposeBag)
         
         return super.transform(input: input)
     }
     
-    private func moveToNext() {
+    private func tapButton() {
         switch kind {
         case .language: coordinator?.showCareer() // TODO: 정보 전달 로직 필요
         case .career: signUseCase?.signup(
@@ -54,8 +51,9 @@ class HashtagSelectedViewModel: HashtagViewModel {
                 careers: [],
                 categorys: []
             )
-        ).subscribe { _ in
-            // 회원가입 후 이동
+        )
+        .subscribe { [weak self] _ in
+            self?.coordinator?.finish(success: true)
         }
         .disposed(by: disposeBag)
         case .category: break

@@ -35,7 +35,13 @@ final class CreateProfiileViewModel: ViewModel {
         
         input
             .completeButtonTapped
-            .withLatestFrom(Observable.combineLatest(input.name, input.introduce, input.selectedProfileImage))
+            .withLatestFrom(
+                Observable.combineLatest(
+                    input.name,
+                    input.introduce,
+                    input.selectedProfileImage
+                )
+            )
             .subscribe(onNext: { _ in
                 // TODO: UseCase - CreateProfile
                 // TODO: AppDelegate - Push
