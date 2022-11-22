@@ -29,7 +29,9 @@ final class ChatTabCoordinator: Coordinator, ChatTabCoordinatorProtocol {
                 chatRoomRepository: ChatRoomRepository(
                     chatRoomDataSource: ChatRoomDataSource(provider: Provider.default),
                     chatDataSource: ChatDataSource(provider: Provider.default)
-                )
+                ), userRepository: UserRepository(
+                    localUserDataSource: UserDefaultsUserDataSource(),
+                    retmoteUserDataSource: RemoteUserDataSource(provider: Provider.default))
             )
         )
         let viewController = ChatListViewController(viewModel: viewModel)

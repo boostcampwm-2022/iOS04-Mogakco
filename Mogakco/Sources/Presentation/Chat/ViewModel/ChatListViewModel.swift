@@ -22,8 +22,8 @@ final class ChatListViewModel: ViewModel {
     }
     
     var disposeBag = DisposeBag()
-    weak var coordinator: ChatTabCoordinator?
-    let chatRoomListUseCase: ChatRoomListUseCaseProtocol
+    private weak var coordinator: ChatTabCoordinator?
+    private let chatRoomListUseCase: ChatRoomListUseCaseProtocol
  
     init(
         coordinator: ChatTabCoordinator,
@@ -41,13 +41,9 @@ final class ChatListViewModel: ViewModel {
                 self.coordinator?.showChatDetail()
             })
             .disposed(by: disposeBag)
-        
-        let chatRoomList = Observable.just(())
-            .withUnretained(self)
-            .flatMap { $0.0.chatRoomListUseCase.list() }
-        
+
         return Output(
-            chatRoomList: chatRoomList.asObservable()
+            chatRoomList: chatRoomListUseCase.chatRooms()
         )
     }
 }
