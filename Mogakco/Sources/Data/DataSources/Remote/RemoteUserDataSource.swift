@@ -7,6 +7,7 @@
 //
 
 import Alamofire
+import Firebase
 import RxSwift
 
 struct RemoteUserDataSource: RemoteUserDataSourceProtocol {
@@ -22,6 +23,29 @@ struct RemoteUserDataSource: RemoteUserDataSourceProtocol {
     
     func editProfile(id: String, request: EditProfileRequestDTO) -> Observable<UserResponseDTO> {
         return provider.request(UserTarget.editProfile(id, request))
+    }
+    
+    func uploadProfileImage(id: String, imageData: Data) -> Observable<URL> {
+        return Observable.create { emitter in
+            let ref = Storage.storage().reference().child("Users").child(id).child("profileImageURL")
+            ref.putData(imageData, metadata: nil) { _, error in
+                if let error = error {
+                    emitter.onError(error)
+                    return
+                }
+                ref.downloadURL { url, error in
+                    guard let url = url else {
+                        if let error = error {
+                            emitter.onError(error)
+                        }
+                        // TODO: custom error
+                        return
+                    }
+                    emitter.onNext(url)
+                }
+            }
+            return Disposables.create()
+        }
     }
 }
 
@@ -55,7 +79,10 @@ extension UserTarget: TargetType {
         case let .user(request):
             return "/\(request.id)"
         case let .editProfile(id, _):
-            return "/\(id)/?updateMask.fieldPaths=name&updateMask.fieldPaths=introduce"
+            return "/\(id)/"
+            + "updateMask.fieldPaths=name"
+            + "&updateMask.fieldPaths=introduce"
+            + "&updateMask.fieldPaths=profileImageURLString"
         }
     }
     
