@@ -23,7 +23,16 @@ final class StudyTabCoordinator: Coordinator, StudyTabCoordinatorProtocol {
     }
     
     func showStudyList() {
-        let viewController = StudyListViewController(coordinator: self)
+        let viewController = StudyListViewController(
+            viewModel: StudyListViewModel(
+                coordinator: self,
+                useCase: StudyListUseCase(
+                    repository: StudyRepository(
+                        dataSource: StudyDataSource(provider: Provider.default)
+                    )
+                )
+            )
+        )
         navigationController.pushViewController(viewController, animated: true)
     }
     
