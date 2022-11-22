@@ -20,11 +20,13 @@ class HashtagEditViewModel: HashtagViewModel {
      init(
         coordinator: ProfileTabCoordinatorProtocol,
         hashTagUsecase: HashtagUseCaseProtocol,
-        userUseCase: UserUseCaseProtocol? = nil
+        userUseCase: UserUseCaseProtocol,
+        selectedHashtag: [Hashtag]
      ) {
          self.userUseCase = userUseCase
          self.coordinator = coordinator
          super.init(hashTagUsecase: hashTagUsecase)
+         self.selectedHashtag = selectedHashtag
     }
     
     override func transform(input: Input) -> Output {

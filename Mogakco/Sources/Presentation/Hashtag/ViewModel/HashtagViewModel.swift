@@ -94,4 +94,3 @@ class HashtagViewModel: ViewModel {
         }
     }
 }
-
