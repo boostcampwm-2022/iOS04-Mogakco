@@ -198,11 +198,12 @@ final class ChatViewController: ViewController {
         sidebarView = ChatSidebarView(frame: CGRect(
             x: view.frame.width,
             y: 0,
-            width: 0,
+            width: view.frame.width,
             height: view.frame.height)
         )
-        sidebarView.delegate = self
         sidebarView.layer.zPosition = 100
+        sidebarView.tableView.delegate = nil
+        sidebarView.tableView.dataSource = nil
         self.view.isUserInteractionEnabled = true
     }
     
