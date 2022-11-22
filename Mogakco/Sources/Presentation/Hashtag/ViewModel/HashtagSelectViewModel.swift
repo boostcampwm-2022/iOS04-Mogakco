@@ -49,7 +49,9 @@ class HashtagSelectedViewModel: HashtagViewModel {
                 name: "",
                 languages: [],
                 careers: [],
-                categorys: []
+                categorys: [],
+                studyIDs: [],
+                chatRoomIDs: []
             )
         )
         .subscribe { [weak self] _ in
