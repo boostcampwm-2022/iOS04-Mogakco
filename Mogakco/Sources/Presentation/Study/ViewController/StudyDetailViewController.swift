@@ -142,8 +142,12 @@ final class StudyDetailViewController: ViewController {
         let output = viewModel.transform(input: input)
         
         output.studyDetail
-            .subscribe(onNext: {
-                // Study 바인딩
+            .subscribe(onNext: { [weak self] in
+                self?.studyTitleLabel.text = $0.title
+                self?.dateView.textLabel.text = "\($0.date)"
+                self?.participantsView.textLabel.text = "\($0.userIDs.count)/\($0.maxUserCount)"
+                self?.locationView.textLabel.text = $0.place
+                self?.studyInfoDescription.text = $0.content
             })
             .disposed(by: disposeBag)
     }
