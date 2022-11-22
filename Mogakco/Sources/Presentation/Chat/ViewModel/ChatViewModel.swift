@@ -27,7 +27,9 @@ final class ChatViewModel: ViewModel {
         let inputViewTextObservable: Observable<String?>
     }
     
-    let messages = Observable.of([1, 2, 3, 4, 5])
+    let messages = Observable.of([1, 2, 3, 4, 5,
+                                  6, 7, 8, 9, 10, 11, 12,
+                                  13, 14])
     var disposeBag = DisposeBag()
     weak var coordinator: Coordinator?
     
