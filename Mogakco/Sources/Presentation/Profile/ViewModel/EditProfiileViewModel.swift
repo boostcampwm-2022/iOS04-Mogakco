@@ -27,7 +27,7 @@ final class EditProfiileViewModel: ViewModel {
     struct Output {
         let originName: Observable<String>
         let originIntroduce: Observable<String>
-        let originProfileImageURL: Observable<URL>
+        let originProfileImage: Observable<UIImage>
         let inputValidation: Observable<Bool>
     }
     
@@ -120,10 +120,7 @@ final class EditProfiileViewModel: ViewModel {
         return Output(
             originName: user.compactMap { $0?.name },
             originIntroduce: user.compactMap { $0?.introduce },
-            originProfileImageURL: user
-                .compactMap { $0?.profileImageURLString }
-                .compactMap { URL(string: $0) }
-                .take(1),
+            originProfileImage: image.asObservable(),
             inputValidation: inputValidation.asObservable()
         )
     }

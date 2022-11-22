@@ -103,9 +103,9 @@ final class EditProfileViewController: ViewController {
             .drive(introuceCountTextView.rx.text)
             .disposed(by: disposeBag)
         
-        output.originProfileImageURL
-            .asDriver(onErrorDriveWith: .empty())
-            .drive(roundProfileImageView.rx.loadImage)
+        output.originProfileImage
+            .asDriver(onErrorJustReturn: .init())
+            .drive(roundProfileImageView.rx.image)
             .disposed(by: disposeBag)
         
         output.inputValidation
