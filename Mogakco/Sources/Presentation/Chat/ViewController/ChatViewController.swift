@@ -84,16 +84,116 @@ final class ChatViewController: ViewController {
         return true
     }
     
+    override func layout() {
+        configure()
+        layoutCollectionView()
+        layoutSideBar()
+        layoutBlackScreen()
+    }
+    
     private func configure() {
         configureSideBar()
         configureBlackScreen()
         configureNavigationBar()
     }
     
-    private func layout() {
-        layoutCollectionView()
-        layoutSideBar()
-        layoutBlackScreen()
+    override func bind() {
+        let input = ChatViewModel.Input(
+            backButtonDidTap: backButton.rx.tap.asObservable(),
+            studyInfoButtonDidTap: studyInfoButton.rx.tap.asObservable(),
+            selectedSidebar: sidebarView.tableView.rx.itemSelected.asObservable(),
+            sendButtonDidTap: messageInputView.sendButton.rx.tap.asObservable(),
+            inputViewText: messageInputView.messageInputTextView.rx.text.asObservable()
+        )
+        
+        let output = viewModel.transform(input: input)
+        
+        Driver<[ChatSidebarMenu]>.just(ChatSidebarMenu.allCases)
+            .drive(sidebarView.tableView.rx.items) { tableView, index, menu in
+                guard let cell = tableView.dequeueReusableCell(
+                    withIdentifier: ChatSidebarTableViewCell.identifier,
+                    for: IndexPath(row: index, section: 0)) as? ChatSidebarTableViewCell else {
+                    return UITableViewCell()
+                }
+
+                cell.menuLabel.text = menu.rawValue
+
+                return cell
+            }
+            .disposed(by: disposeBag)
+        
+        viewModel.messages
+            .asDriver(onErrorJustReturn: [])
+            .drive(collectionView.rx.items) { collectionView, index, category in
+                guard let cell = collectionView.dequeueReusableCell(
+                    withReuseIdentifier: ChatCell.identifier,
+                    for: IndexPath(row: index, section: 0)) as? ChatCell else {
+                    return UICollectionViewCell()
+                }
+                return cell
+            }
+            .disposed(by: disposeBag)
+        
+        output.chatSidebarViewObservable
+            .observe(on: MainScheduler.instance)
+            .subscribe { [weak self] _ in
+                guard let self = self else { return }
+                self.blackScreen.isHidden = false
+
+                UIView.animate(
+                    withDuration: 0.3,
+                    animations: {
+                        self.sidebarView.frame = CGRect(
+                            x: self.view.frame.width * (2 / 3),
+                            y: 0,
+                            width: self.view.frame.width * (1 / 3),
+                            height: self.sidebarView.frame.height)
+                    },
+                    completion: { _ in
+                        self.blackScreen.frame = CGRect(
+                            x: 0,
+                            y: 0,
+                            width: self.view.frame.width * (2 / 3),
+                            height: self.view.bounds.height)
+                    }
+                )
+            }
+            .disposed(by: disposeBag)
+        
+        output.selectedSidebarObservable
+            .subscribe { [weak self] row in
+                guard let self = self else { return }
+                
+                self.blackScreen.isHidden = true
+                self.blackScreen.frame = self.view.bounds
+                
+                UIView.animate(withDuration: 0.3) {
+                    self.sidebarView.frame = CGRect(
+                        x: self.view.frame.width,
+                        y: 0,
+                        width: self.view.frame.width,
+                        height: self.sidebarView.frame.height
+                    )
+                }
+                
+                switch row {
+                case .studyInfo:
+                    print("1")
+                case .exitStudy:
+                    print("2")
+                case .showMember:
+                    print("3")
+                }
+            }
+            .disposed(by: disposeBag)
+        
+        output.inputViewTextObservable
+            .map { $0 ?? "" }
+            .subscribe { [weak self] message in
+                print("DEBUG : ", message)
+                self?.collectionView.reloadData()
+            }
+            .disposed(by: disposeBag)
     }
     
     private func configureSideBar() {
