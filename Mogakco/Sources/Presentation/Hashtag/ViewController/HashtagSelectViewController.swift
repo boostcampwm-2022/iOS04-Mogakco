@@ -94,6 +94,8 @@ class HashtagSelectViewController: ViewController {
             output = viewModel.transform(input: input)
         } else if let viewModel = viewModel as? HashtagEditViewModel {
             output = viewModel.transform(input: input)
+        } else if let viewModel = viewModel as? HashtagFilterViewModel {
+            output = viewModel.transform(input: input)
         }
 
         output.hashtagReload
