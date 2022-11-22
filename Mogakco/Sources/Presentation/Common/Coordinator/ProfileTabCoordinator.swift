@@ -28,7 +28,7 @@ final class ProfileTabCoordinator: Coordinator, ProfileTabCoordinatorProtocol {
             profileUseCase: ProfileUseCase(
                 userRepository: UserRepository(
                     localUserDataSource: UserDefaultsUserDataSource(),
-                    retmoteUserDataSource: RemoteUserDataSource(provider: Provider.default)
+                    remoteUserDataSource: RemoteUserDataSource(provider: Provider.default)
                 )
             )
         )
@@ -39,7 +39,7 @@ final class ProfileTabCoordinator: Coordinator, ProfileTabCoordinatorProtocol {
     func showEditProfile() {
         let userRepository = UserRepository(
             localUserDataSource: UserDefaultsUserDataSource(),
-            retmoteUserDataSource: RemoteUserDataSource(provider: Provider.default)
+            remoteUserDataSource: RemoteUserDataSource(provider: Provider.default)
         )
         let viewModel = EditProfiileViewModel(
             type: .edit,

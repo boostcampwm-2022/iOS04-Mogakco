@@ -31,7 +31,7 @@ final class AdditionalSignupCoordinator: Coordinator, AdditionalSignupCoordinato
     func showCreateProfile() {
         let userRepository = UserRepository(
             localUserDataSource: UserDefaultsUserDataSource(),
-            retmoteUserDataSource: RemoteUserDataSource(provider: Provider.default)
+            remoteUserDataSource: RemoteUserDataSource(provider: Provider.default)
         )
         let viewModel = EditProfiileViewModel(
             type: .create,
