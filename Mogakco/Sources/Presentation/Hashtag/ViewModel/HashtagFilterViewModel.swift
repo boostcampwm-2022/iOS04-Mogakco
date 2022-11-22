@@ -18,10 +18,12 @@ class HashtagFilterViewModel: HashtagViewModel {
     
      init(
         coordinator: StudyTabCoordinatorProtocol,
-        hashTagUsecase: HashtagUseCaseProtocol
+        hashTagUsecase: HashtagUseCaseProtocol,
+        selectedHashtag: [Hashtag]
      ) {
          self.coordinator = coordinator
          super.init(hashTagUsecase: hashTagUsecase)
+         self.selectedHashtag = selectedHashtag
     }
     
     override func transform(input: Input) -> Output {
