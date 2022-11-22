@@ -13,7 +13,13 @@ import RxCocoa
 import SnapKit
 import Then
 
-final class HashtagSelectViewController: ViewController {
+enum KindHashtag {
+    case language
+    case career
+    case category
+}
+
+class HashtagSelectViewController: ViewController {
     
     private let hashtagListCollectionView = UICollectionView(
         frame: .zero,
@@ -29,9 +35,9 @@ final class HashtagSelectViewController: ViewController {
         $0.allowsMultipleSelection = true
         $0.register(BadgeCell.self, forCellWithReuseIdentifier: BadgeCell.identifier)
         $0.register(
-            HashtagSelectHeader.self,
+            HashtagHeader.self,
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
-            withReuseIdentifier: HashtagSelectHeader.identifier
+            withReuseIdentifier: HashtagHeader.identifier
         )
     }
     
@@ -198,9 +204,9 @@ extension HashtagSelectViewController: UICollectionViewDelegateFlowLayout {
         guard kind == UICollectionView.elementKindSectionHeader,
               let header = hashtagListCollectionView.dequeueReusableSupplementaryView(
                   ofKind: kind,
-                  withReuseIdentifier: HashtagSelectHeader.identifier,
+                  withReuseIdentifier: HashtagHeader.identifier,
                   for: indexPath
-              ) as? HashtagSelectHeader
+              ) as? HashtagHeader
         else { return UICollectionReusableView() }
         
         return header
@@ -211,6 +217,6 @@ extension HashtagSelectViewController: UICollectionViewDelegateFlowLayout {
         layout collectionViewLayout: UICollectionViewLayout,
         referenceSizeForHeaderInSection section: Int
     ) -> CGSize {
-        return CGSize(width: view.frame.width, height: HashtagSelectHeader.height)
+        return CGSize(width: view.frame.width, height: HashtagHeader.height)
     }
 }
