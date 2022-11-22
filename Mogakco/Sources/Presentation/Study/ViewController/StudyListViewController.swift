@@ -22,8 +22,6 @@ final class StudyListViewController: ViewController {
         collectionViewLayout: collectionViewLayout()
     ).then {
         $0.showsVerticalScrollIndicator = false
-//        $0.delegate = self
-//        $0.dataSource = self
         $0.showsHorizontalScrollIndicator = false
         $0.showsVerticalScrollIndicator = false
         $0.register(StudyCell.self, forCellWithReuseIdentifier: StudyCell.identifier)
@@ -55,6 +53,15 @@ final class StudyListViewController: ViewController {
         )
         
         let output = viewModel.transform(input: input)
+        
+        output.studyList
+            .bind(to: self.collectionView.rx.items(
+                cellIdentifier: StudyCell.identifier,
+                cellType: StudyCell.self
+            )) { _, study, cell in
+                cell.setup(study)
+            }
+            .disposed(by: disposeBag)
     }
     
     override func layout() {
@@ -90,35 +97,5 @@ final class StudyListViewController: ViewController {
             section.contentInsets = .init(top: 1, leading: 16, bottom: 16, trailing: 16)
             return section
         }
-    }
-    
-    // MARK: - Diffable DataSource
-    
-    
-}
-
-extension StudyListViewController: UICollectionViewDataSource {
-    
-    func collectionView(
-        _ collectionView: UICollectionView,
-        numberOfItemsInSection section: Int
-    ) -> Int {
-        return 5
-    }
-    
-    func collectionView(
-        _ collectionView: UICollectionView,
-        cellForItemAt indexPath: IndexPath
-    ) -> UICollectionViewCell {
-        
-        guard let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: StudyCell.identifier,
-            for: indexPath
-        ) as? StudyCell else {
-            return UICollectionViewCell()
-        }
-        
-        cell.state = .open
-        return cell
     }
 }
