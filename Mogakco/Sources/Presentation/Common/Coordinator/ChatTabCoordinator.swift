@@ -37,7 +37,8 @@ final class ChatTabCoordinator: Coordinator, ChatTabCoordinatorProtocol {
     }
     
     func showChatDetail() {
-        let viewController = ChatViewController()
-        navigationController.pushViewController(viewController, animated: true)
+        let viewModel = ChatViewModel(coordinator: self)
+        let chatViewController = ChatViewController(viewModel: viewModel)
+        navigationController.pushViewController(chatViewController, animated: true)
     }
 }
