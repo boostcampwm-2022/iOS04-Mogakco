@@ -10,6 +10,17 @@ import UIKit
 
 class HashtagFlowLayout: UICollectionViewFlowLayout {
     
+    override init() {
+        super.init()
+        minimumInteritemSpacing = 5
+        minimumLineSpacing = 5
+        scrollDirection = .vertical
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
         guard let attributes = super.layoutAttributesForElements(in: rect) else { return [] }
         
