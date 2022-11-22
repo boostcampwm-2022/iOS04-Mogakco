@@ -11,15 +11,15 @@ import RxSwift
 struct UserRepository: UserRepositoryProtocol {
 
     private var localUserDataSource: LocalUserDataSourceProtocol
-    private var userDataSource: UserDataSourceProtocol
+    private var retmoteUserDataSource: RemoteUserDataSourceProtocol
     private let disposeBag = DisposeBag()
     
     init(
         localUserDataSource: LocalUserDataSourceProtocol,
-        userDataSource: UserDataSourceProtocol
+        retmoteUserDataSource: RemoteUserDataSourceProtocol
     ) {
         self.localUserDataSource = localUserDataSource
-        self.userDataSource = userDataSource
+        self.retmoteUserDataSource = retmoteUserDataSource
     }
 
     func save(user: User) -> Observable<Void> {
@@ -30,7 +30,7 @@ struct UserRepository: UserRepositoryProtocol {
         return localUserDataSource.saveUID(userUID: userUID)
     func user(id: String) -> Observable<User> {
         let request = UserRequestDTO(id: id)
-        return userDataSource.user(request: request)
+        return retmoteUserDataSource.user(request: request)
             .map { $0.toDomain() }
     }
     
