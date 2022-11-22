@@ -26,7 +26,7 @@ final class HashtagSelectViewModel: ViewModel {
     
     struct Input {
         let kindHashtag: Observable<KindHashtag>
-        let cellSelected: ControlEvent<IndexPath>
+        let cellSelected: Observable<Int>
         let nextButtonTapped: Observable<Void>
     }
     struct Output {
@@ -62,13 +62,9 @@ final class HashtagSelectViewModel: ViewModel {
             .disposed(by: disposeBag)
         
         input.cellSelected
-            .map { $0.row }
-            .subscribe { [weak self] in
-                print("선택..")
-                self?.selectBadge(index: $0)
-                self?.selectedHashtag.forEach {
-                    print($0.hashtagTitle())
-                }
+            .withUnretained(self)
+            .subscribe { owner, index in
+                owner.selectHashtag(index: index)
             }
             .disposed(by: disposeBag)
         
@@ -106,20 +102,14 @@ final class HashtagSelectViewModel: ViewModel {
         return false
     }
     
-    func selectBadge(index: Int) {
-        guard let hashTag = cellInfo(index: index) else { return }
-        
-        if !selectedHashtag.contains(where: { $0.title == hashTag.title }) {
-            selectedHashtag.append(hashTag)
-            return
-        }
-    }
-    
-    func deselectBadge(index: Int) {
+    func selectHashtag(index: Int) {
         guard let hashTag = cellInfo(index: index) else { return }
         
         if let removeIndex = selectedHashtag.firstIndex(where: { $0.title == hashTag.title }) {
             selectedHashtag.remove(at: removeIndex)
+        } else {
+            selectedHashtag.append(hashTag)
         }
+        print(selectedHashtag)
     }
 }
