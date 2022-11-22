@@ -51,6 +51,7 @@ final class StudyCell: UICollectionViewCell, Identifiable {
         $0.font = UIFont(name: SFPro.bold.rawValue, size: 16)
         $0.text = "강남역 카페 모각코"
         $0.textColor = .mogakcoColor.typographyPrimary
+        $0.lineBreakMode = .byTruncatingTail
     }
     
     private lazy var topStackView = UIStackView().then { stack in
@@ -87,6 +88,7 @@ final class StudyCell: UICollectionViewCell, Identifiable {
         $0.numberOfLines = 2
         $0.textColor = .mogakcoColor.typographyPrimary
         $0.setLineSpacing(spacing: 4)
+        $0.lineBreakMode = .byTruncatingTail
     }
     
     private let totalStackView = UIStackView().then {
