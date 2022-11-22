@@ -23,7 +23,8 @@ class BaseProjectFactory: ProjectFactory {
         .external(name: "Then"),
         .external(name: "FirebaseAuth"),
         .external(name: "FirebaseDatabase"),
-        .external(name: "FirebaseFirestore")
+        .external(name: "FirebaseFirestore"),
+        .external(name: "FirebaseStorage")
     ]
     
     let infoPlist: [String: InfoPlist.Value] = [
