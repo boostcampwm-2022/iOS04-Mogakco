@@ -1,8 +1,8 @@
 //
-//  HashtagEditViewModel.swift
+//  HashtagFilterViewModel.swift
 //  Mogakco
 //
-//  Created by 이주훈 on 2022/11/17.
+//  Created by 이주훈 on 2022/11/22.
 //  Copyright © 2022 Mogakco. All rights reserved.
 //
 
@@ -11,18 +11,15 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-class HashtagEditViewModel: HashtagViewModel {
+class HashtagFilterViewModel: HashtagViewModel {
     
-    weak var coordinator: ProfileTabCoordinatorProtocol?
-    let userUseCase: UserUseCaseProtocol? // 프로필 업데이트 UseCase
+    weak var coordinator: StudyTabCoordinatorProtocol?
     weak var delegate: HashtagSelectProtocol?
     
      init(
-        coordinator: ProfileTabCoordinatorProtocol,
-        hashTagUsecase: HashtagUseCaseProtocol,
-        userUseCase: UserUseCaseProtocol? = nil
+        coordinator: StudyTabCoordinatorProtocol,
+        hashTagUsecase: HashtagUseCaseProtocol
      ) {
-         self.userUseCase = userUseCase
          self.coordinator = coordinator
          super.init(hashTagUsecase: hashTagUsecase)
     }
@@ -39,8 +36,7 @@ class HashtagEditViewModel: HashtagViewModel {
     }
     
     private func tapButton() {
-        // 1. userUseCase 에서 업데이트
-        delegate?.selectedHashtag(hashTags: selectedHashtag) // 2. 상위 뷰컨에 전달
-        // 3. 화면이동
+        delegate?.selectedHashtag(hashTags: selectedHashtag) // 1. 상위 뷰컨에 전달
+        // 2. 화면 이동
     }
 }
