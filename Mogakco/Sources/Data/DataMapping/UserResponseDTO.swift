@@ -10,6 +10,7 @@ import Foundation
 
 struct UserResponseDTO: Decodable {
     private let id: StringValue
+    private let profileImageURLString: StringValue
     private let name: StringValue
     private let introduce: StringValue
     private let email: StringValue
@@ -24,13 +25,14 @@ struct UserResponseDTO: Decodable {
     }
     
     private enum FieldKeys: String, CodingKey {
-        case id, name, introduce, email, languages, careers, categorys, studyIDs, chatRoomIDs
+        case id, profileImageURLString, name, introduce, email, languages, careers, categorys, studyIDs, chatRoomIDs
     }
     
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: RootKey.self)
         let fieldContainer = try container.nestedContainer(keyedBy: FieldKeys.self, forKey: .fields)
         self.id = try fieldContainer.decode(StringValue.self, forKey: .id)
+        self.profileImageURLString = try fieldContainer.decode(StringValue.self, forKey: .profileImageURLString)
         self.name = try fieldContainer.decode(StringValue.self, forKey: .name)
         self.introduce = try fieldContainer.decode(StringValue.self, forKey: .introduce)
         self.email = try fieldContainer.decode(StringValue.self, forKey: .email)
@@ -43,6 +45,7 @@ struct UserResponseDTO: Decodable {
     
     init(user: User) {
         self.id = StringValue(value: user.id ?? "")
+        self.profileImageURLString = StringValue(value: user.profileImageURLString)
         self.name = StringValue(value: user.name)
         self.introduce = StringValue(value: user.introduce)
         self.email = StringValue(value: user.email)
@@ -56,6 +59,7 @@ struct UserResponseDTO: Decodable {
     func toDomain() -> User {
         return User(
             id: id.value,
+            profileImageURLString: profileImageURLString.value,
             email: email.value,
             introduce: introduce.value,
             password: nil,

@@ -10,6 +10,7 @@ import UIKit
 
 struct User: Codable {
     let id: String?
+    let profileImageURLString: String
     let email: String
     let introduce: String
     let password: String?
@@ -19,5 +20,4 @@ struct User: Codable {
     let categorys: [String]
     let studyIDs: [String]
     let chatRoomIDs: [String]
-    // TODO: Image
 }
