@@ -1,14 +1,14 @@
 //
-//  StudyListUseCase.swift
+//  StudyDetailUseCase.swift
 //  Mogakco
 //
-//  Created by 신소민 on 2022/11/22.
+//  Created by 이주훈 on 2022/11/23.
 //  Copyright © 2022 Mogakco. All rights reserved.
 //
 
 import RxSwift
 
-struct StudyListUseCase: StudyListUseCaseProtocol {
+struct StudyDetailUseCase:  StudyDetailUseCaseProtocol {
     
     private let repository: StudyRepositoryProtocol
     
@@ -16,7 +16,7 @@ struct StudyListUseCase: StudyListUseCaseProtocol {
         self.repository = repository
     }
     
-    func list() -> Observable<[Study]> {
-        return repository.list()
+    func study(id: String) -> Observable<Study> {
+        return repository.detail(id: id)
     }
 }

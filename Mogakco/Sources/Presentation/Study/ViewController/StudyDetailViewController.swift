@@ -138,7 +138,14 @@ final class StudyDetailViewController: ViewController {
         let input = StudyDetailViewModel.Input(
             studyJoinButtonTapped: studyJoinButton.rx.tap.asObservable()
         )
-        _ = viewModel.transform(input: input)
+        
+        let output = viewModel.transform(input: input)
+        
+        output.studyDetail
+            .subscribe(onNext: {
+                // Study 바인딩
+            })
+            .disposed(by: disposeBag)
     }
     
     private func navigationLayout() {
