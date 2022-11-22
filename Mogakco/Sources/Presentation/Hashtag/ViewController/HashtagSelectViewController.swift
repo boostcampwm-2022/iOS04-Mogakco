@@ -23,13 +23,8 @@ class HashtagSelectViewController: ViewController {
     
     private let hashtagListCollectionView = UICollectionView(
         frame: .zero,
-        collectionViewLayout: UICollectionViewFlowLayout()
+        collectionViewLayout: HashtagFlowLayout()
     ).then {
-        let layout = HashtagFlowLayout()
-        layout.minimumInteritemSpacing = 5
-        layout.minimumLineSpacing = 5
-        layout.scrollDirection = .vertical
-        $0.collectionViewLayout = layout
         $0.showsHorizontalScrollIndicator = false
         $0.clipsToBounds = false
         $0.allowsMultipleSelection = true
