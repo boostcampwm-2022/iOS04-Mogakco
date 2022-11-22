@@ -15,9 +15,7 @@ import Then
 
 final class MessageInputView: UIView {
     
-    private let disposeBag = DisposeBag()
-    
-    private let messageInputTextView = UITextView().then {
+    lazy var messageInputTextView = UITextView().then {
         $0.font = .mogakcoFont.smallRegular
         $0.textAlignment = .left
         $0.layer.cornerRadius = 15
@@ -27,7 +25,7 @@ final class MessageInputView: UIView {
         $0.isScrollEnabled = false
     }
     
-    private let sendButton = UIButton().then {
+    lazy var sendButton = UIButton().then {
         $0.setImage(UIImage(systemName: "arrow.up"), for: .normal)
         $0.tintColor = .white
         $0.backgroundColor = .mogakcoColor.primaryDefault
@@ -39,6 +37,8 @@ final class MessageInputView: UIView {
         $0.font = UIFont.mogakcoFont.smallRegular
         $0.textColor = .lightGray
     }
+    
+    private let disposeBag = DisposeBag()
         
     override init(frame: CGRect) {
         super.init(frame: frame)
