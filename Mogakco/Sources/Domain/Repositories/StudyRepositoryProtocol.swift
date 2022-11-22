@@ -10,5 +10,5 @@ import RxSwift
 
 protocol StudyRepositoryProtocol {
     func list() -> Observable<[Study]>
-    func detail(studyID: String) -> Observable<Study>
+    func detail(id: String) -> Observable<Study>
 }
