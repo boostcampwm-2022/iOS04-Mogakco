@@ -21,8 +21,8 @@ struct StudyDataSource: StudyDataSourceProtocol {
         return provider.request(StudyTarget.list)
     }
     
-    func detail(studyID: String) -> Observable<StudyResponseDTO> {
-        return provider.request(StudyTarget.detail(studyID))
+    func detail(id: String) -> Observable<StudyResponseDTO> {
+        return provider.request(StudyTarget.detail(id))
     }
 }
 

@@ -22,8 +22,8 @@ struct StudyRepository: StudyRepositoryProtocol {
             .map { $0.documents.map { $0.toDomain() } }
     }
     
-    func detail(studyID: String) -> Observable<Study> {
-        return dataSource.detail(studyID: studyID)
+    func detail(id: String) -> Observable<Study> {
+        return dataSource.detail(id: id)
             .map { $0.toDomain() }
     }
 }
