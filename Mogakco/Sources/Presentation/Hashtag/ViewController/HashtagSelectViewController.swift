@@ -178,6 +178,15 @@ extension HashtagSelectViewController: UICollectionViewDataSource {
         cellSelect.onNext(indexPath.row)
         cell.deselect()
     }
+    
+    func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
+        guard let selectedCount = collectionView.indexPathsForSelectedItems?.count else {
+            return false }
+        switch kind {
+        case .language, .career: return selectedCount <= 4
+        case .category: return selectedCount <= 1
+        }
+    }
 }
 
 extension HashtagSelectViewController: UICollectionViewDelegateFlowLayout {
