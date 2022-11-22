@@ -35,7 +35,7 @@ final class CreateProfileViewController: ViewController {
         $0.placeholder = "이름을 입력해주세요."
     }
     
-    private let introuceCountTextField = CountTextView().then {
+    private let introuceCountTextView = CountTextView().then {
         $0.title = "소개"
         $0.maxCount = 100
         $0.placeholder = "자신을 소개해주세요."
@@ -80,7 +80,7 @@ final class CreateProfileViewController: ViewController {
     override func bind() {
         let input = CreateProfiileViewModel.Input(
             name: nameCountTextField.rx.text.orEmpty.asObservable(),
-            introduce: introuceCountTextField.rx.text.orEmpty.asObservable(),
+            introduce: introuceCountTextView.rx.text.orEmpty.asObservable(),
             selectedProfileImage: selectedProfileImage.asObservable(),
             completeButtonTapped: completeButton.rx.tap.asObservable()
         )
@@ -93,8 +93,24 @@ final class CreateProfileViewController: ViewController {
             })
             .disposed(by: disposeBag)
         
-        output.profileImage
+        output.originName
+            .asDriver(onErrorJustReturn: "")
+            .drive(nameCountTextField.rx.text)
+            .disposed(by: disposeBag)
+        
+        output.originIntroduce
+            .asDriver(onErrorJustReturn: "")
+            .drive(introuceCountTextView.rx.text)
+            .disposed(by: disposeBag)
+        
+        output.originProfileImage
+            .asDriver(onErrorJustReturn: .init())
             .drive(roundProfileImageView.rx.image)
+            .disposed(by: disposeBag)
+        
+        output.inputValidation
+            .asDriver(onErrorJustReturn: false)
+            .drive(completeButton.rx.isEnabled)
             .disposed(by: disposeBag)
         
         RxKeyboard.instance.visibleHeight
@@ -159,8 +175,8 @@ final class CreateProfileViewController: ViewController {
     }
     
     private func layoutIntrouceCountTextField() {
-        contentView.addSubview(introuceCountTextField)
-        introuceCountTextField.snp.makeConstraints {
+        contentView.addSubview(introuceCountTextView)
+        introuceCountTextView.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(16.0)
             $0.top.equalTo(nameCountTextField.snp.bottom).offset(8.0)
             $0.height.equalTo(240.0)
@@ -172,7 +188,7 @@ final class CreateProfileViewController: ViewController {
         contentView.addSubview(marginView)
         marginView.snp.makeConstraints {
             $0.leading.trailing.bottom.equalToSuperview()
-            $0.top.equalTo(introuceCountTextField.snp.bottom)
+            $0.top.equalTo(introuceCountTextView.snp.bottom)
         }
     }
     
