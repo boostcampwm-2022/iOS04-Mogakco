@@ -28,7 +28,7 @@ final class ProfileTabCoordinator: Coordinator, ProfileTabCoordinatorProtocol {
             profileUseCase: ProfileUseCase(
                 userRepository: UserRepository(
                     localUserDataSource: UserDefaultsUserDataSource(),
-                    userDataSource: UserDataSource(provider: Provider.default)
+                    retmoteUserDataSource: RemoteUserDataSource(provider: Provider.default)
                 )
             )
         )

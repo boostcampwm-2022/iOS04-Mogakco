@@ -1,5 +1,5 @@
 //
-//  UserDataSource.swift
+//  RemoteUserDataSource.swift
 //  Mogakco
 //
 //  Created by 김범수 on 2022/11/21.
@@ -9,7 +9,7 @@
 import Alamofire
 import RxSwift
 
-struct UserDataSource: UserDataSourceProtocol {
+struct RemoteUserDataSource: RemoteUserDataSourceProtocol {
     let provider: ProviderProtocol
     
     init(provider: ProviderProtocol) {
