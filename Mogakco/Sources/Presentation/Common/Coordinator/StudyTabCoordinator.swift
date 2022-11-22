@@ -37,8 +37,14 @@ final class StudyTabCoordinator: Coordinator, StudyTabCoordinatorProtocol {
     }
     
     func showStudyDetail() {
-        let viewModel = StudyDetailViewModel()
-        viewModel.coordinator = self
+        let studyDataSource = StudyDataSource(provider: Provider.default)
+        let studyRepository = StudyRepository(dataSource: studyDataSource)
+        let studyUseCase = StudyDetailUseCase(repository: studyRepository)
+        let viewModel = StudyDetailViewModel(
+            studyID: "nN2KGsHG1my3fMo4tjwE", // TODO: Flow 수정
+            coordinator: self,
+            studyUsecase: studyUseCase
+        )
         let studyDetailViewController = StudyDetailViewController(viewModel: viewModel)
         navigationController.pushViewController(studyDetailViewController, animated: true)
     }
