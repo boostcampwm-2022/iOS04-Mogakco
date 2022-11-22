@@ -33,10 +33,10 @@ final class LoginViewController: ViewController {
         $0.clipsToBounds = true
     }
     
-    private var coordinator: AuthCoordinatorProtocol?
+    private let viewModel: LoginViewModel
     
-    init(coordinator: AuthCoordinatorProtocol?) {
-        self.coordinator = coordinator
+    init(viewModel: LoginViewModel) {
+        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -44,29 +44,15 @@ final class LoginViewController: ViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        addActions()
-    }
-    
-    func addActions() {
-        signupButton.addAction(
-            UIAction { [weak self] _ in
-                self?.coordinator?.showRequiredSignup()
-            },
-            for: .touchUpInside
-        )
-        
-        loginButton.addAction(
-            UIAction { [weak self] _ in
-                self?.coordinator?.finish()
-            },
-            for: .touchUpInside
-        )
-    }
-    
     override func bind() {
-        //
+        let input = LoginViewModel.Input(
+            email: emailTextField.rx.text.orEmpty.asObservable(),
+            password: secureTextField.rx.text.orEmpty.asObservable(),
+            signupButtonTap: signupButton.rx.tap.asObservable(),
+            loginButtonTap: loginButton.rx.tap.asObservable()
+        )
+
+        _ = viewModel.transform(input: input)
     }
     
     override func layout() {
