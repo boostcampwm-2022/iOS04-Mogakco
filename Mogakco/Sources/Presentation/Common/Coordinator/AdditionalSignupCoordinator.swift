@@ -37,18 +37,43 @@ final class AdditionalSignupCoordinator: Coordinator, AdditionalSignupCoordinato
     func showLanguage() {
         let hashtagDataSource = HashtagDataSource()
         let hashtagRepository = HashtagRepository(localHashtagDataSource: hashtagDataSource)
-        let hashtagUsecase = HashtagUsecase(hashtagRepository: hashtagRepository)
-        let viewModel = HashtagViewModel(coordinator: self, hashTagUsecase: hashtagUsecase)
-        let hashtagSelectViewController = HashtagSelectViewController(kind: .language, viewModel: viewModel)
+        let hashtagUseCase = HashtagUsecase(hashtagRepository: hashtagRepository)
+        let viewModel = HashtagSelectedViewModel(
+            coordinator: self,
+            hashTagUsecase: hashtagUseCase
+        )
+        let hashtagSelectViewController = HashtagSelectViewController(
+            kind: .language,
+            viewModel: viewModel
+        )
         navigationController.pushViewController(hashtagSelectViewController, animated: true)
     }
     
     func showCareer() {
         let hashtagDataSource = HashtagDataSource()
+        let authService = FBAuthService()
+        let userDefaultDataSource = UserDefaultsUserDataSource()
+        let remoteUserDataSouce = RemoteUserDataSource(provider: Provider.default)
         let hashtagRepository = HashtagRepository(localHashtagDataSource: hashtagDataSource)
-        let hashtagUsecase = HashtagUsecase(hashtagRepository: hashtagRepository)
-        let viewModel = HashtagViewModel(coordinator: self, hashTagUsecase: hashtagUsecase)
-        let hashtagSelectViewController = HashtagSelectViewController(kind: .career, viewModel: viewModel)
+        let authRepository = AuthRepository(authService: authService)
+        let userRepository = UserRepository(
+            localUserDataSource: userDefaultDataSource,
+            retmoteUserDataSource: remoteUserDataSouce
+        )
+        let hashtagUseCase = HashtagUsecase(hashtagRepository: hashtagRepository)
+        let signupUseCase = SignupUseCase(
+            authRepository: authRepository,
+            userRepository: userRepository
+        )
+        let viewModel = HashtagSelectedViewModel(
+            coordinator: self,
+            hashTagUsecase: hashtagUseCase,
+            signUpUseCase: signupUseCase
+        )
+        let hashtagSelectViewController = HashtagSelectViewController(
+            kind: .career,
+            viewModel: viewModel
+        )
         navigationController.pushViewController(hashtagSelectViewController, animated: true)
     }
     
