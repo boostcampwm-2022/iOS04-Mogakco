@@ -1,5 +1,5 @@
 //
-//  StudyUseCaseProtocol.swift
+//  StudyListUseCaseProtocol.swift
 //  Mogakco
 //
 //  Created by 신소민 on 2022/11/22.
@@ -8,7 +8,6 @@
 
 import RxSwift
 
-protocol StudyUseCaseProtocol {
+protocol StudyListUseCaseProtocol {
     func list() -> Observable<[Study]>
-    func detail(studyID: String) -> Observable<Study>
 }
