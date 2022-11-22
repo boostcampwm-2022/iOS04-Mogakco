@@ -49,6 +49,7 @@ final class StudyListViewController: ViewController {
     override func bind() {
         
         let input = StudyListViewModel.Input(
+            plusButtonTapped: header.plusButton.rx.tap.asObservable(),
             cellSelected: collectionView.rx.itemSelected.asObservable()
         )
         

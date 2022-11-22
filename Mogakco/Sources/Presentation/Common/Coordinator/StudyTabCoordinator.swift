@@ -43,6 +43,15 @@ final class StudyTabCoordinator: Coordinator, StudyTabCoordinatorProtocol {
         navigationController.pushViewController(studyDetailViewController, animated: true)
     }
     
+    func showStudyCreate() {
+        let viewController = CreateStudyViewController(
+            viewModel: CreateStudyViewModel(
+                coordinator: self
+            )
+        )
+        navigationController.pushViewController(viewController, animated: true)
+    }
+    
     func showChatDetail() {
         let chatViewController = ChatViewController()
         navigationController.pushViewController(chatViewController, animated: true)

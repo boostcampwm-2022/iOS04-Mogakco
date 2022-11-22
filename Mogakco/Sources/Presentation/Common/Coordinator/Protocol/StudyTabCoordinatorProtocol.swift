@@ -11,5 +11,6 @@ import Foundation
 protocol StudyTabCoordinatorProtocol: AnyObject {
     func showStudyList()
     func showStudyDetail()
+    func showStudyCreate()
     func showChatDetail()
 }
