@@ -11,5 +11,5 @@ import Foundation
 import RxSwift
 
 protocol LoginUseCaseProtocol {
-    func login(emailLoginData: EmailLoginData) -> Observable<Void>
+    func login(emailLoginData: EmailLogin) -> Observable<Void>
 }
