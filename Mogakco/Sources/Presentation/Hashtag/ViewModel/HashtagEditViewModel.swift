@@ -1,5 +1,5 @@
 //
-//  HashtagSelectViewModel.swift
+//  HashtagEditViewModel.swift
 //  Mogakco
 //
 //  Created by 이주훈 on 2022/11/17.
@@ -11,18 +11,7 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-enum KindHashtag {
-    case language
-    case career
-    case category
-}
-
-protocol Hashtag {
-    var title: String { get }
-    func hashtagTitle() -> String
-}
-
-final class HashtagSelectViewModel: ViewModel {
+class HashtagEditViewModel: ViewModel {
     
     struct Input {
         let kindHashtag: Observable<KindHashtag>
@@ -83,14 +72,6 @@ final class HashtagSelectViewModel: ViewModel {
         return Output(hashtagReload: collectionReloadObservable.asObservable())
     }
     
-    private func loadTagList(kind: KindHashtag) {
-        hashTagUsecase.loadTagList(kind: kind)
-            .subscribe { [weak self] in
-                self?.badgeList.onNext($0)
-            }
-            .disposed(by: disposeBag)
-    }
-    
     func cellInfo(index: Int) -> Hashtag? {
         return try? badgeList.value()[index]
     }
@@ -102,7 +83,15 @@ final class HashtagSelectViewModel: ViewModel {
         return false
     }
     
-    func selectHashtag(index: Int) {
+    private func loadTagList(kind: KindHashtag) {
+        hashTagUsecase.loadTagList(kind: kind)
+            .subscribe { [weak self] in
+                self?.badgeList.onNext($0)
+            }
+            .disposed(by: disposeBag)
+    }
+    
+    private func selectHashtag(index: Int) {
         guard let hashTag = cellInfo(index: index) else { return }
         
         if let removeIndex = selectedHashtag.firstIndex(where: { $0.title == hashTag.title }) {

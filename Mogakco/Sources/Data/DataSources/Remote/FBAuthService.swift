@@ -73,7 +73,7 @@ struct FBAuthService: AuthServiceProtocol {
         }
     }
     
-    func login(_ request: EmailLoginData) -> Observable<String> {
+    func login(_ request: EmailLogin) -> Observable<String> {
         return Observable.create { emmiter in
             Auth.auth().signIn(withEmail: request.email, password: request.password) { result, error in
                 if let id = result?.user.uid,

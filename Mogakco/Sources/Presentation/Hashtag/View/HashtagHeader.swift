@@ -11,7 +11,7 @@ import UIKit
 import SnapKit
 import Then
 
-final class HashtagSelectHeader: UICollectionReusableView, Identifiable {
+final class HashtagHeader: UICollectionReusableView, Identifiable {
     
     static let height = CGFloat(65)
     
@@ -51,8 +51,17 @@ final class HashtagSelectHeader: UICollectionReusableView, Identifiable {
         }
     }
     
-    func setTitle(title: String?, description: String?) {
-        mainTitleLabel.text = title
-        secondaryTitleLabel.text = description
+    func setTitle(kind: KindHashtag) {
+        switch kind {
+        case .language:
+            mainTitleLabel.text = "사용하시는 언어를 선택해주세요!"
+            secondaryTitleLabel.text = "다중 선택 가능(최대 5개)\n첫 번째 언어가 주 언어가 됩니다."
+        case .career:
+            mainTitleLabel.text = "경력을 선택해 주세요."
+            secondaryTitleLabel.text = "다중 선택 가능(최대 5개)"
+        case .category:
+            mainTitleLabel.text = "카테고리를 선택해주세요."
+            secondaryTitleLabel.text = "하나만 선택 가능"
+        }
     }
 }
