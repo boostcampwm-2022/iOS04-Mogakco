@@ -47,13 +47,13 @@ class HashtagSelectViewController: ViewController {
     
     // MARK: - Property
     
-    private let viewModel: HashtagSelectViewModel
+    private let viewModel: HashtagViewModel
     private let kind: KindHashtag
     private let cellSelect = PublishSubject<Int>()
     
     // MARK: - function
     
-    init(kind: KindHashtag, viewModel: HashtagSelectViewModel) {
+    init(kind: KindHashtag, viewModel: HashtagViewModel) {
         self.kind = kind
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -82,13 +82,19 @@ class HashtagSelectViewController: ViewController {
     }
     
     override func bind() {
-        let input = HashtagSelectViewModel.Input(
+        let input = HashtagViewModel.Input(
             kindHashtag: Observable.just(kind),
             cellSelected: cellSelect.asObservable(),
             nextButtonTapped: nextButton.rx.tap.asObservable()
         )
         
-        let output = viewModel.transform(input: input)
+        var output: HashtagViewModel.Output = HashtagViewModel.Output(hashtagReload: Observable.just(()))
+        
+        if let viewModel = viewModel as? HashtagSelectedViewModel {
+            output = viewModel.transform(input: input)
+        } else if let viewModel = viewModel as? HashtagEditViewModel {
+            output = viewModel.transform(input: input)
+        }
 
         output.hashtagReload
             .observe(on: MainScheduler.instance)
