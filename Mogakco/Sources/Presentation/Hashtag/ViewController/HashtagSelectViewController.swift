@@ -25,7 +25,7 @@ class HashtagSelectViewController: ViewController {
         frame: .zero,
         collectionViewLayout: UICollectionViewFlowLayout()
     ).then {
-        let layout = UICollectionViewFlowLayout()
+        let layout = HashtagFlowLayout()
         layout.minimumInteritemSpacing = 5
         layout.minimumLineSpacing = 5
         layout.scrollDirection = .vertical
@@ -158,7 +158,6 @@ extension HashtagSelectViewController: UICollectionViewDataSource {
             cell.select()
         }
         cell.setInfo(iconName: cellInfo?.title, title: cellInfo?.hashtagTitle())
-        
         return cell
     }
     
