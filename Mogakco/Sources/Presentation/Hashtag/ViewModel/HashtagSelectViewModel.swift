@@ -43,6 +43,7 @@ class HashtagSelectedViewModel: HashtagViewModel {
         case .career: signUseCase?.signup(
             user: User(
                 id: "",
+                profileImageURLString: "",
                 email: "",
                 introduce: "",
                 password: "",
