@@ -19,7 +19,6 @@ final class AppCoordinator: Coordinator, AppCoordinatorProtocol {
         window?.backgroundColor = .mogakcoColor.backgroundDefault
         window?.makeKeyAndVisible()
     }
-
     
     func start() {
         showAuthFlow()
