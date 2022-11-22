@@ -10,6 +10,7 @@ import Foundation
 
 struct SignupRequestDTO: Encodable {
     // TODO: private
+    let profileImageURLString: String
     let email: String
     let password: String
     let name: String
@@ -21,6 +22,7 @@ struct SignupRequestDTO: Encodable {
     let chatRoomIDs: [String]
     
     init(user: User) {
+        self.profileImageURLString = user.profileImageURLString
         self.email = user.email
         self.password = user.password ?? ""
         self.name = user.name

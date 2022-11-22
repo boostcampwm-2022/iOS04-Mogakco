@@ -11,6 +11,7 @@ import Foundation
 struct SignupResponseDTO: Decodable {
     // TODO: private
     let id: String
+    let profileImageURLString: String
     let email: String
     let name: String
     let introduce: String
@@ -23,6 +24,7 @@ struct SignupResponseDTO: Decodable {
     func toDomain() -> User {
         return User(
             id: id,
+            profileImageURLString: profileImageURLString,
             email: email,
             introduce: introduce,
             password: nil,
