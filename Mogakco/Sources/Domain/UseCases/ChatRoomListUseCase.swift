@@ -11,13 +11,21 @@ import RxSwift
 struct ChatRoomListUseCase: ChatRoomListUseCaseProtocol {
 
     private let chatRoomRepository: ChatRoomRepositoryProtocol
+    private let userRepository: UserRepositoryProtocol
     private let disposeBag = DisposeBag()
     
-    init(chatRoomRepository: ChatRoomRepositoryProtocol) {
+    init(
+        chatRoomRepository: ChatRoomRepositoryProtocol,
+        userRepository: UserRepositoryProtocol
+    ) {
         self.chatRoomRepository = chatRoomRepository
+        self.userRepository = userRepository
     }
     
-    func list() -> Observable<[ChatRoom]> {
-        return chatRoomRepository.list()
+    func chatRooms() -> Observable<[ChatRoom]> {
+        return userRepository
+            .load()
+            .compactMap { $0.chatRoomIDs }
+            .flatMap { chatRoomRepository.list(ids: $0) }
     }
 }

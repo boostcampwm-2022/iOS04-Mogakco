@@ -21,5 +21,8 @@ struct ProfileUseCase: ProfileUseCaseProtocol {
         return userRepository.load()
             .compactMap { $0.id }
             .flatMap { userRepository.user(id: $0) }
+            .do(onNext: {
+                userRepository.save(user: $0)
+            })
     }
 }
