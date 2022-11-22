@@ -10,17 +10,17 @@ import Foundation
 
 extension Date {
     
-    func toString() -> String {
+    func toString(dateFormat: String) -> String {
         let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy년 MM월 dd일 HH시 dd분"
+        formatter.dateFormat = dateFormat
         formatter.locale = Locale(identifier: "ko_KR")
         formatter.timeZone = TimeZone(abbreviation: "KST")
         return formatter.string(from: self)
     }
     
-    func toInt() -> Int {
+    func toInt(dateFormat: String) -> Int {
         let formatter = DateFormatter()
-        formatter.dateFormat = "yyyyMMddHHdd"
+        formatter.dateFormat = dateFormat
         formatter.locale = Locale(identifier: "ko_KR")
         formatter.timeZone = TimeZone(abbreviation: "KST")
         return Int(formatter.string(from: self)) ?? 0
