@@ -27,7 +27,7 @@ final class EditProfiileViewModel: ViewModel {
     struct Output {
         let originName: Observable<String>
         let originIntroduce: Observable<String>
-        let originProfileImage: Observable<UIImage>
+        let originProfileImageURL: Observable<URL>
         let inputValidation: Observable<Bool>
     }
     
@@ -52,23 +52,24 @@ final class EditProfiileViewModel: ViewModel {
     func transform(input: Input) -> Output {
         let type = BehaviorSubject<EditType>(value: type)
         let user = BehaviorSubject<User?>(value: nil)
-  
         let name = Observable.merge(
             user.compactMap { $0?.name },
             input.name
         )
-        
         let introduce = Observable.merge(
             user.compactMap { $0?.introduce },
             input.introduce
         )
-        
-        let profileImage = Observable.merge(
-            Observable.just(MogakcoAsset.swift.image), // TODO: 기본 이미지
-            // user.compactMap { $0?.profileImage },
+        let image = Observable.merge(
+            user
+                .compactMap { $0?.profileImageURLString }
+                .compactMap { URL(string: $0) }
+                .observe(on: ConcurrentDispatchQueueScheduler(queue: .global()))
+                .compactMap { try? Data(contentsOf: $0) }
+                .observe(on: MainScheduler.asyncInstance)
+                .compactMap { UIImage(data: $0) },
             input.selectedProfileImage
         )
-        
         let inputValidation = name.map { (2...10).contains($0.count) }
         
         type
@@ -87,10 +88,10 @@ final class EditProfiileViewModel: ViewModel {
         
         profileEdit
             .withLatestFrom(
-                Observable.combineLatest(name, introduce, profileImage)
+                Observable.combineLatest(name, introduce, image)
             )
-            .flatMap { name, introduce, _ in
-                self.editProfileUseCase.editProfile(name: name, introduce: introduce)
+            .flatMap { name, introduce, image in
+                self.editProfileUseCase.editProfile(name: name, introduce: introduce, image: image)
             }
             .withUnretained(self)
             .subscribe(onNext: { viewModel, _ in
@@ -106,11 +107,9 @@ final class EditProfiileViewModel: ViewModel {
             .filter { $0 == .create }
         
         profileCreate
-            .withLatestFrom(Observable.combineLatest(
-                input.name,
-                input.introduce,
-                input.selectedProfileImage
-            ))
+            .withLatestFrom(
+                Observable.combineLatest(input.name, input.introduce, input.selectedProfileImage)
+            )
             .subscribe(onNext: { _ in
                 if let coordinator = self.coordinator as? AdditionalSignupCoordinator {
                     coordinator.showLanguage()
@@ -121,7 +120,10 @@ final class EditProfiileViewModel: ViewModel {
         return Output(
             originName: user.compactMap { $0?.name },
             originIntroduce: user.compactMap { $0?.introduce },
-            originProfileImage: profileImage.take(1),
+            originProfileImageURL: user
+                .compactMap { $0?.profileImageURLString }
+                .compactMap { URL(string: $0) }
+                .take(1),
             inputValidation: inputValidation.asObservable()
         )
     }
