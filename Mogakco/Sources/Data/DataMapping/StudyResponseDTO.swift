@@ -59,9 +59,9 @@ struct StudyResponseDTO: Codable {
             userIDs: userIDs.arrayValue.flatMap { $0.value }.map { $0.value },
             title: title.value,
             content: content.value,
-            date: date.value,
+            date: Int(date.value) ?? 0,
             place: place.value,
-            maxUserCount: maxUserCount.value,
+            maxUserCount: Int(maxUserCount.value) ?? 0,
             languages: languages.arrayValue.flatMap { $0.value }.map { $0.value },
             category: category.value
         )
