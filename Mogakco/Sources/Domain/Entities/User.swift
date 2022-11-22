@@ -17,5 +17,7 @@ struct User: Codable {
     let languages: [String]
     let careers: [String]
     let categorys: [String]
+    let studyIDs: [String]
+    let chatRoomIDs: [String]
     // TODO: Image
 }

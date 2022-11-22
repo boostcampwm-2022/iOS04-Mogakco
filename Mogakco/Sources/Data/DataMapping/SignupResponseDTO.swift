@@ -17,6 +17,8 @@ struct SignupResponseDTO: Decodable {
     let languages: [String]
     let careers: [String]
     let categorys: [String]
+    let studyIDs: [String]
+    let chatRoomIDs: [String]
     
     func toDomain() -> User {
         return User(
@@ -27,7 +29,9 @@ struct SignupResponseDTO: Decodable {
             name: name,
             languages: languages,
             careers: careers,
-            categorys: categorys
+            categorys: categorys,
+            studyIDs: studyIDs,
+            chatRoomIDs: chatRoomIDs
         )
     }
 }
