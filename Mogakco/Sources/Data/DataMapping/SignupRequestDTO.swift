@@ -17,6 +17,8 @@ struct SignupRequestDTO: Encodable {
     let languages: [String]
     let careers: [String]
     let categorys: [String]
+    let studyIDs: [String]
+    let chatRoomIDs: [String]
     
     init(user: User) {
         self.email = user.email
@@ -26,5 +28,7 @@ struct SignupRequestDTO: Encodable {
         self.languages = user.languages
         self.careers = user.careers
         self.categorys = user.categorys
+        self.studyIDs = user.studyIDs
+        self.chatRoomIDs = user.chatRoomIDs
     }
 }

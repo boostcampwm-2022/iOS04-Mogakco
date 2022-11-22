@@ -63,7 +63,9 @@ struct FBAuthService: AuthServiceProtocol {
                         introduce: request.introduce,
                         languages: request.languages,
                         careers: request.careers,
-                        categorys: request.categorys
+                        categorys: request.categorys,
+                        studyIDs: request.studyIDs,
+                        chatRoomIDs: request.chatRoomIDs
                     )
                     emitter.onNext(response)
                 }
