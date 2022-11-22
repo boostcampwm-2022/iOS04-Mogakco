@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct Study: Hashable {
+struct Study {
     let id: String
     let chatRoomID: String
     let userIDs: [String]
