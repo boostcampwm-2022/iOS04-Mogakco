@@ -19,4 +19,8 @@ extension Coordinator {
     func finish(_ child: Coordinator) {
         childCoordinators = childCoordinators.filter { !($0 === child) }
     }
+    
+    func pop(animated: Bool) {
+        navigationController.popViewController(animated: animated)
+    }
 }
