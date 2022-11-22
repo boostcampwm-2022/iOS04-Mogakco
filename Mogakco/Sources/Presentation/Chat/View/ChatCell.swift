@@ -16,6 +16,7 @@ final class ChatCell: UICollectionViewCell, Identifiable {
     
     let textView = UITextView().then {
         $0.backgroundColor = .clear
+        $0.text = "HelloWorldHelloWorldHelloWorldHelloWorldHelloWorld"
         $0.font = UIFont.mogakcoFont.smallBold
         $0.textColor = UIColor.mogakcoColor.typographyPrimary
         $0.isScrollEnabled = false
