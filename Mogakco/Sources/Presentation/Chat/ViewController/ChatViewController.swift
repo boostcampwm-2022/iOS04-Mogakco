@@ -13,15 +13,38 @@ import RxSwift
 import SnapKit
 import Then
 
-final class ChatViewController: UICollectionViewController, ChatSidebarViewDelegate {
+final class ChatViewController: ViewController {
     
-    private lazy var messageInputView = MessageInputView(
-        frame: CGRect(
+    private lazy var messageInputView = MessageInputView().then {
+        $0.frame = CGRect(
             x: 0,
             y: 0,
             width: view.frame.width,
-            height: 0)
-    )
+            height: 0
+        )
+    }
+    
+    private let collectionView = UICollectionView(
+        frame: .zero,
+        collectionViewLayout: UICollectionViewFlowLayout()
+    ).then {
+        let layout = UICollectionViewFlowLayout()
+        layout.sectionInset = UIEdgeInsets(top: 16, left: 0, bottom: 16, right: 0)
+        $0.collectionViewLayout = layout
+        $0.register(ChatCell.self, forCellWithReuseIdentifier: ChatCell.identifier)
+        $0.showsHorizontalScrollIndicator = false
+        $0.alwaysBounceVertical = true
+    }
+    
+    let backButton = UIButton().then {
+        $0.setTitle("이전", for: .normal)
+        $0.setTitleColor(.mogakcoColor.primaryDefault, for: .normal)
+    }
+    
+    let studyInfoButton = UIButton().then {
+        $0.setImage(UIImage(systemName: "line.horizontal.3"), for: .normal)
+        $0.tintColor = .mogakcoColor.primaryDefault
+    }
     
     var sidebarView: ChatSidebarView!
     var blackScreen: UIView!
