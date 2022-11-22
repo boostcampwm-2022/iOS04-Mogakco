@@ -16,13 +16,15 @@ struct UserResponseDTO: Decodable {
     private let languages: ArrayValue<StringValue>
     private let careers: ArrayValue<StringValue>
     private let categorys: ArrayValue<StringValue>
-    
+    private let studyIDs: ArrayValue<StringValue>
+    private let chatRoomIDs: ArrayValue<StringValue>
+
     private enum RootKey: String, CodingKey {
         case fields
     }
     
     private enum FieldKeys: String, CodingKey {
-        case id, name, introduce, email, languages, careers, categorys
+        case id, name, introduce, email, languages, careers, categorys, studyIDs, chatRoomIDs
     }
     
     init(from decoder: Decoder) throws {
@@ -35,6 +37,8 @@ struct UserResponseDTO: Decodable {
         self.languages = try fieldContainer.decode(ArrayValue<StringValue>.self, forKey: .languages)
         self.careers = try fieldContainer.decode(ArrayValue<StringValue>.self, forKey: .careers)
         self.categorys = try fieldContainer.decode(ArrayValue<StringValue>.self, forKey: .categorys)
+        self.studyIDs = try fieldContainer.decode(ArrayValue<StringValue>.self, forKey: .studyIDs)
+        self.chatRoomIDs = try fieldContainer.decode(ArrayValue<StringValue>.self, forKey: .chatRoomIDs)
     }
     
     init(user: User) {
@@ -45,6 +49,8 @@ struct UserResponseDTO: Decodable {
         self.languages = ArrayValue<StringValue>(values: user.languages.map { StringValue(value: $0) })
         self.careers = ArrayValue<StringValue>(values: user.careers.map { StringValue(value: $0) })
         self.categorys = ArrayValue<StringValue>(values: user.categorys.map { StringValue(value: $0) })
+        self.studyIDs = ArrayValue<StringValue>(values: user.studyIDs.map { StringValue(value: $0) })
+        self.chatRoomIDs = ArrayValue<StringValue>(values: user.chatRoomIDs.map { StringValue(value: $0) })
     }
     
     func toDomain() -> User {
@@ -56,7 +62,9 @@ struct UserResponseDTO: Decodable {
             name: name.value,
             languages: languages.arrayValue.map { $0.value }.flatMap { $0.map { $0.value } },
             careers: careers.arrayValue.map { $0.value }.flatMap { $0.map { $0.value } },
-            categorys: categorys.arrayValue.map { $0.value }.flatMap { $0.map { $0.value } }
+            categorys: categorys.arrayValue.map { $0.value }.flatMap { $0.map { $0.value } },
+            studyIDs: studyIDs.arrayValue.map { $0.value }.flatMap { $0.map { $0.value } },
+            chatRoomIDs: chatRoomIDs.arrayValue.map { $0.value }.flatMap { $0.map { $0.value } }
         )
     }
 }
