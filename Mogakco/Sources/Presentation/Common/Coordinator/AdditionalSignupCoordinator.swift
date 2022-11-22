@@ -67,7 +67,7 @@ final class AdditionalSignupCoordinator: Coordinator, AdditionalSignupCoordinato
         let authRepository = AuthRepository(authService: authService)
         let userRepository = UserRepository(
             localUserDataSource: userDefaultDataSource,
-            retmoteUserDataSource: remoteUserDataSouce
+            remoteUserDataSource: remoteUserDataSouce
         )
         let hashtagUseCase = HashtagUsecase(hashtagRepository: hashtagRepository)
         let signupUseCase = SignupUseCase(
