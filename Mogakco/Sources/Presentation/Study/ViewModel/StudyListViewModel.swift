@@ -14,7 +14,7 @@ import RxSwift
 final class StudyListViewModel: ViewModel {
    
     struct Input {
-        
+        let cellSelected: Observable<IndexPath>
     }
     
     struct Output {
@@ -34,6 +34,14 @@ final class StudyListViewModel: ViewModel {
     }
     
     func transform(input: Input) -> Output {
+        
+        input.cellSelected
+            .withUnretained(self)
+            .subscribe { _ in
+                self.coordinator?.showStudyDetail()
+            }
+            .disposed(by: disposeBag)
+        
         return Output()
     }
 }
