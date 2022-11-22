@@ -13,7 +13,7 @@ import RxSwift
 import SnapKit
 import Then
 
-final class StudyListHeader: UICollectionReusableView, Identifiable {
+final class StudyListHeader: UIView {
     
     private let disposeBag = DisposeBag()
     
