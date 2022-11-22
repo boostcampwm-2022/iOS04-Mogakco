@@ -105,7 +105,11 @@ class HashtagSelectViewController: ViewController {
     }
     
     private func layoutNavigation() {
-        navigationItem.title = "언어 선택"
+        switch kind {
+        case .language: navigationItem.title = "언어 선택"
+        case .career: navigationItem.title = "경력 선택"
+        case .category: navigationItem.title = "카테고리 선택"
+        }
         navigationItem.backButtonTitle = "이전"
         navigationItem.backBarButtonItem?.tintColor = .mogakcoColor.primaryDefault
     }
@@ -208,7 +212,7 @@ extension HashtagSelectViewController: UICollectionViewDelegateFlowLayout {
                   for: indexPath
               ) as? HashtagHeader
         else { return UICollectionReusableView() }
-        
+        header.setTitle(kind: self.kind)
         return header
     }
     
