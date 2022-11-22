@@ -43,6 +43,7 @@ final class HashtagSelectViewController: ViewController {
     
     private let viewModel: HashtagSelectViewModel
     private let kind: KindHashtag
+    private let cellSelect = PublishSubject<Int>()
     
     // MARK: - function
     
@@ -75,11 +76,9 @@ final class HashtagSelectViewController: ViewController {
     }
     
     override func bind() {
-        let cellSelected = hashtagListCollectionView.rx.itemSelected
-        
         let input = HashtagSelectViewModel.Input(
             kindHashtag: Observable.just(kind),
-            cellSelected: cellSelected,
+            cellSelected: cellSelect.asObservable(),
             nextButtonTapped: nextButton.rx.tap.asObservable()
         )
         
@@ -158,7 +157,7 @@ extension HashtagSelectViewController: UICollectionViewDataSource {
         didSelectItemAt indexPath: IndexPath
     ) {
         guard let cell = collectionView.cellForItem(at: indexPath) as? BadgeCell else { return }
-        viewModel.selectBadge(index: indexPath.row)
+        cellSelect.onNext(indexPath.row)
         cell.select()
     }
     
@@ -167,7 +166,7 @@ extension HashtagSelectViewController: UICollectionViewDataSource {
         didDeselectItemAt indexPath: IndexPath
     ) {
         guard let cell = collectionView.cellForItem(at: indexPath) as? BadgeCell else { return }
-        viewModel.deselectBadge(index: indexPath.row)
+        cellSelect.onNext(indexPath.row)
         cell.deselect()
     }
 }
