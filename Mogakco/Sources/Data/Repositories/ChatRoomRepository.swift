@@ -21,8 +21,9 @@ struct ChatRoomRepository: ChatRoomRepositoryProtocol {
         self.chatDataSource = chatDataSource
     }
 
-    func list() -> Observable<[ChatRoom]> {
+    func list(ids: [String]) -> Observable<[ChatRoom]> {
         return chatRoomDataSource.list()
-            .map { $0.documents.map { $0.toDomain() } } // TODO: Lastest Chat
+            .map { $0.documents.map { $0.toDomain() } }
+            .map { $0.filter { ids.contains($0.id) } }
     }
 }
