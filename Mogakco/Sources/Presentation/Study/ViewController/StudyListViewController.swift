@@ -22,17 +22,19 @@ final class StudyListViewController: ViewController {
         collectionViewLayout: collectionViewLayout()
     ).then {
         $0.showsVerticalScrollIndicator = false
-        $0.delegate = self
-        $0.dataSource = self
+//        $0.delegate = self
+//        $0.dataSource = self
         $0.showsHorizontalScrollIndicator = false
         $0.showsVerticalScrollIndicator = false
         $0.register(StudyCell.self, forCellWithReuseIdentifier: StudyCell.identifier)
     }
     
-    private weak var coordinator: StudyTabCoordinatorProtocol?
+    private let viewModel: StudyListViewModel
     
-    init(coordinator: StudyTabCoordinatorProtocol) {
-        self.coordinator = coordinator
+    // MARK: - Inits
+    
+    init(viewModel: StudyListViewModel) {
+        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -40,12 +42,19 @@ final class StudyListViewController: ViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Methods
+    
     override func viewDidLoad() {
         super.viewDidLoad()
     }
     
     override func bind() {
         
+        let input = StudyListViewModel.Input(
+            cellSelected: collectionView.rx.itemSelected.asObservable()
+        )
+        
+        let output = viewModel.transform(input: input)
     }
     
     override func layout() {
@@ -82,6 +91,10 @@ final class StudyListViewController: ViewController {
             return section
         }
     }
+    
+    // MARK: - Diffable DataSource
+    
+    
 }
 
 extension StudyListViewController: UICollectionViewDataSource {
@@ -107,12 +120,5 @@ extension StudyListViewController: UICollectionViewDataSource {
         
         cell.state = .open
         return cell
-    }
-}
-
-extension StudyListViewController: UICollectionViewDelegate {
-    
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        coordinator?.showStudyDetail()
     }
 }
