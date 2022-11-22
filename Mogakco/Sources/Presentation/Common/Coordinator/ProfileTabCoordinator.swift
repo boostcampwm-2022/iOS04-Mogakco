@@ -37,7 +37,16 @@ final class ProfileTabCoordinator: Coordinator, ProfileTabCoordinatorProtocol {
     }
     
     func showEditProfile() {
-        let viewModel = CreateProfiileViewModel(coordinator: self)
+        let userRepository = UserRepository(
+            localUserDataSource: UserDefaultsUserDataSource(),
+            retmoteUserDataSource: RemoteUserDataSource(provider: Provider.default)
+        )
+        let viewModel = CreateProfiileViewModel(
+            type: .edit,
+            coordinator: self,
+            profileUseCase: ProfileUseCase(userRepository: userRepository),
+            editProfileUseCase: EditProfileUseCase(userRepository: userRepository)
+        )
         let viewController = CreateProfileViewController(viewModel: viewModel)
         navigationController.pushViewController(viewController, animated: false)
     }
