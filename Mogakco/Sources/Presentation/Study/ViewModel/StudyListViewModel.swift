@@ -18,7 +18,7 @@ final class StudyListViewModel: ViewModel {
     }
     
     struct Output {
-        
+        let studyList: Observable<[Study]>
     }
     
     private weak var coordinator: StudyTabCoordinatorProtocol?
@@ -42,6 +42,6 @@ final class StudyListViewModel: ViewModel {
             }
             .disposed(by: disposeBag)
         
-        return Output()
+        return Output(studyList: useCase.list())
     }
 }
