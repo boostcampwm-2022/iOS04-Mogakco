@@ -13,4 +13,5 @@ protocol UserRepositoryProtocol {
     func save(userUID: String) -> Observable<Void>
     func user(id: String) -> Observable<User>
     func load() -> Observable<User>
+    func editProfile(id: String, name: String, introduce: String) -> Observable<User>
 }
