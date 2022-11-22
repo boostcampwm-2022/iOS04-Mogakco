@@ -6,8 +6,10 @@
 //  Copyright © 2022 Mogakco. All rights reserved.
 //
 
+import UIKit
+
 import RxSwift
 
 protocol EditProfileUseCaseProtocol {
-    func editProfile(name: String, introduce: String) -> Observable<Void>
+    func editProfile(name: String, introduce: String, image: UIImage) -> Observable<Void>
 }
