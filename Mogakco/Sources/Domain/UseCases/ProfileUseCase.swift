@@ -22,7 +22,7 @@ struct ProfileUseCase: ProfileUseCaseProtocol {
             .compactMap { $0.id }
             .flatMap { userRepository.user(id: $0) }
             .do(onNext: {
-                userRepository.save(user: $0)
+                _ = userRepository.save(user: $0)
             })
     }
 }
