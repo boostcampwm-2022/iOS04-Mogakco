@@ -24,7 +24,7 @@ struct LoginUseCase: LoginUseCaseProtocol {
         self.userRepository = userRepository
     }
     
-    func login(emailLoginData: EmailLoginData) -> Observable<Void> {
+    func login(emailLoginData: EmailLogin) -> Observable<Void> {
         return authRepository.login(emailLoginData: emailLoginData)
             .flatMap { userRepository.save(userUID: $0) }
     }

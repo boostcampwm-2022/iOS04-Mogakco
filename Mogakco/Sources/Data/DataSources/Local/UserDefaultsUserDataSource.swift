@@ -12,14 +12,14 @@ import RxSwift
 
 struct UserDefaultsUserDataSource: LocalUserDataSourceProtocol {
     
-    private let userKey = "user"
+    private let userIDKey = "userID"
     private let userUIDKey = "userUID"
     
     func save(user: User) -> Observable<Void> {
         return Observable.create { emitter in
             do {
                 let jsonData = try JSONEncoder().encode(user)
-                UserDefaults.standard.set(jsonData, forKey: userKey)
+                UserDefaults.standard.set(jsonData, forKey: userIDKey)
                 emitter.onNext(())
             } catch {
                 emitter.onError(error)
@@ -30,7 +30,7 @@ struct UserDefaultsUserDataSource: LocalUserDataSourceProtocol {
 
     func load() -> Observable<User> {
         return Observable.create { emitter in
-            guard let jsonData = UserDefaults.standard.value(forKey: userKey) as? Data,
+            guard let jsonData = UserDefaults.standard.value(forKey: userIDKey) as? Data,
                   let user = try? JSONDecoder().decode(User.self, from: jsonData) else {
                 // TODO: onError
                 return Disposables.create()
@@ -42,13 +42,13 @@ struct UserDefaultsUserDataSource: LocalUserDataSourceProtocol {
     
     func remove() -> Observable<Void> {
         return Observable.create { emitter in
-            UserDefaults.standard.removeObject(forKey: userKey)
+            UserDefaults.standard.removeObject(forKey: userIDKey)
             emitter.onNext(())
             return Disposables.create()
         }
     }
     
-    func saveUID(userUID: String) -> RxSwift.Observable<Void> {
+    func saveUID(userUID: String) -> Observable<Void> {
         return Observable.create { emitter in
             UserDefaults.standard.set(userUID, forKey: userUIDKey)
             emitter.onNext(())
