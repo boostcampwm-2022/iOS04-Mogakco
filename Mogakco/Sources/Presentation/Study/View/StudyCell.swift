@@ -27,16 +27,14 @@ final class StudyCell: UICollectionViewCell, Identifiable {
         }
     }
     
-    // MARK: - Public
+    // MARK: - Private
     
-    var state: StudyState = .open {
+    private var state: StudyState = .open {
         didSet {
             stateLabel.text = state.rawValue
             stateLabel.textColor = state.color
         }
     }
-    
-    // MARK: - Private
     
     private let hashtagStackView = UIStackView().then {
         $0.spacing = 5
@@ -103,7 +101,6 @@ final class StudyCell: UICollectionViewCell, Identifiable {
         super.init(frame: frame)
         layout()
         configure()
-        setupHashtag(titles: ["알고리즘", "Swift"])
     }
     
     required init?(coder: NSCoder) {
@@ -112,11 +109,30 @@ final class StudyCell: UICollectionViewCell, Identifiable {
     
     // MARK: - Methods
     
-    func setupHashtag(titles: [String]) {
-        titles.forEach {
+    func setup(_ study: Study) {
+        let currDate = Date().toString()
+        let studyDate = study.date.toDateString()
+        state = currDate < studyDate ? .open : .close
+        titleLabel.text = study.title
+        dateView.textLabel.text = studyDate
+        participantsView.textLabel.text = "\(study.userIDs.count)/\(study.maxUserCount) 참여"
+        contentLabel.text = study.content
+        addCategoryHashtag(tag: study.category)
+        addLanguageHashtag(tags: study.languages)
+    }
+    
+    private func addCategoryHashtag(tag: String) {
+        let label = UILabel()
+        label.font = UIFont(name: SFPro.regular.rawValue, size: 12)
+        label.text = Category(rawValue: tag)?.hashtagTitle()
+        hashtagStackView.addArrangedSubview(label)
+    }
+    
+    private func addLanguageHashtag(tags: [String]) {
+        tags.forEach {
             let label = UILabel()
             label.font = UIFont(name: SFPro.regular.rawValue, size: 12)
-            label.text = $0
+            label.text = Languages(rawValue: $0)?.hashtagTitle()
             hashtagStackView.addArrangedSubview(label)
         }
     }
