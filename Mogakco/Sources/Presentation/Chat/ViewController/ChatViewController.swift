@@ -62,8 +62,6 @@ final class ChatViewController: ViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        configure()
-        layout()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -222,89 +220,23 @@ final class ChatViewController: ViewController {
     
     private func layoutBlackScreen() {
         view.addSubview(blackScreen)
+        
         blackScreen.layer.zPosition = 100
     }
     
     private func configureNavigationBar() {
         navigationItem.title = "채팅"
         
-        let backButton = UIBarButtonItem(
-            title: "이전",
-            style: .plain,
-            target: self,
-            action: #selector(backButtonDidTap)
-        )
-        backButton.tintColor = UIColor.mogakcoColor.primaryDefault
-        
-        let studyInfoButton = UIBarButtonItem(
-            image: UIImage(systemName: "line.horizontal.3"),
-            style: .plain,
-            target: self,
-            action: #selector(studyInfoDidTap)
-        )
-        [backButton, studyInfoButton].forEach {
-            $0.tintColor = UIColor.mogakcoColor.primaryDefault
-        }
-        
-        navigationItem.leftBarButtonItem = backButton
-        navigationItem.rightBarButtonItem = studyInfoButton
+        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: backButton)
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: studyInfoButton)
     }
     
     private func layoutCollectionView() {
+        view.addSubview(collectionView)
+        
         collectionView.snp.makeConstraints {
             $0.top.left.bottom.right.equalToSuperview()
         }
-        collectionView.register(ChatCell.self, forCellWithReuseIdentifier: ChatCell.identifier)
-        collectionView.alwaysBounceVertical = true
-    }
-    
-    func sidebarDidTap(row: ChatSidebarMenu) {
-        blackScreen.isHidden = true
-        blackScreen.frame = self.view.bounds
-        
-        UIView.animate(withDuration: 0.3) {
-            self.sidebarView.frame = CGRect(
-                x: self.view.frame.width,
-                y: 0,
-                width: 0,
-                height: self.sidebarView.frame.height
-            )
-        }
-        
-        switch row {
-        case .studyInfo:
-            print("1")
-        case .exitStudy:
-            print("2")
-        case .showMember:
-            print("3")
-        }
-    }
-    
-    @objc private func backButtonDidTap() {
-        self.navigationController?.popViewController(animated: true)
-    }
-    
-    @objc private func studyInfoDidTap() {
-        blackScreen.isHidden = false
-        
-        UIView.animate(
-            withDuration: 0.3,
-            animations: {
-                self.sidebarView.frame = CGRect(
-                    x: self.view.frame.width * (2 / 3),
-                    y: 0,
-                    width: 250,
-                    height: self.sidebarView.frame.height)
-            },
-            completion: { _ in
-                self.blackScreen.frame = CGRect(
-                    x: 0,
-                    y: 0,
-                    width: 300,
-                    height: self.view.bounds.height)
-            }
-        )
     }
     
     @objc func blackScreenTapAction(sender: UITapGestureRecognizer) {
@@ -319,47 +251,5 @@ final class ChatViewController: ViewController {
                 height: self.sidebarView.frame.height
             )
         }
-    }
-}
-
-extension ChatViewController {
-    
-    override func collectionView(
-        _ collectionView: UICollectionView,
-        numberOfItemsInSection section: Int
-    ) -> Int {
-        return 15
-    }
-    
-    override func collectionView(
-        _ collectionView: UICollectionView,
-        cellForItemAt indexPath: IndexPath
-    ) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: ChatCell.identifier,
-            for: indexPath
-        ) as? ChatCell else { return ChatCell() }
-        return cell
-    }
-}
-
-// MARK: - UICollectionViewDelegateFlowLayout
-
-extension ChatViewController: UICollectionViewDelegateFlowLayout {
-    
-    func collectionView(
-        _ collectionView: UICollectionView,
-        layout collectionViewLayout: UICollectionViewLayout,
-        insetForSectionAt section: Int
-    ) -> UIEdgeInsets {
-        return .init(top: 16, left: 0, bottom: 16, right: 0)
-    }
-    
-    func collectionView(
-        _ collectionView: UICollectionView,
-        layout collectionViewLayout: UICollectionViewLayout,
-        sizeForItemAt indexPath: IndexPath
-    ) -> CGSize {
-        return .init(width: view.frame.width, height: 50)
     }
 }
