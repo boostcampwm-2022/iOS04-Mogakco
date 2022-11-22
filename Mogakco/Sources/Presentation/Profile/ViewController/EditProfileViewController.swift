@@ -1,5 +1,5 @@
 //
-//  CreateProfileViewController.swift
+//  EditProfileViewController.swift
 //  Mogakco
 //
 //  Created by 김범수 on 2022/11/16.
@@ -12,7 +12,7 @@ import RxCocoa
 import RxSwift
 import RxKeyboard
 
-final class CreateProfileViewController: ViewController {
+final class EditProfileViewController: ViewController {
     
     private let scrollView = UIScrollView().then {
         $0.showsVerticalScrollIndicator = false
@@ -47,11 +47,11 @@ final class CreateProfileViewController: ViewController {
         $0.setTitle("완료", for: .normal)
     }
     
-    private var viewModel: CreateProfiileViewModel
+    private var viewModel: EditProfiileViewModel
     private let imagePicker = UIImagePickerController()
     private let selectedProfileImage = PublishRelay<UIImage>()
     
-    init(viewModel: CreateProfiileViewModel) {
+    init(viewModel: EditProfiileViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
@@ -78,7 +78,7 @@ final class CreateProfileViewController: ViewController {
     }
     
     override func bind() {
-        let input = CreateProfiileViewModel.Input(
+        let input = EditProfiileViewModel.Input(
             name: nameCountTextField.rx.text.orEmpty.asObservable(),
             introduce: introuceCountTextView.rx.text.orEmpty.asObservable(),
             selectedProfileImage: selectedProfileImage.asObservable(),
@@ -203,7 +203,7 @@ final class CreateProfileViewController: ViewController {
 
 // MARK: Picker
 
-private extension CreateProfileViewController {
+private extension EditProfileViewController {
     func configureImagePicker() {
         imagePicker.allowsEditing = true
         imagePicker.delegate = self
@@ -216,7 +216,7 @@ private extension CreateProfileViewController {
 
 // MARK: Picker Delegate
 
-extension CreateProfileViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+extension EditProfileViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     func imagePickerController(
         _ picker: UIImagePickerController,
         didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]
