@@ -19,9 +19,15 @@ final class AppCoordinator: Coordinator, AppCoordinatorProtocol {
         window?.backgroundColor = .mogakcoColor.backgroundDefault
         window?.makeKeyAndVisible()
     }
-    
+
     func start() {
-        showAuthFlow()
+        let hashtagDataSource = HashtagDataSource()
+        let hashtagRepository = HashtagRepository(localHashtagDataSource: hashtagDataSource)
+        let hashtagUsecase = HashtagUsecase(hashtagRepository: hashtagRepository)
+        let viewModel = HashtagSelectViewModel(coordinator: AdditionalSignupCoordinator(navigationController), hashTagUsecase: hashtagUsecase)
+        let hashtagSelectViewController = HashtagSelectViewController(kind: .career, viewModel: viewModel)
+        navigationController.pushViewController(hashtagSelectViewController, animated: true)
+//        showAuthFlow()
     }
     
     func showAuthFlow() {
