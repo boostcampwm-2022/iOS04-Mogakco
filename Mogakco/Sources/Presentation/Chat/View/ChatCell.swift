@@ -63,9 +63,14 @@ final class ChatCell: UICollectionViewCell, Identifiable {
         
         bubbleContainer.snp.makeConstraints {
             $0.top.equalToSuperview()
-            $0.left.equalTo(profileImageView.snp.right).offset(12)
             $0.width.lessThanOrEqualTo(250)
         }
+        
+        bubbleLeftAnchor = bubbleContainer.leftAnchor.constraint(equalTo: profileImageView.rightAnchor, constant: 12)
+        bubbleLeftAnchor.isActive = true
+
+//        bubbleRightAnchor = bubbleContainer.rightAnchor.constraint(equalTo: rightAnchor, constant: -12)
+//        bubbleRightAnchor.isActive = false
     }
     
     private func layoutTextView() {
@@ -75,5 +80,18 @@ final class ChatCell: UICollectionViewCell, Identifiable {
             $0.top.bottom.equalTo(bubbleContainer).inset(4)
             $0.left.right.equalTo(bubbleContainer).inset(12)
         }
+    }
+    
+    private func configureMessage() {
+        guard let message = message else { return }
+        let viewModel = MessageViewModel(message: message)
+        
+        bubbleContainer.backgroundColor = viewModel.messageBackgroundColor
+        textView.textColor = viewModel.messageTextColor
+        textView.text = message.text
+        
+//        bubbleLeftAnchor.isActive = viewModel.leftAnchorActive
+//        bubbleRightAnchor.isActive = viewModel.rightAnchorActive
+//        profileImageView.isHidden = viewModel.shouldHideProfileImage
     }
 }
