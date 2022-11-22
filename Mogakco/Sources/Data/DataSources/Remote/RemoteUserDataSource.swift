@@ -19,10 +19,15 @@ struct RemoteUserDataSource: RemoteUserDataSourceProtocol {
     func user(request: UserRequestDTO) -> Observable<UserResponseDTO> {
         return provider.request(UserTarget.user(request))
     }
+    
+    func editProfile(id: String, request: EditProfileRequestDTO) -> Observable<UserResponseDTO> {
+        return provider.request(UserTarget.editProfile(id, request))
+    }
 }
 
 enum UserTarget {
     case user(UserRequestDTO)
+    case editProfile(String, EditProfileRequestDTO)
 }
 
 extension UserTarget: TargetType {
@@ -34,22 +39,23 @@ extension UserTarget: TargetType {
         switch self {
         case .user:
             return .get
+        case .editProfile:
+            return .patch
         }
     }
     
     var header: HTTPHeaders {
-        switch self {
-        case .user:
-            return [
-                "Content-Type": "application/json"
-            ]
-        }
+        return [
+            "Content-Type": "application/json"
+        ]
     }
     
     var path: String {
         switch self {
-        case .user(let request):
+        case let .user(request):
             return "/\(request.id)"
+        case let .editProfile(id, _):
+            return "/\(id)/?updateMask.fieldPaths=name&updateMask.fieldPaths=introduce"
         }
     }
     
@@ -57,13 +63,12 @@ extension UserTarget: TargetType {
         switch self {
         case .user:
             return nil
+        case let .editProfile(_, request):
+            return .body(request)
         }
     }
     
     var encoding: ParameterEncoding {
-        switch self {
-        case .user:
-            return JSONEncoding.default
-        }
+        return JSONEncoding.default
     }
 }
