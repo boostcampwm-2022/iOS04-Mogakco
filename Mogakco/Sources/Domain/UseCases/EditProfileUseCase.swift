@@ -6,22 +6,35 @@
 //  Copyright © 2022 Mogakco. All rights reserved.
 //
 
+import UIKit
+
 import RxSwift
 
 struct EditProfileUseCase: EditProfileUseCaseProtocol {
+    
+    enum EditProfileError: Error, LocalizedError {
+        case imageCompress
+    }
 
     private let userRepository: UserRepositoryProtocol
     private let disposeBag = DisposeBag()
     
-    init(userRepository: UserRepositoryProtocol) {
+    init(
+        userRepository: UserRepositoryProtocol
+    ) {
         self.userRepository = userRepository
     }
     
-    func editProfile(name: String, introduce: String) -> Observable<Void> {
+    func editProfile(name: String, introduce: String, image: UIImage) -> Observable<Void> {
+        guard let imageData = image.jpegData(compressionQuality: 0.5) else {
+            return Observable<Void>.error(EditProfileError.imageCompress)
+        }
         return userRepository
             .load()
             .compactMap { $0.id }
-            .flatMap { userRepository.editProfile(id: $0, name: name, introduce: introduce) }
+            .flatMap {
+                userRepository.editProfile(id: $0, name: name, introduce: introduce, imageData: imageData)
+            }
             .flatMap { userRepository.save(user: $0) }
     }
 }
