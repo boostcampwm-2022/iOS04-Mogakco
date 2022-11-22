@@ -80,19 +80,10 @@ final class TextView: UITextView {
     }
     
     private func bind() {
-        self.rx.didBeginEditing
-            .subscribe(onNext: { [weak self] in
-                self?.label.isHidden = true
-            })
-            .disposed(by: disposeBag)
-
-        self.rx.didEndEditing
-            .filter { [weak self] in
-                self?.text.isEmpty ?? true
-            }
-            .subscribe(onNext: { [weak self] in
-                self?.label.isHidden = false
-            })
+        self.rx.text
+            .orEmpty
+            .map { !$0.isEmpty }
+            .bind(to: label.rx.isHidden)
             .disposed(by: disposeBag)
     }
 }
