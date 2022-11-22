@@ -112,7 +112,7 @@ final class StudyCell: UICollectionViewCell, Identifiable {
     // MARK: - Methods
     
     func setup(_ study: Study) {
-        let currDate = Date().toString()
+        let currDate = Date().toString(dateFormat: Format.detailDateFormat)
         let studyDate = study.date.toDateString()
         state = currDate < studyDate ? .open : .close
         titleLabel.text = study.title
