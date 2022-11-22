@@ -24,6 +24,8 @@ final class StudyDetailViewModel: ViewModel {
     private let studyID: String
     private let coordinator: StudyTabCoordinatorProtocol
     private let studyUsecase: StudyDetailUseCaseProtocol
+    private var languages: [Hashtag] = []
+    private var participants: [User] = []
     
     init(
         studyID: String,
@@ -33,12 +35,19 @@ final class StudyDetailViewModel: ViewModel {
         self.studyID = studyID
         self.coordinator = coordinator
         self.studyUsecase = studyUsecase
-        
     }
     
     func transform(input: Input) -> Output {
+        // TODO: 유저 UseCase에서 불러오기, 언어 불러오기 바인딩
+        let languages = PublishSubject<[String]>()
+        let users = PublishSubject<[String]>()
         
-        let studyDetail = studyUsecase.study(id: studyID).asObservable()
+        let studyDetail = studyUsecase.study(id: studyID)
+            .map {
+                languages.onNext($0.languages)
+                users.onNext($0.userIDs)
+                return $0
+            }
         
         input.studyJoinButtonTapped
             .subscribe(onNext: {
