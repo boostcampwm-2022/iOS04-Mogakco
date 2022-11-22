@@ -13,10 +13,6 @@ import RxSwift
 import SnapKit
 import Then
 
-protocol ChatSidebarViewDelegate: AnyObject {
-    func sidebarDidTap(row: ChatSidebarMenu)
-}
-
 enum ChatSidebarMenu: String, CaseIterable {
     
     case studyInfo = "스터디 정보"
@@ -34,29 +30,26 @@ enum ChatSidebarMenu: String, CaseIterable {
 
 final class ChatSidebarView: UIView {
     
-    let tableView = UITableView()
-    
-    var delegate: ChatSidebarViewDelegate?
+    let tableView = UITableView().then {
+        $0.register(
+            ChatSidebarTableViewCell.self,
+            forCellReuseIdentifier: ChatSidebarTableViewCell.identifier
+        )
+        $0.rowHeight = ChatSidebarTableViewCell.cellHeight
+        $0.showsVerticalScrollIndicator = false
+        $0.bounces = false
+        $0.separatorStyle = .none
+        $0.allowsSelection = true
+        $0.backgroundColor = .clear
+    }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         layout()
-        configureTableView()
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-    
-    private func configureTableView() {
-        tableView.delegate = self
-        tableView.dataSource = self
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "Cell")
-        tableView.showsVerticalScrollIndicator = false
-        tableView.bounces = false
-        tableView.separatorStyle = .none
-        tableView.allowsSelection = true
-        tableView.backgroundColor = .clear
     }
     
     private func layout() {
@@ -76,35 +69,5 @@ final class ChatSidebarView: UIView {
             $0.top.equalToSuperview().offset(80)
             $0.left.bottom.right.equalToSuperview()
         }
-    }
-}
-
-// MARK: - UITableViewDataSource
-
-extension ChatSidebarView: UITableViewDataSource {
-
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return ChatSidebarMenu.allCases.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
-        cell.selectionStyle = .none
-        cell.textLabel?.text = ChatSidebarMenu.allCases[indexPath.row].rawValue
-        cell.textLabel?.textColor = .mogakcoColor.typographyPrimary
-        return cell
-    }
-}
-
-// MARK: - UITableViewDelegate
-
-extension ChatSidebarView: UITableViewDelegate {
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        self.delegate?.sidebarDidTap(row: ChatSidebarMenu(row: indexPath.row))
-    }
-    
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 60
     }
 }
