@@ -23,8 +23,8 @@ final class LoginViewModel: ViewModel {
     struct Output {}
     
     var disposeBag = DisposeBag()
-    var loginUseCase: LoginUseCaseProtocol
-    private var coordinator: AuthCoordinatorProtocol?
+    private let loginUseCase: LoginUseCaseProtocol
+    private let coordinator: AuthCoordinatorProtocol
     
     
     init(coordinator: AuthCoordinatorProtocol, loginUseCase: LoginUseCaseProtocol) {
@@ -48,7 +48,7 @@ final class LoginViewModel: ViewModel {
         
         input.signupButtonTap
             .subscribe(onNext: { [weak self] in
-                self?.coordinator?.showRequiredSignup()
+                self?.coordinator.showRequiredSignup()
             })
             .disposed(by: disposeBag)
         
@@ -58,7 +58,7 @@ final class LoginViewModel: ViewModel {
                 return self.loginUseCase.login(emailLogin: userData)
             }
             .subscribe(onNext: { [weak self] in
-                self?.coordinator?.finish()
+                self?.coordinator.finish()
             })
             .disposed(by: disposeBag)
             

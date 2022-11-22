@@ -18,18 +18,37 @@ final class StudyDetailViewModel: ViewModel {
     }
     
     struct Output {
+        let studyDetail: Observable<Study>
+    }
+    
+    private let studyID: String
+    private let coordinator: StudyTabCoordinatorProtocol
+    private let studyUsecase: StudyDetailUseCaseProtocol
+    
+    init(
+        studyID: String,
+        coordinator: StudyTabCoordinatorProtocol,
+        studyUsecase: StudyDetailUseCaseProtocol
+    ) {
+        self.studyID = studyID
+        self.coordinator = coordinator
+        self.studyUsecase = studyUsecase
+        
     }
     
     func transform(input: Input) -> Output {
+        
+        let studyDetail = studyUsecase.study(id: studyID).asObservable()
+        
         input.studyJoinButtonTapped
-            .subscribe { [weak self] _ in
-                self?.coordinator?.showChatDetail()
-            }
+            .subscribe(onNext: {
+                // TODO: 스터디 참가 API 바인딩 - studyUseCase -> JoinStudy()
+                print("스터디 참가")
+            })
             .disposed(by: disposeBag)
         
-        return Output()
+        return Output(studyDetail: studyDetail)
     }
     
-    weak var coordinator: StudyTabCoordinatorProtocol?
     var disposeBag = DisposeBag()
 }
