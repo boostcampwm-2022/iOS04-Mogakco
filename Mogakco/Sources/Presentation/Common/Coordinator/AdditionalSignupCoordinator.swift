@@ -38,7 +38,7 @@ final class AdditionalSignupCoordinator: Coordinator, AdditionalSignupCoordinato
         let hashtagDataSource = HashtagDataSource()
         let hashtagRepository = HashtagRepository(localHashtagDataSource: hashtagDataSource)
         let hashtagUsecase = HashtagUsecase(hashtagRepository: hashtagRepository)
-        let viewModel = HashtagSelectViewModel(coordinator: self, hashTagUsecase: hashtagUsecase)
+        let viewModel = HashtagViewModel(coordinator: self, hashTagUsecase: hashtagUsecase)
         let hashtagSelectViewController = HashtagSelectViewController(kind: .language, viewModel: viewModel)
         navigationController.pushViewController(hashtagSelectViewController, animated: true)
     }
@@ -47,7 +47,7 @@ final class AdditionalSignupCoordinator: Coordinator, AdditionalSignupCoordinato
         let hashtagDataSource = HashtagDataSource()
         let hashtagRepository = HashtagRepository(localHashtagDataSource: hashtagDataSource)
         let hashtagUsecase = HashtagUsecase(hashtagRepository: hashtagRepository)
-        let viewModel = HashtagSelectViewModel(coordinator: self, hashTagUsecase: hashtagUsecase)
+        let viewModel = HashtagViewModel(coordinator: self, hashTagUsecase: hashtagUsecase)
         let hashtagSelectViewController = HashtagSelectViewController(kind: .career, viewModel: viewModel)
         navigationController.pushViewController(hashtagSelectViewController, animated: true)
     }
