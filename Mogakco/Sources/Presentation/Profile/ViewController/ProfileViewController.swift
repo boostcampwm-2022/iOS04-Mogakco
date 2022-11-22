@@ -89,6 +89,11 @@ final class ProfileViewController: ViewController {
         )
         let output = viewModel.transform(input: input)
         
+        output.profileImageURL
+            .asDriver(onErrorDriveWith: .empty())
+            .drive(profileView.roundProfileImageView.rx.loadImage)
+            .disposed(by: disposeBag)
+        
         output.name
             .asDriver(onErrorJustReturn: "")
             .drive(profileView.nameLabel.rx.text)

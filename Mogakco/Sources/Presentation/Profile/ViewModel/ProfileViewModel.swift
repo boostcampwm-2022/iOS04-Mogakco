@@ -18,6 +18,7 @@ final class ProfileViewModel: ViewModel {
     }
     
     struct Output {
+        let profileImageURL: Observable<URL>
         let name: Observable<String>
         let introduce: Observable<String>
         let languages: Observable<[String]>
@@ -44,16 +45,17 @@ final class ProfileViewModel: ViewModel {
             })
             .disposed(by: disposeBag)
         
-        let profile = Observable.just(())
+        let user = Observable.just(())
             .withUnretained(self)
             .flatMap { $0.0.profileUseCase.profile() }
         
         return Output(
-            name: profile.map { $0.name }.asObservable(),
-            introduce: profile.map { $0.introduce }.asObservable(),
-            languages: profile.map { $0.languages }.asObservable(),
-            careers: profile.map { $0.careers }.asObservable(),
-            categorys: profile.map { $0.categorys }.asObservable()
+            profileImageURL: user.compactMap { URL(string: $0.profileImageURLString) },
+            name: user.map { $0.name }.asObservable(),
+            introduce: user.map { $0.introduce }.asObservable(),
+            languages: user.map { $0.languages }.asObservable(),
+            careers: user.map { $0.careers }.asObservable(),
+            categorys: user.map { $0.categorys }.asObservable()
         )
     }
 }
