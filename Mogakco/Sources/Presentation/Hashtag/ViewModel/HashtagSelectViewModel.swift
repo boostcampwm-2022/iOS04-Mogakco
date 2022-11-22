@@ -53,6 +53,7 @@ class HashtagSelectViewModel: ViewModel {
         input.kindHashtag
             .subscribe { [weak self] in
                 self?.loadTagList(kind: $0)
+                self?.kind = $0
             }
             .disposed(by: disposeBag)
         
@@ -105,6 +106,5 @@ class HashtagSelectViewModel: ViewModel {
         } else {
             selectedHashtag.append(hashTag)
         }
-        print(selectedHashtag)
     }
 }
