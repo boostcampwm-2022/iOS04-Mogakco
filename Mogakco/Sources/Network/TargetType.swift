@@ -22,7 +22,9 @@ protocol TargetType: URLRequestConvertible {
 extension TargetType {
     func asURLRequest() throws -> URLRequest {
         let url = try baseURL.asURL()
-        var urlRequest = try URLRequest(url: url.appendingPathComponent(path), method: method)
+        // var urlRequest = try URLRequest(url: url.appendingPathComponent(path), method: method)
+        // appendingPathComponent 사용 시 path 내 ?를 %3f로 인식하여 임시 처리
+        var urlRequest = try URLRequest(url: url.absoluteString + path, method: method)
         urlRequest.headers = header
 
         switch parameters {
