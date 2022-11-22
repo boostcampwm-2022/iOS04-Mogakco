@@ -21,7 +21,7 @@ struct StringValue: Codable {
 }
 
 struct IntegerValue: Codable {
-    let value: String
+    let value: Int
     
     private enum CodingKeys: String, CodingKey {
         case value = "integerValue"
