@@ -1,5 +1,5 @@
 //
-//  CustomInputAccessoryView.swift
+//  MessageInputView.swift
 //  Mogakco
 //
 //  Created by 오국원 on 2022/11/16.
