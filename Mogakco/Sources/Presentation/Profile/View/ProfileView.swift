@@ -16,7 +16,7 @@ final class ProfileView: UIView {
         }
     }
     
-    private let roundLanguageImageView = RoundProfileImageView(45.0).then {
+    let roundLanguageImageView = RoundProfileImageView(45.0).then {
         $0.snp.makeConstraints {
             $0.size.equalTo(45.0)
         }
@@ -25,14 +25,12 @@ final class ProfileView: UIView {
     
     let nameLabel = UILabel().then {
         $0.font = UIFont.mogakcoFont.smallBold
-        $0.text = "옹심이"
         $0.textColor = .mogakcoColor.typographyPrimary
         $0.textAlignment = .left
     }
     
     let introduceLabel = UILabel().then {
         $0.font = UIFont.mogakcoFont.caption
-        $0.text = "안녕하세요!! iOS 개발자 옹심이입니다."
         $0.textColor = .mogakcoColor.typographySecondary
         $0.numberOfLines = 0
         $0.textAlignment = .left
