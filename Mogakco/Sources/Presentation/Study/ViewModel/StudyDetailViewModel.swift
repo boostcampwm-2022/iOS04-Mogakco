@@ -73,10 +73,12 @@ final class StudyDetailViewModel: ViewModel {
        studyDetail
             .withUnretained(self)
             .flatMap {
-                $0.0.userUseCase.users(ids: $0.1.userIDs)
+                return $0.0.userUseCase.users(ids: $0.1.userIDs)
             }
             .subscribe(onNext: { [weak self] in
                 self?.participants.onNext($0)
+                print("여기")
+                print(self?.participantsCount)
             })
             .disposed(by: disposeBag)
             
