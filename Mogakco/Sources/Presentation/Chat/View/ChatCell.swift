@@ -71,7 +71,6 @@ final class ChatCell: UICollectionViewCell, Identifiable {
         bubbleLeftAnchor.isActive = true
 
 //        bubbleRightAnchor = bubbleContainer.rightAnchor.constraint(equalTo: rightAnchor, constant: -12)
-//        bubbleRightAnchor.isActive = false
     }
     
     private func layoutTextView() {
@@ -90,9 +89,5 @@ final class ChatCell: UICollectionViewCell, Identifiable {
         bubbleContainer.backgroundColor = viewModel.messageBackgroundColor
         textView.textColor = viewModel.messageTextColor
         textView.text = message.text
-        
-//        bubbleLeftAnchor.isActive = viewModel.leftAnchorActive
-//        bubbleRightAnchor.isActive = viewModel.rightAnchorActive
-//        profileImageView.isHidden = viewModel.shouldHideProfileImage
     }
 }
