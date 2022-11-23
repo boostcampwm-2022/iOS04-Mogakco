@@ -24,7 +24,7 @@ struct UserDefaultsUserDataSource: LocalUserDataSourceProtocol {
         return Observable.create { emitter in
             do {
                 let jsonData = try JSONEncoder().encode(user)
-                UserDefaults.standard.set(jsonData, forKey: userIDKey)
+                UserDefaults.standard.set(jsonData, forKey: userKey)
                 emitter.onNext(())
             } catch {
                 emitter.onError(error)
@@ -35,7 +35,7 @@ struct UserDefaultsUserDataSource: LocalUserDataSourceProtocol {
 
     func load() -> Observable<User> {
         return Observable.create { emitter in
-            guard let jsonData = UserDefaults.standard.value(forKey: userIDKey) as? Data,
+            guard let jsonData = UserDefaults.standard.value(forKey: userKey) as? Data,
                   let user = try? JSONDecoder().decode(User.self, from: jsonData) else {
                 emitter.onError(UserDefaultsError.json)
                 return Disposables.create()
@@ -47,7 +47,7 @@ struct UserDefaultsUserDataSource: LocalUserDataSourceProtocol {
     
     func remove() -> Observable<Void> {
         return Observable.create { emitter in
-            UserDefaults.standard.removeObject(forKey: userIDKey)
+            UserDefaults.standard.removeObject(forKey: userKey)
             emitter.onNext(())
             return Disposables.create()
         }
