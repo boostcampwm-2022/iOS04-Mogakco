@@ -42,7 +42,7 @@ class HashtagEditViewModel: HashtagViewModel {
     
     private func tapButton() {
         // 1. userUseCase 에서 업데이트
-        delegate?.selectedHashtag(hashTags: selectedHashtag) // 2. 상위 뷰컨에 전달
+        delegate?.selectedHashtag(kind: kind, hashTags: selectedHashtag) // 2. 상위 뷰컨에 전달
         // 3. 화면이동
     }
 }
