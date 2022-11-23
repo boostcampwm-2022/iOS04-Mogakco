@@ -24,8 +24,16 @@ struct LoginUseCase: LoginUseCaseProtocol {
         self.userRepository = userRepository
     }
     
-    func login(emailLoginUser: EmailLogin) -> Observable<Void> {
-        return authRepository.login(emailLoginUser: emailLoginUser)
-            .flatMap { userRepository.save(userUID: $0) }
+    func login(emailLogin: EmailLogin) -> Observable<Void> {
+        return authRepository.login(emailLogin: emailLogin)
+            .do(onNext: { _ in
+                // TODO: Authroziation save to keychain
+            })
+            .map { $0.localId }
+            .flatMap { userRepository.user(id: $0) }
+            .do(onNext: {
+                _ = userRepository.save(user: $0)
+            })
+            .map { _ in }
     }
 }

@@ -33,13 +33,18 @@ struct UserRepository: UserRepositoryProtocol {
     }
     
     func user(id: String) -> Observable<User> {
-        let request = UserRequestDTO(id: id)
-        return remoteUserDataSource.user(request: request)
+        return remoteUserDataSource.user(id: id)
             .map { $0.toDomain() }
     }
     
     func load() -> Observable<User> {
         return localUserDataSource.load()
+    }
+    
+    func create(user: User) -> Observable<User> {
+        let request = UserRequestDTO(user: user)
+        return remoteUserDataSource.create(request: request)
+            .map { $0.toDomain() }
     }
     
     func editProfile(id: String, name: String, introduce: String, imageData: Data) -> Observable<User> {

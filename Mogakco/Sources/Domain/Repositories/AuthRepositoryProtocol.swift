@@ -9,6 +9,6 @@
 import RxSwift
 
 protocol AuthRepositoryProtocol {
-    func signup(user: User) -> Observable<User>
-    func login(emailLoginUser: EmailLogin) -> Observable<String>
+    func signup(user: User) -> Observable<Authorization>
+    func login(emailLogin: EmailLogin) -> Observable<Authorization>
 }
