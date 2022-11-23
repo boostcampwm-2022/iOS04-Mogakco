@@ -55,13 +55,12 @@ final class StudyStepperView: UIView {
     }
     
     private func layout() {
-        let stackView = UIStackView(
-            arrangedSubviews: [titleLabel, UIView(), countLabel, stepper]
-        ).then {
+        let subviews = [titleLabel, UIView(), countLabel, stepper]
+        let stackView = UIStackView(arrangedSubviews: subviews).then {
             $0.axis = .horizontal
             $0.spacing = 20
+            $0.alignment = .center
         }
-        
         addSubview(stackView)
         stackView.snp.makeConstraints {
             $0.top.bottom.right.equalToSuperview()

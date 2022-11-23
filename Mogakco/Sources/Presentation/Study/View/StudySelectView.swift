@@ -26,7 +26,6 @@ final class StudySelectView: UIView {
     let titleLabel = UILabel().then {
         $0.font = UIFont(name: SFPro.bold.rawValue, size: 16)
         $0.textAlignment = .left
-        $0.snp.makeConstraints { $0.left.equalToSuperview().inset(4) }
     }
     
     lazy var selectButton = UIButton().then {
@@ -34,17 +33,13 @@ final class StudySelectView: UIView {
         $0.addShadow(offset: .init(width: 1, height: 1))
         $0.layer.borderWidth = 1
         $0.layer.borderColor = UIColor.clear.cgColor
-        $0.layer.cornerRadius = 8
+        $0.layer.cornerRadius = 5
     }
     
     var selectLabel = UILabel().then {
         $0.font = UIFont(name: SFPro.bold.rawValue, size: 16)
         $0.textAlignment = .right
         $0.isHidden = true
-    }
-    
-    let collectionView = UICollectionView().then {
-        $0.register(BadgeCell.self, forCellWithReuseIdentifier: BadgeCell.identifier)
     }
     
     private let disposeBag = DisposeBag()
@@ -63,24 +58,18 @@ final class StudySelectView: UIView {
     private func layout() {
         let totalStackView = createTotalStackView()
         addSubview(totalStackView)
-        totalStackView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-        }
-    }
-    
-    private func createTopStackView() -> UIStackView {
-        let subviews = [titleLabel, selectButton, selectLabel]
-        return UIStackView(arrangedSubviews: subviews).then {
-            $0.axis = .horizontal
-            $0.distribution = .equalSpacing
+        totalStackView.snp.makeConstraints {
+            $0.top.bottom.equalToSuperview()
+            $0.left.right.equalToSuperview().inset(4)
         }
     }
     
     private func createTotalStackView() -> UIStackView {
-        let subviews = [createTopStackView(), collectionView]
+        let subviews = [titleLabel, selectButton, selectLabel]
         return UIStackView(arrangedSubviews: subviews).then {
-            $0.axis = .vertical
-            $0.spacing = 10
+            $0.axis = .horizontal
+            $0.alignment = .center
+            $0.distribution = .equalSpacing
         }
     }
     
@@ -92,9 +81,9 @@ final class StudySelectView: UIView {
         var configuration = UIButton.Configuration.filled()
         configuration.baseForegroundColor = .mogakcoColor.typographyPrimary
         configuration.baseBackgroundColor = .mogakcoColor.backgroundDefault
-        configuration.background.cornerRadius = 8
+        configuration.background.cornerRadius = 5
         configuration.attributedTitle = attributedTitle
-        configuration.contentInsets = .init(top: 8, leading: 0, bottom: 8, trailing: 0)
+        configuration.contentInsets = .init(top: 4, leading: 12, bottom: 4, trailing: 12)
         
         return configuration
     }
