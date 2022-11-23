@@ -62,7 +62,7 @@ final class ProfileViewModel: ViewModel {
     func transform(input: Input) -> Output {
         let type = BehaviorSubject<ProfileType>(value: type)
         let isMyProfile = type
-            .map { $0 != .current }
+            .map { $0 == .current }
         let user = type
             .withUnretained(self)
             .flatMap { viewModel, type -> Observable<User> in
@@ -97,7 +97,9 @@ final class ProfileViewModel: ViewModel {
         
         return Output(
             isMyProfile: isMyProfile.asObservable(),
-            profileImageURL: user.compactMap { URL(string: $0.profileImageURLString) },
+            profileImageURL: user
+                .compactMap { $0.profileImageURLString }
+                .compactMap { URL(string: $0) },
             representativeLanguageImage: user
                 .compactMap { $0.languages.randomElement() }
                 .compactMap { UIImage(named: $0) },

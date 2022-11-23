@@ -41,9 +41,12 @@ struct UserRepository: UserRepositoryProtocol {
         return localUserDataSource.load()
     }
     
-    func create(user: User) -> Observable<User> {
-        let request = UserRequestDTO(user: user)
-        return remoteUserDataSource.create(request: request)
+    func create(user: User, imageData: Data) -> Observable<User> {
+        return remoteUserDataSource.uploadProfileImage(id: user.id, imageData: imageData)
+            .map { $0.absoluteString }
+            .map { User(profileImageURLString: $0, user: user) }
+            .map { UserRequestDTO(user: $0) }
+            .flatMap { remoteUserDataSource.create(request: $0) }
             .map { $0.toDomain() }
     }
     
