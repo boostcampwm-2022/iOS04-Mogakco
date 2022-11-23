@@ -38,7 +38,7 @@ final class AppCoordinator: Coordinator, AppCoordinatorProtocol {
         let userUseCase = UserUseCase(userRepository: userRepository)
 
         let viewModel = StudyDetailViewModel(
-            studyID: "nN2KGsHG1my3fMo4tjwE", // TODO: StudyID 받아오는 모델로 수정
+            studyID: "FEVKKUm24VGBVmmTKICB", // TODO: StudyID 받아오는 모델로 수정
             coordinator: StudyTabCoordinator(navigationController),
             studyUsecase: studyUseCase,
             hashtagUseCase: hashtagUseCase,
