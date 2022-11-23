@@ -36,6 +36,8 @@ class Provider: ProviderProtocol {
                 .request(urlConvertible)
                 .validate(statusCode: 200 ..< 300)
                 .responseDecodable(of: T.self) { response in
+                    print(T.self)
+                    print(response.result)
                     switch response.result {
                     case let .success(data):
                         emitter.onNext(data)

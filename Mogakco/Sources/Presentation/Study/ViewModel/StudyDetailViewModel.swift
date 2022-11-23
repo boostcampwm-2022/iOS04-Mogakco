@@ -58,9 +58,15 @@ final class StudyDetailViewModel: ViewModel {
         // TODO: 유저 UseCase에서 불러오기, 언어 불러오기 바인딩
         let languageReload = PublishSubject<Void>()
         let userReload = PublishSubject<Void>()
-        let studyDetail = studyUseCase.study(id: studyID)
+        let studyDetailLoad = PublishSubject<Study>()
         
-        studyDetail
+        studyUseCase.study(id: studyID)
+            .subscribe(onNext: {
+                studyDetailLoad.onNext($0)
+            })
+            .disposed(by: disposeBag)
+        
+        studyDetailLoad
             .withUnretained(self)
             .flatMap {
                 return $0.0.hashtagUseCase.loadTagByString(kind: .language, tagTitle: $0.1.languages)
@@ -70,18 +76,19 @@ final class StudyDetailViewModel: ViewModel {
             })
             .disposed(by: disposeBag)
         
-       studyDetail
+        studyDetailLoad
             .withUnretained(self)
             .flatMap {
                 return $0.0.userUseCase.users(ids: $0.1.userIDs)
             }
-            .subscribe(onNext: { [weak self] in
-                self?.participants.onNext($0)
-                print("여기")
-                print(self?.participantsCount)
-            })
+            .subscribe(
+                onNext: { [weak self] in
+                    self?.participants.onNext($0)
+                    print(self?.participantsCount)
+                }
+            )
             .disposed(by: disposeBag)
-            
+        
         languages
             .subscribe(onNext: { _ in
                 languageReload.onNext(())
@@ -94,15 +101,15 @@ final class StudyDetailViewModel: ViewModel {
             })
             .disposed(by: disposeBag)
         
-//        studyDetail
-//            .withUnretained(self)
-//            .flatMap {
-//
-//            }
-//            .subscribe(onNext: { [weak self] in
-//
-//            })
-//            .disposed(by: disposeBag)
+        //        studyDetail
+        //            .withUnretained(self)
+        //            .flatMap {
+        //
+        //            }
+        //            .subscribe(onNext: { [weak self] in
+        //
+        //            })
+        //            .disposed(by: disposeBag)
         
         input.studyJoinButtonTapped
             .subscribe(onNext: {
@@ -112,7 +119,7 @@ final class StudyDetailViewModel: ViewModel {
             .disposed(by: disposeBag)
         
         return Output(
-            studyDetail: studyDetail,
+            studyDetail: studyDetailLoad,
             languageReload: languageReload.asObservable(),
             userReload: userReload.asObservable()
         )
