@@ -29,11 +29,14 @@ final class ProfileViewModel: ViewModel {
     
     struct Input {
         let editProfileButtonTapped: Observable<Void>
+        let chatButtonTapped: Observable<Void>
+        let hashtagEditButtonTapped: Observable<KindHashtag>
     }
     
     struct Output {
-        let myProfile: Observable<Bool>
+        let isMyProfile: Observable<Bool>
         let profileImageURL: Observable<URL>
+        let representativeLanguageImage: Observable<UIImage>
         let name: Observable<String>
         let introduce: Observable<String>
         let languages: Observable<[String]>
@@ -43,12 +46,12 @@ final class ProfileViewModel: ViewModel {
 
     var disposeBag = DisposeBag()
     private let type: ProfileType
-    private weak var coordinator: ProfileTabCoordinator?
+    private weak var coordinator: ProfileTabCoordinatorProtocol?
     private let userUseCase: UserUseCase
  
     init(
         type: ProfileType,
-        coordinator: ProfileTabCoordinator,
+        coordinator: ProfileTabCoordinatorProtocol,
         userUseCase: UserUseCase
     ) {
         self.type = type
@@ -58,8 +61,8 @@ final class ProfileViewModel: ViewModel {
     
     func transform(input: Input) -> Output {
         let type = BehaviorSubject<ProfileType>(value: type)
-        let myProfile = type
-            .map { $0 == .current }
+        let isMyProfile = type
+            .map { $0 != .current }
         let user = type
             .withUnretained(self)
             .flatMap { viewModel, type -> Observable<User> in
@@ -72,14 +75,32 @@ final class ProfileViewModel: ViewModel {
             }
         
         input.editProfileButtonTapped
-            .subscribe(onNext: {
-                self.coordinator?.showEditProfile()
+            .withUnretained(self)
+            .subscribe(onNext: { viewModel, _ in
+                viewModel.coordinator?.showEditProfile()
+            })
+            .disposed(by: disposeBag)
+        
+        input.chatButtonTapped
+            .withUnretained(self)
+            .subscribe(onNext: { viewModel, _ in
+                viewModel.coordinator?.showChat()
+            })
+            .disposed(by: disposeBag)
+        
+        input.hashtagEditButtonTapped
+            .withUnretained(self)
+            .subscribe(onNext: { viewModel, kindHashtag in
+                viewModel.coordinator?.showSelectHashtag(kindHashtag: kindHashtag)
             })
             .disposed(by: disposeBag)
         
         return Output(
-            myProfile: myProfile.asObservable(),
+            isMyProfile: isMyProfile.asObservable(),
             profileImageURL: user.compactMap { URL(string: $0.profileImageURLString) },
+            representativeLanguageImage: user
+                .compactMap { $0.languages.randomElement() }
+                .compactMap { UIImage(named: $0) },
             name: user.map { $0.name }.asObservable(),
             introduce: user.map { $0.introduce }.asObservable(),
             languages: user.map { $0.languages }.asObservable(),

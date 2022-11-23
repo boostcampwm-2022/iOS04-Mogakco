@@ -8,6 +8,8 @@
 
 import UIKit
 
+import RxSwift
+
 final class ProfileViewController: ViewController {
 
     enum Constant {
@@ -46,18 +48,21 @@ final class ProfileViewController: ViewController {
     }
     
     private let languageListView = HashtagListView().then {
+        $0.titleLabel.text = "언어"
         $0.snp.makeConstraints {
             $0.height.equalTo(Constant.hashtagViewHeight)
         }
     }
     
     private let careerListView = HashtagListView().then {
+        $0.titleLabel.text = "경력"
         $0.snp.makeConstraints {
             $0.height.equalTo(Constant.hashtagViewHeight)
         }
     }
     
     private let categoryListView = HashtagListView().then {
+        $0.titleLabel.text = "카테고리"
         $0.snp.makeConstraints {
             $0.height.equalTo(Constant.hashtagViewHeight)
         }
@@ -88,42 +93,61 @@ final class ProfileViewController: ViewController {
     
     override func bind() {
         let input = ProfileViewModel.Input(
-            editProfileButtonTapped: profileView.editProfileButton.rx.tap.asObservable()
+            editProfileButtonTapped: profileView.editProfileButton.rx.tap.asObservable(),
+            chatButtonTapped: profileView.chatButton.rx.tap.asObservable(),
+            hashtagEditButtonTapped: Observable.merge(
+                languageListView.editButton.rx.tap.map { _ in KindHashtag.language },
+                careerListView.editButton.rx.tap.map { _ in KindHashtag.career },
+                categoryListView.editButton.rx.tap.map { _ in KindHashtag.category }
+            )
         )
         let output = viewModel.transform(input: input)
         
-        output.myProfile
+        bindIsMyProfile(output: output)
+        bindProfile(output: output)
+        bindHashtags(output: output)
+    }
+    
+    private func bindIsMyProfile(output: ProfileViewModel.Output) {
+        output.isMyProfile
             .asDriver(onErrorJustReturn: false)
             .drive(profileView.chatButton.rx.isHidden)
             .disposed(by: disposeBag)
         
-        output.myProfile
+        output.isMyProfile
             .map { !$0 }
             .asDriver(onErrorJustReturn: false)
             .drive(profileView.editProfileButton.rx.isHidden)
             .disposed(by: disposeBag)
         
-        output.myProfile
+        output.isMyProfile
             .map { !$0 }
             .asDriver(onErrorJustReturn: false)
             .drive(languageListView.editButton.rx.isHidden)
             .disposed(by: disposeBag)
         
-        output.myProfile
+        output.isMyProfile
             .map { !$0 }
             .asDriver(onErrorJustReturn: false)
             .drive(careerListView.editButton.rx.isHidden)
             .disposed(by: disposeBag)
         
-        output.myProfile
+        output.isMyProfile
             .map { !$0 }
             .asDriver(onErrorJustReturn: false)
             .drive(categoryListView.editButton.rx.isHidden)
             .disposed(by: disposeBag)
-        
+    }
+    
+    private func bindProfile(output: ProfileViewModel.Output) {
         output.profileImageURL
             .asDriver(onErrorDriveWith: .empty())
             .drive(profileView.roundProfileImageView.rx.loadImage)
+            .disposed(by: disposeBag)
+        
+        output.representativeLanguageImage
+            .asDriver(onErrorJustReturn: .init())
+            .drive(profileView.roundLanguageImageView.rx.image)
             .disposed(by: disposeBag)
         
         output.name
@@ -135,7 +159,9 @@ final class ProfileViewController: ViewController {
             .asDriver(onErrorJustReturn: "")
             .drive(profileView.introduceLabel.rx.text)
             .disposed(by: disposeBag)
-        
+    }
+    
+    private func bindHashtags(output: ProfileViewModel.Output) {
         output.languages
             .asDriver(onErrorJustReturn: [])
             .drive(languageListView.hashtagCollectionView.rx.items) { collectionView, index, language in
