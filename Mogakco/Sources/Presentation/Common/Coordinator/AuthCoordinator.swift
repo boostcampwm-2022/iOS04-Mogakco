@@ -28,11 +28,11 @@ final class AuthCoordinator: Coordinator, AuthCoordinatorProtocol {
     func showLogin() {
         let localUserDataSource = UserDefaultsUserDataSource()
         let remoteUserDataSource = RemoteUserDataSource(provider: Provider.default)
-        let authService = FBAuthService()
+        let authService = FBAuthService(provider: Provider.default)
         let authRepository = AuthRepository(authService: authService)
         let userRepository = UserRepository(
             localUserDataSource: localUserDataSource,
-            retmoteUserDataSource: remoteUserDataSource
+            remoteUserDataSource: remoteUserDataSource
         )
         let loginUseCase = LoginUseCase(
             authRepository: authRepository,
