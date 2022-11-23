@@ -47,8 +47,8 @@ final class SetEmailViewModel: ViewModel {
         input.nextButtonTapped
             .withLatestFrom(input.email)
             .subscribe { [weak self] email in
-                self?.coordinator?.email = email
-                self?.coordinator?.showPassword()
+                let emailProps = EmailProps(email: email)
+                self?.coordinator?.showPassword(emailProps: emailProps)
             }
             .disposed(by: disposeBag)
         

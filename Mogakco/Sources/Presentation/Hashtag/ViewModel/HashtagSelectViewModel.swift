@@ -14,15 +14,21 @@ import RxCocoa
 class HashtagSelectedViewModel: HashtagViewModel {
     
     weak var coordinator: AdditionalSignupCoordinatorProtocol?
-    let signUseCase: SignupUseCaseProtocol?
+    private let signUseCase: SignupUseCaseProtocol?
+    private let profileProps: ProfileProps?
+    private let languageProps: LanguageProps?
     
     init(
         coordinator: AdditionalSignupCoordinatorProtocol,
         hashTagUsecase: HashtagUseCaseProtocol,
-        signUpUseCase: SignupUseCaseProtocol? = nil
+        signUpUseCase: SignupUseCaseProtocol? = nil,
+        profileProps: ProfileProps? = nil,
+        languageProps: LanguageProps? = nil
     ) {
         self.signUseCase = signUpUseCase
         self.coordinator = coordinator
+        self.profileProps = profileProps
+        self.languageProps = languageProps
         super.init(hashTagUsecase: hashTagUsecase)
     }
     
@@ -39,27 +45,43 @@ class HashtagSelectedViewModel: HashtagViewModel {
     
     private func tapButton() {
         switch kind {
-        case .language: coordinator?.showCareer() // TODO: 정보 전달 로직 필요
-        case .career: signUseCase?.signup(
-            user: User(
-                id: "",
-                profileImageURLString: "",
-                email: "",
-                introduce: "",
-                password: "",
-                name: "",
-                languages: [],
-                careers: [],
-                categorys: [],
-                studyIDs: [],
-                chatRoomIDs: []
+        case .language:
+            guard let profileProps = profileProps else { return }
+            let languageProps = LanguageProps(
+                email: profileProps.email,
+                password: profileProps.password,
+                name: profileProps.name,
+                introduce: profileProps.introduce,
+                profileImage: profileProps.profileImage,
+                languages: selectedHashtag.map { $0.title }
             )
-        )
-        .subscribe { [weak self] _ in
-            self?.coordinator?.finish(success: true)
-        }
-        .disposed(by: disposeBag)
-        case .category: break
+            coordinator?.showCareer(languageProps: languageProps)
+            
+        case .career:
+            guard let languageProps = languageProps else { return }
+            print(languageProps, selectedHashtag.map { $0.title })
+            signUseCase?.signup(
+                user: User(
+                    id: "",
+                    profileImageURLString: "", // TODO: 프로필 이미지 업로드해서 문자열로 바꿔야 함
+                    email: languageProps.email,
+                    introduce: languageProps.introduce,
+                    password: languageProps.password,
+                    name: languageProps.name,
+                    languages: languageProps.languages,
+                    careers: selectedHashtag.map { $0.title },
+                    categorys: [],
+                    studyIDs: [],
+                    chatRoomIDs: []
+                )
+            )
+            .subscribe { [weak self] _ in
+                self?.coordinator?.finish(success: true)
+            }
+            .disposed(by: disposeBag)
+            
+        case .category:
+            break
         }
     }
 }
