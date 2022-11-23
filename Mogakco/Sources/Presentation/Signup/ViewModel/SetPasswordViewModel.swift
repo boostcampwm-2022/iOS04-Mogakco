@@ -26,10 +26,15 @@ final class SetPasswordViewModel: ViewModel {
     }
     
     private weak var coordinator: RequiredSignupCoordinatorProtocol?
+    private var emailProps: EmailProps
     var disposeBag = DisposeBag()
     
-    init(coordinator: RequiredSignupCoordinatorProtocol?) {
+    init(
+        coordinator: RequiredSignupCoordinatorProtocol?,
+        emailProps: EmailProps
+    ) {
         self.coordinator = coordinator
+        self.emailProps = emailProps
     }
 
     func transform(input: Input) -> Output {
@@ -61,10 +66,14 @@ final class SetPasswordViewModel: ViewModel {
         
         input.nextButtonTapped
             .withLatestFrom(input.password)
-            .subscribe { [weak self] password in
-                self?.coordinator?.password = password
-                self?.coordinator?.finish()
-            }
+            .withUnretained(self)
+            .subscribe(onNext: { viewModel, password in
+                let passwordProps = PasswordProps(
+                    email: viewModel.emailProps.email,
+                    password: password
+                )
+                viewModel.coordinator?.finish(passwordProps: passwordProps)
+            })
             .disposed(by: disposeBag)
         
         return Output(

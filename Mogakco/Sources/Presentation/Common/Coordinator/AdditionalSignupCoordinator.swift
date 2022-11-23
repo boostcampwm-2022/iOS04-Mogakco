@@ -13,28 +13,24 @@ final class AdditionalSignupCoordinator: Coordinator, AdditionalSignupCoordinato
     weak var delegate: AuthCoordinatorFinishDelegate?
     var navigationController: UINavigationController
     var childCoordinators: [Coordinator] = []
+    private var passwordProps: PasswordProps
     
-    var name: String?
-    var introduce: String?
-    var profile: UIImage?
-    var language: String?
-    var career: String?
-    
-    init(_ navigationController: UINavigationController) {
+    init(_ navigationController: UINavigationController, passwordProps: PasswordProps) {
         self.navigationController = navigationController
+        self.passwordProps = passwordProps
     }
     
     func start() {
-        showCreateProfile()
+        showCreateProfile(passwordProps: passwordProps)
     }
     
-    func showCreateProfile() {
+    func showCreateProfile(passwordProps: PasswordProps) {
         let userRepository = UserRepository(
             localUserDataSource: UserDefaultsUserDataSource(),
             remoteUserDataSource: RemoteUserDataSource(provider: Provider.default)
         )
         let viewModel = EditProfiileViewModel(
-            type: .create,
+            type: .create(passwordProps),
             coordinator: self,
             profileUseCase: ProfileUseCase(userRepository: userRepository),
             editProfileUseCase: EditProfileUseCase(userRepository: userRepository)
@@ -43,13 +39,14 @@ final class AdditionalSignupCoordinator: Coordinator, AdditionalSignupCoordinato
         navigationController.pushViewController(viewController, animated: true)
     }
     
-    func showLanguage() {
+    func showLanguage(profileProps: ProfileProps) {
         let hashtagDataSource = HashtagDataSource()
         let hashtagRepository = HashtagRepository(localHashtagDataSource: hashtagDataSource)
         let hashtagUseCase = HashtagUsecase(hashtagRepository: hashtagRepository)
         let viewModel = HashtagSelectedViewModel(
             coordinator: self,
-            hashTagUsecase: hashtagUseCase
+            hashTagUsecase: hashtagUseCase,
+            profileProps: profileProps
         )
         let hashtagSelectViewController = HashtagSelectViewController(
             kind: .language,
@@ -58,7 +55,7 @@ final class AdditionalSignupCoordinator: Coordinator, AdditionalSignupCoordinato
         navigationController.pushViewController(hashtagSelectViewController, animated: true)
     }
     
-    func showCareer() {
+    func showCareer(languageProps: LanguageProps) {
         let hashtagDataSource = HashtagDataSource()
         let authService = FBAuthService(provider: Provider.default)
         let userDefaultDataSource = UserDefaultsUserDataSource()
@@ -77,7 +74,8 @@ final class AdditionalSignupCoordinator: Coordinator, AdditionalSignupCoordinato
         let viewModel = HashtagSelectedViewModel(
             coordinator: self,
             hashTagUsecase: hashtagUseCase,
-            signUpUseCase: signupUseCase
+            signUpUseCase: signupUseCase,
+            languageProps: languageProps
         )
         let hashtagSelectViewController = HashtagSelectViewController(
             kind: .career,

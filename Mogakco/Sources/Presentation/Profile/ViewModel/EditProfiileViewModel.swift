@@ -14,7 +14,17 @@ import RxSwift
 final class EditProfiileViewModel: ViewModel {
     
     enum EditType {
-        case create, edit
+        case create(PasswordProps)
+        case edit
+        
+        static func ==(lhs: EditType, rhs: EditType) -> Bool {
+            switch (lhs, rhs) {
+            case (.create, .create), (.edit, .edit):
+                return true
+            default:
+                return false
+            }
+        }
     }
     
     struct Input {
@@ -104,15 +114,29 @@ final class EditProfiileViewModel: ViewModel {
         let profileCreate = input
             .completeButtonTapped
             .withLatestFrom(type)
-            .filter { $0 == .create }
+            .filter {
+                if case EditType.create = $0 {
+                    return true
+                } else {
+                    return false
+                }
+            }
         
         profileCreate
             .withLatestFrom(
                 Observable.combineLatest(input.name, input.introduce, input.selectedProfileImage)
             )
-            .subscribe(onNext: { _ in
-                if let coordinator = self.coordinator as? AdditionalSignupCoordinator {
-                    coordinator.showLanguage()
+            .subscribe(onNext: { profile in
+                if let coordinator = self.coordinator as? AdditionalSignupCoordinator,
+                   case let EditType.create(passwordProps) = self.type {
+                    let profileProps = ProfileProps(
+                        email: passwordProps.email,
+                        password: passwordProps.password,
+                        name: profile.0,
+                        introduce: profile.1,
+                        profileImage: profile.2
+                    )
+                    coordinator.showLanguage(profileProps: profileProps)
                 }
             })
             .disposed(by: disposeBag)
