@@ -9,8 +9,8 @@
 import UIKit
 
 struct User: Codable {
-    let id: String?
-    let profileImageURLString: String
+    let id: String
+    let profileImageURLString: String?
     let email: String
     let introduce: String
     let password: String?
@@ -23,9 +23,23 @@ struct User: Codable {
 }
 
 extension User {
-    init(id: String, user: User) {
+    init(id: String, signupProps: SignupProps) {
         self.id = id
-        self.profileImageURLString = user.profileImageURLString
+        self.profileImageURLString = nil
+        self.email = signupProps.email
+        self.introduce = signupProps.introduce
+        self.password = nil
+        self.name = signupProps.name
+        self.languages = signupProps.languages
+        self.careers = signupProps.careers
+        self.categorys = []
+        self.studyIDs = []
+        self.chatRoomIDs = []
+    }
+    
+    init(profileImageURLString: String, user: User) {
+        self.id = user.id
+        self.profileImageURLString = profileImageURLString
         self.email = user.email
         self.introduce = user.introduce
         self.password = user.password

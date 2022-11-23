@@ -54,21 +54,8 @@ class HashtagSelectedViewModel: HashtagViewModel {
             
         case .career:
             guard let languageProps = languageProps else { return }
-            signUseCase?.signup(
-                user: User(
-                    id: "",
-                    profileImageURLString: "", // TODO: 프로필 이미지 업로드해서 문자열로 바꿔야 함
-                    email: languageProps.email,
-                    introduce: languageProps.introduce,
-                    password: languageProps.password,
-                    name: languageProps.name,
-                    languages: languageProps.languages,
-                    careers: selectedHashtag.map { $0.title },
-                    categorys: [],
-                    studyIDs: [],
-                    chatRoomIDs: []
-                )
-            )
+            let signupProps = languageProps.toSignupProps(careers: selectedHashtag.map { $0.title })
+            signUseCase?.signup(signupProps: signupProps)
             .subscribe { [weak self] _ in
                 self?.coordinator?.finish(success: true)
             }
