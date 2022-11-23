@@ -14,9 +14,6 @@ final class RequiredSignupCoordinator: Coordinator, RequiredSignupCoordinatorPro
     var navigationController: UINavigationController
     var childCoordinators: [Coordinator] = []
     
-    var email: String?
-    var password: String?
-    
     init(_ navigationController: UINavigationController) {
         self.navigationController = navigationController
     }
@@ -31,13 +28,16 @@ final class RequiredSignupCoordinator: Coordinator, RequiredSignupCoordinatorPro
         navigationController.pushViewController(emailViewController, animated: true)
     }
     
-    func showPassword() {
-        let passwordViewModel = SetPasswordViewModel(coordinator: self)
+    func showPassword(emailProps: EmailProps) {
+        let passwordViewModel = SetPasswordViewModel(coordinator: self, emailProps: emailProps)
         let passwordViewController = SetPasswordViewController(viewModel: passwordViewModel)
         navigationController.pushViewController(passwordViewController, animated: true)
     }
     
-    func finish() {
-        delegate?.requiredSignupCoordinatorDidFinish(child: self, email: email, password: password)
+    func finish(passwordProps: PasswordProps) {
+        delegate?.requiredSignupCoordinatorDidFinish(
+            child: self,
+            passwordProps: passwordProps
+        )
     }
 }

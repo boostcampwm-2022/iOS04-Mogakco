@@ -6,13 +6,13 @@
 //  Copyright © 2022 Mogakco. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 struct LanguageProps {
     let email: String
     let password: String
     let name: String
     let introduce: String
-    let profileImageURLString: String
+    let profileImage: UIImage
     let languages: [String]
 }
