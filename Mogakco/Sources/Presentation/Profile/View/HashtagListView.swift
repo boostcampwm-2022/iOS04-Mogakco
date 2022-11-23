@@ -13,7 +13,7 @@ import RxSwift
 
 final class HashtagListView: UIView {
     
-    private let typeLabel = UILabel().then {
+    let titleLabel = UILabel().then {
         $0.font = UIFont.mogakcoFont.smallBold
         $0.text = "해시태크"
         $0.textColor = UIColor.mogakcoColor.typographyPrimary
@@ -78,7 +78,7 @@ final class HashtagListView: UIView {
     }
  
     private func createLabelStackView() -> UIStackView {
-        let arrangeSubviews = [typeLabel, editButton]
+        let arrangeSubviews = [titleLabel, editButton]
         return UIStackView(arrangedSubviews: arrangeSubviews).then {
             $0.axis = .horizontal
             $0.layoutMargins = .init(top: 0.0, left: 16.0, bottom: 0.0, right: 16.0)

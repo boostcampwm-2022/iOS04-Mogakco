@@ -22,11 +22,11 @@ final class ChatListViewModel: ViewModel {
     }
     
     var disposeBag = DisposeBag()
-    private weak var coordinator: ChatTabCoordinator?
+    private weak var coordinator: ChatTabCoordinatorProtocol?
     private let chatRoomListUseCase: ChatRoomListUseCaseProtocol
  
     init(
-        coordinator: ChatTabCoordinator,
+        coordinator: ChatTabCoordinatorProtocol,
         chatRoomListUseCase: ChatRoomListUseCaseProtocol
     ) {
         self.coordinator = coordinator
