@@ -14,4 +14,15 @@ struct ProfileProps {
     let name: String
     let introduce: String
     let profileImage: UIImage
+    
+    func toLanguageProps(languages: [String]) -> LanguageProps {
+        return LanguageProps(
+            email: email,
+            password: password,
+            name: name,
+            introduce: introduce,
+            profileImage: profileImage,
+            languages: languages
+        )
+    }
 }

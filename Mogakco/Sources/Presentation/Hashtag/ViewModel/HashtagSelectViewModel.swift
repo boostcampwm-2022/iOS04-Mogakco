@@ -47,19 +47,13 @@ class HashtagSelectedViewModel: HashtagViewModel {
         switch kind {
         case .language:
             guard let profileProps = profileProps else { return }
-            let languageProps = LanguageProps(
-                email: profileProps.email,
-                password: profileProps.password,
-                name: profileProps.name,
-                introduce: profileProps.introduce,
-                profileImage: profileProps.profileImage,
+            let languageProps = profileProps.toLanguageProps(
                 languages: selectedHashtag.map { $0.title }
             )
             coordinator?.showCareer(languageProps: languageProps)
             
         case .career:
             guard let languageProps = languageProps else { return }
-            print(languageProps, selectedHashtag.map { $0.title })
             signUseCase?.signup(
                 user: User(
                     id: "",

@@ -6,9 +6,24 @@
 //  Copyright © 2022 Mogakco. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 struct PasswordProps {
     let email: String
     let password: String
+    
+    func toProfileProps(
+        name: String,
+        introduce: String,
+        profileImage: UIImage
+    ) -> ProfileProps {
+        
+        return ProfileProps(
+            email: email,
+            password: password,
+            name: name,
+            introduce: introduce,
+            profileImage: profileImage
+        )
+    }
 }
