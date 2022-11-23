@@ -26,4 +26,10 @@ struct StudyRepository: StudyRepositoryProtocol {
         return dataSource.detail(id: id)
             .map { $0.toDomain() }
     }
+    
+    func create(study: Study) -> Observable<Study> {
+        let studyDTO = StudyRequestDTO(study: study)
+        return dataSource.create(study: studyDTO)
+            .map { $0.toDomain() }
+    }
 }

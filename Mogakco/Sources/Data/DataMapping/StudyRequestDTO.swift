@@ -51,4 +51,17 @@ struct StudyRequestDTO: Codable {
         try fieldContainer.encode(self.languages, forKey: .languages)
         try fieldContainer.encode(self.category, forKey: .category)
     }
+    
+    init(study: Study) {
+        self.id = StringValue(value: study.id)
+        self.chatRoomID = StringValue(value: study.chatRoomID)
+        self.userIDs = ArrayValue<StringValue>(values: study.userIDs.map { StringValue(value: $0) })
+        self.title = StringValue(value: study.title)
+        self.content = StringValue(value: study.content)
+        self.date = IntegerValue(value: "\(study.date)")
+        self.place = StringValue(value: study.place)
+        self.maxUserCount = IntegerValue(value: "\(study.maxUserCount)")
+        self.languages = ArrayValue<StringValue>(values: study.languages.map { StringValue(value: $0) })
+        self.category = StringValue(value: study.category)
+    }
 }
