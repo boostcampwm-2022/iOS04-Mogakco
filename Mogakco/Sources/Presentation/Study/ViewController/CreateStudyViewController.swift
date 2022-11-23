@@ -148,7 +148,7 @@ final class CreateStudyViewController: ViewController {
             content: contentTextView.rx.text.orEmpty.asObservable(),
             place: placeTextField.rx.text.orEmpty.asObservable(),
             maxUserCount: countStepper.stepper.rx.value.asObservable(),
-            date: date,
+            date: date.asObserver(),
             categoryButtonTapped: categorySelect.button.rx.tap.asObservable(),
             languageButtonTapped: languageSelect.button.rx.tap.asObservable(),
             createButtonTapped: createButton.rx.tap.asObservable()
@@ -240,23 +240,46 @@ final class CreateStudyViewController: ViewController {
     }
     
     private func showDateSelectView() {
-        
-        let datePicker = UIDatePicker(
-            frame: .init(x: 5, y: 20, width: 250, height: 140)
-        )
-        datePicker.datePickerMode = .dateAndTime
-        datePicker.preferredDatePickerStyle = .automatic
-        datePicker.locale = Locale(identifier: "ko_KR")
-        
+
         let alert = UIAlertController(
-            title: "스터디 날짜를 선택해주세요",
+            title: "스터디 날찌를 선택해주세요",
             message: nil,
             preferredStyle: .alert
         )
-        alert.view.addSubview(datePicker)
         
-        let selectAction = UIAlertAction(title: "선택", style: .cancel, handler: nil)
+        let datePicker = createDatePicker()
+        alert.view.addSubview(datePicker)
+        datePicker.snp.makeConstraints { make in
+            make.centerX.equalTo(alert.view)
+            make.top.equalTo(alert.view).inset(55)
+            make.bottom.equalTo(alert.view).inset(60)
+        }
+        
+        let cancelAction = UIAlertAction(
+            title: "취소",
+            style: .cancel,
+            handler: nil
+        )
+        
+        let selectAction = UIAlertAction(
+            title: "선택",
+            style: .default,
+            handler: { [weak self] _ in
+                self?.date.onNext(datePicker.date)
+            }
+        )
+        
+        alert.addAction(cancelAction)
         alert.addAction(selectAction)
+        alert.view.tintColor = .mogakcoColor.primaryDefault
         present(alert, animated: true)
+    }
+    
+    private func createDatePicker() -> UIDatePicker {
+        let datePicker = UIDatePicker()
+        datePicker.datePickerMode = .dateAndTime
+        datePicker.preferredDatePickerStyle = .automatic
+        datePicker.locale = Locale(identifier: "ko_KR")
+        return datePicker
     }
 }
