@@ -9,5 +9,5 @@
 import RxSwift
 
 protocol SignupUseCaseProtocol {
-    func signup(user: User) -> Observable<Void>
+    func signup(signupProps: SignupProps) -> Observable<Void>
 }

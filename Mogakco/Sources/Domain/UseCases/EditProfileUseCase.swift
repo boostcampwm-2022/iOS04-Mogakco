@@ -12,7 +12,7 @@ import RxSwift
 
 struct EditProfileUseCase: EditProfileUseCaseProtocol {
     
-    enum EditProfileError: Error, LocalizedError {
+    enum EditProfileUseCaseError: Error, LocalizedError {
         case imageCompress
     }
 
@@ -27,7 +27,7 @@ struct EditProfileUseCase: EditProfileUseCaseProtocol {
     
     func editProfile(name: String, introduce: String, image: UIImage) -> Observable<Void> {
         guard let imageData = image.jpegData(compressionQuality: 0.5) else {
-            return Observable<Void>.error(EditProfileError.imageCompress)
+            return Observable<Void>.error(EditProfileUseCaseError.imageCompress)
         }
         return userRepository
             .load()

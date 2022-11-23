@@ -31,7 +31,7 @@ struct RemoteUserDataSource: RemoteUserDataSourceProtocol {
     
     func uploadProfileImage(id: String, imageData: Data) -> Observable<URL> {
         return Observable.create { emitter in
-            let ref = Storage.storage().reference().child("Users").child(id).child("profileImageURL")
+            let ref = Storage.storage().reference().child("User").child(id).child("profileImageURL")
             ref.putData(imageData, metadata: nil) { _, error in
                 if let error = error {
                     emitter.onError(error)

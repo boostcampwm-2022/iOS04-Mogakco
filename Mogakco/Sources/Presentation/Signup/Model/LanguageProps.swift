@@ -15,4 +15,16 @@ struct LanguageProps {
     let introduce: String
     let profileImage: UIImage
     let languages: [String]
+    
+    func toSignupProps(careers: [String]) -> SignupProps {
+        return SignupProps(
+            email: email,
+            password: password,
+            name: name,
+            introduce: introduce,
+            profileImage: profileImage,
+            languages: languages,
+            careers: careers
+        )
+    }
 }

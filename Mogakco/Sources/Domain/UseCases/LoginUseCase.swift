@@ -31,9 +31,6 @@ struct LoginUseCase: LoginUseCaseProtocol {
             })
             .map { $0.localId }
             .flatMap { userRepository.user(id: $0) }
-            .do(onNext: {
-                _ = userRepository.save(user: $0)
-            })
-            .map { _ in }
+            .flatMap { userRepository.save(user: $0) }
     }
 }
