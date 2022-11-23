@@ -16,7 +16,7 @@ struct StudyListUseCase: StudyListUseCaseProtocol {
         self.repository = repository
     }
     
-    func list() -> RxSwift.Observable<[Study]> {
+    func list() -> Observable<[Study]> {
         return repository.list()
     }
 }
