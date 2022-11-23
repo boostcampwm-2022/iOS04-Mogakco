@@ -84,7 +84,6 @@ final class StudyDetailViewModel: ViewModel {
             .subscribe(
                 onNext: { [weak self] in
                     self?.participants.onNext($0)
-                    print(self?.participantsCount)
                 }
             )
             .disposed(by: disposeBag)
@@ -101,15 +100,6 @@ final class StudyDetailViewModel: ViewModel {
             })
             .disposed(by: disposeBag)
         
-        //        studyDetail
-        //            .withUnretained(self)
-        //            .flatMap {
-        //
-        //            }
-        //            .subscribe(onNext: { [weak self] in
-        //
-        //            })
-        //            .disposed(by: disposeBag)
         
         input.studyJoinButtonTapped
             .subscribe(onNext: {
@@ -127,5 +117,9 @@ final class StudyDetailViewModel: ViewModel {
     
     func languaegCellInfo(index: Int) -> Hashtag? {
         return try? languages.value()[index]
+    }
+    
+    func  participantCellInfp(index: Int) -> User? {
+        return try? participants.value()[index]
     }
 }
