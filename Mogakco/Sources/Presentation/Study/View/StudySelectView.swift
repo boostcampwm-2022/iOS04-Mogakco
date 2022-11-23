@@ -14,32 +14,31 @@ import SnapKit
 import Then
 
 final class StudySelectView: UIView {
-    
+
     var title: String? {
         didSet {
             titleLabel.text = title
         }
     }
     
+    var content: String = "" {
+        didSet {
+            button.configuration = plain(title: content)
+            button.removeShadow()
+        }
+    }
+    
     // MARK: - UI
     
-    let titleLabel = UILabel().then {
+    private let titleLabel = UILabel().then {
         $0.font = UIFont(name: SFPro.bold.rawValue, size: 16)
         $0.textAlignment = .left
     }
     
     lazy var button = UIButton().then {
-        $0.configuration = configuration(title: "선택")
+        $0.configuration = rounded(title: "선택")
         $0.addShadow(offset: .init(width: 1, height: 1))
-        $0.layer.borderWidth = 1
-        $0.layer.borderColor = UIColor.clear.cgColor
         $0.layer.cornerRadius = 5
-    }
-    
-    var selectLabel = UILabel().then {
-        $0.font = UIFont(name: SFPro.bold.rawValue, size: 16)
-        $0.textAlignment = .right
-        $0.isHidden = true
     }
     
     private let disposeBag = DisposeBag()
@@ -65,7 +64,7 @@ final class StudySelectView: UIView {
     }
     
     private func createTotalStackView() -> UIStackView {
-        let subviews = [titleLabel, button, selectLabel]
+        let subviews = [titleLabel, button]
         return UIStackView(arrangedSubviews: subviews).then {
             $0.axis = .horizontal
             $0.alignment = .center
@@ -73,7 +72,7 @@ final class StudySelectView: UIView {
         }
     }
     
-    private func configuration(title: String) -> UIButton.Configuration {
+    private func rounded(title: String) -> UIButton.Configuration {
         
         var attributedTitle = AttributedString(title)
         attributedTitle.font = UIFont(name: SFPro.regular.rawValue, size: 13)
@@ -84,6 +83,19 @@ final class StudySelectView: UIView {
         configuration.background.cornerRadius = 5
         configuration.attributedTitle = attributedTitle
         configuration.contentInsets = .init(top: 4, leading: 12, bottom: 4, trailing: 12)
+        
+        return configuration
+    }
+    
+    private func plain(title: String) -> UIButton.Configuration {
+     
+        var attributedTitle = AttributedString(title)
+        attributedTitle.font = UIFont(name: SFPro.regular.rawValue, size: 16)
+        
+        var configuration = UIButton.Configuration.plain()
+        configuration.baseForegroundColor = .mogakcoColor.typographyPrimary
+        configuration.attributedTitle = attributedTitle
+        configuration.contentInsets = .zero
         
         return configuration
     }
