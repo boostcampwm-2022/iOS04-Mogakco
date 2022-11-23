@@ -39,7 +39,6 @@ class HashtagFilterViewModel: HashtagViewModel {
     
     private func tapButton() {
         delegate?.selectedHashtag(kind: kind, hashTags: selectedHashtag)
-        // 2. 화면 이동
         coordinator?.goToPrevScreen()
     }
 }
