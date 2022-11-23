@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct UserResponseDTO: Decodable {
+struct UserResponseDTO: Codable {
     private let id: StringValue
     private let profileImageURLString: StringValue
     private let name: StringValue

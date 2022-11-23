@@ -22,15 +22,21 @@ struct UserUseCase: UserUseCaseProtocol {
     }
     
     func users(ids: [String]) -> Observable<[User]> {
-        return userRepository.users(ids: ids)
+        return userRepository.allUsers()
+            .map {
+                var filteredUser: [User] = []
+                $0.forEach { user in
+                    guard let id = user.id else { return }
+                    if ids.contains(id) { filteredUser.append(user) }
+                }
+                return filteredUser
+            }
 	}
 
     func myProfile() -> Observable<User> {
         return userRepository.load()
             .compactMap { $0.id }
             .flatMap { userRepository.user(id: $0) }
-            .do(onNext: {
-                _ = userRepository.save(user: $0)
-            })
+			.flatMap { userRepository.save(user: $0) }
     }
 }

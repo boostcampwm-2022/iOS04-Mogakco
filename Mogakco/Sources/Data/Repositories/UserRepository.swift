@@ -37,8 +37,10 @@ struct UserRepository: UserRepositoryProtocol {
             .map { $0.toDomain() }
     }
     
-    func users(ids: [String]) -> Observable<[User]> {
-        return remoteUserDataSource.users(ids: ids)
+    func allUsers() -> Observable<[User]> {
+        return remoteUserDataSource
+            .allUsers()
+            .map { $0.documents.map { $0.toDomain() } }
     }
     
     func load() -> Observable<User> {
