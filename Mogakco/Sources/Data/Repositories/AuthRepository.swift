@@ -17,14 +17,15 @@ struct AuthRepository: AuthRepositoryProtocol {
         self.authService = authService
     }
     
-    func signup(user: User) -> Observable<User> {
-        let request = SignupRequestDTO(user: user)
-        return authService
-            .signup(request)
+    func signup(user: User) -> Observable<Authorization> {
+        let request = EmailAuthorizationRequestDTO(user: user)
+        return authService.signup(request)
             .map { $0.toDomain() }
     }
     
-    func login(emailLoginUser: EmailLogin) -> Observable<String> {
-        return authService.login(emailLoginUser)
+    func login(emailLogin: EmailLogin) -> Observable<Authorization> {
+        let request = EmailAuthorizationRequestDTO(emailLogin: emailLogin)
+        return authService.login(request)
+            .map { $0.toDomain() }
     }
 }

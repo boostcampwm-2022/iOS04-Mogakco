@@ -24,6 +24,15 @@ struct SignupUseCase: SignupUseCaseProtocol {
     
     func signup(user: User) -> Observable<Void> {
         return authRepository.signup(user: user)
-            .flatMap { userRepository.save(user: $0) }
+            .do(onNext: {_ in
+                // TODO: Authroziation save to keychain
+            })
+            .map { $0.localId }
+            .map { User(id: $0, user: user) }
+            .flatMap { userRepository.create(user: $0) }
+            .do(onNext: {
+                _ = userRepository.save(user: $0)
+            })
+            .map { _ in }
     }
 }

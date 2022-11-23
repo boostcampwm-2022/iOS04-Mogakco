@@ -60,7 +60,7 @@ final class AdditionalSignupCoordinator: Coordinator, AdditionalSignupCoordinato
     
     func showCareer() {
         let hashtagDataSource = HashtagDataSource()
-        let authService = FBAuthService()
+        let authService = FBAuthService(provider: Provider.default)
         let userDefaultDataSource = UserDefaultsUserDataSource()
         let remoteUserDataSouce = RemoteUserDataSource(provider: Provider.default)
         let hashtagRepository = HashtagRepository(localHashtagDataSource: hashtagDataSource)
