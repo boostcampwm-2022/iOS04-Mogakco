@@ -156,6 +156,12 @@ final class StudyDetailViewController: ViewController {
                 self?.languageCollectionView.reloadData()
             })
             .disposed(by: disposebag)
+        
+        output.userReload
+            .subscribe(onNext: { [weak self] in
+                self?.participantsCollectionView.reloadData()
+            })
+            .disposed(by: disposebag)
     }
     
     private func navigationLayout() {
@@ -299,10 +305,14 @@ extension StudyDetailViewController: UICollectionViewDataSource {
             else { return UICollectionViewCell() }
             
             cell.prepareForReuse()
-            cell.setInfo(imageURLString: "person", name: "김신오이", description: "iOS 개발자들")
+            
+            if let cellUserInfo = viewModel.participantCellInfp(index: indexPath.row) {
+                cell.setInfo(imageURLString: "프로필사진", name: cellUserInfo.name, description: cellUserInfo.introduce)
+            } else {
+                cell.setInfo(imageURLString: "person", name: "김신오이", description: "iOS 개발자")
+            }
             
             return cell
-        
         default:
             return UICollectionViewCell()
         }
