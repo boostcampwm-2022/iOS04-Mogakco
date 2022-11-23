@@ -17,8 +17,12 @@ struct RemoteUserDataSource: RemoteUserDataSourceProtocol {
         self.provider = provider
     }
     
-    func user(request: UserRequestDTO) -> Observable<UserResponseDTO> {
-        return provider.request(UserTarget.user(request))
+    func user(id: String) -> Observable<UserResponseDTO> {
+        return provider.request(UserTarget.user(id))
+    }
+    
+    func create(request: UserRequestDTO) -> Observable<UserResponseDTO> {
+        return provider.request(UserTarget.createUser(request))
     }
     
     func editProfile(id: String, request: EditProfileRequestDTO) -> Observable<UserResponseDTO> {
@@ -50,7 +54,8 @@ struct RemoteUserDataSource: RemoteUserDataSourceProtocol {
 }
 
 enum UserTarget {
-    case user(UserRequestDTO)
+    case user(String)
+    case createUser(UserRequestDTO)
     case editProfile(String, EditProfileRequestDTO)
 }
 
@@ -63,6 +68,8 @@ extension UserTarget: TargetType {
         switch self {
         case .user:
             return .get
+        case .createUser:
+            return .post
         case .editProfile:
             return .patch
         }
@@ -76,8 +83,10 @@ extension UserTarget: TargetType {
     
     var path: String {
         switch self {
-        case let .user(request):
-            return "/\(request.id)"
+        case let .user(id):
+            return "/\(id)"
+        case let .createUser(request):
+            return "/?documentId=\(request.id.value)"
         case let .editProfile(id, _):
             return "/\(id)"
             + "/?updateMask.fieldPaths=name"
@@ -90,6 +99,8 @@ extension UserTarget: TargetType {
         switch self {
         case .user:
             return nil
+        case let .createUser(request):
+            return .body(request)
         case let .editProfile(_, request):
             return .body(request)
         }

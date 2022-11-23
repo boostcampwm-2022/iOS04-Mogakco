@@ -6,89 +6,68 @@
 //  Copyright © 2022 Mogakco. All rights reserved.
 //
 
-import FirebaseAuth
-import FirebaseFirestore
+import Alamofire
 import RxSwift
 
 struct FBAuthService: AuthServiceProtocol {
     
-    private let auth: Auth
-    private let firestore: Firestore
+    private let provider: Provider
     
-    init() {
-        self.auth = Auth.auth()
-        self.firestore = Firestore.firestore()
+    init(provider: Provider) {
+        self.provider = provider
     }
 
-    func signup(_ request: SignupRequestDTO) -> Observable<SignupResponseDTO> {
-        let signupedUserID = PublishSubject<String>()
-        
-        auth.createUser(withEmail: request.email, password: request.password) { result, error in
-            guard let result = result,
-                  error == nil else {
-                      if let error = error {
-                          signupedUserID.onError(error)
-                      }
-                    return // TODO: Custom Error
-                  }
-            signupedUserID.onNext(result.user.uid)
-        }
-        
-        return signupedUserID
-            .flatMap { createUser(request: request, id: $0) }
+    func signup(_ request: EmailAuthorizationRequestDTO) -> Observable<AuthorizationResponseDTO> {
+        return provider.request(AuthTarget.signup(request))
     }
     
-    private func createUser(request: SignupRequestDTO, id: String) -> Observable<SignupResponseDTO> {
-        return Observable.create { emitter in
-            // TODO: RestAPI
-            let data = [
-                "id": id,
-                "email": request.email,
-                "password": request.password,
-                "name": request.name,
-                "introduce": request.introduce
-                // "languages": request.languages,
-                // "careers": request.careers
-            ]
-            
-            firestore.collection("User").document(id).setData(data) { error in
-                if let error = error {
-                    emitter.onError(error)
-                } else {
-                    // TODO: Save User Image
-                    let response = SignupResponseDTO(
-                        id: id,
-                        profileImageURLString: request.profileImageURLString,
-                        email: request.email,
-                        name: request.name,
-                        introduce: request.introduce,
-                        languages: request.languages,
-                        careers: request.careers,
-                        categorys: request.categorys,
-                        studyIDs: request.studyIDs,
-                        chatRoomIDs: request.chatRoomIDs
-                    )
-                    emitter.onNext(response)
-                }
-            }
- 
-            return Disposables.create()
+    func login(_ request: EmailAuthorizationRequestDTO) -> Observable<AuthorizationResponseDTO> {
+        return provider.request(AuthTarget.login(request))
+    }
+}
+
+enum AuthTarget {
+    case signup(EmailAuthorizationRequestDTO)
+    case login(EmailAuthorizationRequestDTO)
+}
+
+extension AuthTarget: TargetType {
+    var baseURL: String {
+        return "https://identitytoolkit.googleapis.com/v1"
+    }
+    
+    var method: HTTPMethod {
+        switch self {
+        case .signup:
+            return .post
+        case .login:
+            return .post
         }
     }
     
-    func login(_ request: EmailLogin) -> Observable<String> {
-        return Observable.create { emmiter in
-            Auth.auth().signIn(withEmail: request.email, password: request.password) { result, error in
-                if let id = result?.user.uid,
-                   error == nil {
-                    emmiter.onNext(id)
-                } else {
-                    if let error {
-                        emmiter.onError(error)
-                    }
-                }
-            }
-            return Disposables.create()
+    var header: HTTPHeaders {
+        return ["Content-Type": "application/json"]
+    }
+    
+    var path: String {
+        switch self {
+        case .signup:
+            return "/accounts:signUp?key=AIzaSyBXf4UoZJU9Wy7X2-Isy6uaCZv6CpImqY8"
+        case .login:
+            return "/accounts:signInWithPassword?key=AIzaSyBXf4UoZJU9Wy7X2-Isy6uaCZv6CpImqY8"
         }
+    }
+    
+    var parameters: RequestParams? {
+        switch self {
+        case let .signup(request):
+            return .body(request)
+        case let .login(request):
+            return .body(request)
+        }
+    }
+
+    var encoding: ParameterEncoding {
+        return JSONEncoding.default
     }
 }
