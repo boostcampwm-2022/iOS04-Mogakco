@@ -9,6 +9,6 @@
 import Foundation
 
 enum Format {
-    static let compactDateFormat: String = "yyyyMMddHHdd"
-    static let detailDateFormat: String = "yyyy년 MM월 dd일 HH시 dd분"
+    static let compactDateFormat: String = "yyyyMMddHHmm"
+    static let detailDateFormat: String = "yyyy년 MM월 dd일 HH시 mm분"
 }
