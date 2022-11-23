@@ -150,6 +150,12 @@ final class StudyDetailViewController: ViewController {
                 self?.studyInfoDescription.text = $0.content
             })
             .disposed(by: disposeBag)
+        
+        output.languageReload
+            .subscribe(onNext: { [weak self] in
+                self?.languageCollectionView.reloadData()
+            })
+            .disposed(by: disposebag)
     }
     
     private func navigationLayout() {
@@ -260,7 +266,11 @@ extension StudyDetailViewController: UICollectionViewDataSource {
         _ collectionView: UICollectionView,
         numberOfItemsInSection section: Int
     ) -> Int {
-        return 5
+        switch collectionView {
+        case languageCollectionView: return viewModel.languageCount
+        case participantsCollectionView: return viewModel.participantsCount
+        default: return 0
+        }
     }
     
     func collectionView(
@@ -275,7 +285,11 @@ extension StudyDetailViewController: UICollectionViewDataSource {
             else { return UICollectionViewCell() }
             
             cell.prepareForReuse()
-            cell.setInfo(iconName: nil, title: "Default")
+            if let cellHashtag = viewModel.languaegCellInfo(index: indexPath.row) {
+                cell.setInfo(iconName: cellHashtag.title, title: cellHashtag.hashtagTitle())
+            } else {
+                cell.setInfo(iconName: nil, title: "None")
+            }
             
             return cell
         case participantsCollectionView:
@@ -303,8 +317,11 @@ extension StudyDetailViewController: UICollectionViewDelegateFlowLayout {
     ) -> CGSize {
         switch collectionView {
         case languageCollectionView:
+            guard let cellHashtag = viewModel.languaegCellInfo(index: indexPath.row) else {
+                return CGSize(width: 0, height: 0)
+            }
             return CGSize(
-                width: "Default".size(
+                width: cellHashtag.hashtagTitle().size(
                     withAttributes: [NSAttributedString.Key.font: UIFont.mogakcoFont.mediumRegular]
                 ).width + BadgeCell.addWidth,
                 height: BadgeCell.height

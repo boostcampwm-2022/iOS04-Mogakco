@@ -19,15 +19,25 @@ final class StudyDetailViewModel: ViewModel {
     
     struct Output {
         let studyDetail: Observable<Study>
+        let languageReload: Observable<Void>
     }
     
+    var disposeBag = DisposeBag()
     private let studyID: String
     private let coordinator: StudyTabCoordinatorProtocol
     private let studyUseCase: StudyDetailUseCaseProtocol
     private let hashtagUseCase: HashtagUseCaseProtocol
     private let userUseCase: UserUseCaseProtocol
-    private var languages: [Hashtag] = []
-    private var participants: [User] = []
+    var languages = BehaviorSubject<[Hashtag]>(value: [])
+    var participants = BehaviorSubject<[User]>(value: [])
+    
+    var languageCount: Int {
+        return (try? languages.value().count) ?? 0
+    }
+    
+    var participantsCount: Int {
+        return (try? participants.value().count) ?? 0
+    }
     
     init(
         studyID: String,
@@ -45,26 +55,32 @@ final class StudyDetailViewModel: ViewModel {
     
     func transform(input: Input) -> Output {
         // TODO: 유저 UseCase에서 불러오기, 언어 불러오기 바인딩
-        let languages = PublishSubject<[String]>()
-        let users = PublishSubject<[String]>()
-        
+        let reload = PublishSubject<Void>()
         let studyDetail = studyUseCase.study(id: studyID)
-            .map {
-                languages.onNext($0.languages)
-                users.onNext($0.userIDs)
-                return $0
+        
+        studyDetail
+            .withUnretained(self)
+            .flatMap {
+                return $0.0.hashtagUseCase.loadTagByString(kind: .language, tagTitle: $0.1.languages)
             }
+            .subscribe(onNext: { [weak self] in
+                self?.languages.onNext($0)
+            })
+            .disposed(by: disposeBag)
         
+        languages
+            .subscribe(onNext: { _ in
+                reload.onNext(())
+            })
+            .disposed(by: disposeBag)
         
-//         languages
-//            .subscribe(onNext: { <#[String]#> in
-//                <#code#>
-//            })
-//            .disposed(by: disposeBag)
+//        studyDetail
+//            .withUnretained(self)
+//            .flatMap {
 //
-//        users
-//            .subscribe(onNext: { <#[String]#> in
-//                <#code#>
+//            }
+//            .subscribe(onNext: { [weak self] in
+//
 //            })
 //            .disposed(by: disposeBag)
         
@@ -75,8 +91,13 @@ final class StudyDetailViewModel: ViewModel {
             })
             .disposed(by: disposeBag)
         
-        return Output(studyDetail: studyDetail)
+        return Output(
+            studyDetail: studyDetail,
+            languageReload: reload
+        )
     }
     
-    var disposeBag = DisposeBag()
+    func languaegCellInfo(index: Int) -> Hashtag? {
+        return try? languages.value()[index]
+    }
 }
