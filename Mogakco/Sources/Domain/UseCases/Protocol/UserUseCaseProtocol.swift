@@ -10,5 +10,6 @@ import RxSwift
 
 protocol UserUseCaseProtocol {
     func user(id: String) -> Observable<User>
+    func users(ids: [String]) -> Observable<[User]>
     func myProfile() -> Observable<User>
 }

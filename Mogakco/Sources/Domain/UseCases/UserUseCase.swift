@@ -21,6 +21,10 @@ struct UserUseCase: UserUseCaseProtocol {
         return userRepository.user(id: id)
     }
     
+    func users(ids: [String]) -> Observable<[User]> {
+        return userRepository.users(ids: ids)
+	}
+
     func myProfile() -> Observable<User> {
         return userRepository.load()
             .compactMap { $0.id }
