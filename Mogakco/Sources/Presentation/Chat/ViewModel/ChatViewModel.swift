@@ -22,9 +22,9 @@ final class ChatViewModel: ViewModel {
     }
     
     struct Output {
-        let chatSidebarViewObservable: Observable<Void>
-        let selectedSidebarObservable: Observable<ChatSidebarMenu>
-        let inputViewTextObservable: Observable<String>
+        let showChatSidebarView: Observable<Void>
+        let selectedSidebar: Observable<ChatSidebarMenu>
+        let inputViewText: Observable<String>
     }
     
     let messages = Observable.of([1, 2, 3, 4, 5,
@@ -38,9 +38,9 @@ final class ChatViewModel: ViewModel {
     }
     
     func transform(input: Input) -> Output {
-        let chatSidebarViewObservable = PublishSubject<Void>()
-        let selectedSidebarObservable = PublishSubject<ChatSidebarMenu>()
-        let inputViewTextObservable = PublishSubject<String>()
+        let showChatSidebarView = PublishSubject<Void>()
+        let selectedSidebar = PublishSubject<ChatSidebarMenu>()
+        let inputViewText = PublishSubject<String>()
         
         input.backButtonDidTap
             .subscribe(onNext: { [weak self] in
@@ -50,14 +50,14 @@ final class ChatViewModel: ViewModel {
         
         input.studyInfoButtonDidTap
             .subscribe(onNext: {
-                chatSidebarViewObservable.onNext(())
+                showChatSidebarView.onNext(())
             })
             .disposed(by: disposeBag)
         
         input.selectedSidebar
             .map { ChatSidebarMenu(row: $0.row) }
             .subscribe { row in
-                selectedSidebarObservable.on(row)
+                selectedSidebar.on(row)
             }
             .disposed(by: disposeBag)
         
@@ -70,14 +70,14 @@ final class ChatViewModel: ViewModel {
         input.sendButtonDidTap
             .withLatestFrom(input.inputViewText)
             .subscribe { message in
-                inputViewTextObservable.on(message)
+                inputViewText.on(message)
             }
             .disposed(by: disposeBag)
         
         return Output(
-            chatSidebarViewObservable: chatSidebarViewObservable,
-            selectedSidebarObservable: selectedSidebarObservable,
-            inputViewTextObservable: inputViewTextObservable
+            showChatSidebarView: showChatSidebarView,
+            selectedSidebar: selectedSidebar,
+            inputViewText: inputViewText
         )
     }
 }

@@ -145,7 +145,7 @@ final class ChatViewController: ViewController {
             }
             .disposed(by: disposeBag)
         
-        output.chatSidebarViewObservable
+        output.showChatSidebarView
             .observe(on: MainScheduler.instance)
             .subscribe { [weak self] _ in
                 guard let self = self else { return }
@@ -153,7 +153,7 @@ final class ChatViewController: ViewController {
             }
             .disposed(by: disposeBag)
         
-        output.selectedSidebarObservable
+        output.selectedSidebar
             .subscribe { [weak self] row in
                 guard let self = self else { return }
                 self.hideSidebarView()
@@ -161,8 +161,7 @@ final class ChatViewController: ViewController {
             }
             .disposed(by: disposeBag)
         
-        output.inputViewTextObservable
-            .map { $0 ?? "" }
+        output.inputViewText
             .subscribe { [weak self] message in
                 self?.collectionView.reloadData()
             }
