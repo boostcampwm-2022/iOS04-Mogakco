@@ -19,7 +19,7 @@ final class HashtagListView: UIView {
         $0.textColor = UIColor.mogakcoColor.typographyPrimary
     }
     
-    private let editButton = UIButton().then {
+    let editButton = UIButton().then {
         $0.addShadow(offset: .init(width: 5.0, height: 5.0))
         $0.layer.cornerRadius = 8.0
         $0.setTitle("편집", for: .normal)
