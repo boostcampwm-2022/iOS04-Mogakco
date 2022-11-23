@@ -242,7 +242,7 @@ final class CreateStudyViewController: ViewController {
     private func showDateSelectView() {
 
         let alert = UIAlertController(
-            title: "스터디 날찌를 선택해주세요",
+            title: "스터디 날짜를 선택해주세요",
             message: nil,
             preferredStyle: .alert
         )
