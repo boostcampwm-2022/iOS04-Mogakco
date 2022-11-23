@@ -6,9 +6,15 @@
 //  Copyright © 2022 Mogakco. All rights reserved.
 //
 
+import Foundation
+
 import RxSwift
 
 struct SignupUseCase: SignupUseCaseProtocol {
+    
+    enum SignupUseCaseError: Error, LocalizedError {
+        case imageCompress
+    }
     
     private let authRepository: AuthRepositoryProtocol
     private let userRepository: UserRepositoryProtocol
@@ -22,17 +28,17 @@ struct SignupUseCase: SignupUseCaseProtocol {
         self.userRepository = userRepository
     }
     
-    func signup(user: User) -> Observable<Void> {
-        return authRepository.signup(user: user)
+    func signup(signupProps: SignupProps) -> Observable<Void> {
+        guard let imageData = signupProps.profileImage.jpegData(compressionQuality: 0.5) else {
+            return Observable<Void>.error(SignupUseCaseError.imageCompress)
+        }
+        return authRepository.signup(signupProps: signupProps)
             .do(onNext: {_ in
                 // TODO: Authroziation save to keychain
             })
             .map { $0.localId }
-            .map { User(id: $0, user: user) }
-            .flatMap { userRepository.create(user: $0) }
-            .do(onNext: {
-                _ = userRepository.save(user: $0)
-            })
-            .map { _ in }
+            .map { User(id: $0, signupProps: signupProps) }
+            .flatMap { userRepository.create(user: $0, imageData: imageData) }
+            .flatMap { userRepository.save(user: $0) }
     }
 }

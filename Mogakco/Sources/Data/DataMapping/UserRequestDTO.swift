@@ -44,8 +44,8 @@ struct UserRequestDTO: Codable {
     }
     
     init(user: User) {
-        self.id = StringValue(value: user.id ?? "")
-        self.profileImageURLString = StringValue(value: user.profileImageURLString)
+        self.id = StringValue(value: user.id)
+        self.profileImageURLString = StringValue(value: user.profileImageURLString ?? "")
         self.name = StringValue(value: user.name)
         self.introduce = StringValue(value: user.introduce)
         self.email = StringValue(value: user.email)
