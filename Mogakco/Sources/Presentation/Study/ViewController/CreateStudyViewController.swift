@@ -93,6 +93,7 @@ final class CreateStudyViewController: ViewController {
     
     private let createButton = ValidationButton().then {
         $0.setTitle(Constant.navigationTitle, for: .normal)
+        $0.isEnabled = false
         $0.snp.makeConstraints {
             $0.height.equalTo(Layout.buttonHeight)
         }
@@ -154,7 +155,11 @@ final class CreateStudyViewController: ViewController {
             createButtonTapped: createButton.rx.tap.asObservable()
         )
         
-        _ = viewModel.transform(input: input)
+        let output = viewModel.transform(input: input)
+        
+        output.createButtonEnabled
+            .bind(to: createButton.rx.isEnabled)
+            .disposed(by: disposeBag)
         
         Observable.of(Array((0...0)))
             .bind(to: self.languageCollectionView.rx.items(
