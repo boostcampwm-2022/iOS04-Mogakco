@@ -83,15 +83,7 @@ class HashtagSelectViewController: ViewController {
             nextButtonTapped: nextButton.rx.tap.asObservable()
         )
         
-        var output: HashtagViewModel.Output = HashtagViewModel.Output(hashtagReload: Observable.just(()))
-        
-        if let viewModel = viewModel as? HashtagSelectedViewModel {
-            output = viewModel.transform(input: input)
-        } else if let viewModel = viewModel as? HashtagEditViewModel {
-            output = viewModel.transform(input: input)
-        } else if let viewModel = viewModel as? HashtagFilterViewModel {
-            output = viewModel.transform(input: input)
-        }
+        var output = viewModel.transform(input: input)
 
         output.hashtagReload
             .observe(on: MainScheduler.instance)
