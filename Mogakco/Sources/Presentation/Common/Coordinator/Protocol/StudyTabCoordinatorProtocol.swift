@@ -13,4 +13,7 @@ protocol StudyTabCoordinatorProtocol: AnyObject {
     func showStudyDetail()
     func showStudyCreate()
     func showChatDetail()
+    func showCategorySelect(delegate: HashtagSelectProtocol?)
+    func showLanguageSelect(delegate: HashtagSelectProtocol?)
+    func goToPrevScreen()
 }
