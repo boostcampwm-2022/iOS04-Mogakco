@@ -24,12 +24,12 @@ final class ProfileViewController: ViewController {
     }
     
     private lazy var contentStackView = UIStackView(arrangedSubviews: [
-        self.headerView,
         self.profileView,
         self.languageListView,
         self.careerListView,
         self.categoryListView,
-        self.studyRatingListView
+        self.studyRatingListView,
+        self.marginView
     ]).then {
         $0.spacing = 4.0
         $0.axis = .vertical
@@ -37,9 +37,6 @@ final class ProfileViewController: ViewController {
     
     private let headerView = TitleHeaderView().then {
         $0.setTitle(Constant.headerViewTitle)
-        $0.snp.makeConstraints {
-            $0.height.equalTo(Constant.headerViewHeight)
-        }
     }
     
     private let profileView = ProfileView().then {
@@ -69,6 +66,12 @@ final class ProfileViewController: ViewController {
     private let studyRatingListView = StudyRatingListView().then {
         $0.snp.makeConstraints {
             $0.height.equalTo(Constant.studyRatingListView)
+        }
+    }
+    
+    private let marginView = UIView().then {
+        $0.snp.makeConstraints {
+            $0.height.equalTo(200.0)
         }
     }
     
@@ -145,18 +148,28 @@ final class ProfileViewController: ViewController {
     }
     
     override func layout() {
+        layoutHeaderView()
         layoutScrollView()
+    }
+    
+    private func layoutHeaderView() {
+        view.addSubview(headerView)
+        headerView.snp.makeConstraints {
+            $0.leading.top.trailing.equalTo(view.safeAreaLayoutGuide)
+            $0.height.equalTo(Constant.headerViewHeight)
+        }
     }
     
     private func layoutScrollView() {
         view.addSubview(scrollView)
         scrollView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
+            $0.top.equalTo(headerView.snp.bottom)
+            $0.leading.trailing.bottom.equalToSuperview()
         }
         
         scrollView.addSubview(contentStackView)
         contentStackView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
+            $0.leading.top.trailing.bottom.equalToSuperview()
             $0.width.equalToSuperview()
         }
     }
