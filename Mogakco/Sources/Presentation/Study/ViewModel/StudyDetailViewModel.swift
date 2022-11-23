@@ -20,6 +20,7 @@ final class StudyDetailViewModel: ViewModel {
     struct Output {
         let studyDetail: Observable<Study>
         let languageReload: Observable<Void>
+        let userReload: Observable<Void>
     }
     
     var disposeBag = DisposeBag()
@@ -55,7 +56,8 @@ final class StudyDetailViewModel: ViewModel {
     
     func transform(input: Input) -> Output {
         // TODO: 유저 UseCase에서 불러오기, 언어 불러오기 바인딩
-        let reload = PublishSubject<Void>()
+        let languageReload = PublishSubject<Void>()
+        let userReload = PublishSubject<Void>()
         let studyDetail = studyUseCase.study(id: studyID)
         
         studyDetail
@@ -68,9 +70,25 @@ final class StudyDetailViewModel: ViewModel {
             })
             .disposed(by: disposeBag)
         
+       studyDetail
+            .withUnretained(self)
+            .flatMap {
+                $0.0.userUseCase.users(ids: $0.1.userIDs)
+            }
+            .subscribe(onNext: { [weak self] in
+                self?.participants.onNext($0)
+            })
+            .disposed(by: disposeBag)
+            
         languages
             .subscribe(onNext: { _ in
-                reload.onNext(())
+                languageReload.onNext(())
+            })
+            .disposed(by: disposeBag)
+        
+        participants
+            .subscribe(onNext: { _ in
+                userReload.onNext(())
             })
             .disposed(by: disposeBag)
         
@@ -93,7 +111,8 @@ final class StudyDetailViewModel: ViewModel {
         
         return Output(
             studyDetail: studyDetail,
-            languageReload: reload
+            languageReload: languageReload.asObservable(),
+            userReload: userReload.asObservable()
         )
     }
     
