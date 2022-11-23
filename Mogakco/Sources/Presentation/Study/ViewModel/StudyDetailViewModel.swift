@@ -23,18 +23,24 @@ final class StudyDetailViewModel: ViewModel {
     
     private let studyID: String
     private let coordinator: StudyTabCoordinatorProtocol
-    private let studyUsecase: StudyDetailUseCaseProtocol
+    private let studyUseCase: StudyDetailUseCaseProtocol
+    private let hashtagUseCase: HashtagUseCaseProtocol
+    private let userUseCase: UserUseCaseProtocol
     private var languages: [Hashtag] = []
     private var participants: [User] = []
     
     init(
         studyID: String,
         coordinator: StudyTabCoordinatorProtocol,
-        studyUsecase: StudyDetailUseCaseProtocol
+        studyUsecase: StudyDetailUseCaseProtocol,
+        hashtagUseCase: HashtagUseCaseProtocol,
+        userUseCase: UserUseCaseProtocol
     ) {
         self.studyID = studyID
         self.coordinator = coordinator
-        self.studyUsecase = studyUsecase
+        self.studyUseCase = studyUsecase
+        self.hashtagUseCase = hashtagUseCase
+        self.userUseCase = userUseCase
     }
     
     func transform(input: Input) -> Output {
@@ -42,12 +48,25 @@ final class StudyDetailViewModel: ViewModel {
         let languages = PublishSubject<[String]>()
         let users = PublishSubject<[String]>()
         
-        let studyDetail = studyUsecase.study(id: studyID)
+        let studyDetail = studyUseCase.study(id: studyID)
             .map {
                 languages.onNext($0.languages)
                 users.onNext($0.userIDs)
                 return $0
             }
+        
+        
+//         languages
+//            .subscribe(onNext: { <#[String]#> in
+//                <#code#>
+//            })
+//            .disposed(by: disposeBag)
+//
+//        users
+//            .subscribe(onNext: { <#[String]#> in
+//                <#code#>
+//            })
+//            .disposed(by: disposeBag)
         
         input.studyJoinButtonTapped
             .subscribe(onNext: {
