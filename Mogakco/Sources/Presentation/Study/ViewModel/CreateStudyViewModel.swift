@@ -25,16 +25,21 @@ final class CreateStudyViewModel: ViewModel {
     }
     
     struct Output {
+        let category: Observable<Hashtag>
+        let languages: Observable<[Hashtag]>
         let createButtonEnabled: Observable<Bool>
     }
     
-    private weak var coordinator: Coordinator?
+    private weak var coordinator: StudyTabCoordinatorProtocol?
     private let useCase: CreateStudyUseCaseProtocol
-    private let category = PublishSubject<String>()
-    private let languages = PublishSubject<[String]>()
+    private let category = PublishSubject<Hashtag>()
+    private let languages = PublishSubject<[Hashtag]>()
     var disposeBag = DisposeBag()
     
-    init(coordinator: Coordinator, useCase: CreateStudyUseCaseProtocol) {
+    init(
+        coordinator: StudyTabCoordinatorProtocol,
+        useCase: CreateStudyUseCaseProtocol
+    ) {
         self.coordinator = coordinator
         self.useCase = useCase
     }
@@ -61,33 +66,25 @@ final class CreateStudyViewModel: ViewModel {
                     date: $0.2,
                     place: $0.3,
                     maxUserCount: $0.4,
-                    languages: $0.5,
-                    category: $0.6
+                    languages: $0.5.map { $0.title },
+                    category: $0.6.title
                 )
             }
         
         input.categoryButtonTapped
             .withUnretained(self)
-            .subscribe(onNext: { _ in
-                // TODO: 카테고리 선택 화면 보여주기
+            .subscribe(onNext: { viewModel, _ in
+                viewModel.coordinator?.showCategorySelect(delegate: self)
             })
             .disposed(by: disposeBag)
         
         input.languageButtonTapped
             .withUnretained(self)
-            .subscribe(onNext: { _ in
-                // TODO: 언어 선택 화면 보여주기
+            .subscribe(onNext: { viewModel, _ in
+                viewModel.coordinator?.showLanguageSelect(delegate: self)
             })
             .disposed(by: disposeBag)
-        
-        input.date
-            .subscribe { _ in
-                // TODO: 테스트코드 - 삭제 예정
-                self.category.onNext("iOS")
-                self.languages.onNext(["swift"])
-            }
-            .disposed(by: disposeBag)
-        
+
         input.createButtonTapped
             .withLatestFrom(study)
             .withUnretained(self)
@@ -96,12 +93,31 @@ final class CreateStudyViewModel: ViewModel {
             }
             .withUnretained(self)
             .subscribe(onNext: { viewModel, _ in
-                viewModel.coordinator?.pop(animated: true)
+                viewModel.coordinator?.goToPrevScreen()
             })
             .disposed(by: disposeBag)
 
         return Output(
+            category: category,
+            languages: languages,
             createButtonEnabled: study.map { _ in return true }
         )
+    }
+}
+
+// MARK: - HashtagSelectProtocol
+
+extension CreateStudyViewModel: HashtagSelectProtocol {
+    
+    func selectedHashtag(kind: KindHashtag, hashTags: [Hashtag]) {
+        switch kind {
+        case .category:
+            guard let selected = hashTags.first else { return }
+            category.onNext(selected)
+        case .language:
+            languages.onNext(hashTags)
+        default:
+            break
+        }
     }
 }
