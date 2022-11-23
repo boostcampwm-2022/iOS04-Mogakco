@@ -32,6 +32,10 @@ final class CreateStudyViewController: ViewController {
     
     // MARK: 인원
     
+    private let countStepper = StudyStepperView().then {
+        $0.title = "인원"
+    }
+    
     // MARK: 날짜
     
     // MARK: 카테고리
@@ -93,7 +97,7 @@ final class CreateStudyViewController: ViewController {
             $0.axis = .vertical
             $0.spacing = 20
         }
-        [titleTextField, contentTextView, placeTextField, language].forEach {
+        [titleTextField, contentTextView, placeTextField, countStepper, language].forEach {
             stackView.addArrangedSubview($0)
         }
         view.addSubview(stackView)
