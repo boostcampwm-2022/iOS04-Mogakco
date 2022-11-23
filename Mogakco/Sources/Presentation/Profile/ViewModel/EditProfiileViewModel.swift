@@ -81,7 +81,7 @@ final class EditProfiileViewModel: ViewModel {
             input.selectedProfileImage
         )
         let inputValidation = name.map { (2...10).contains($0.count) }
-        
+
         type
             .filter { $0 == .edit }
             .withUnretained(self)
@@ -90,16 +90,13 @@ final class EditProfiileViewModel: ViewModel {
                 user.onNext($0)
             })
             .disposed(by: disposeBag)
-        
-        let profileEdit = input
+
+        input
             .completeButtonTapped
             .withLatestFrom(type)
-            .filter { $0 == .edit }
-        
-        profileEdit
-            .withLatestFrom(
-                Observable.combineLatest(name, introduce, image)
-            )
+            .map { $0 == .edit }
+            .filter { $0 }
+            .withLatestFrom( Observable.combineLatest(name, introduce, image) )
             .flatMap { name, introduce, image in
                 self.editProfileUseCase.editProfile(name: name, introduce: introduce, image: image)
             }
@@ -110,21 +107,13 @@ final class EditProfiileViewModel: ViewModel {
                 print("Edit Error \(error.localizedDescription)")
             })
             .disposed(by: disposeBag)
-        
-        let profileCreate = input
+    
+        input
             .completeButtonTapped
             .withLatestFrom(type)
-            .filter {
-                if case EditType.create = $0 {
-                    return true
-                }
-                return false
-            }
-        
-        profileCreate
-            .withLatestFrom(
-                Observable.combineLatest(input.name, input.introduce, input.selectedProfileImage)
-            )
+            .map { $0 == .edit }
+            .filter { !$0 }
+            .withLatestFrom( Observable.combineLatest(input.name, input.introduce, input.selectedProfileImage) )
             .subscribe(onNext: { profile in
                 if let coordinator = self.coordinator as? AdditionalSignupCoordinator,
                    case let EditType.create(passwordProps) = self.type {
