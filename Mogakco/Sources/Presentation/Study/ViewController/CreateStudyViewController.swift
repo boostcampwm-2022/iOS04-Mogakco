@@ -139,8 +139,8 @@ final class CreateStudyViewController: ViewController {
         
         dateSelect.button.rx.tap
             .withUnretained(self)
-            .subscribe { _ in
-                self.showDateSelectView()
+            .subscribe { viewController, _ in
+                viewController.showDateSelectView()
             }
             .disposed(by: disposeBag)
         
@@ -161,12 +161,19 @@ final class CreateStudyViewController: ViewController {
             .bind(to: createButton.rx.isEnabled)
             .disposed(by: disposeBag)
         
-        Observable.of(Array((0...0)))
+        output.languages
             .bind(to: self.languageCollectionView.rx.items(
                 cellIdentifier: BadgeCell.identifier,
                 cellType: BadgeCell.self
-            )) { _, _, _ in
-                // TODO: Language 해시태그
+            )) { _, hashtag, cell in
+                cell.setInfo(iconName: hashtag.title, title: hashtag.hashtagTitle())
+            }
+            .disposed(by: disposeBag)
+        
+        output.category
+            .withUnretained(self)
+            .subscribe { viewController, hashtag in
+                viewController.categorySelect.content = hashtag.hashtagTitle()
             }
             .disposed(by: disposeBag)
     }
