@@ -68,10 +68,7 @@ final class SetPasswordViewModel: ViewModel {
             .withLatestFrom(input.password)
             .withUnretained(self)
             .subscribe(onNext: { viewModel, password in
-                let passwordProps = PasswordProps(
-                    email: viewModel.emailProps.email,
-                    password: password
-                )
+                let passwordProps = viewModel.emailProps.toPasswordProps(password: password)
                 viewModel.coordinator?.finish(passwordProps: passwordProps)
             })
             .disposed(by: disposeBag)
