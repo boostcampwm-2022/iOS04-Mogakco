@@ -13,9 +13,9 @@ struct EmailAuthorizationRequestDTO: Encodable {
     private let password: String
     private let returnSecureToken: Bool
     
-    init(user: User) {
-        self.email = user.email
-        self.password = user.password ?? ""
+    init(signupProps: SignupProps) {
+        self.email = signupProps.email
+        self.password = signupProps.password
         self.returnSecureToken = true
     }
     

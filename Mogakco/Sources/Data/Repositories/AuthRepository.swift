@@ -17,8 +17,8 @@ struct AuthRepository: AuthRepositoryProtocol {
         self.authService = authService
     }
     
-    func signup(user: User) -> Observable<Authorization> {
-        let request = EmailAuthorizationRequestDTO(user: user)
+    func signup(signupProps: SignupProps) -> Observable<Authorization> {
+        let request = EmailAuthorizationRequestDTO(signupProps: signupProps)
         return authService.signup(request)
             .map { $0.toDomain() }
     }
