@@ -8,7 +8,7 @@
 
 import RxSwift
 
-struct StudyDetailUseCase:  StudyDetailUseCaseProtocol {
+struct StudyDetailUseCase: StudyDetailUseCaseProtocol {
     
     private let repository: StudyRepositoryProtocol
     
