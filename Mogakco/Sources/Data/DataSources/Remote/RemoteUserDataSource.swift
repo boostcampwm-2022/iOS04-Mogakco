@@ -25,8 +25,8 @@ struct RemoteUserDataSource: RemoteUserDataSourceProtocol {
         return provider.request(UserTarget.createUser(request))
     }
     
-    func users(ids: [String]) -> Observable<[User]> {
-        return Observable.just([])
+    func allUsers() -> Observable<Documents<[UserResponseDTO]>> {
+        return provider.request(UserTarget.users)
     }
     
     func editProfile(id: String, request: EditProfileRequestDTO) -> Observable<UserResponseDTO> {
@@ -60,6 +60,7 @@ struct RemoteUserDataSource: RemoteUserDataSourceProtocol {
 enum UserTarget {
     case user(String)
     case createUser(UserRequestDTO)
+    case users
     case editProfile(String, EditProfileRequestDTO)
 }
 
@@ -71,6 +72,8 @@ extension UserTarget: TargetType {
     var method: HTTPMethod {
         switch self {
         case .user:
+            return .get
+        case .users:
             return .get
         case .createUser:
             return .post
@@ -87,6 +90,8 @@ extension UserTarget: TargetType {
     
     var path: String {
         switch self {
+        case .users:
+            return ""
         case let .user(id):
             return "/\(id)"
         case let .createUser(request):
@@ -102,6 +107,8 @@ extension UserTarget: TargetType {
     var parameters: RequestParams? {
         switch self {
         case .user:
+            return nil
+        case .users:
             return nil
         case let .createUser(request):
             return .body(request)
