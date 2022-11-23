@@ -11,4 +11,5 @@ import RxSwift
 protocol StudyDataSourceProtocol {
     func list() -> Observable<Documents<[StudyResponseDTO]>>
     func detail(id: String) -> Observable<StudyResponseDTO>
+    func create(study: StudyRequestDTO) -> Observable<StudyResponseDTO>
 }

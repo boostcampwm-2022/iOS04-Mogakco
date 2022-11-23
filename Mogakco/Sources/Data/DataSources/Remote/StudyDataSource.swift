@@ -24,11 +24,16 @@ struct StudyDataSource: StudyDataSourceProtocol {
     func detail(id: String) -> Observable<StudyResponseDTO> {
         return provider.request(StudyTarget.detail(id))
     }
+    
+    func create(study: StudyRequestDTO) -> Observable<StudyResponseDTO> {
+        return provider.request(StudyTarget.create(study))
+    }
 }
 
 enum StudyTarget {
     case list
     case detail(String)
+    case create(StudyRequestDTO)
 }
 
 extension StudyTarget: TargetType {
@@ -37,20 +42,24 @@ extension StudyTarget: TargetType {
     }
     
     var method: HTTPMethod {
-        return .get
+        switch self {
+        case .list, .detail:
+            return .get
+        case .create:
+            return .post
+        }
     }
     
     var header: HTTPHeaders {
-        switch self {
-        case .list, .detail:
-            return ["Content-Type": "application/json"]
-        }
+        return ["Content-Type": "application/json"]
     }
     
     var path: String {
         switch self {
-        case .detail(let studyID):
-            return "/\(studyID)"
+        case .detail(let id):
+            return "/\(id)"
+        case .create(let study):
+            return "/?documentId=\(study.id.value)"
         default:
             return ""
         }
@@ -60,13 +69,12 @@ extension StudyTarget: TargetType {
         switch self {
         case .list, .detail:
             return nil
+        case .create(let study):
+            return .body(study)
         }
     }
 
     var encoding: ParameterEncoding {
-        switch self {
-        case .list, .detail:
-            return JSONEncoding.default
-        }
+        return JSONEncoding.default
     }
 }
