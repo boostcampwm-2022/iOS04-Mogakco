@@ -40,10 +40,25 @@ final class StudyTabCoordinator: Coordinator, StudyTabCoordinatorProtocol {
         let studyDataSource = StudyDataSource(provider: Provider.default)
         let studyRepository = StudyRepository(dataSource: studyDataSource)
         let studyUseCase = StudyDetailUseCase(repository: studyRepository)
+        
+        let hashtagDataSource = HashtagDataSource()
+        let hashtagRepository = HashtagRepository(localHashtagDataSource: hashtagDataSource)
+        let hashtagUseCase = HashtagUsecase(hashtagRepository: hashtagRepository)
+        
+        let localUserDataSource = UserDefaultsUserDataSource()
+        let remoteUserDataSource = RemoteUserDataSource(provider: Provider.default)
+        let userRepository = UserRepository(
+            localUserDataSource: localUserDataSource,
+            retmoteUserDataSource: remoteUserDataSource
+        )
+        let userUseCase = UserUseCase(userRepository: userRepository)
+        
         let viewModel = StudyDetailViewModel(
-            studyID: "nN2KGsHG1my3fMo4tjwE", // TODO: Flow 수정
+            studyID: "nN2KGsHG1my3fMo4tjwE", // TODO: StudyID 받아오는 모델로 수정
             coordinator: self,
-            studyUsecase: studyUseCase
+            studyUsecase: studyUseCase,
+            hashtagUseCase: hashtagUseCase,
+            userUseCase: userUseCase
         )
         let studyDetailViewController = StudyDetailViewController(viewModel: viewModel)
         navigationController.pushViewController(studyDetailViewController, animated: true)
