@@ -135,7 +135,7 @@ final class ChatViewController: ViewController {
         
         viewModel.messages
             .asDriver(onErrorJustReturn: [])
-            .drive(collectionView.rx.items) { collectionView, index, category in
+            .drive(collectionView.rx.items) { collectionView, index, _ in
                 guard let cell = collectionView.dequeueReusableCell(
                     withReuseIdentifier: ChatCell.identifier,
                     for: IndexPath(row: index, section: 0)) as? ChatCell else {
@@ -149,59 +149,21 @@ final class ChatViewController: ViewController {
             .observe(on: MainScheduler.instance)
             .subscribe { [weak self] _ in
                 guard let self = self else { return }
-                self.blackScreen.isHidden = false
-
-                UIView.animate(
-                    withDuration: 0.3,
-                    animations: {
-                        self.sidebarView.frame = CGRect(
-                            x: self.view.frame.width * (2 / 3),
-                            y: 0,
-                            width: self.view.frame.width * (1 / 3),
-                            height: self.sidebarView.frame.height)
-                    },
-                    completion: { _ in
-                        self.blackScreen.frame = CGRect(
-                            x: 0,
-                            y: 0,
-                            width: self.view.frame.width * (2 / 3),
-                            height: self.view.bounds.height)
-                    }
-                )
+                self.showSidebarView()
             }
             .disposed(by: disposeBag)
         
         output.selectedSidebarObservable
             .subscribe { [weak self] row in
                 guard let self = self else { return }
-                
-                self.blackScreen.isHidden = true
-                self.blackScreen.frame = self.view.bounds
-                
-                UIView.animate(withDuration: 0.3) {
-                    self.sidebarView.frame = CGRect(
-                        x: self.view.frame.width,
-                        y: 0,
-                        width: self.view.frame.width,
-                        height: self.sidebarView.frame.height
-                    )
-                }
-                
-                switch row {
-                case .studyInfo:
-                    print("1")
-                case .exitStudy:
-                    print("2")
-                case .showMember:
-                    print("3")
-                }
+                self.hideSidebarView()
+                self.sidebarMenuDidTap(row: row)
             }
             .disposed(by: disposeBag)
         
         output.inputViewTextObservable
             .map { $0 ?? "" }
             .subscribe { [weak self] message in
-                print("DEBUG : ", message)
                 self?.collectionView.reloadData()
             }
             .disposed(by: disposeBag)
@@ -246,6 +208,51 @@ final class ChatViewController: ViewController {
         }
     }
     
+    private func showSidebarView() {
+        blackScreen.isHidden = false
+        UIView.animate(
+            withDuration: 0.3,
+            animations: {
+                self.sidebarView.frame = CGRect(
+                    x: self.view.frame.width * (2 / 3),
+                    y: 0,
+                    width: self.view.frame.width * (1 / 3),
+                    height: self.sidebarView.frame.height)
+                
+                self.blackScreen.frame = CGRect(
+                    x: 0,
+                    y: 0,
+                    width: self.view.frame.width * (2 / 3),
+                    height: self.view.bounds.height)
+            }
+        )
+    }
+    
+    private func hideSidebarView() {
+        blackScreen.isHidden = true
+        blackScreen.frame = self.view.bounds
+        
+        UIView.animate(withDuration: 0.3) {
+            self.sidebarView.frame = CGRect(
+                x: self.view.frame.width,
+                y: 0,
+                width: self.sidebarView.frame.width,
+                height: self.sidebarView.frame.height
+            )
+        }
+    }
+    
+    private func sidebarMenuDidTap(row: ChatSidebarMenu) {
+        switch row {
+        case .studyInfo:
+            print("1")
+        case .exitStudy:
+            print("2")
+        case .showMember:
+            print("3")
+        }
+    }
+    
     @objc func blackScreenTapAction(sender: UITapGestureRecognizer) {
         blackScreen.isHidden = true
         blackScreen.frame = view.bounds
@@ -254,7 +261,7 @@ final class ChatViewController: ViewController {
             self.sidebarView.frame = CGRect(
                 x: self.view.frame.width,
                 y: 0,
-                width: 0,
+                width: self.view.frame.width,
                 height: self.sidebarView.frame.height
             )
         }
