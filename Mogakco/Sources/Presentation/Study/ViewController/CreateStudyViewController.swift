@@ -270,7 +270,10 @@ final class CreateStudyViewController: ViewController {
             title: "선택",
             style: .default,
             handler: { [weak self] _ in
-                self?.date.onNext(datePicker.date)
+                let date = datePicker.date
+                let dateString = date.toString(dateFormat: Format.detailDateFormat)
+                self?.dateSelect.content = dateString
+                self?.date.onNext(date)
             }
         )
         
