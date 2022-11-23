@@ -21,4 +21,8 @@ struct HashtagUsecase: HashtagUseCaseProtocol {
     func loadTagList(kind: KindHashtag) -> Observable<[Hashtag]> {
         return hashtagRepository.loadTagList(kind: kind)
     }
+    
+    func loadTagByString(kind: KindHashtag, tagTitle: [String]) -> Observable<[Hashtag]> {
+        return hashtagRepository.loadTagByString(kind: kind, tagTitle: tagTitle)
+    }
 }

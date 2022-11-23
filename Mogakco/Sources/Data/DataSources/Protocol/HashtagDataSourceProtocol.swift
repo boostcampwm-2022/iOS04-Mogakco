@@ -12,4 +12,5 @@ import RxSwift
 
 protocol HashtagDataSourceProtocol {
     func loadTagList(kind: KindHashtag) -> Observable<[Hashtag]>
+    func loadTagByString(kind: KindHashtag, tagTitle: [String]) -> Observable<[Hashtag]>
 }
