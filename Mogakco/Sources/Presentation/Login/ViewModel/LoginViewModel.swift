@@ -55,7 +55,7 @@ final class LoginViewModel: ViewModel {
         input.loginButtonTap
             .flatMap { [weak self] () -> Observable<Void> in
                 guard let self else { return  Observable.error(LoginError.loginFail) }
-                return self.loginUseCase.login(emailLoginUser: userData)
+                return self.loginUseCase.login(emailLogin: userData)
             }
             .subscribe(onNext: { [weak self] in
                 self?.coordinator?.finish()
