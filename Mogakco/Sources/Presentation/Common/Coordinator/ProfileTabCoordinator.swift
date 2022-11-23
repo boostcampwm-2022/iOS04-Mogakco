@@ -24,8 +24,9 @@ final class ProfileTabCoordinator: Coordinator, ProfileTabCoordinatorProtocol {
     
     func showProfile() {
         let viewModel = ProfileViewModel(
+            type: .current,
             coordinator: self,
-            profileUseCase: ProfileUseCase(
+            userUseCase: UserUseCase(
                 userRepository: UserRepository(
                     localUserDataSource: UserDefaultsUserDataSource(),
                     remoteUserDataSource: RemoteUserDataSource(provider: Provider.default)
