@@ -54,7 +54,7 @@ final class StudyTabCoordinator: Coordinator, StudyTabCoordinatorProtocol {
         let userUseCase = UserUseCase(userRepository: userRepository)
         
         let viewModel = StudyDetailViewModel(
-            studyID: "FEVKKUm24VGBVmmTKICB", // TODO: StudyID 받아오는 모델로 수정
+            studyID: "FEVKKUm24VGBVmmTKICB",
             coordinator: self,
             studyUsecase: studyUseCase,
             hashtagUseCase: hashtagUseCase,
