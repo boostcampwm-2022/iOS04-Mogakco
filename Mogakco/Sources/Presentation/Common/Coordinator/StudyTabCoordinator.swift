@@ -46,7 +46,12 @@ final class StudyTabCoordinator: Coordinator, StudyTabCoordinatorProtocol {
     func showStudyCreate() {
         let viewController = CreateStudyViewController(
             viewModel: CreateStudyViewModel(
-                coordinator: self
+                coordinator: self,
+                useCase: CreateStudyUseCase(
+                    repository: StudyRepository(
+                        dataSource: StudyDataSource(provider: Provider.default)
+                    )
+                )
             )
         )
         navigationController.pushViewController(viewController, animated: true)
@@ -56,5 +61,45 @@ final class StudyTabCoordinator: Coordinator, StudyTabCoordinatorProtocol {
         let viewModel = ChatViewModel(coordinator: self)
         let chatViewController = ChatViewController(viewModel: viewModel)
         navigationController.pushViewController(chatViewController, animated: true)
+    }
+    
+    func showCategorySelect(delegate: HashtagSelectProtocol?) {
+        let viewModel = HashtagFilterViewModel(
+            coordinator: self,
+            hashTagUsecase: HashtagUsecase(
+                hashtagRepository: HashtagRepository(
+                    localHashtagDataSource: HashtagDataSource()
+                )
+            ),
+            selectedHashtag: []
+        )
+        viewModel.delegate = delegate
+        let viewController = HashtagSelectViewController(
+            kind: .category,
+            viewModel: viewModel
+        )
+        navigationController.pushViewController(viewController, animated: true)
+    }
+    
+    func showLanguageSelect(delegate: HashtagSelectProtocol?) {
+        let viewModel = HashtagFilterViewModel(
+            coordinator: self,
+            hashTagUsecase: HashtagUsecase(
+                hashtagRepository: HashtagRepository(
+                    localHashtagDataSource: HashtagDataSource()
+                )
+            ),
+            selectedHashtag: []
+        )
+        viewModel.delegate = delegate
+        let viewController = HashtagSelectViewController(
+            kind: .language,
+            viewModel: viewModel
+        )
+        navigationController.pushViewController(viewController, animated: true)
+    }
+    
+    func goToPrevScreen() {
+        self.pop(animated: true)
     }
 }
