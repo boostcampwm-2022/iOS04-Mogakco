@@ -23,13 +23,13 @@ struct UserUseCase: UserUseCaseProtocol {
     
     func users(ids: [String]) -> Observable<[User]> {
         return userRepository.allUsers()
-            .map {
+            .flatMap {
                 var filteredUser: [User] = []
                 $0.forEach { user in
                     guard let id = user.id else { return }
                     if ids.contains(id) { filteredUser.append(user) }
                 }
-                return filteredUser
+                return Observable.just(filteredUser)
             }
 	}
 
