@@ -99,6 +99,7 @@ final class CreateStudyViewController: ViewController {
     }
     
     private let viewModel: CreateStudyViewModel
+    private let date = PublishSubject<Date>()
     
     // MARK: - Inits
     
@@ -134,12 +135,33 @@ final class CreateStudyViewController: ViewController {
     }
     
     override func bind() {
+        
+        dateSelect.button.rx.tap
+            .withUnretained(self)
+            .subscribe { _ in
+                self.showDateSelectView()
+            }
+            .disposed(by: disposeBag)
+        
+        let input = CreateStudyViewModel.Input(
+            title: titleTextField.rx.text.orEmpty.asObservable(),
+            content: contentTextView.rx.text.orEmpty.asObservable(),
+            place: placeTextField.rx.text.orEmpty.asObservable(),
+            maxUserCount: countStepper.stepper.rx.value.asObservable(),
+            date: date,
+            categoryButtonTapped: categorySelect.button.rx.tap.asObservable(),
+            languageButtonTapped: languageSelect.button.rx.tap.asObservable(),
+            createButtonTapped: createButton.rx.tap.asObservable()
+        )
+        
+        _ = viewModel.transform(input: input)
+        
         Observable.of(Array((0...0)))
             .bind(to: self.languageCollectionView.rx.items(
                 cellIdentifier: BadgeCell.identifier,
                 cellType: BadgeCell.self
-            )) { _, badge, cell in
-
+            )) { _, _, _ in
+                // TODO: Language 해시태그
             }
             .disposed(by: disposeBag)
     }
@@ -215,5 +237,26 @@ final class CreateStudyViewController: ViewController {
             section.contentInsets = .init(top: 4, leading: 4, bottom: 4, trailing: 4)
             return section
         }
+    }
+    
+    private func showDateSelectView() {
+        
+        let datePicker = UIDatePicker(
+            frame: .init(x: 5, y: 20, width: 250, height: 140)
+        )
+        datePicker.datePickerMode = .dateAndTime
+        datePicker.preferredDatePickerStyle = .automatic
+        datePicker.locale = Locale(identifier: "ko_KR")
+        
+        let alert = UIAlertController(
+            title: "스터디 날짜를 선택해주세요",
+            message: nil,
+            preferredStyle: .alert
+        )
+        alert.view.addSubview(datePicker)
+        
+        let selectAction = UIAlertAction(title: "선택", style: .cancel, handler: nil)
+        alert.addAction(selectAction)
+        present(alert, animated: true)
     }
 }
