@@ -2,7 +2,7 @@
 //  UserResponseDTO.swift
 //  Mogakco
 //
-//  Created by 김범수 on 2022/11/21.
+//  Created by 김범수 on 2022/11/23.
 //  Copyright © 2022 Mogakco. All rights reserved.
 //
 
@@ -42,20 +42,7 @@ struct UserResponseDTO: Decodable {
         self.studyIDs = try fieldContainer.decode(ArrayValue<StringValue>.self, forKey: .studyIDs)
         self.chatRoomIDs = try fieldContainer.decode(ArrayValue<StringValue>.self, forKey: .chatRoomIDs)
     }
-    
-    init(user: User) {
-        self.id = StringValue(value: user.id ?? "")
-        self.profileImageURLString = StringValue(value: user.profileImageURLString)
-        self.name = StringValue(value: user.name)
-        self.introduce = StringValue(value: user.introduce)
-        self.email = StringValue(value: user.email)
-        self.languages = ArrayValue<StringValue>(values: user.languages.map { StringValue(value: $0) })
-        self.careers = ArrayValue<StringValue>(values: user.careers.map { StringValue(value: $0) })
-        self.categorys = ArrayValue<StringValue>(values: user.categorys.map { StringValue(value: $0) })
-        self.studyIDs = ArrayValue<StringValue>(values: user.studyIDs.map { StringValue(value: $0) })
-        self.chatRoomIDs = ArrayValue<StringValue>(values: user.chatRoomIDs.map { StringValue(value: $0) })
-    }
-    
+
     func toDomain() -> User {
         return User(
             id: id.value,
