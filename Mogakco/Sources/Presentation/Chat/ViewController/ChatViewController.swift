@@ -114,7 +114,7 @@ final class ChatViewController: ViewController {
             studyInfoButtonDidTap: studyInfoButton.rx.tap.asObservable(),
             selectedSidebar: sidebarView.tableView.rx.itemSelected.asObservable(),
             sendButtonDidTap: messageInputView.sendButton.rx.tap.asObservable(),
-            inputViewText: messageInputView.messageInputTextView.rx.text.asObservable()
+            inputViewText: messageInputView.messageInputTextView.rx.text.orEmpty.asObservable()
         )
         
         let output = viewModel.transform(input: input)

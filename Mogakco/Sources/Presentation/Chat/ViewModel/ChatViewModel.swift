@@ -18,13 +18,13 @@ final class ChatViewModel: ViewModel {
         let studyInfoButtonDidTap: Observable<Void>
         let selectedSidebar: Observable<IndexPath>
         let sendButtonDidTap: Observable<Void>
-        let inputViewText: Observable<String?>
+        let inputViewText: Observable<String>
     }
     
     struct Output {
         let chatSidebarViewObservable: Observable<Void>
         let selectedSidebarObservable: Observable<ChatSidebarMenu>
-        let inputViewTextObservable: Observable<String?>
+        let inputViewTextObservable: Observable<String>
     }
     
     let messages = Observable.of([1, 2, 3, 4, 5,
@@ -40,7 +40,7 @@ final class ChatViewModel: ViewModel {
     func transform(input: Input) -> Output {
         let chatSidebarViewObservable = PublishSubject<Void>()
         let selectedSidebarObservable = PublishSubject<ChatSidebarMenu>()
-        let inputViewTextObservable = PublishSubject<String?>()
+        let inputViewTextObservable = PublishSubject<String>()
         
         input.backButtonDidTap
             .subscribe(onNext: { [weak self] in
