@@ -50,8 +50,11 @@ final class AuthCoordinator: Coordinator, AuthCoordinatorProtocol {
         signupCoordinator.start()
     }
     
-    func showAdditionalSignup(email: String? = nil, password: String? = nil) {
-        let socialSignupCoordinator = AdditionalSignupCoordinator(navigationController)
+    func showAdditionalSignup(passwordProps: PasswordProps) {
+        let socialSignupCoordinator = AdditionalSignupCoordinator(
+            navigationController,
+            passwordProps: passwordProps
+        )
         childCoordinators.append(socialSignupCoordinator)
         socialSignupCoordinator.delegate = self
         socialSignupCoordinator.start()
@@ -73,9 +76,9 @@ extension AuthCoordinator: AuthCoordinatorFinishDelegate {
         }
     }
     
-    func requiredSignupCoordinatorDidFinish(child: Coordinator, email: String?, password: String?) {
+    func requiredSignupCoordinatorDidFinish(child: Coordinator, passwordProps: PasswordProps) {
         finish(child)
-        showAdditionalSignup(email: email, password: password)
+        showAdditionalSignup(passwordProps: passwordProps)
     }
     
     func additionalSignupCoordinatorDidFinish(child: Coordinator, success: Bool) {

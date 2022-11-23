@@ -9,14 +9,8 @@
 import UIKit
 
 protocol AdditionalSignupCoordinatorProtocol: AnyObject {
-    var name: String? { get set }
-    var introduce: String? { get set }
-    var profile: UIImage? { get set }
-    var language: String? { get set }
-    var career: String? { get set }
-    
-    func showCreateProfile()
-    func showLanguage()
-    func showCareer()
+    func showCreateProfile(passwordProps: PasswordProps)
+    func showLanguage(profileProps: ProfileProps)
+    func showCareer(languageProps: LanguageProps)
     func finish(success: Bool)
 }

@@ -10,6 +10,6 @@ import Foundation
 
 protocol AuthCoordinatorFinishDelegate: AnyObject {
     func autoLoginCoordinatorDidFinish(child: Coordinator, success: Bool)
-    func requiredSignupCoordinatorDidFinish(child: Coordinator, email: String?, password: String?)
+    func requiredSignupCoordinatorDidFinish(child: Coordinator, passwordProps: PasswordProps)
     func additionalSignupCoordinatorDidFinish(child: Coordinator, success: Bool)
 }

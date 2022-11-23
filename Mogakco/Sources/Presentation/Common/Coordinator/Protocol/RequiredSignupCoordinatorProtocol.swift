@@ -9,10 +9,7 @@
 import Foundation
 
 protocol RequiredSignupCoordinatorProtocol: AnyObject {
-    var email: String? { get set }
-    var password: String? { get set }
-    
     func showEmail()
-    func showPassword()
-    func finish()
+    func showPassword(emailProps: EmailProps)
+    func finish(passwordProps: PasswordProps)
 }
