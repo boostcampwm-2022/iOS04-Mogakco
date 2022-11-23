@@ -13,6 +13,7 @@ import RxSwift
 protocol RemoteUserDataSourceProtocol {
     func user(id: String) -> Observable<UserResponseDTO>
     func create(request: UserRequestDTO) -> Observable<UserResponseDTO>
+    func users(ids: [String]) -> Observable<[User]>
     func editProfile(id: String, request: EditProfileRequestDTO) -> Observable<UserResponseDTO>
     func uploadProfileImage(id: String, imageData: Data) -> Observable<URL>
 }

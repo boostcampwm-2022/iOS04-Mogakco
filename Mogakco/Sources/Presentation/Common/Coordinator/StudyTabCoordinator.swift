@@ -49,7 +49,7 @@ final class StudyTabCoordinator: Coordinator, StudyTabCoordinatorProtocol {
         let remoteUserDataSource = RemoteUserDataSource(provider: Provider.default)
         let userRepository = UserRepository(
             localUserDataSource: localUserDataSource,
-            retmoteUserDataSource: remoteUserDataSource
+            remoteUserDataSource: remoteUserDataSource
         )
         let userUseCase = UserUseCase(userRepository: userRepository)
         
