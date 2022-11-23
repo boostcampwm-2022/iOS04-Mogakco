@@ -51,4 +51,10 @@ final class ProfileTabCoordinator: Coordinator, ProfileTabCoordinatorProtocol {
         let viewController = EditProfileViewController(viewModel: viewModel)
         navigationController.pushViewController(viewController, animated: false)
     }
+    
+    func showChat() {
+    }
+    
+    func showSelectHashtag(kindHashtag: KindHashtag) {
+    }
 }
