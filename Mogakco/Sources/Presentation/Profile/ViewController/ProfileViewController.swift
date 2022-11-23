@@ -92,6 +92,35 @@ final class ProfileViewController: ViewController {
         )
         let output = viewModel.transform(input: input)
         
+        output.myProfile
+            .asDriver(onErrorJustReturn: false)
+            .drive(profileView.chatButton.rx.isHidden)
+            .disposed(by: disposeBag)
+        
+        output.myProfile
+            .map { !$0 }
+            .asDriver(onErrorJustReturn: false)
+            .drive(profileView.editProfileButton.rx.isHidden)
+            .disposed(by: disposeBag)
+        
+        output.myProfile
+            .map { !$0 }
+            .asDriver(onErrorJustReturn: false)
+            .drive(languageListView.editButton.rx.isHidden)
+            .disposed(by: disposeBag)
+        
+        output.myProfile
+            .map { !$0 }
+            .asDriver(onErrorJustReturn: false)
+            .drive(careerListView.editButton.rx.isHidden)
+            .disposed(by: disposeBag)
+        
+        output.myProfile
+            .map { !$0 }
+            .asDriver(onErrorJustReturn: false)
+            .drive(categoryListView.editButton.rx.isHidden)
+            .disposed(by: disposeBag)
+        
         output.profileImageURL
             .asDriver(onErrorDriveWith: .empty())
             .drive(profileView.roundProfileImageView.rx.loadImage)

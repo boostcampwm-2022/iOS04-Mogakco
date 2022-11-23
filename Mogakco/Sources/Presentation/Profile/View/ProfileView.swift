@@ -38,7 +38,7 @@ final class ProfileView: UIView {
         $0.textAlignment = .left
     }
     
-    private let chatButton = UIButton().then {
+    let chatButton = UIButton().then {
         $0.addShadow(offset: .init(width: 5.0, height: 5.0))
         $0.layer.cornerRadius = 12.0
         $0.setTitle("채팅", for: .normal)
