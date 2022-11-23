@@ -21,7 +21,32 @@ final class AppCoordinator: Coordinator, AppCoordinatorProtocol {
     }
 
     func start() {
-        showAuthFlow()
+        let studyDataSource = StudyDataSource(provider: Provider.default)
+        let studyRepository = StudyRepository(dataSource: studyDataSource)
+        let studyUseCase = StudyDetailUseCase(repository: studyRepository)
+
+        let hashtagDataSource = HashtagDataSource()
+        let hashtagRepository = HashtagRepository(localHashtagDataSource: hashtagDataSource)
+        let hashtagUseCase = HashtagUsecase(hashtagRepository: hashtagRepository)
+
+        let localUserDataSource = UserDefaultsUserDataSource()
+        let remoteUserDataSource = RemoteUserDataSource(provider: Provider.default)
+        let userRepository = UserRepository(
+            localUserDataSource: localUserDataSource,
+            retmoteUserDataSource: remoteUserDataSource
+        )
+        let userUseCase = UserUseCase(userRepository: userRepository)
+
+        let viewModel = StudyDetailViewModel(
+            studyID: "nN2KGsHG1my3fMo4tjwE", // TODO: StudyID 받아오는 모델로 수정
+            coordinator: StudyTabCoordinator(navigationController),
+            studyUsecase: studyUseCase,
+            hashtagUseCase: hashtagUseCase,
+            userUseCase: userUseCase
+        )
+        let studyDetailViewController = StudyDetailViewController(viewModel: viewModel)
+        navigationController.pushViewController(studyDetailViewController, animated: true)
+//        showAuthFlow()
     }
     
     func showAuthFlow() {

@@ -36,22 +36,22 @@ struct HashtagDataSource: HashtagDataSourceProtocol {
     }
     
     func loadTagByString(kind: KindHashtag, tagTitle: [String]) -> Observable<[Hashtag]> {
-        let filteredTags = PublishSubject<[Hashtag]>()
-        let tagList: [Hashtag]
-        var selectedTags: [Hashtag] = []
-        
-        switch kind {
-        case .language: tagList = loadLanguage()
-        case .career: tagList = loadCareer()
-        case .category: tagList = loadCategory()
+        return Observable.create { emitter in
+            let tagList: [Hashtag]
+            var selectedTags: [Hashtag] = []
+            
+            switch kind {
+            case .language: tagList = loadLanguage()
+            case .career: tagList = loadCareer()
+            case .category: tagList = loadCategory()
+            }
+            
+            tagList.forEach {
+                if tagTitle.contains($0.title) {selectedTags.append($0)}
+            }
+            
+            emitter.onNext(selectedTags)
+            return Disposables.create()
         }
-        
-        tagList.forEach {
-            if tagTitle.contains($0.title) {selectedTags.append($0)}
-        }
-
-        filteredTags.onNext(selectedTags)
-        
-        return filteredTags.asObservable()
     }
 }
