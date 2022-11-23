@@ -9,5 +9,5 @@
 import Foundation
 
 protocol HashtagSelectProtocol: AnyObject {
-    func selectedHashtag(hashTags: [Hashtag])
+    func selectedHashtag(kind: KindHashtag, hashTags: [Hashtag])
 }
