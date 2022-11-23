@@ -10,4 +10,11 @@ import Foundation
 
 struct EmailProps {
     let email: String
+    
+    func toPasswordProps(password: String) -> PasswordProps {
+        return PasswordProps(
+            email: email,
+            password: password
+        )
+    }
 }

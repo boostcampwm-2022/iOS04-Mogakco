@@ -17,7 +17,7 @@ final class EditProfiileViewModel: ViewModel {
         case create(PasswordProps)
         case edit
         
-        static func ==(lhs: EditType, rhs: EditType) -> Bool {
+        static func == (lhs: EditType, rhs: EditType) -> Bool {
             switch (lhs, rhs) {
             case (.create, .create), (.edit, .edit):
                 return true
@@ -117,9 +117,8 @@ final class EditProfiileViewModel: ViewModel {
             .filter {
                 if case EditType.create = $0 {
                     return true
-                } else {
-                    return false
                 }
+                return false
             }
         
         profileCreate
@@ -129,9 +128,7 @@ final class EditProfiileViewModel: ViewModel {
             .subscribe(onNext: { profile in
                 if let coordinator = self.coordinator as? AdditionalSignupCoordinator,
                    case let EditType.create(passwordProps) = self.type {
-                    let profileProps = ProfileProps(
-                        email: passwordProps.email,
-                        password: passwordProps.password,
+                    let profileProps = passwordProps.toProfileProps(
                         name: profile.0,
                         introduce: profile.1,
                         profileImage: profile.2
