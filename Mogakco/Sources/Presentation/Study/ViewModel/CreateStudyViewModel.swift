@@ -24,18 +24,47 @@ final class CreateStudyViewModel: ViewModel {
         let createButtonTapped: Observable<Void>
     }
     
-    struct Output { }
+    struct Output {
+        let createButtonEnabled: Observable<Bool>
+    }
     
     private weak var coordinator: Coordinator?
+    private let useCase: CreateStudyUseCaseProtocol
     private let category = PublishSubject<String>()
     private let languages = PublishSubject<[String]>()
     var disposeBag = DisposeBag()
     
-    init(coordinator: Coordinator) {
+    init(coordinator: Coordinator, useCase: CreateStudyUseCaseProtocol) {
         self.coordinator = coordinator
+        self.useCase = useCase
     }
     
     func transform(input: Input) -> Output {
+        
+        let study = Observable
+            .combineLatest(
+                input.title,
+                input.content,
+                input.date.map { $0.toInt(dateFormat: Format.compactDateFormat) },
+                input.place,
+                input.maxUserCount.map { Int($0) },
+                languages.asObservable(),
+                category.asObservable()
+            )
+            .map {
+                Study(
+                    id: UUID().uuidString,
+                    chatRoomID: "",
+                    userIDs: [],
+                    title: $0.0,
+                    content: $0.1,
+                    date: $0.2,
+                    place: $0.3,
+                    maxUserCount: $0.4,
+                    languages: $0.5,
+                    category: $0.6
+                )
+            }
         
         input.categoryButtonTapped
             .withUnretained(self)
@@ -51,23 +80,28 @@ final class CreateStudyViewModel: ViewModel {
             })
             .disposed(by: disposeBag)
         
-        input.createButtonTapped
-            .withLatestFrom(Observable.combineLatest(
-                input.title,
-                input.content,
-                input.place,
-                input.maxUserCount.map { Int($0) },
-                input.date.map { $0.toInt(dateFormat: Format.compactDateFormat) },
-                category,
-                languages
-            ))
-            .withUnretained(self)
+        input.date
             .subscribe { _ in
-                // TODO: 스터디 생성
-                self.coordinator?.pop(animated: true)
+                // TODO: 테스트코드 - 삭제 예정
+                self.category.onNext("iOS")
+                self.languages.onNext(["swift"])
             }
             .disposed(by: disposeBag)
         
-        return Output()
+        input.createButtonTapped
+            .withLatestFrom(study)
+            .withUnretained(self)
+            .flatMap { viewModel, study in
+                viewModel.useCase.create(study: study)
+            }
+            .withUnretained(self)
+            .subscribe(onNext: { viewModel, _ in
+                viewModel.coordinator?.pop(animated: true)
+            })
+            .disposed(by: disposeBag)
+
+        return Output(
+            createButtonEnabled: study.map { _ in return true }
+        )
     }
 }
