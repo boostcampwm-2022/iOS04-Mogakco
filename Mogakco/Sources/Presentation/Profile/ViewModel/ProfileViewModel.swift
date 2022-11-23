@@ -60,6 +60,8 @@ final class ProfileViewModel: ViewModel {
     }
     
     func transform(input: Input) -> Output {
+        bindScene(input: input)
+        
         let type = BehaviorSubject<ProfileType>(value: type)
         let isMyProfile = type
             .map { $0 == .current }
@@ -70,10 +72,27 @@ final class ProfileViewModel: ViewModel {
                 case .current:
                     return viewModel.userUseCase.myProfile()
                 case let .other(user):
-                    return viewModel.userUseCase.user(id: user.id ?? "")
+                    return viewModel.userUseCase.user(id: user.id)
                 }
-            }
+            } 
         
+        return Output(
+            isMyProfile: isMyProfile.asObservable(),
+            profileImageURL: user
+                .compactMap { $0.profileImageURLString }
+                .compactMap { URL(string: $0) },
+            representativeLanguageImage: user
+                .compactMap { $0.languages.randomElement() }
+                .compactMap { UIImage(named: $0) },
+            name: user.map { $0.name }.asObservable(),
+            introduce: user.map { $0.introduce }.asObservable(),
+            languages: user.map { $0.languages }.asObservable(),
+            careers: user.map { $0.careers }.asObservable(),
+            categorys: user.map { $0.categorys }.asObservable()
+        )
+    }
+    
+    private func bindScene(input: Input) {
         input.editProfileButtonTapped
             .withUnretained(self)
             .subscribe(onNext: { viewModel, _ in
@@ -94,20 +113,5 @@ final class ProfileViewModel: ViewModel {
                 viewModel.coordinator?.showSelectHashtag(kindHashtag: kindHashtag)
             })
             .disposed(by: disposeBag)
-        
-        return Output(
-            isMyProfile: isMyProfile.asObservable(),
-            profileImageURL: user
-                .compactMap { $0.profileImageURLString }
-                .compactMap { URL(string: $0) },
-            representativeLanguageImage: user
-                .compactMap { $0.languages.randomElement() }
-                .compactMap { UIImage(named: $0) },
-            name: user.map { $0.name }.asObservable(),
-            introduce: user.map { $0.introduce }.asObservable(),
-            languages: user.map { $0.languages }.asObservable(),
-            careers: user.map { $0.careers }.asObservable(),
-            categorys: user.map { $0.categorys }.asObservable()
-        )
     }
 }
