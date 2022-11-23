@@ -25,6 +25,10 @@ struct RemoteUserDataSource: RemoteUserDataSourceProtocol {
         return provider.request(UserTarget.createUser(request))
     }
     
+    func users(ids: [String]) -> Observable<[User]> {
+        return Observable.just([])
+    }
+    
     func editProfile(id: String, request: EditProfileRequestDTO) -> Observable<UserResponseDTO> {
         return provider.request(UserTarget.editProfile(id, request))
     }
