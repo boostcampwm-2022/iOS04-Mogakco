@@ -28,7 +28,7 @@ final class StudySelectView: UIView {
         $0.textAlignment = .left
     }
     
-    lazy var selectButton = UIButton().then {
+    lazy var button = UIButton().then {
         $0.configuration = configuration(title: "선택")
         $0.addShadow(offset: .init(width: 1, height: 1))
         $0.layer.borderWidth = 1
@@ -65,7 +65,7 @@ final class StudySelectView: UIView {
     }
     
     private func createTotalStackView() -> UIStackView {
-        let subviews = [titleLabel, selectButton, selectLabel]
+        let subviews = [titleLabel, button, selectLabel]
         return UIStackView(arrangedSubviews: subviews).then {
             $0.axis = .horizontal
             $0.alignment = .center
