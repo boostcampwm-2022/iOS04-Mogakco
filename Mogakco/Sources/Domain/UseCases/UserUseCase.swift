@@ -26,8 +26,7 @@ struct UserUseCase: UserUseCaseProtocol {
             .flatMap {
                 var filteredUser: [User] = []
                 $0.forEach { user in
-                    guard let id = user.id else { return }
-                    if ids.contains(id) { filteredUser.append(user) }
+                    if ids.contains(user.id) { filteredUser.append(user) }
                 }
                 return Observable.just(filteredUser)
             }
@@ -37,6 +36,8 @@ struct UserUseCase: UserUseCaseProtocol {
         return userRepository.load()
             .compactMap { $0.id }
             .flatMap { userRepository.user(id: $0) }
-			.flatMap { userRepository.save(user: $0) }
+            .do(onNext: {
+                _ = userRepository.save(user: $0) // 저장되는지 확인 필요
+            })
     }
 }
