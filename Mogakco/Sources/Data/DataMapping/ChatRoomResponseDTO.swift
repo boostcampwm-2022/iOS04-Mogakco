@@ -10,7 +10,7 @@ import Foundation
 
 struct ChatRoomResponseDTO: Codable {
     private let id: StringValue
-    private let studyID: StringValue
+    private let studyID: StringValue?
     private let userIDs: ArrayValue<StringValue>
     
     private enum RootKey: String, CodingKey {
@@ -25,15 +25,17 @@ struct ChatRoomResponseDTO: Codable {
         let container = try decoder.container(keyedBy: RootKey.self)
         let fieldContainer = try container.nestedContainer(keyedBy: FieldKeys.self, forKey: .fields)
         self.id = try fieldContainer.decode(StringValue.self, forKey: .id)
-        self.studyID = try fieldContainer.decode(StringValue.self, forKey: .studyID)
+        self.studyID = try fieldContainer.decodeIfPresent(StringValue.self, forKey: .studyID)
         self.userIDs = try fieldContainer.decode(ArrayValue<StringValue>.self, forKey: .userIDs)
     }
     
     func toDomain() -> ChatRoom {
         return ChatRoom(
             id: id.value,
-            studyID: studyID.value,
-            userIDs: userIDs.arrayValue.map { $0.value }.flatMap { $0.map { $0.value } }
+            studyID: studyID?.value,
+            userIDs: userIDs.arrayValue.map { $0.value }.flatMap { $0.map { $0.value } },
+            latestChat: nil,
+            unreadChatCount: nil
         )
     }
 }

@@ -10,6 +10,18 @@ import Foundation
 
 struct ChatRoom {
     let id: String
-    let studyID: String
+    let studyID: String?
     let userIDs: [String]
+    let latestChat: Chat?
+    let unreadChatCount: Int?
+}
+
+extension ChatRoom {
+    init(chatRoom: ChatRoom, latestChat: Chat?, unreadChatCount: Int) {
+        self.id = chatRoom.id
+        self.studyID = chatRoom.studyID
+        self.userIDs = chatRoom.userIDs
+        self.latestChat = latestChat
+        self.unreadChatCount = unreadChatCount
+    }
 }

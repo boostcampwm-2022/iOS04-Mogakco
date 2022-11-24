@@ -9,5 +9,5 @@
 import RxSwift
 
 protocol ChatRoomRepositoryProtocol {
-    func list(ids: [String]) -> Observable<[ChatRoom]>
+    func list(id: String, ids: [String]) -> Observable<[ChatRoom]>
 }

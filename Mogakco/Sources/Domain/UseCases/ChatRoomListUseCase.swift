@@ -6,9 +6,15 @@
 //  Copyright © 2022 Mogakco. All rights reserved.
 //
 
+import Foundation
+
 import RxSwift
 
 struct ChatRoomListUseCase: ChatRoomListUseCaseProtocol {
+    
+    enum ChatRoomListUseCaseError: Error, LocalizedError {
+        case nonUserID
+    }
 
     private let chatRoomRepository: ChatRoomRepositoryProtocol
     private let userRepository: UserRepositoryProtocol
@@ -25,7 +31,11 @@ struct ChatRoomListUseCase: ChatRoomListUseCaseProtocol {
     func chatRooms() -> Observable<[ChatRoom]> {
         return userRepository
             .load()
-            .compactMap { $0.chatRoomIDs }
-            .flatMap { chatRoomRepository.list(ids: $0) }
+            .flatMap { user in
+                guard let id = user.id else {
+                    return Observable<[ChatRoom]>.error(ChatRoomListUseCaseError.nonUserID)
+                }
+                return chatRoomRepository.list(id: id, ids: user.chatRoomIDs)
+            }
     }
 }
