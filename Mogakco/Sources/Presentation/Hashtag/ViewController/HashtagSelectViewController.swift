@@ -93,7 +93,7 @@ class HashtagSelectViewController: ViewController {
             nextButtonTapped: nextButton.rx.tap.asObservable()
         )
         
-        var output = viewModel.transform(input: input)
+        let output = viewModel.transform(input: input)
 
         output.hashtagReload
             .observe(on: MainScheduler.instance)
