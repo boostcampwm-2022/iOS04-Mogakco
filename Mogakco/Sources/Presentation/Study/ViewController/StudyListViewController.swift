@@ -28,7 +28,7 @@ final class StudyListViewController: ViewController {
     }
     
     private let viewModel: StudyListViewModel
-    private let viewWillAppear = PublishSubject<Void>()
+//    private let viewWillAppear = PublishSubject<Void>()
     
     // MARK: - Inits
     
@@ -60,7 +60,7 @@ final class StudyListViewController: ViewController {
     override func bind() {
         
         let input = StudyListViewModel.Input(
-            viewWillAppear: viewWillAppear.asObservable(),
+            viewWillAppear: self.rx.viewWillAppear.map { _ in () }.asObservable(),
             plusButtonTapped: header.plusButton.rx.tap.asObservable(),
             cellSelected: collectionView.rx.itemSelected.asObservable()
         )
