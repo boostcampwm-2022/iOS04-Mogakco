@@ -32,10 +32,7 @@ struct ChatRoomListUseCase: ChatRoomListUseCaseProtocol {
         return userRepository
             .load()
             .flatMap { user in
-                guard let id = user.id else {
-                    return Observable<[ChatRoom]>.error(ChatRoomListUseCaseError.nonUserID)
-                }
-                return chatRoomRepository.list(id: id, ids: user.chatRoomIDs)
+                return chatRoomRepository.list(id: user.id, ids: user.chatRoomIDs)
             }
     }
 }
