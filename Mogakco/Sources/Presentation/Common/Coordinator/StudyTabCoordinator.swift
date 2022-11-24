@@ -36,7 +36,7 @@ final class StudyTabCoordinator: Coordinator, StudyTabCoordinatorProtocol {
         navigationController.pushViewController(viewController, animated: true)
     }
     
-    func showStudyDetail() {
+    func showStudyDetail(id: String) {
         let studyDataSource = StudyDataSource(provider: Provider.default)
         let studyRepository = StudyRepository(dataSource: studyDataSource)
         let studyUseCase = StudyDetailUseCase(repository: studyRepository)
@@ -54,7 +54,7 @@ final class StudyTabCoordinator: Coordinator, StudyTabCoordinatorProtocol {
         let userUseCase = UserUseCase(userRepository: userRepository)
         
         let viewModel = StudyDetailViewModel(
-            studyID: "FEVKKUm24VGBVmmTKICB",
+            studyID: id,
             coordinator: self,
             studyUsecase: studyUseCase,
             hashtagUseCase: hashtagUseCase,
