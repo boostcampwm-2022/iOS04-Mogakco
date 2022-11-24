@@ -9,9 +9,10 @@
 import RxSwift
 
 struct ChatRoomRepository: ChatRoomRepositoryProtocol {
+    
+    private let disposeBag = DisposeBag()
     private let chatRoomDataSource: ChatRoomDataSourceProtocol
     private let chatDataSource: ChatDataSourceProtocol
-    private let disposeBag = DisposeBag()
     
     init(
         chatRoomDataSource: ChatRoomDataSourceProtocol,
@@ -21,9 +22,43 @@ struct ChatRoomRepository: ChatRoomRepositoryProtocol {
         self.chatDataSource = chatDataSource
     }
 
-    func list(ids: [String]) -> Observable<[ChatRoom]> {
-        return chatRoomDataSource.list()
+    func list(id: String, ids: [String]) -> Observable<[ChatRoom]> {
+        // 채팅방 모델 호출
+        let chatRoomsSb = chatRoomDataSource.list()
             .map { $0.documents.map { $0.toDomain() } }
             .map { $0.filter { ids.contains($0.id) } }
+        
+        // 최근 메세지 호출
+        let latestChatChatRoomsSb = BehaviorSubject<[ChatRoom]>(value: [])
+        chatRoomsSb
+            .subscribe(onNext: { chatRooms in
+                chatRooms.forEach { chatRoom in
+                    chatRoomDataSource.chats(id: chatRoom.id)
+                        .map { $0.documents.map { $0.toDomain() } }
+                        .map { $0.sorted { $0.date < $1.date } } // TODO: 정렬 API 쿼리로 이동
+                        .map { ($0.first, unreadChatCount(id: id, chats: $0)) }
+                        .map { ChatRoom(chatRoom: chatRoom, latestChat: $0.0, unreadChatCount: $0.1) }
+                        .withLatestFrom(latestChatChatRoomsSb) { $1 + [$0] }
+                        .subscribe(onNext: {
+                            latestChatChatRoomsSb.onNext($0)
+                        })
+                        .disposed(by: disposeBag)
+                }
+            })
+            .disposed(by: disposeBag)
+
+        return latestChatChatRoomsSb.asObservable()
+    }
+    
+    private func unreadChatCount(id: String, chats: [Chat]) -> Int {
+        var count = 0
+        for chat in chats {
+            if !chat.readUserIDs.contains(id) {
+                count += 1
+            } else {
+                break
+            }
+        }
+        return count
     }
 }
