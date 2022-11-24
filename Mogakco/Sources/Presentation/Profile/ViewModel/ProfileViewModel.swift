@@ -74,7 +74,12 @@ final class ProfileViewModel: ViewModel {
                 case let .other(user):
                     return viewModel.userUseCase.user(id: user.id)
                 }
-            } 
+            }
+        
+        let studyList = user
+            .map { $0.id }
+            .withUnretained(self)
+            .flatMap { $0.0.userUseCase.studyList(id: $0.1) }
         
         return Output(
             isMyProfile: isMyProfile.asObservable(),
