@@ -36,20 +36,29 @@ final class StudyListViewModel: ViewModel {
     
     func transform(input: Input) -> Output {
         
+        let studyList = useCase.list()
+        
         input.plusButtonTapped
             .withUnretained(self)
-            .subscribe { _ in
-                self.coordinator?.showStudyCreate()
+            .subscribe { viewModel, _ in
+                viewModel.coordinator?.showStudyCreate()
             }
             .disposed(by: disposeBag)
         
         input.cellSelected
+            .withLatestFrom(
+                Observable.combineLatest(
+                    input.cellSelected,
+                    studyList
+                )
+            )
+            .map { $1[$0.row].id }
             .withUnretained(self)
-            .subscribe { _ in
-                self.coordinator?.showStudyDetail()
+            .subscribe { viewModel, id in
+                viewModel.coordinator?.showStudyDetail(id: id)
             }
             .disposed(by: disposeBag)
         
-        return Output(studyList: useCase.list())
+        return Output(studyList: studyList)
     }
 }
