@@ -121,6 +121,16 @@ final class StudyDetailViewController: ViewController {
         configDelegate()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.isNavigationBarHidden = false
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        navigationController?.isNavigationBarHidden = true
+    }
+    
     private func configDelegate() {
         languageCollectionView.delegate = self
         languageCollectionView.dataSource = self
