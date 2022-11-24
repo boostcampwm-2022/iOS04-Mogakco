@@ -27,8 +27,7 @@ final class ChatTabCoordinator: Coordinator, ChatTabCoordinatorProtocol {
             coordinator: self,
             chatRoomListUseCase: ChatRoomListUseCase(
                 chatRoomRepository: ChatRoomRepository(
-                    chatRoomDataSource: ChatRoomDataSource(provider: Provider.default),
-                    chatDataSource: ChatDataSource()
+                    chatRoomDataSource: ChatRoomDataSource(provider: Provider.default)
                 ), userRepository: UserRepository(
                     localUserDataSource: UserDefaultsUserDataSource(),
                     remoteUserDataSource: RemoteUserDataSource(provider: Provider.default))
@@ -38,26 +37,8 @@ final class ChatTabCoordinator: Coordinator, ChatTabCoordinatorProtocol {
         navigationController.pushViewController(viewController, animated: false)
     }
     
-    func showChatDetail(chatRoomID: String) {
-        let localUserDataSource = UserDefaultsUserDataSource()
-        let remoteUserDataSource = RemoteUserDataSource(provider: Provider.default)
-        let chatDataSource = ChatDataSource()
-        
-        let chatRepository = ChatRepository(chatDataSource: chatDataSource)
-        let userRepository = UserRepository(
-            localUserDataSource: localUserDataSource,
-            remoteUserDataSource: remoteUserDataSource
-        )
-        
-        let chatUseCase = ChatUseCase(
-            chatRepository: chatRepository,
-            userRepository: userRepository
-        )
-        let viewModel = ChatViewModel(
-            coordinator: self,
-            chatUseCase: chatUseCase,
-            chatRoomID: chatRoomID
-        )
+    func showChatDetail() {
+        let viewModel = ChatViewModel(coordinator: self)
         let chatViewController = ChatViewController(viewModel: viewModel)
         navigationController.pushViewController(chatViewController, animated: true)
     }
