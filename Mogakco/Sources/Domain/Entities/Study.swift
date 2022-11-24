@@ -11,7 +11,7 @@ import Foundation
 struct Study {
     let id: String
     let chatRoomID: String
-    let userIDs: [String]
+    var userIDs: [String]
     let title: String
     let content: String
     let date: Int

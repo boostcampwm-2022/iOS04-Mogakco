@@ -48,8 +48,12 @@ final class StudyTabCoordinator: Coordinator, StudyTabCoordinatorProtocol {
             viewModel: CreateStudyViewModel(
                 coordinator: self,
                 useCase: CreateStudyUseCase(
-                    repository: StudyRepository(
+                    studyRepository: StudyRepository(
                         dataSource: StudyDataSource(provider: Provider.default)
+                    ),
+                    userRepository: UserRepository(
+                        localUserDataSource: UserDefaultsUserDataSource(),
+                        remoteUserDataSource: RemoteUserDataSource(provider: Provider.default)
                     )
                 )
             )
