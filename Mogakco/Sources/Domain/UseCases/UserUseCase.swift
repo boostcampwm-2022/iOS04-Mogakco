@@ -11,10 +11,15 @@ import RxSwift
 struct UserUseCase: UserUseCaseProtocol {
 
     private let userRepository: UserRepositoryProtocol
+    private let studyRepository: StudyRepositoryProtocol
     private let disposeBag = DisposeBag()
     
-    init(userRepository: UserRepositoryProtocol) {
+    init(
+        userRepository: UserRepositoryProtocol,
+        studyRepository: StudyRepositoryProtocol
+    ) {
         self.userRepository = userRepository
+        self.studyRepository = studyRepository
     }
     
     func user(id: String) -> Observable<User> {
@@ -39,5 +44,11 @@ struct UserUseCase: UserUseCaseProtocol {
             .do(onNext: {
                 _ = userRepository.save(user: $0) // 저장되는지 확인 필요
             })
+    }
+    
+    func studyList(id: String) -> Observable<[Study]> {
+        return userRepository.load()
+            .map { $0.studyIDs }
+            .flatMap { studyRepository.list(ids: $0) }
     }
 }
