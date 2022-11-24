@@ -6,20 +6,29 @@
 //  Copyright © 2022 Mogakco. All rights reserved.
 //
 
+import Foundation
+
 import RxSwift
 
 struct ChatRoomRepository: ChatRoomRepositoryProtocol {
     
     private let disposeBag = DisposeBag()
     private let chatRoomDataSource: ChatRoomDataSourceProtocol
-    private let chatDataSource: ChatDataSourceProtocol
     
     init(
-        chatRoomDataSource: ChatRoomDataSourceProtocol,
-        chatDataSource: ChatDataSourceProtocol
+        chatRoomDataSource: ChatRoomDataSourceProtocol
     ) {
         self.chatRoomDataSource = chatRoomDataSource
-        self.chatDataSource = chatDataSource
+    }
+    
+    func create(studyID: String?, userIDs: [String]) -> Observable<ChatRoom> {
+        let request = CreateChatRoomRequestDTO(
+            id: studyID ?? UUID().uuidString,
+            studyID: studyID,
+            userIDs: userIDs
+        )
+        return chatRoomDataSource.create(request: request)
+            .map { $0.toDomain() }
     }
 
     func list(id: String, ids: [String]) -> Observable<[ChatRoom]> {
