@@ -112,11 +112,11 @@ final class StudyCell: UICollectionViewCell, Identifiable {
     // MARK: - Methods
     
     func setup(_ study: Study) {
-        let currDate = Date().toString(dateFormat: Format.detailDateFormat)
-        let studyDate = study.date.toDateString()
-        state = currDate < studyDate ? .open : .close
+        let currDate = Date().toInt(dateFormat: Format.compactDateFormat)
+        let studyDateString = study.date.toCompactDateString()
+        state = currDate < study.date ? .open : .close
         titleLabel.text = study.title
-        dateView.textLabel.text = studyDate
+        dateView.textLabel.text = studyDateString
         participantsView.textLabel.text = "\(study.userIDs.count)/\(study.maxUserCount) 참여"
         contentLabel.text = study.content
         addCategoryHashtag(tag: study.category)
