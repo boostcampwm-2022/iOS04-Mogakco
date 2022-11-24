@@ -22,6 +22,12 @@ struct StudyRepository: StudyRepositoryProtocol {
             .map { $0.documents.map { $0.toDomain() } }
     }
     
+    func list(ids: [String]) -> Observable<[Study]> {
+        return dataSource.list()
+            .map { $0.documents.map { $0.toDomain() } }
+            .map { $0.filter { ids.contains($0.id) } }
+    }
+    
     func detail(id: String) -> Observable<Study> {
         return dataSource.detail(id: id)
             .map { $0.toDomain() }
