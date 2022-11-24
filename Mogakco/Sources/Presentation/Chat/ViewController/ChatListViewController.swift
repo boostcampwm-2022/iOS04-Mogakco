@@ -50,6 +50,16 @@ final class ChatListViewController: UIViewController {
         layout()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.isNavigationBarHidden = true
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        navigationController?.isNavigationBarHidden = false
+    }
+    
     func bind() {
         let input = ChatListViewModel.Input(
             selectedChatRoom: chatRoomTableView.rx.itemSelected.map { _ in }.asObservable()
