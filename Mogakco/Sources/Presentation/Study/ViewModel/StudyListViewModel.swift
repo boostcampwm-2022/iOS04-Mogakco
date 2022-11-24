@@ -14,6 +14,7 @@ import RxSwift
 final class StudyListViewModel: ViewModel {
    
     struct Input {
+        let viewWillAppear: Observable<Void>
         let plusButtonTapped: Observable<Void>
         let cellSelected: Observable<IndexPath>
     }
@@ -36,7 +37,13 @@ final class StudyListViewModel: ViewModel {
     
     func transform(input: Input) -> Output {
         
-        let studyList = useCase.list()
+        let studyList = PublishSubject<[Study]>()
+        
+        input.viewWillAppear
+            .withUnretained(self)
+            .flatMap { $0.0.useCase.list() }
+            .bind(to: studyList)
+            .disposed(by: disposeBag)
         
         input.plusButtonTapped
             .withUnretained(self)
