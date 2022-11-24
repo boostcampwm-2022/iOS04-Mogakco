@@ -60,6 +60,14 @@ final class ChatRoomTableViewCell: UITableViewCell, Identifiable {
     
     func configure(chatRoom: ChatRoom) {
         chatRoomTitleLabel.text = chatRoom.userIDs.joined()
+        latestMessageLabel.text = chatRoom.latestChat?.message ?? ""
+        if let date = chatRoom.latestChat?.date {
+            latestMessageDateLabel.text = String(date)
+        }
+        if let unreadChatCount = chatRoom.unreadChatCount {
+            unreadMessageCountLabel.isHidden = unreadChatCount == 0
+            unreadMessageCountLabel.text = String(unreadChatCount)
+        }
     }
     
     private func layout() {
