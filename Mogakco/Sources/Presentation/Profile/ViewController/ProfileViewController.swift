@@ -229,7 +229,7 @@ final class ProfileViewController: ViewController {
         view.addSubview(scrollView)
         scrollView.snp.makeConstraints {
             $0.top.equalTo(headerView.snp.bottom)
-            $0.leading.trailing.bottom.equalToSuperview()
+            $0.leading.trailing.bottom.equalTo(view.safeAreaLayoutGuide)
         }
         
         scrollView.addSubview(contentStackView)
