@@ -14,7 +14,6 @@ final class AppCoordinator: Coordinator, AppCoordinatorProtocol {
     
     init(window: UIWindow?) {
         self.navigationController = UINavigationController()
-        navigationController.isNavigationBarHidden = true
         window?.rootViewController = navigationController
         window?.backgroundColor = .mogakcoColor.backgroundDefault
         window?.makeKeyAndVisible()
@@ -45,9 +44,11 @@ extension AppCoordinator: CoordinatorFinishDelegate {
         finish(child)
         switch child {
         case is AuthCoordinator:
+            navigationController.isNavigationBarHidden = true
             navigationController.viewControllers.removeAll()
             showMainFlow()
         case is TabCoordinator:
+            navigationController.isNavigationBarHidden = true
             navigationController.viewControllers.removeAll()
             showAuthFlow()
         default:
