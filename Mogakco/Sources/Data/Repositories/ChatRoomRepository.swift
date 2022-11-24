@@ -35,10 +35,11 @@ struct ChatRoomRepository: ChatRoomRepositoryProtocol {
                 chatRooms.forEach { chatRoom in
                     chatRoomDataSource.chats(id: chatRoom.id)
                         .map { $0.documents.map { $0.toDomain() } }
-                        .map { $0.sorted { $0.date < $1.date } } // TODO: 정렬 API 쿼리로 이동
+                        .map { $0.sorted { $0.date < $1.date } } // TODO: 메세지 정렬 API 쿼리로 이동
                         .map { ($0.first, unreadChatCount(id: id, chats: $0)) }
                         .map { ChatRoom(chatRoom: chatRoom, latestChat: $0.0, unreadChatCount: $0.1) }
                         .withLatestFrom(latestChatChatRoomsSb) { $1 + [$0] }
+                        .map { $0.sorted { $0.latestChat?.date ?? 0 < $1.latestChat?.date ?? 0 } }
                         .subscribe(onNext: {
                             latestChatChatRoomsSb.onNext($0)
                         })
