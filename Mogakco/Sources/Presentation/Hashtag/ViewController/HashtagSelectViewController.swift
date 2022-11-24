@@ -188,8 +188,8 @@ extension HashtagSelectViewController: UICollectionViewDataSource {
         guard let selectedCount = collectionView.indexPathsForSelectedItems?.count else {
             return false }
         switch kind {
-        case .language, .career: return selectedCount <= 4
-        case .category: return selectedCount <= 1
+        case .language, .career: return selectedCount < 5
+        case .category: return selectedCount < 1
         }
     }
 }
