@@ -49,7 +49,7 @@ final class ProfileTabCoordinator: Coordinator, ProfileTabCoordinatorProtocol {
             editProfileUseCase: EditProfileUseCase(userRepository: userRepository)
         )
         let viewController = EditProfileViewController(viewModel: viewModel)
-        navigationController.pushViewController(viewController, animated: false)
+        navigationController.tabBarController?.navigationController?.pushViewController(viewController, animated: true)
     }
     
     func showChat() {
