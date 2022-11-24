@@ -18,7 +18,7 @@ struct ChatRoomResponseDTO: Codable {
     }
     
     private enum FieldKeys: String, CodingKey {
-        case id, studyID, messageIDs, userIDs
+        case id, studyID, userIDs
     }
     
     init(from decoder: Decoder) throws {
