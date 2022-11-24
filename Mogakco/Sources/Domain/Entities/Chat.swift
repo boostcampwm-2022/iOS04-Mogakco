@@ -12,4 +12,7 @@ struct Chat {
     let id: String
     let userID: String
     let message: String
+    let chatRoomID: String
+    let date: Int
+    let readUserIDs: [String]
 }
