@@ -10,7 +10,7 @@ import Foundation
 
 protocol StudyTabCoordinatorProtocol: AnyObject {
     func showStudyList()
-    func showStudyDetail()
+    func showStudyDetail(id: String)
     func showStudyCreate()
     func showChatDetail()
     func showCategorySelect(delegate: HashtagSelectProtocol?)
