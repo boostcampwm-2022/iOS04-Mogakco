@@ -23,6 +23,7 @@ final class TabCoordinator: Coordinator {
     func start() {
         setRootViewControllers()
         setChildCoordinators()
+        tabBarController.tabBar.tintColor = .mogakcoColor.primaryDefault
         navigationController.viewControllers = [tabBarController]
     }
     
