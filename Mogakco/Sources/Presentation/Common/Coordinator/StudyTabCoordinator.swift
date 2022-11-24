@@ -60,8 +60,8 @@ final class StudyTabCoordinator: Coordinator, StudyTabCoordinatorProtocol {
             hashtagUseCase: hashtagUseCase,
             userUseCase: userUseCase
         )
-        let studyDetailViewController = StudyDetailViewController(viewModel: viewModel)
-        navigationController.pushViewController(studyDetailViewController, animated: true)
+        let viewController = StudyDetailViewController(viewModel: viewModel)
+        navigationController.tabBarController?.navigationController?.pushViewController(viewController, animated: true)
     }
     
     func showStudyCreate() {
@@ -79,7 +79,7 @@ final class StudyTabCoordinator: Coordinator, StudyTabCoordinatorProtocol {
                 )
             )
         )
-        navigationController.pushViewController(viewController, animated: true)
+        navigationController.tabBarController?.navigationController?.pushViewController(viewController, animated: true)
     }
     
     func showChatDetail() {
