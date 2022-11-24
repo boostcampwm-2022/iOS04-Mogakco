@@ -11,4 +11,5 @@ import RxSwift
 protocol ChatRoomDataSourceProtocol {
     func list() -> Observable<Documents<[ChatRoomResponseDTO]>>
     func chats(id: String) -> Observable<Documents<[ChatResponseDTO]>>
+    func create(request: CreateChatRoomRequestDTO) -> Observable<ChatRoomResponseDTO>
 }
