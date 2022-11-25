@@ -17,9 +17,32 @@ struct StudyRepository: StudyRepositoryProtocol {
         self.dataSource = dataSource
     }
     
-    func list() -> Observable<[Study]> {
+    func list(sort: StudySort, filters: [StudyFilter]) -> Observable<[Study]> {
         return dataSource.list()
             .map { $0.documents.map { $0.toDomain() } }
+            .map { studys -> [Study] in
+                switch sort {
+                case .latest:
+                    return studys.sorted { $0.date < $1.date }
+                case .oldest:
+                    return studys.sorted { $0.date > $1.date }
+                }
+            }
+            .map { studys -> [Study] in
+                return studys
+                    .filter { study in
+                        return !filters
+                            .map { filter in
+                                switch filter {
+                                case .languages(let languages):
+                                    return study.languages.allContains(languages)
+                                case .category(let category):
+                                    return study.category == category
+                                }
+                            }
+                            .contains(false)
+                    }
+            }
     }
     
     func list(ids: [String]) -> Observable<[Study]> {
