@@ -69,7 +69,7 @@ final class StudyDetailViewModel: ViewModel {
         studyDetailLoad
             .withUnretained(self)
             .flatMap {
-                return $0.0.hashtagUseCase.loadTagByString(kind: .language, tagTitle: $0.1.languages)
+                return $0.0.hashtagUseCase.loadHashtagByString(kind: .language, tagTitle: $0.1.languages)
             }
             .subscribe(onNext: { [weak self] in
                 self?.languages.onNext($0)
