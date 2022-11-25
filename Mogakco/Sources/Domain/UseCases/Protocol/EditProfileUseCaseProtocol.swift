@@ -12,4 +12,7 @@ import RxSwift
 
 protocol EditProfileUseCaseProtocol {
     func editProfile(name: String, introduce: String, image: UIImage) -> Observable<Void>
+    func editLanguages(languages: [String]) -> Observable<Void>
+    func editCareers(careers: [String]) -> Observable<Void>
+    func editCategorys(categorys: [String]) -> Observable<Void>
 }
