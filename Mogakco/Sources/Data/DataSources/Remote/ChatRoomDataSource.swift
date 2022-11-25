@@ -27,10 +27,17 @@ struct ChatRoomDataSource: ChatRoomDataSourceProtocol {
     func create(request: CreateChatRoomRequestDTO) -> Observable<ChatRoomResponseDTO> {
         return provider.request(ChatRoomTarget.create(request))
     }
+    
+    func updateIDs(id: String, request: UpdateUserIDRequestDTO) -> Observable<ChatRoomResponseDTO> {
+        return provider.request(StudyTarget.updateIDs(id, request))
+    }
 }
 
 enum ChatRoomTarget {
-    case list, chats(String), create(CreateChatRoomRequestDTO)
+    case list
+    case chats(String)
+    case create(CreateChatRoomRequestDTO)
+    case updateIDs(String, UpdateUserIDRequestDTO)
 }
 
 extension ChatRoomTarget: TargetType {
@@ -44,6 +51,8 @@ extension ChatRoomTarget: TargetType {
             return .get
         case .create:
             return .post
+        case .updateIDs:
+            return .patch
         }
     }
     
@@ -61,6 +70,9 @@ extension ChatRoomTarget: TargetType {
             return "/\(id)/chats"
         case let .create(request):
             return "/?documentId=\(request.id.value)"
+        case .updateIDs(let id, _):
+            return "/\(id)"
+            + "/?updateMask.fieldPaths=userIDs"
         }
     }
     
@@ -69,6 +81,8 @@ extension ChatRoomTarget: TargetType {
         case .list, .chats:
             return nil
         case let .create(request):
+            return .body(request)
+        case .updateIDs(_, let request):
             return .body(request)
         }
     }

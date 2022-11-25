@@ -81,7 +81,7 @@ enum UserTarget {
     case editLanguages(String, EditLanguagesRequestDTO)
     case editCareers(String, EditCareersRequestDTO)
     case editCategorys(String, EditCategorysRequestDTO)
-    case updateIDs(String, UpdateStudyIDRequestDTO)
+    case updateIDs(String, UpdateStudyIDsRequestDTO)
 }
 
 extension UserTarget: TargetType {
