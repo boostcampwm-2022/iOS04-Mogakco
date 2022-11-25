@@ -62,15 +62,34 @@ final class EditProfiileViewModel: ViewModel {
     func transform(input: Input) -> Output {
         let type = BehaviorSubject<EditType>(value: type)
         let user = BehaviorSubject<User?>(value: nil)
-        let name = Observable.merge(
-            user.compactMap { $0?.name },
-            input.name
-        )
-        let introduce = Observable.merge(
-            user.compactMap { $0?.introduce },
-            input.introduce
-        )
-        let image = Observable.merge(
+        let name = BehaviorSubject<String>(value: "")
+        let introduce = BehaviorSubject<String>(value: "")
+        let image = BehaviorSubject<UIImage>(value: Image.profileDefault)
+        let inputValidation = BehaviorSubject<Bool>(value: false)
+        
+        type
+            .filter { $0 == .edit }
+            .withUnretained(self)
+            .flatMap { $0.0.profileUseCase.profile() }
+            .subscribe(onNext: {
+                user.onNext($0)
+            })
+            .disposed(by: disposeBag)
+        
+        Observable.merge(user.compactMap { $0?.name }, input.name)
+            .bind(to: name)
+            .disposed(by: disposeBag)
+        
+        name
+            .map { (2...10).contains($0.count) }
+            .bind(to: inputValidation)
+            .disposed(by: disposeBag)
+          
+        Observable.merge(user.compactMap { $0?.introduce }, input.introduce)
+            .bind(to: introduce)
+            .disposed(by: disposeBag)
+        
+        Observable.merge(
             user
                 .compactMap { $0?.profileImageURLString }
                 .compactMap { URL(string: $0) }
@@ -80,15 +99,7 @@ final class EditProfiileViewModel: ViewModel {
                 .compactMap { UIImage(data: $0) },
             input.selectedProfileImage
         )
-        let inputValidation = name.map { (2...10).contains($0.count) }
-
-        type
-            .filter { $0 == .edit }
-            .withUnretained(self)
-            .flatMap { $0.0.profileUseCase.profile() }
-            .subscribe(onNext: {
-                user.onNext($0)
-            })
+            .bind(to: image)
             .disposed(by: disposeBag)
 
         input
@@ -103,8 +114,6 @@ final class EditProfiileViewModel: ViewModel {
             .withUnretained(self)
             .subscribe(onNext: { viewModel, _ in
                 viewModel.coordinator?.pop(animated: true)
-            }, onError: { error in
-                print("Edit Error \(error.localizedDescription)")
             })
             .disposed(by: disposeBag)
     
@@ -113,17 +122,9 @@ final class EditProfiileViewModel: ViewModel {
             .withLatestFrom(type)
             .map { $0 == .edit }
             .filter { !$0 }
-            .withLatestFrom( Observable.combineLatest(input.name, input.introduce, input.selectedProfileImage) )
-            .subscribe(onNext: { profile in
-                if let coordinator = self.coordinator as? AdditionalSignupCoordinator,
-                   case let EditType.create(passwordProps) = self.type {
-                    let profileProps = passwordProps.toProfileProps(
-                        name: profile.0,
-                        introduce: profile.1,
-                        profileImage: profile.2
-                    )
-                    coordinator.showLanguage(profileProps: profileProps)
-                }
+            .withLatestFrom( Observable.combineLatest(input.name, input.introduce, image) )
+            .subscribe(onNext: { [weak self] name, introduce, image in
+                self?.pushLanguage(name: name, introduce: introduce, image: image)
             })
             .disposed(by: disposeBag)
         
@@ -133,5 +134,14 @@ final class EditProfiileViewModel: ViewModel {
             originProfileImage: image.asObservable(),
             inputValidation: inputValidation.asObservable()
         )
+    }
+    
+    private func pushLanguage(name: String, introduce: String, image: UIImage) {
+        guard let coordinator = self.coordinator as? AdditionalSignupCoordinator,
+              case let EditType.create(passwordProps) = self.type else {
+            return
+        }
+        let profileProps = passwordProps.toProfileProps(name: name, introduce: introduce, profileImage: image)
+        coordinator.showLanguage(profileProps: profileProps)
     }
 }
