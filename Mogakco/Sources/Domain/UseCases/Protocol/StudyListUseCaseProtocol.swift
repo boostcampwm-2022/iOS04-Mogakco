@@ -9,5 +9,5 @@
 import RxSwift
 
 protocol StudyListUseCaseProtocol {
-    func list() -> Observable<[Study]>
+    func list(sort: StudySort, filters: [StudyFilter]) -> Observable<[Study]>
 }
