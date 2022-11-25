@@ -33,6 +33,18 @@ struct RemoteUserDataSource: RemoteUserDataSourceProtocol {
         return provider.request(UserTarget.editProfile(id, request))
     }
     
+    func editLanguages(id: String, request: EditLanguagesRequestDTO) -> Observable<UserResponseDTO> {
+        return provider.request(UserTarget.editLanguages(id, request))
+    }
+    
+    func editCareers(id: String, request: EditCareersRequestDTO) -> Observable<UserResponseDTO> {
+        return provider.request(UserTarget.editCareers(id, request))
+    }
+    
+    func editCategorys(id: String, request: EditCategorysRequestDTO) -> Observable<UserResponseDTO> {
+        return provider.request(UserTarget.editCategorys(id, request))
+    }
+    
     func uploadProfileImage(id: String, imageData: Data) -> Observable<URL> {
         return Observable.create { emitter in
             let ref = Storage.storage().reference().child("User").child(id).child("profileImageURL")
@@ -62,6 +74,9 @@ enum UserTarget {
     case createUser(UserRequestDTO)
     case users
     case editProfile(String, EditProfileRequestDTO)
+    case editLanguages(String, EditLanguagesRequestDTO)
+    case editCareers(String, EditCareersRequestDTO)
+    case editCategorys(String, EditCategorysRequestDTO)
 }
 
 extension UserTarget: TargetType {
@@ -71,13 +86,11 @@ extension UserTarget: TargetType {
     
     var method: HTTPMethod {
         switch self {
-        case .user:
-            return .get
-        case .users:
+        case .user, .users:
             return .get
         case .createUser:
             return .post
-        case .editProfile:
+        case .editProfile, .editLanguages, .editCareers, .editCategorys:
             return .patch
         }
     }
@@ -101,6 +114,12 @@ extension UserTarget: TargetType {
             + "/?updateMask.fieldPaths=name"
             + "&updateMask.fieldPaths=introduce"
             + "&updateMask.fieldPaths=profileImageURLString"
+        case let .editLanguages(id, _):
+            return "/\(id)" + "/?updateMask.fieldPaths=languages"
+        case let .editCareers(id, _):
+            return "/\(id)" + "/?updateMask.fieldPaths=careers"
+        case let .editCategorys(id, _):
+            return "/\(id)" + "/?updateMask.fieldPaths=categorys"
         }
     }
     
@@ -113,6 +132,12 @@ extension UserTarget: TargetType {
         case let .createUser(request):
             return .body(request)
         case let .editProfile(_, request):
+            return .body(request)
+        case let .editLanguages(_, request):
+            return .body(request)
+        case let .editCareers(_, request):
+            return .body(request)
+        case let .editCategorys(_, request):
             return .body(request)
         }
     }
