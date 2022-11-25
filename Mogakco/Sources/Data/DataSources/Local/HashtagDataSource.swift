@@ -35,7 +35,7 @@ struct HashtagDataSource: HashtagDataSourceProtocol {
         return Category.allCases
     }
     
-    func loadTagByString(kind: KindHashtag, tagTitle: [String]) -> Observable<[Hashtag]> {
+    func loadHashtagByString(kind: KindHashtag, tagTitle: [String]) -> Observable<[Hashtag]> {
         return Observable.create { emitter in
             let tagList: [Hashtag]
             var selectedTags: [Hashtag] = []
