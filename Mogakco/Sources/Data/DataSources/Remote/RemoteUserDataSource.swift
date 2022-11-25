@@ -67,6 +67,10 @@ struct RemoteUserDataSource: RemoteUserDataSourceProtocol {
             return Disposables.create()
         }
     }
+    
+    func updateIDs(id: String, request: UpdateStudyIDRequestDTO) -> Observable<UserResponseDTO> {
+        return provider.request(UserTarget.updateIDs(id, request))
+    }
 }
 
 enum UserTarget {
@@ -77,6 +81,7 @@ enum UserTarget {
     case editLanguages(String, EditLanguagesRequestDTO)
     case editCareers(String, EditCareersRequestDTO)
     case editCategorys(String, EditCategorysRequestDTO)
+    case updateIDs(String, UpdateStudyIDRequestDTO)
 }
 
 extension UserTarget: TargetType {
@@ -91,6 +96,8 @@ extension UserTarget: TargetType {
         case .createUser:
             return .post
         case .editProfile, .editLanguages, .editCareers, .editCategorys:
+            return .patch
+        case .updateIDs:
             return .patch
         }
     }
@@ -120,6 +127,10 @@ extension UserTarget: TargetType {
             return "/\(id)" + "/?updateMask.fieldPaths=careers"
         case let .editCategorys(id, _):
             return "/\(id)" + "/?updateMask.fieldPaths=categorys"
+        case let .updateIDs(id, _):
+            return "/\(id)"
+            + "/?updateMask.fieldPaths=chatRoomIDs"
+            + "&updateMask.fieldPaths=studyIDs"
         }
     }
     
@@ -138,6 +149,8 @@ extension UserTarget: TargetType {
         case let .editCareers(_, request):
             return .body(request)
         case let .editCategorys(_, request):
+            return .body(request)
+        case let .updateIDs(_, request):
             return .body(request)
         }
     }
