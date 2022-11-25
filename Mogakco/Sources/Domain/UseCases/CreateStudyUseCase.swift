@@ -34,7 +34,7 @@ struct CreateStudyUseCase: CreateStudyUseCaseProtocol {
                 userRepository.updateIDs(
                     id: $0.id,
                     chatRoomIDs: $0.chatRoomIDs + [study.id],
-                    studyIDs: $0.chatRoomIDs + [study.id]
+                    studyIDs: $0.studyIDs + [study.id]
                 )
             }
             .map { _ in return () }
