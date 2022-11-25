@@ -119,7 +119,7 @@ final class StudyDetailViewModel: ViewModel {
         return try? languages.value()[index]
     }
     
-    func  participantCellInfp(index: Int) -> User? {
+    func  participantCellInfo(index: Int) -> User? {
         return try? participants.value()[index]
     }
 }
