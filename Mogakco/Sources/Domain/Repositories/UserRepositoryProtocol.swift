@@ -21,4 +21,5 @@ protocol UserRepositoryProtocol {
     func editLanguages(id: String, languages: [String]) -> Observable<User>
     func editCareers(id: String, careers: [String]) -> Observable<User>
     func editCategorys(id: String, categorys: [String]) -> Observable<User>
+    func updateIDs(id: String, chatRoomIDs: [String], studyIDs: [String]) -> Observable<User>
 }
