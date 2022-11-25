@@ -60,6 +60,12 @@ struct ChatRoomRepository: ChatRoomRepositoryProtocol {
         return latestChatChatRoomsSb.asObservable()
     }
     
+    func updateIDs(id: String, userIDs: [String]) -> Observable<ChatRoom> {
+        let updateDTO = UpdateUserIDRequestDTO(userIDs: userIDs)
+        return chatRoomDataSource.updateIDs(id: id, request: updateDTO)
+            .map { $0.toDomain() }
+    }
+    
     private func unreadChatCount(id: String, chats: [Chat]) -> Int {
         var count = 0
         for chat in chats {
