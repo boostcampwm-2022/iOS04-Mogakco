@@ -29,7 +29,7 @@ struct ChatRoomDataSource: ChatRoomDataSourceProtocol {
     }
     
     func updateIDs(id: String, request: UpdateUserIDRequestDTO) -> Observable<ChatRoomResponseDTO> {
-        return provider.request(StudyTarget.updateIDs(id, request))
+        return provider.request(ChatRoomTarget.updateIDs(id, request))
     }
 }
 
