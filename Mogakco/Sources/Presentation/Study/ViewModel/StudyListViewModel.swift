@@ -41,7 +41,7 @@ final class StudyListViewModel: ViewModel {
         
         input.viewWillAppear
             .withUnretained(self)
-            .flatMap { $0.0.useCase.list() }
+            .flatMap { $0.0.useCase.list(sort: .latest, filters: []) }
             .bind(to: studyList)
             .disposed(by: disposeBag)
         
@@ -65,7 +65,7 @@ final class StudyListViewModel: ViewModel {
                 viewModel.coordinator?.showStudyDetail(id: id)
             }
             .disposed(by: disposeBag)
-        
+ 
         return Output(studyList: studyList)
     }
 }

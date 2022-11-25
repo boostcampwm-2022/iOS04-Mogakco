@@ -16,7 +16,7 @@ struct StudyListUseCase: StudyListUseCaseProtocol {
         self.repository = repository
     }
     
-    func list() -> Observable<[Study]> {
-        return repository.list()
+    func list(sort: StudySort, filters: [StudyFilter]) -> Observable<[Study]> {
+        return repository.list(sort: sort, filters: filters)
     }
 }
