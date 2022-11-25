@@ -10,9 +10,7 @@ import RxSwift
 import UIKit
 
 class StudyRatingView: UIView {
-    private let iconImageView = UIImageView().then {
-        $0.image = MogakcoAsset.algorithm.image
-    }
+    private let iconImageView = UIImageView()
 
     private let contentLabel = UILabel().then {
         $0.font = .mogakcoFont.smallBold
@@ -39,6 +37,12 @@ class StudyRatingView: UIView {
     @available(*, unavailable)
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    func configure(studyRating: (String, Int)) {
+        iconImageView.image = UIImage(named: studyRating.0)
+        contentLabel.text = studyRating.0
+        countLabel.text = "+\(studyRating.1)"
     }
 
     private func attribute() {

@@ -51,7 +51,7 @@ final class StudyTabCoordinator: Coordinator, StudyTabCoordinatorProtocol {
             localUserDataSource: localUserDataSource,
             remoteUserDataSource: remoteUserDataSource
         )
-        let userUseCase = UserUseCase(userRepository: userRepository)
+        let userUseCase = UserUseCase(userRepository: userRepository, studyRepository: studyRepository)
         
         let viewModel = StudyDetailViewModel(
             studyID: id,
