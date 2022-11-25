@@ -56,10 +56,21 @@ struct UserRepository: UserRepositoryProtocol {
             .map { $0.toDomain() }
     }
     
-    func editProfile(id: String, name: String, introduce: String, imageData: Data) -> Observable<User> {
+    func editProfile(
+        id: String,
+        name: String,
+        introduce: String,
+        imageData: Data
+    ) -> Observable<User> {
         return remoteUserDataSource.uploadProfileImage(id: id, imageData: imageData)
             .map { $0.absoluteString }
-            .map { EditProfileRequestDTO(name: name, introduce: introduce, profileImageURLString: $0) }
+            .map {
+                EditProfileRequestDTO(
+                    name: name,
+                    introduce: introduce,
+                    profileImageURLString: $0
+                )
+            }
             .flatMap { remoteUserDataSource.editProfile(id: id, request: $0) }
             .map { $0.toDomain() }
     }
@@ -79,6 +90,16 @@ struct UserRepository: UserRepositoryProtocol {
     func editCategorys(id: String, categorys: [String]) -> Observable<User> {
         let request = EditCategorysRequestDTO(categorys: categorys)
         return remoteUserDataSource.editCategorys(id: id, request: request)
+            .map { $0.toDomain() }
+    }
+    
+    func updateIDs(
+        id: String,
+        chatRoomIDs: [String],
+        studyIDs: [String]
+    ) -> Observable<User> {
+        let request = UpdateStudyIDRequestDTO(chatRoomIDs: chatRoomIDs, studyIDs: studyIDs)
+        return remoteUserDataSource.updateIDs(id: id, request: request)
             .map { $0.toDomain() }
     }
 }
