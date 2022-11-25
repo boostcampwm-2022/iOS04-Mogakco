@@ -63,5 +63,23 @@ struct UserRepository: UserRepositoryProtocol {
             .flatMap { remoteUserDataSource.editProfile(id: id, request: $0) }
             .map { $0.toDomain() }
     }
+    
+    func editLanguages(id: String, languages: [String]) -> Observable<User> {
+        let request = EditLanguagesRequestDTO(languages: languages)
+        return remoteUserDataSource.editLanguages(id: id, request: request)
+            .map { $0.toDomain() }
+    }
+    
+    func editCareers(id: String, careers: [String]) -> Observable<User> {
+        let request = EditCareersRequestDTO(careers: careers)
+        return remoteUserDataSource.editCareers(id: id, request: request)
+            .map { $0.toDomain() }
+    }
+    
+    func editCategorys(id: String, categorys: [String]) -> Observable<User> {
+        let request = EditCategorysRequestDTO(categorys: categorys)
+        return remoteUserDataSource.editCategorys(id: id, request: request)
+            .map { $0.toDomain() }
+    }
 }
  
