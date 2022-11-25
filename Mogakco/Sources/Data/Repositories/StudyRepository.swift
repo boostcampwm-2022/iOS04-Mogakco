@@ -23,9 +23,9 @@ struct StudyRepository: StudyRepositoryProtocol {
             .map { studys -> [Study] in
                 switch sort {
                 case .latest:
-                    return studys.sorted { $0.date < $1.date }
-                case .oldest:
                     return studys.sorted { $0.date > $1.date }
+                case .oldest:
+                    return studys.sorted { $0.date < $1.date }
                 }
             }
             .map { studys -> [Study] in
