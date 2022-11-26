@@ -42,7 +42,7 @@ final class ProfileViewModel: ViewModel {
         let languages: Observable<[String]>
         let careers: Observable<[String]>
         let categorys: Observable<[String]>
-        let studyRatingList: Observable<[String: Int]>
+        let studyRatingList: Observable<[(String, Int)]>
     }
 
     var disposeBag = DisposeBag()
@@ -76,14 +76,6 @@ final class ProfileViewModel: ViewModel {
                     return viewModel.userUseCase.user(id: user.id)
                 }
             }
-        
-        let studyRatingList = user
-            .map { $0.id }
-            .withUnretained(self)
-            .flatMap { $0.0.userUseCase.studyList(id: $0.1) }
-            .map { $0.map { $0.category } }
-            .map { $0.countDictionary } // TODO: sort
-        
 
         return Output(
             isMyProfile: isMyProfile.asObservable(),
@@ -98,7 +90,7 @@ final class ProfileViewModel: ViewModel {
             languages: user.map { $0.languages }.asObservable(),
             careers: user.map { $0.careers }.asObservable(),
             categorys: user.map { $0.categorys }.asObservable(),
-            studyRatingList: studyRatingList.asObservable()
+            studyRatingList: userUseCase.myStudyRatingList().asObservable()
         )
     }
     

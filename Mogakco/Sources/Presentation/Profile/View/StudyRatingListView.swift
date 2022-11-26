@@ -49,7 +49,7 @@ class StudyRatingListView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configure(studyRatingList: [String: Int]) {
+    func configure(studyRatingList: [(String, Int)]) {
         let studyRatingViews = [firstStudyRatingView, secondStudyRatingView, thirdStudyRatingView]
         zip(studyRatingList, studyRatingViews).forEach { studyRating, studyRatingView in
             studyRatingView.configure(studyRating: studyRating)
