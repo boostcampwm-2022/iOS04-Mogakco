@@ -1,5 +1,5 @@
 //
-//  UpdateUserIDRequestDTO.swift.swift
+//  UpdateUserIDsRequestDTO.swift.swift
 //  Mogakco
 //
 //  Created by 신소민 on 2022/11/26.
@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct UpdateUserIDRequestDTO: Encodable {
+struct UpdateUserIDsRequestDTO: Encodable {
     private let userIDs: ArrayValue<StringValue>
     
     private enum RootKey: String, CodingKey {
