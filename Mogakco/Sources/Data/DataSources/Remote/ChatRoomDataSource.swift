@@ -28,7 +28,7 @@ struct ChatRoomDataSource: ChatRoomDataSourceProtocol {
         return provider.request(ChatRoomTarget.create(request))
     }
     
-    func updateIDs(id: String, request: UpdateUserIDRequestDTO) -> Observable<ChatRoomResponseDTO> {
+    func updateIDs(id: String, request: UpdateUserIDsRequestDTO) -> Observable<ChatRoomResponseDTO> {
         return provider.request(ChatRoomTarget.updateIDs(id, request))
     }
 }
@@ -37,7 +37,7 @@ enum ChatRoomTarget {
     case list
     case chats(String)
     case create(CreateChatRoomRequestDTO)
-    case updateIDs(String, UpdateUserIDRequestDTO)
+    case updateIDs(String, UpdateUserIDsRequestDTO)
 }
 
 extension ChatRoomTarget: TargetType {

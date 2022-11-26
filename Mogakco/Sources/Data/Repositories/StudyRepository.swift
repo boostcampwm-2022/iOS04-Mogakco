@@ -63,7 +63,7 @@ struct StudyRepository: StudyRepositoryProtocol {
     }
     
     func updateIDs(id: String, userIDs: [String]) -> Observable<Study> {
-        let updateDTO = UpdateUserIDRequestDTO(userIDs: userIDs)
+        let updateDTO = UpdateUserIDsRequestDTO(userIDs: userIDs)
         return dataSource.updateIDs(id: id, request: updateDTO)
             .map { $0.toDomain() }
     }

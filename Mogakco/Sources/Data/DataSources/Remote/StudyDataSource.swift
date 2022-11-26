@@ -29,7 +29,7 @@ struct StudyDataSource: StudyDataSourceProtocol {
         return provider.request(StudyTarget.create(study))
     }
     
-    func updateIDs(id: String, request: UpdateUserIDRequestDTO) -> Observable<StudyResponseDTO> {
+    func updateIDs(id: String, request: UpdateUserIDsRequestDTO) -> Observable<StudyResponseDTO> {
         return provider.request(StudyTarget.updateIDs(id, request))
     }
 }
@@ -38,7 +38,7 @@ enum StudyTarget {
     case list
     case detail(String)
     case create(StudyRequestDTO)
-    case updateIDs(String, UpdateUserIDRequestDTO)
+    case updateIDs(String, UpdateUserIDsRequestDTO)
 }
 
 extension StudyTarget: TargetType {
