@@ -12,5 +12,5 @@ protocol StudyDataSourceProtocol {
     func list() -> Observable<Documents<[StudyResponseDTO]>>
     func detail(id: String) -> Observable<StudyResponseDTO>
     func create(study: StudyRequestDTO) -> Observable<StudyResponseDTO>
-    func updateIDs(id: String, request: UpdateUserIDRequestDTO) -> Observable<StudyResponseDTO>
+    func updateIDs(id: String, request: UpdateUserIDsRequestDTO) -> Observable<StudyResponseDTO>
 }
