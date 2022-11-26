@@ -25,7 +25,7 @@ struct CreateStudyUseCase: CreateStudyUseCaseProtocol {
     func create(study: Study) -> Observable<Void> {
         var study = study
         return userRepository.load()
-            .compactMap { $0.id }
+            .map { $0.id }
             .map { study.userIDs.append($0) }
             .flatMap { studyRepository.create(study: study) } // 1. 스터디 생성
 //            .flatMap { } // 2. 채팅방 생성
