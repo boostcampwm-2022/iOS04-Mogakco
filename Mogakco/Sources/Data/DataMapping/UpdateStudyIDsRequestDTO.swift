@@ -1,5 +1,5 @@
 //
-//  UpdateStudyIDRequestDTO.swift
+//  UpdateStudyIDsRequestDTO.swift
 //  Mogakco
 //
 //  Created by 신소민 on 2022/11/26.
@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct UpdateStudyIDRequestDTO: Encodable {
+struct UpdateStudyIDsRequestDTO: Encodable {
     private let chatRoomIDs: ArrayValue<StringValue>
     private let studyIDs: ArrayValue<StringValue>
     
