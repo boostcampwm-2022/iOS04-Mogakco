@@ -68,7 +68,7 @@ struct RemoteUserDataSource: RemoteUserDataSourceProtocol {
         }
     }
     
-    func updateIDs(id: String, request: UpdateStudyIDRequestDTO) -> Observable<UserResponseDTO> {
+    func updateIDs(id: String, request: UpdateStudyIDsRequestDTO) -> Observable<UserResponseDTO> {
         return provider.request(UserTarget.updateIDs(id, request))
     }
 }

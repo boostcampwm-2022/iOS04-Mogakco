@@ -98,7 +98,7 @@ struct UserRepository: UserRepositoryProtocol {
         chatRoomIDs: [String],
         studyIDs: [String]
     ) -> Observable<User> {
-        let request = UpdateStudyIDRequestDTO(chatRoomIDs: chatRoomIDs, studyIDs: studyIDs)
+        let request = UpdateStudyIDsRequestDTO(chatRoomIDs: chatRoomIDs, studyIDs: studyIDs)
         return remoteUserDataSource.updateIDs(id: id, request: request)
             .map { $0.toDomain() }
     }
