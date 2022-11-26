@@ -12,11 +12,7 @@ extension Array where Element: Hashable {
     var countDictionary: [Element: Int] {
         var dictionary: [Element: Int] = [:]
         self.forEach { element in
-            if let count = dictionary[element] {
-                dictionary[element] = count + 1
-            } else {
-                dictionary[element] = 1
-            }
+            dictionary[element, default: 0] += 1
         }
         return dictionary
     }
