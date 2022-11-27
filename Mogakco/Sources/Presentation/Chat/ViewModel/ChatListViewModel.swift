@@ -14,7 +14,7 @@ import RxSwift
 final class ChatListViewModel: ViewModel {
     
     struct Input {
-        let selectedChatRoom: Observable<Void>
+        let selectedChatRoom: Observable<ChatRoom>
     }
     
     struct Output {
@@ -38,7 +38,7 @@ final class ChatListViewModel: ViewModel {
         input
             .selectedChatRoom
             .subscribe(onNext: {
-                self.coordinator?.showChatDetail()
+                self.coordinator?.showChatDetail(chatRoomID: $0.id)
             })
             .disposed(by: disposeBag)
 
