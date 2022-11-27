@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct Chat {
+struct Chat: Codable {
     let id: String
     let userID: String
     let message: String
