@@ -32,7 +32,7 @@ final class MessageInputView: UIView {
         $0.layer.cornerRadius = 12
     }
     
-    private let placeholderLabel = UILabel().then {
+    lazy var placeholderLabel = UILabel().then {
         $0.text = "메세지를 입력해주세요."
         $0.font = UIFont.mogakcoFont.smallRegular
         $0.textColor = .lightGray
