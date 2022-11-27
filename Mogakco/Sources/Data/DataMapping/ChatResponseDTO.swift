@@ -24,6 +24,15 @@ struct ChatResponseDTO: Codable {
         case id, userID, message, chatRoomID, date, readUserIDs
     }
     
+    init(dictionary: [String: Any]) {
+        self.id = StringValue(value: dictionary["id"] as? String ?? "")
+        self.userID = StringValue(value: dictionary["userID"] as? String ?? "")
+        self.message = StringValue(value: dictionary["message"] as? String ?? "")
+        self.chatRoomID = StringValue(value: dictionary["chatRoomID"] as? String ?? "")
+        self.date = IntegerValue(value: dictionary["date"] as? String ?? "")
+        self.readUserIDs = ArrayValue(values: dictionary["readUserIDs"] as? [StringValue] ?? [StringValue(value: "")])
+    }
+    
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: RootKey.self)
         let fieldContainer = try container.nestedContainer(keyedBy: FieldKeys.self, forKey: .fields)
