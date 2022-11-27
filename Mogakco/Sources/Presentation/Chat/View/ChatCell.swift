@@ -72,11 +72,6 @@ final class ChatCell: UICollectionViewCell, Identifiable {
             $0.top.equalToSuperview()
             $0.width.lessThanOrEqualTo(250)
         }
-        
-        bubbleLeftAnchor = bubbleContainer.leftAnchor.constraint(equalTo: profileImageView.rightAnchor, constant: 12)
-        bubbleLeftAnchor.isActive = true
-
-//        bubbleRightAnchor = bubbleContainer.rightAnchor.constraint(equalTo: rightAnchor, constant: -12)
     }
     
     private func layoutTextView() {
@@ -88,12 +83,68 @@ final class ChatCell: UICollectionViewCell, Identifiable {
         }
     }
     
-    private func configureMessage() {
-        guard let message = message else { return }
-        let viewModel = MessageViewModel(message: message)
+    private func configureChat() {
+        guard let chat = chat else { return }
+        let chatDataSource = ChatDataSource()
+        let localUserDataSource = UserDefaultsUserDataSource()
+        let remoteUserDataSource = RemoteUserDataSource(provider: Provider.default)
         
-        bubbleContainer.backgroundColor = viewModel.messageBackgroundColor
-        textView.textColor = viewModel.messageTextColor
-        textView.text = message.text
+        let chatRepository = ChatRepository(chatDataSource: chatDataSource)
+        let userRepository = UserRepository(
+            localUserDataSource: localUserDataSource,
+            remoteUserDataSource: remoteUserDataSource
+        )
+        
+        let chatUseCase = ChatUseCase(
+            chatRepository: chatRepository,
+            userRepository: userRepository
+        )
+        
+        let viewModel = MessageViewModel(
+            chat: chat,
+            chatUseCase: chatUseCase
+        )
+        
+        let output = viewModel.transform()
+        print("@", 2)
+        output.isFromCurrentUser
+            .subscribe { [weak self] bool in
+                print("@@", bool.element)
+                
+            }.disposed(by: disposeBag)
+        print("@", 3)
+        output.isFromCurrentUser
+            .map { $0 ? UIColor.mogakcoColor.backgroundSecondary : UIColor.mogakcoColor.primaryDefault }
+            .bind(to: bubbleContainer.rx.backgroundColor)
+            .disposed(by: disposeBag)
+        print("@", 4)
+        output.isFromCurrentUser
+            .withUnretained(self)
+            .subscribe { _, bool in
+                
+                if bool {
+                    self.layoutMyBubble()
+                    print("DEBUG : true")
+                } else {
+                    self.layoutOthersBubble()
+                    print("DEBUG : false")
+                }
+            }
+            .disposed(by: disposeBag)
+        print("@", 5)
+        textView.text = chat.message
+    }
+    
+    private func layoutOthersBubble() {
+        bubbleContainer.snp.makeConstraints {
+            $0.left.equalTo(profileImageView.snp.right).offset(12)
+        }
+    }
+    
+    private func layoutMyBubble() {
+        bubbleContainer.snp.makeConstraints {
+            $0.right.equalToSuperview().inset(12)
+        }
+        profileImageView.isHidden = true
     }
 }
