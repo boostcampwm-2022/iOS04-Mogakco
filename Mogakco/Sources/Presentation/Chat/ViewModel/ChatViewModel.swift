@@ -78,22 +78,35 @@ final class ChatViewModel: ViewModel {
             .disposed(by: disposeBag)
         
         input.sendButtonDidTap
-            .subscribe(onNext: { message in
-                print(message)
-            })
-            .disposed(by: disposeBag)
-        
-        input.sendButtonDidTap
+            .withUnretained(self)
             .withLatestFrom(input.inputViewText)
             .subscribe { message in
-                inputViewText.on(message)
+                let chat = Chat(
+                    id: "me",
+                    userID: "you",
+                    message: message.element ?? "",
+                    chatRoomID: self.chatRoomID,
+                    date: 202211270600,
+                    readUserIDs: ["me"]
+                )
+
+                self.chatUseCase.send(
+                    chat: chat,
+                    to: self.chatRoomID
+                    )
+                    .subscribe { _ in
+                    sendMessage.onNext(())
+                    }
+                    .disposed(by: self.disposeBag)
             }
             .disposed(by: disposeBag)
         
         return Output(
             showChatSidebarView: showChatSidebarView,
             selectedSidebar: selectedSidebar,
-            inputViewText: inputViewText
+            inputViewText: inputViewText,
+            sendMessage: sendMessage,
+            messages: messages
         )
     }
 }
