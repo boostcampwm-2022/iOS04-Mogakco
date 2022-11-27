@@ -104,7 +104,7 @@ final class StudyDetailViewModel: ViewModel {
         input.studyJoinButtonTapped
             .subscribe(onNext: {
                 // TODO: 스터디 참가 API 바인딩 - studyUseCase -> JoinStudy()
-                print("스터디 참가")
+                self.coordinator.showChatDetail(chatRoomID: self.studyID)
             })
             .disposed(by: disposeBag)
         
