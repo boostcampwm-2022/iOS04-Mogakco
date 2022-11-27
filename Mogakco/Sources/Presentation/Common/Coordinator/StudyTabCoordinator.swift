@@ -82,8 +82,26 @@ final class StudyTabCoordinator: Coordinator, StudyTabCoordinatorProtocol {
         navigationController.tabBarController?.navigationController?.pushViewController(viewController, animated: true)
     }
     
-    func showChatDetail() {
-        let viewModel = ChatViewModel(coordinator: self)
+    func showChatDetail(chatRoomID: String) {
+        let localUserDataSource = UserDefaultsUserDataSource()
+        let remoteUserDataSource = RemoteUserDataSource(provider: Provider.default)
+        let chatDataSource = ChatDataSource()
+        
+        let chatRepository = ChatRepository(chatDataSource: chatDataSource)
+        let userRepository = UserRepository(
+            localUserDataSource: localUserDataSource,
+            remoteUserDataSource: remoteUserDataSource
+        )
+        
+        let chatUseCase = ChatUseCase(
+            chatRepository: chatRepository,
+            userRepository: userRepository
+        )
+        let viewModel = ChatViewModel(
+            coordinator: self,
+            chatUseCase: chatUseCase,
+            chatRoomID: chatRoomID
+        )
         let chatViewController = ChatViewController(viewModel: viewModel)
         navigationController.pushViewController(chatViewController, animated: true)
     }
