@@ -8,6 +8,7 @@
 
 import UIKit
 
+import RxSwift
 import Then
 
 final class ChatCell: UICollectionViewCell, Identifiable {
@@ -16,7 +17,6 @@ final class ChatCell: UICollectionViewCell, Identifiable {
     
     let textView = UITextView().then {
         $0.backgroundColor = .clear
-        $0.text = "HelloWorldHelloWorldHelloWorldHelloWorldHelloWorld"
         $0.font = UIFont.mogakcoFont.smallBold
         $0.textColor = UIColor.mogakcoColor.typographyPrimary
         $0.isScrollEnabled = false
@@ -28,12 +28,11 @@ final class ChatCell: UICollectionViewCell, Identifiable {
         $0.layer.cornerRadius = 8
     }
     
-    var message: Message? {
-        didSet { configureMessage() }
+    var chat: Chat? {
+        didSet { configureChat() }
     }
     
-    var bubbleLeftAnchor: NSLayoutConstraint!
-    var bubbleRightAnchor: NSLayoutConstraint!
+    let disposeBag = DisposeBag()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
