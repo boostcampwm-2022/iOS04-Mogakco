@@ -154,7 +154,7 @@ final class StudyDetailViewController: ViewController {
         output.studyDetail
             .subscribe(onNext: { [weak self] in
                 self?.studyTitleLabel.text = $0.title
-                self?.dateView.textLabel.text = "\($0.date.toCompactDateString())"
+                self?.dateView.textLabel.text = $0.date.toCompactDateString()
                 self?.participantsView.textLabel.text = "\($0.userIDs.count)/\($0.maxUserCount)"
                 self?.locationView.textLabel.text = $0.place
                 self?.studyInfoDescription.text = $0.content
