@@ -133,14 +133,16 @@ final class ChatViewController: ViewController {
             }
             .disposed(by: disposeBag)
         
-        viewModel.messages
+        output.messages
             .asDriver(onErrorJustReturn: [])
-            .drive(collectionView.rx.items) { collectionView, index, _ in
+            .drive(collectionView.rx.items) { collectionView, index, chat in
                 guard let cell = collectionView.dequeueReusableCell(
                     withReuseIdentifier: ChatCell.identifier,
                     for: IndexPath(row: index, section: 0)) as? ChatCell else {
                     return UICollectionViewCell()
                 }
+                cell.chat = chat
+                print("@", 6)
                 return cell
             }
             .disposed(by: disposeBag)
@@ -161,9 +163,18 @@ final class ChatViewController: ViewController {
             }
             .disposed(by: disposeBag)
         
-        output.inputViewText
-            .subscribe { [weak self] message in
-                self?.collectionView.reloadData()
+        output.sendMessage
+            .withUnretained(self)
+            .subscribe { _ in
+                self.messageInputView.messageInputTextView.text = nil
+                self.collectionView.reloadData()
+                self.collectionView.scrollToItem(
+                    at: IndexPath(
+                        row: self.collectionView.numberOfItems(inSection: 0) - 1,
+                        section: 0),
+                    at: .bottom,
+                    animated: true
+                )
             }
             .disposed(by: disposeBag)
     }
