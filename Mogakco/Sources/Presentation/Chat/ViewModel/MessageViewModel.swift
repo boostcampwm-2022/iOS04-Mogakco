@@ -13,34 +13,35 @@ import RxSwift
 
 struct MessageViewModel {
     
-    private let message: Message
-    
-    var messageBackgroundColor: UIColor? {
-        return message.isFromCurrentUser ? .mogakcoColor.primarySecondary : .mogakcoColor.backgroundSecondary
+    struct Input {
     }
     
-    var messageTextColor: UIColor? {
-        return .mogakcoColor.typographyPrimary
+    struct Output {
+        let isFromCurrentUser: Observable<Bool>
     }
     
-    var rightAnchorActive: Bool {
-        return message.isFromCurrentUser
+    let chat: Chat
+    private let chatUseCase: ChatUseCaseProtocol
+    private let disposeBag = DisposeBag()
+    
+    init(
+        chat: Chat,
+        chatUseCase: ChatUseCaseProtocol
+    ) {
+        self.chat = chat
+        self.chatUseCase = chatUseCase
     }
     
-    var leftAnchorActive: Bool {
-        return !message.isFromCurrentUser
+    func transform() -> Output {
+        let isFromCurrentUser = PublishSubject<Bool>()
+        
+        chatUseCase.myProfile()
+            .map { print("@", 1); return $0.id == chat.id }
+            .subscribe(isFromCurrentUser)
+            .disposed(by: disposeBag)
+        
+        return Output(
+            isFromCurrentUser: isFromCurrentUser
+        )
     }
-    
-    var shouldHideProfileImage: Bool {
-        return message.isFromCurrentUser
-    }
-    
-    init(message: Message) {
-        self.message = message
-    }
-}
-
-struct Message {
-    let isFromCurrentUser: Bool
-    let text: String
 }
