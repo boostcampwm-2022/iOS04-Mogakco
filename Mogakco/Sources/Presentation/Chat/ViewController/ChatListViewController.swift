@@ -62,7 +62,7 @@ final class ChatListViewController: UIViewController {
     
     func bind() {
         let input = ChatListViewModel.Input(
-            selectedChatRoom: chatRoomTableView.rx.itemSelected.map { _ in }.asObservable()
+            selectedChatRoom: chatRoomTableView.rx.modelSelected(ChatRoom.self).asObservable()
         )
         let output = viewModel.transform(input: input)
         

@@ -10,5 +10,5 @@ import Foundation
 
 protocol ChatTabCoordinatorProtocol: AnyObject {
     func showChatList()
-    func showChatDetail()
+    func showChatDetail(chatRoomID: String)
 }
