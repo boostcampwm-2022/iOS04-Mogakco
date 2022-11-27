@@ -25,16 +25,23 @@ final class ChatViewModel: ViewModel {
         let showChatSidebarView: Observable<Void>
         let selectedSidebar: Observable<ChatSidebarMenu>
         let inputViewText: Observable<String>
+        let sendMessage: Observable<Void>
+        let messages: Observable<[Chat]>
     }
     
-    let messages = Observable.of([1, 2, 3, 4, 5,
-                                  6, 7, 8, 9, 10, 11, 12,
-                                  13, 14])
     var disposeBag = DisposeBag()
     weak var coordinator: Coordinator?
+    private let chatUseCase: ChatUseCaseProtocol
+    let chatRoomID: String
     
-    init(coordinator: Coordinator) {
+    init(
+        coordinator: Coordinator,
+        chatUseCase: ChatUseCaseProtocol,
+        chatRoomID: String
+    ) {
         self.coordinator = coordinator
+        self.chatUseCase = chatUseCase
+        self.chatRoomID = chatRoomID
     }
     
     func transform(input: Input) -> Output {
