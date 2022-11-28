@@ -22,6 +22,24 @@ enum Category: String, CaseIterable, Hashtag {
     case interview
     case machineLearning
     
+    static func idToHashtag(id: String) -> Hashtag? {
+        switch id {
+        case "ai": return Category.artificialIntelligence
+        case "algorithm": return Category.algorithm
+        case "android": return Category.android
+        case "backend": return Category.backend
+        case "bigdata": return Category.bigdata
+        case "contest": return Category.contest
+        case "cs": return Category.computerScience
+        case "frontend": return Category.frontend
+        case "hackathon": return Category.hackathon
+        case "ios": return Category.iOS
+        case "interview": return Category.interview
+        case "machineLearning": return Category.machineLearning
+        default: return nil
+        }
+    }
+    
     var id: String {
         return self.rawValue
     }
