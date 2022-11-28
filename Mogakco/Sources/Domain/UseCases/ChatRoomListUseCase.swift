@@ -31,8 +31,6 @@ struct ChatRoomListUseCase: ChatRoomListUseCaseProtocol {
     func chatRooms() -> Observable<[ChatRoom]> {
         return userRepository
             .load()
-            .flatMap { user in
-                return chatRoomRepository.list(id: user.id, ids: user.chatRoomIDs)
-            }
+            .flatMap { chatRoomRepository.list(id: $0.id, ids: $0.chatRoomIDs) }
     }
 }
