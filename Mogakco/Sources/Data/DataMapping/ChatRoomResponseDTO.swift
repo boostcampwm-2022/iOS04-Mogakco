@@ -35,7 +35,8 @@ struct ChatRoomResponseDTO: Codable {
             studyID: studyID?.value,
             userIDs: userIDs.arrayValue.map { $0.value }.flatMap { $0.map { $0.value } },
             latestChat: nil,
-            unreadChatCount: nil
+            unreadChatCount: nil,
+            users: nil
         )
     }
 }

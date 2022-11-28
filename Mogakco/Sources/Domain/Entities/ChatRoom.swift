@@ -14,6 +14,7 @@ struct ChatRoom {
     let userIDs: [String]
     let latestChat: Chat?
     let unreadChatCount: Int?
+    let users: [User]?
 }
 
 extension ChatRoom {
@@ -23,5 +24,15 @@ extension ChatRoom {
         self.userIDs = chatRoom.userIDs
         self.latestChat = latestChat
         self.unreadChatCount = unreadChatCount
+        self.users = nil
+    }
+    
+    init(chatRoom: ChatRoom, users: [User]) {
+        self.id = chatRoom.id
+        self.studyID = chatRoom.studyID
+        self.userIDs = chatRoom.userIDs
+        self.latestChat = chatRoom.latestChat
+        self.unreadChatCount = chatRoom.unreadChatCount
+        self.users = users
     }
 }
