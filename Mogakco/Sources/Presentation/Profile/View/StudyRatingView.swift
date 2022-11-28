@@ -16,14 +16,12 @@ class StudyRatingView: UIView {
         $0.font = .mogakcoFont.smallBold
         $0.textColor = .mogakcoColor.typographyPrimary
         $0.textAlignment = .left
-        $0.text = "알고리즘 스터디"
     }
 
     private lazy var countLabel = UILabel().then {
         $0.font = .mogakcoFont.smallBold
         $0.textColor = .mogakcoColor.typographyPrimary
         $0.textAlignment = .right
-        $0.text = "+33"
     }
 
     private let bag = DisposeBag()
