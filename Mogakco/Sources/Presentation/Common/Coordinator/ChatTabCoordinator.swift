@@ -27,7 +27,8 @@ final class ChatTabCoordinator: Coordinator, ChatTabCoordinatorProtocol {
             coordinator: self,
             chatRoomListUseCase: ChatRoomListUseCase(
                 chatRoomRepository: ChatRoomRepository(
-                    chatRoomDataSource: ChatRoomDataSource(provider: Provider.default)
+                    chatRoomDataSource: ChatRoomDataSource(provider: Provider.default),
+                    remoteUserDataSource: RemoteUserDataSource(provider: Provider.default)
                 ), userRepository: UserRepository(
                     localUserDataSource: UserDefaultsUserDataSource(),
                     remoteUserDataSource: RemoteUserDataSource(provider: Provider.default))

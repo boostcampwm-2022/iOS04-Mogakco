@@ -14,6 +14,7 @@ import RxSwift
 final class ChatListViewModel: ViewModel {
     
     struct Input {
+        let viewWillAppear: Observable<Void>
         let selectedChatRoom: Observable<ChatRoom>
     }
     
@@ -41,9 +42,9 @@ final class ChatListViewModel: ViewModel {
                 self.coordinator?.showChatDetail(chatRoomID: $0.id)
             })
             .disposed(by: disposeBag)
-
+        
         return Output(
-            chatRoomList: chatRoomListUseCase.chatRooms()
+            chatRoomList: input.viewWillAppear.withUnretained(self).flatMap { $0.0.chatRoomListUseCase.chatRooms() }
         )
     }
 }

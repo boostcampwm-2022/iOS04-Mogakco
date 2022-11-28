@@ -25,7 +25,7 @@ final class ChatListViewController: UIViewController {
     
     private let chatRoomTableView = UITableView().then {
         $0.register(ChatRoomTableViewCell.self, forCellReuseIdentifier: ChatRoomTableViewCell.identifier)
-        $0.rowHeight = ChatRoomTableViewCell.cellHeight
+        $0.rowHeight = ChatRoomTableViewCell.Constant.cellHeight
         $0.backgroundColor = UIColor.mogakcoColor.backgroundDefault
         $0.showsVerticalScrollIndicator = false
         $0.separatorStyle = .none
@@ -62,6 +62,7 @@ final class ChatListViewController: UIViewController {
     
     func bind() {
         let input = ChatListViewModel.Input(
+            viewWillAppear: rx.viewWillAppear.map { _ in }.asObservable(),
             selectedChatRoom: chatRoomTableView.rx.modelSelected(ChatRoom.self).asObservable()
         )
         let output = viewModel.transform(input: input)
