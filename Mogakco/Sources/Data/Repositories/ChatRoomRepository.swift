@@ -79,6 +79,11 @@ struct ChatRoomRepository: ChatRoomRepositoryProtocol {
            }
     }
     
+    func detail(id: String) -> Observable<ChatRoom> {
+        return chatRoomDataSource.detail(id: id)
+            .map { $0.toDomain() }
+    }
+    
     func updateIDs(id: String, userIDs: [String]) -> Observable<ChatRoom> {
         let updateDTO = UpdateUserIDsRequestDTO(userIDs: userIDs)
         return chatRoomDataSource.updateIDs(id: id, request: updateDTO)
