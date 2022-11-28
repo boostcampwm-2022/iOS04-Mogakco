@@ -14,11 +14,14 @@ struct ChatRoomRepository: ChatRoomRepositoryProtocol {
     
     private let disposeBag = DisposeBag()
     private let chatRoomDataSource: ChatRoomDataSourceProtocol
+    private let remoteUserDataSource: RemoteUserDataSourceProtocol
     
     init(
-        chatRoomDataSource: ChatRoomDataSourceProtocol
+        chatRoomDataSource: ChatRoomDataSourceProtocol,
+        remoteUserDataSource: RemoteUserDataSourceProtocol
     ) {
         self.chatRoomDataSource = chatRoomDataSource
+        self.remoteUserDataSource = remoteUserDataSource
     }
     
     func create(studyID: String?, userIDs: [String]) -> Observable<ChatRoom> {
@@ -56,8 +59,18 @@ struct ChatRoomRepository: ChatRoomRepositoryProtocol {
                 }
             })
             .disposed(by: disposeBag)
+        
+        // 유저 정보 호출
+       let usersSb = remoteUserDataSource
+            .allUsers()
+            .map { $0.documents.map { $0.toDomain() } }
 
-        return latestChatChatRoomsSb.asObservable()
+       return Observable.combineLatest(latestChatChatRoomsSb, usersSb)
+           .map { chatRooms, users in
+               chatRooms.map { chatRoom in
+                   ChatRoom(chatRoom: chatRoom, users: users.filter { chatRoom.userIDs.contains($0.id) })
+               }
+           }
     }
     
     func updateIDs(id: String, userIDs: [String]) -> Observable<ChatRoom> {
