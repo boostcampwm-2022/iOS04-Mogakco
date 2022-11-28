@@ -149,7 +149,8 @@ final class SetPasswordViewController: ViewController {
     
     private func updateButtonLayout(height: CGFloat) {
         button.snp.makeConstraints {
-            $0.left.right.bottom.equalTo(view.safeAreaLayoutGuide).inset(16)
+            $0.left.right.equalTo(view.safeAreaLayoutGuide).inset(16)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(Layout.buttonBottomInset)
             $0.height.equalTo(Layout.buttonHeight)
         }
     }
