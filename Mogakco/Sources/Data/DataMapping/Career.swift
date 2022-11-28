@@ -18,11 +18,11 @@ enum Career: String, CaseIterable, Hashtag {
     case toss
     case worksMobile
     
-    var title: String {
+    var id: String {
         return self.rawValue
     }
     
-    var displayTitle: String {
+    var title: String {
         switch self {
         case .baemin: return "배달의민족"
         case .carrot: return "당근마켓"

@@ -302,7 +302,7 @@ extension StudyDetailViewController: UICollectionViewDataSource {
             
             cell.prepareForReuse()
             if let cellHashtag = viewModel.languaegCellInfo(index: indexPath.row) {
-                cell.setInfo(iconName: cellHashtag.title, title: cellHashtag.displayTitle)
+                cell.setInfo(iconName: cellHashtag.id, title: cellHashtag.title)
             } else {
                 cell.setInfo(iconName: nil, title: "None")
             }
@@ -341,7 +341,7 @@ extension StudyDetailViewController: UICollectionViewDelegateFlowLayout {
                 return CGSize(width: 0, height: 0)
             }
             return CGSize(
-                width: cellHashtag.displayTitle.size(
+                width: cellHashtag.title.size(
                     withAttributes: [NSAttributedString.Key.font: UIFont.mogakcoFont.mediumRegular]
                 ).width + BadgeCell.addWidth,
                 height: BadgeCell.height
