@@ -166,7 +166,7 @@ final class CreateStudyViewController: ViewController {
                 cellIdentifier: BadgeCell.identifier,
                 cellType: BadgeCell.self
             )) { _, hashtag, cell in
-                cell.setInfo(iconName: hashtag.id, title: hashtag.title)
+                cell.setHashtag(hashtag: hashtag)
             }
             .disposed(by: disposeBag)
         

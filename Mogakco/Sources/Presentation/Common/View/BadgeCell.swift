@@ -71,9 +71,10 @@ final class BadgeCell: UICollectionViewCell, Identifiable {
         titleLabel.text = "Default"
     }
     
-    func setInfo(iconName: String?, title: String?) {
-        iconimageView.image = UIImage(named: iconName ?? "Default" ) ?? UIImage(systemName: "questionmark.app")
-        titleLabel.text = title ?? "??"
+    func setHashtag(hashtag: Hashtag?) {
+        guard let hashtag else { return }
+        iconimageView.image = hashtag.image
+        titleLabel.text = hashtag.title
     }
     
     func select() {

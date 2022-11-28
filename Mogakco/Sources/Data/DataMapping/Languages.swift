@@ -37,6 +37,30 @@ enum Languages: String, CaseIterable, Hashtag {
         return names
     }
     
+    static func idToHashtag(id: String) -> Hashtag? {
+        switch id {
+        case "c": return Languages.cLang
+        case "cShop": return Languages.cShop
+        case "cpp": return Languages.cpp
+        case "dart": return Languages.dart
+        case "go": return Languages.goLang
+        case "haskell": return Languages.haskell
+        case "javaScript": return Languages.javaScript
+        case "kotlin": return Languages.kotlin
+        case "matlab": return Languages.matlab
+        case "objectC": return Languages.objectC
+        case "php": return Languages.php
+        case "python": return Languages.python
+        case "r": return Languages.rLang
+        case "ruby": return Languages.ruby
+        case "rust": return Languages.rust
+        case "scratch": return Languages.scratch
+        case "swift": return Languages.swift
+        case "visualBasic": return Languages.visualBasic
+        default: return nil
+        }
+    }
+    
     var id: String {
         return self.rawValue
     }

@@ -301,11 +301,8 @@ extension StudyDetailViewController: UICollectionViewDataSource {
             else { return UICollectionViewCell() }
             
             cell.prepareForReuse()
-            if let cellHashtag = viewModel.languaegCellInfo(index: indexPath.row) {
-                cell.setInfo(iconName: cellHashtag.id, title: cellHashtag.title)
-            } else {
-                cell.setInfo(iconName: nil, title: "None")
-            }
+            let cellHashtag = viewModel.languaegCellInfo(index: indexPath.row)
+            cell.setHashtag(hashtag: cellHashtag)
             
             return cell
         case participantsCollectionView:
