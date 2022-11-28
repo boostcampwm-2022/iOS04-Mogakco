@@ -32,7 +32,10 @@ final class ProfileTabCoordinator: Coordinator, ProfileTabCoordinatorProtocol {
                     remoteUserDataSource: RemoteUserDataSource(provider: Provider.default)
                 ),
                 studyRepository: StudyRepository(
-                    dataSource: StudyDataSource(provider: Provider.default)
+                    studyDataSource: StudyDataSource(provider: Provider.default),
+                    localUserDataSource: UserDefaultsUserDataSource(),
+                    remoteUserDataSource: RemoteUserDataSource(provider: Provider.default),
+                    chatRoomDataSource: ChatRoomDataSource(provider: Provider.default)
                 )
             )
         )
