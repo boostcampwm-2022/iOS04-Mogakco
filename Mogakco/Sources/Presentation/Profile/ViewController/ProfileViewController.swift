@@ -210,6 +210,14 @@ final class ProfileViewController: ViewController {
                 return cell
             }
             .disposed(by: disposeBag)
+        
+        output.studyRatingList
+            .withUnretained(self)
+            .asDriver(onErrorDriveWith: .empty())
+            .drive(onNext: { viewController, studyRatingList in
+                viewController.studyRatingListView.configure(studyRatingList: studyRatingList)
+            })
+            .disposed(by: disposeBag)
     }
     
     override func layout() {

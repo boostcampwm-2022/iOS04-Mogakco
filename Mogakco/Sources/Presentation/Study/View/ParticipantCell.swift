@@ -81,10 +81,7 @@ final class ParticipantCell: UICollectionViewCell, Identifiable {
     }
     
     func setInfo(imageURLString: String, name: String, description: String) {
-        
-        // TODO: Image 처리 필요
-        guard let image = UIImage(systemName: "person.crop.circle") else { return }
-        imageView.setPhoto(image)
+        imageView.setPhoto(Image.profileDefault)
         userNameLabel.text = name
         userDescriptionLabel.text = description
     }

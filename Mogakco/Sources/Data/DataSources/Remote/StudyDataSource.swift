@@ -28,12 +28,17 @@ struct StudyDataSource: StudyDataSourceProtocol {
     func create(study: StudyRequestDTO) -> Observable<StudyResponseDTO> {
         return provider.request(StudyTarget.create(study))
     }
+    
+    func updateIDs(id: String, request: UpdateUserIDsRequestDTO) -> Observable<StudyResponseDTO> {
+        return provider.request(StudyTarget.updateIDs(id, request))
+    }
 }
 
 enum StudyTarget {
     case list
     case detail(String)
     case create(StudyRequestDTO)
+    case updateIDs(String, UpdateUserIDsRequestDTO)
 }
 
 extension StudyTarget: TargetType {
@@ -47,6 +52,8 @@ extension StudyTarget: TargetType {
             return .get
         case .create:
             return .post
+        case .updateIDs:
+            return .patch
         }
     }
     
@@ -60,6 +67,9 @@ extension StudyTarget: TargetType {
             return "/\(id)"
         case .create(let study):
             return "/?documentId=\(study.id.value)"
+        case .updateIDs(let id, _):
+            return "/\(id)"
+            + "/?updateMask.fieldPaths=userIDs"
         default:
             return ""
         }
@@ -71,6 +81,8 @@ extension StudyTarget: TargetType {
             return nil
         case .create(let study):
             return .body(study)
+        case .updateIDs(_, let request):
+            return .body(request)
         }
     }
 

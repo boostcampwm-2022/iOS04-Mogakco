@@ -30,6 +30,9 @@ final class ProfileTabCoordinator: Coordinator, ProfileTabCoordinatorProtocol {
                 userRepository: UserRepository(
                     localUserDataSource: UserDefaultsUserDataSource(),
                     remoteUserDataSource: RemoteUserDataSource(provider: Provider.default)
+                ),
+                studyRepository: StudyRepository(
+                    dataSource: StudyDataSource(provider: Provider.default)
                 )
             )
         )

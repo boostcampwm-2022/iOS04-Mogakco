@@ -9,5 +9,5 @@
 import RxSwift
 
 protocol CreateStudyUseCaseProtocol {
-    func create(study: Study) -> Observable<Study>
+    func create(study: Study) -> Observable<Void>
 }

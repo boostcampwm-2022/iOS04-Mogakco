@@ -18,4 +18,8 @@ protocol UserRepositoryProtocol {
     func load() -> Observable<User>
     func create(user: User, imageData: Data) -> Observable<User>
     func editProfile(id: String, name: String, introduce: String, imageData: Data) -> Observable<User>
+    func editLanguages(id: String, languages: [String]) -> Observable<User>
+    func editCareers(id: String, careers: [String]) -> Observable<User>
+    func editCategorys(id: String, categorys: [String]) -> Observable<User>
+    func updateIDs(id: String, chatRoomIDs: [String], studyIDs: [String]) -> Observable<User>
 }

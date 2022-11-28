@@ -22,7 +22,7 @@ struct HashtagRepository: HashtagRepositoryProtocol {
         return localHashtagDataSource.loadTagList(kind: kind)
     }
     
-    func loadTagByString(kind: KindHashtag, tagTitle: [String]) -> Observable<[Hashtag]> {
-        return localHashtagDataSource.loadTagByString(kind: kind, tagTitle: tagTitle)
+    func loadHashtagByString(kind: KindHashtag, tagTitle: [String]) -> Observable<[Hashtag]> {
+        return localHashtagDataSource.loadHashtagByString(kind: kind, tagTitle: tagTitle)
     }
 }

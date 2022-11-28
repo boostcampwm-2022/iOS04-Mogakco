@@ -37,4 +37,28 @@ struct EditProfileUseCase: EditProfileUseCaseProtocol {
             }
             .flatMap { userRepository.save(user: $0) }
     }
+    
+    func editLanguages(languages: [String]) -> Observable<Void> {
+        return userRepository
+            .load()
+            .compactMap { $0.id }
+            .flatMap { userRepository.editLanguages(id: $0, languages: languages) }
+            .flatMap { userRepository.save(user: $0) }
+    }
+    
+    func editCareers(careers: [String]) -> Observable<Void> {
+        return userRepository
+            .load()
+            .compactMap { $0.id }
+            .flatMap { userRepository.editCareers(id: $0, careers: careers) }
+            .flatMap { userRepository.save(user: $0) }
+    }
+    
+    func editCategorys(categorys: [String]) -> Observable<Void> {
+        return userRepository
+            .load()
+            .compactMap { $0.id }
+            .flatMap { userRepository.editCategorys(id: $0, categorys: categorys) }
+            .flatMap { userRepository.save(user: $0) }
+    }
 }

@@ -22,7 +22,7 @@ struct HashtagUsecase: HashtagUseCaseProtocol {
         return hashtagRepository.loadTagList(kind: kind)
     }
     
-    func loadTagByString(kind: KindHashtag, tagTitle: [String]) -> Observable<[Hashtag]> {
-        return hashtagRepository.loadTagByString(kind: kind, tagTitle: tagTitle)
+    func loadHashtagByString(kind: KindHashtag, tagTitle: [String]) -> Observable<[Hashtag]> {
+        return hashtagRepository.loadHashtagByString(kind: kind, tagTitle: tagTitle)
     }
 }
