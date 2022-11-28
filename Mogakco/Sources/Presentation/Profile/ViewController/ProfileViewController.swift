@@ -103,6 +103,7 @@ final class ProfileViewController: ViewController {
     
     override func bind() {
         let input = ProfileViewModel.Input(
+            viewWillAppear: rx.viewWillAppear.map { _ in }.asObservable(),
             editProfileButtonTapped: profileView.editProfileButton.rx.tap.asObservable(),
             chatButtonTapped: profileView.chatButton.rx.tap.asObservable(),
             hashtagEditButtonTapped: Observable.merge(
