@@ -78,6 +78,10 @@ final class ProfileViewModel: ViewModel {
                     return viewModel.userUseCase.user(id: user.id)
                 }
             }
+        let studyRatingList = user
+            .map { $0.studyIDs }
+            .withUnretained(self)
+            .flatMap { $0.0.userUseCase.studyRatingList(studyIDs: $0.1) }
 
         return Output(
             isMyProfile: isMyProfile.asObservable(),
@@ -92,7 +96,7 @@ final class ProfileViewModel: ViewModel {
             languages: user.map { $0.languages }.asObservable(),
             careers: user.map { $0.careers }.asObservable(),
             categorys: user.map { $0.categorys }.asObservable(),
-            studyRatingList: userUseCase.myStudyRatingList().asObservable()
+            studyRatingList: studyRatingList.asObservable()
         )
     }
     
