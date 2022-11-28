@@ -11,5 +11,5 @@ import UIKit
 protocol Hashtag {
     var id: String { get }
     var title: String { get }
-    //    var image: UIImage { get }
+    var image: UIImage { get }
 }
