@@ -72,7 +72,6 @@ final class ProfileView: UIView {
     
     private func layoutRoundProfileImageView() {
         addSubview(roundProfileImageView)
-        
         roundProfileImageView.snp.makeConstraints {
             $0.leading.equalToSuperview().inset(16.0)
             $0.top.equalToSuperview().offset(16.0)
@@ -81,7 +80,6 @@ final class ProfileView: UIView {
     
     private func layoutRoundLanguageImageView() {
         addSubview(roundLanguageImageView)
-        
         roundLanguageImageView.snp.makeConstraints {
             $0.center.equalTo(roundProfileImageView).offset(40.0)
         }
