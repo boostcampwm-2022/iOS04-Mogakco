@@ -118,4 +118,84 @@ struct StudyRepository: StudyRepositoryProtocol {
         return studyDataSource.updateIDs(id: id, request: updateDTO)
             .map { $0.toDomain() }
     }
+    
+    func join(id: String) -> Observable<Bool> {
+        
+        return Observable<Bool>.create { emitter in
+            
+            let canJoinStudy = Observable
+                .zip(
+                    localUserDataSource.load(),
+                    studyDataSource.detail(id: id).map { $0.toDomain() }
+                )
+                .do(onNext: { user, study in
+                    if study.userIDs.count >= study.maxUserCount &&
+                      !study.userIDs.contains(user.id) {
+                        emitter.onNext(false)
+                    }
+                })
+                .filter { user, study in
+                    return study.userIDs.count < study.maxUserCount ||
+                        study.userIDs.contains(user.id)
+                }
+            
+            let user = canJoinStudy
+                .flatMap { _ in localUserDataSource.load() }
+            
+            let updateUser = user
+                .flatMap { user in
+                    remoteUserDataSource.updateIDs(
+                        id: user.id,
+                        request: UpdateStudyIDsRequestDTO(
+                            chatRoomIDs: Array(Set(user.chatRoomIDs + [id])),
+                            studyIDs: Array(Set(user.studyIDs + [id]))
+                        )
+                    )
+                }
+                .flatMap {
+                    localUserDataSource.save(user: $0.toDomain())
+                }
+
+            let updateStudy = Observable
+                .zip(
+                    user,
+                    studyDataSource.detail(id: id).map { $0.toDomain() }
+                )
+                .flatMap { user, study in
+                    studyDataSource.updateIDs(
+                        id: study.id,
+                        request: UpdateUserIDsRequestDTO(
+                            userIDs: Array(Set(study.userIDs + [user.id]))
+                        )
+                    )
+                }
+
+            let updateChatRoom = Observable
+                .zip(
+                    user,
+                    chatRoomDataSource.detail(id: id).map { $0.toDomain() }
+                )
+                .flatMap { user, chatRoom in
+                    chatRoomDataSource.updateIDs(
+                        id: chatRoom.id,
+                        request: UpdateUserIDsRequestDTO(
+                            userIDs: Array(Set(chatRoom.userIDs + [user.id]))
+                        )
+                    )
+                }
+
+            Observable
+                .zip(
+                    updateUser,
+                    updateStudy,
+                    updateChatRoom
+                )
+                .subscribe { _ in
+                    emitter.onNext(true)
+                }
+                .disposed(by: self.disposeBag)
+            
+            return Disposables.create()
+        }
+    }
 }
