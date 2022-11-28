@@ -64,11 +64,7 @@ final class StudyTabCoordinator: Coordinator, StudyTabCoordinatorProtocol {
             remoteUserDataSource: remoteUserDataSource
         )
         let userUseCase = UserUseCase(userRepository: userRepository, studyRepository: studyRepository)
-        let joinStudyUseCase = JoinStudyUseCase(
-            studyRepository: studyRepository,
-            chatRoomRepository: chatRoomRepository,
-            userRepository: userRepository
-        )
+        let joinStudyUseCase = JoinStudyUseCase(studyRepository: studyRepository)
         
         let viewModel = StudyDetailViewModel(
             studyID: id,
