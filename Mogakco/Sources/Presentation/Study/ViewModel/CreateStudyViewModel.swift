@@ -57,9 +57,10 @@ final class CreateStudyViewModel: ViewModel {
                 category.asObservable()
             )
             .map {
-                Study(
-                    id: UUID().uuidString,
-                    chatRoomID: "",
+                let id = UUID().uuidString
+                return Study(
+                    id: id,
+                    chatRoomID: id,
                     userIDs: [],
                     title: $0.0,
                     content: $0.1,
