@@ -180,7 +180,8 @@ final class ProfileViewController: ViewController {
                     for: IndexPath(row: index, section: 0)) as? BadgeCell else {
                     return UICollectionViewCell()
                 }
-                cell.setInfo(iconName: language, title: language)
+                let hashtag = Languages.idToHashtag(id: language)
+                cell.setHashtag(hashtag: hashtag)
                 return cell
             }
             .disposed(by: disposeBag)
@@ -193,7 +194,8 @@ final class ProfileViewController: ViewController {
                     for: IndexPath(row: index, section: 0)) as? BadgeCell else {
                     return UICollectionViewCell()
                 }
-                cell.setInfo(iconName: career, title: career)
+                let hashtag = Career.idToHashtag(id: career)
+                cell.setHashtag(hashtag: hashtag)
                 return cell
             }
             .disposed(by: disposeBag)
@@ -206,7 +208,8 @@ final class ProfileViewController: ViewController {
                     for: IndexPath(row: index, section: 0)) as? BadgeCell else {
                     return UICollectionViewCell()
                 }
-                cell.setInfo(iconName: category, title: category)
+                let hashtag = Category.idToHashtag(id: category)
+                cell.setHashtag(hashtag: hashtag)
                 return cell
             }
             .disposed(by: disposeBag)

@@ -12,4 +12,6 @@ protocol Hashtag {
     var id: String { get }
     var title: String { get }
     var image: UIImage { get }
+    
+    static func idToHashtag(id: String) -> Hashtag?
 }
