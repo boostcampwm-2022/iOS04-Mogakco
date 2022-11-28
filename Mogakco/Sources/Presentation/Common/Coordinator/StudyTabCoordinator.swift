@@ -28,7 +28,10 @@ final class StudyTabCoordinator: Coordinator, StudyTabCoordinatorProtocol {
                 coordinator: self,
                 useCase: StudyListUseCase(
                     repository: StudyRepository(
-                        dataSource: StudyDataSource(provider: Provider.default)
+                        studyDataSource: StudyDataSource(provider: Provider.default),
+                        localUserDataSource: UserDefaultsUserDataSource(),
+                        remoteUserDataSource: RemoteUserDataSource(provider: Provider.default),
+                        chatRoomDataSource: ChatRoomDataSource(provider: Provider.default)
                     )
                 )
             )
@@ -38,7 +41,12 @@ final class StudyTabCoordinator: Coordinator, StudyTabCoordinatorProtocol {
     
     func showStudyDetail(id: String) {
         let studyDataSource = StudyDataSource(provider: Provider.default)
-        let studyRepository = StudyRepository(dataSource: studyDataSource)
+        let studyRepository = StudyRepository(
+            studyDataSource: StudyDataSource(provider: Provider.default),
+            localUserDataSource: UserDefaultsUserDataSource(),
+            remoteUserDataSource: RemoteUserDataSource(provider: Provider.default),
+            chatRoomDataSource: ChatRoomDataSource(provider: Provider.default)
+        )
         let studyUseCase = StudyDetailUseCase(repository: studyRepository)
         
         let hashtagDataSource = HashtagDataSource()
@@ -70,11 +78,10 @@ final class StudyTabCoordinator: Coordinator, StudyTabCoordinatorProtocol {
                 coordinator: self,
                 useCase: CreateStudyUseCase(
                     studyRepository: StudyRepository(
-                        dataSource: StudyDataSource(provider: Provider.default)
-                    ),
-                    userRepository: UserRepository(
+                        studyDataSource: StudyDataSource(provider: Provider.default),
                         localUserDataSource: UserDefaultsUserDataSource(),
-                        remoteUserDataSource: RemoteUserDataSource(provider: Provider.default)
+                        remoteUserDataSource: RemoteUserDataSource(provider: Provider.default),
+                        chatRoomDataSource: ChatRoomDataSource(provider: Provider.default)
                     )
                 )
             )
@@ -121,7 +128,7 @@ final class StudyTabCoordinator: Coordinator, StudyTabCoordinatorProtocol {
             kind: .category,
             viewModel: viewModel
         )
-        navigationController.pushViewController(viewController, animated: true)
+        navigationController.tabBarController?.navigationController?.pushViewController(viewController, animated: true)
     }
     
     func showLanguageSelect(delegate: HashtagSelectProtocol?) {
@@ -139,10 +146,10 @@ final class StudyTabCoordinator: Coordinator, StudyTabCoordinatorProtocol {
             kind: .language,
             viewModel: viewModel
         )
-        navigationController.pushViewController(viewController, animated: true)
+        navigationController.tabBarController?.navigationController?.pushViewController(viewController, animated: true)
     }
     
     func goToPrevScreen() {
-        self.pop(animated: true)
+        navigationController.tabBarController?.navigationController?.popViewController(animated: true)
     }
 }
