@@ -62,6 +62,6 @@ final class ProfileTabCoordinator: Coordinator, ProfileTabCoordinatorProtocol {
     }
     
     func editFinished() {
-        navigationController.popViewController(animated: true)
+        pop(animated: true)
     }
 }
