@@ -29,6 +29,8 @@ final class StudyDetailViewModel: ViewModel {
     private let studyUseCase: StudyDetailUseCaseProtocol
     private let hashtagUseCase: HashtagUseCaseProtocol
     private let userUseCase: UserUseCaseProtocol
+    private let joinStudyUseCase: JoinStudyUseCaseProtocol
+    
     var languages = BehaviorSubject<[Hashtag]>(value: [])
     var participants = BehaviorSubject<[User]>(value: [])
     
@@ -45,13 +47,15 @@ final class StudyDetailViewModel: ViewModel {
         coordinator: StudyTabCoordinatorProtocol,
         studyUsecase: StudyDetailUseCaseProtocol,
         hashtagUseCase: HashtagUseCaseProtocol,
-        userUseCase: UserUseCaseProtocol
+        userUseCase: UserUseCaseProtocol,
+        joinStudyUseCase: JoinStudyUseCase
     ) {
         self.studyID = studyID
         self.coordinator = coordinator
         self.studyUseCase = studyUsecase
         self.hashtagUseCase = hashtagUseCase
         self.userUseCase = userUseCase
+        self.joinStudyUseCase = joinStudyUseCase
     }
     
     func transform(input: Input) -> Output {
@@ -102,9 +106,17 @@ final class StudyDetailViewModel: ViewModel {
         
         
         input.studyJoinButtonTapped
-            .subscribe(onNext: {
-                // TODO: 스터디 참가 API 바인딩 - studyUseCase -> JoinStudy()
-                self.coordinator.showChatDetail(chatRoomID: self.studyID)
+            .withUnretained(self)
+            .flatMap { viewModel, _ in
+                viewModel.joinStudyUseCase.join(id: viewModel.studyID)
+            }
+            .withUnretained(self)
+            .subscribe(onNext: { viewModel, _ in
+                // TODO: 채팅방 화면 띄우기
+                viewModel.coordinator.showChatDetail(chatRoomID: viewModel.studyID)
+            }, onError: { error in
+                // TODO: 채팅방 인원이 다 찼을 때 예외처리
+                print("👀:", error)
             })
             .disposed(by: disposeBag)
         
