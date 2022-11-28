@@ -135,14 +135,24 @@ final class ChatViewController: ViewController {
         
         output.messages
             .asDriver(onErrorJustReturn: [])
-            .drive(collectionView.rx.items) { collectionView, index, chat in
-                guard let cell = collectionView.dequeueReusableCell(
+            .drive(collectionView.rx.items) { [weak self] collectionView, index, chat in
+                
+                guard let self = self,
+                      let cell = collectionView.dequeueReusableCell(
                     withReuseIdentifier: ChatCell.identifier,
                     for: IndexPath(row: index, section: 0)) as? ChatCell else {
                     return UICollectionViewCell()
                 }
-                cell.chat = chat
-                print("@", 6)
+                
+                self.viewModel.userID()
+                    .subscribe(onNext: { user in
+                        cell.isFromCurrentUser(
+                            userID: user.id,
+                            chat: chat
+                        )
+                    })
+                    .disposed(by: self.disposeBag)
+                
                 return cell
             }
             .disposed(by: disposeBag)
