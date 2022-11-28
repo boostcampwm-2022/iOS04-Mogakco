@@ -79,24 +79,26 @@ final class ChatViewModel: ViewModel {
             .disposed(by: disposeBag)
         
         input.sendButtonDidTap
-            .withUnretained(self)
-            .withLatestFrom(input.inputViewText)
-            .subscribe { message in
-                let chat = Chat(
-                    id: "me",
-                    userID: "you",
-                    message: message.element ?? "",
-                    chatRoomID: self.chatRoomID,
-                    date: 202211270600,
-                    readUserIDs: ["me"]
-                )
-
-                self.chatUseCase.send(
-                    chat: chat,
-                    to: self.chatRoomID
+            .withLatestFrom(Observable.combineLatest(
+                chatUseCase.myProfile(),
+                input.inputViewText
+            )) { ( $1.0, $1.1 ) }
+            .subscribe { [weak self] user, message in
+                guard let self = self else { return }
+                self.chatUseCase
+                    .send(
+                        chat: Chat(
+                            id: self.chatRoomID,
+                            userID: user.id,
+                            message: message,
+                            chatRoomID: self.chatRoomID,
+                            date: Date().toInt(dateFormat: "yyyy-MM-dd HH:mm:ss"),
+                            readUserIDs: ["me"]
+                        ),
+                        to: self.chatRoomID
                     )
-                    .subscribe { _ in
-                    sendMessage.onNext(())
+                    .subscribe {
+                        sendMessage.onNext(())
                     }
                     .disposed(by: self.disposeBag)
             }
