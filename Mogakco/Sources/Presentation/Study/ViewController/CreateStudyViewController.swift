@@ -166,14 +166,14 @@ final class CreateStudyViewController: ViewController {
                 cellIdentifier: BadgeCell.identifier,
                 cellType: BadgeCell.self
             )) { _, hashtag, cell in
-                cell.setInfo(iconName: hashtag.title, title: hashtag.hashtagTitle())
+                cell.setInfo(iconName: hashtag.title, title: hashtag.displayTitle)
             }
             .disposed(by: disposeBag)
         
         output.category
             .withUnretained(self)
             .subscribe { viewController, hashtag in
-                viewController.categorySelect.content = hashtag.hashtagTitle()
+                viewController.categorySelect.content = hashtag.displayTitle
             }
             .disposed(by: disposeBag)
     }
