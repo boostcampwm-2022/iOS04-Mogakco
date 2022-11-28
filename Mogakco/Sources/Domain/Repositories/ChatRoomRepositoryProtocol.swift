@@ -10,4 +10,6 @@ import RxSwift
 
 protocol ChatRoomRepositoryProtocol {
     func list(id: String, ids: [String]) -> Observable<[ChatRoom]>
+    func create(studyID: String?, userIDs: [String]) -> Observable<ChatRoom>
+    func updateIDs(id: String, userIDs: [String]) -> Observable<ChatRoom>
 }

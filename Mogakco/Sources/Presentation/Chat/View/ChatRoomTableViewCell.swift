@@ -15,7 +15,7 @@ final class ChatRoomTableViewCell: UITableViewCell, Identifiable {
     static let cellHeight = 80.0
     
     private lazy var chatRoomImageView = UIImageView().then {
-        $0.image = UIImage(systemName: "person")
+        $0.image = Image.profileDefault
     }
     
     private let chatRoomTitleLabel = UILabel().then {

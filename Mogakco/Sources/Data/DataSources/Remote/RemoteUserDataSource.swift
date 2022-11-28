@@ -26,11 +26,23 @@ struct RemoteUserDataSource: RemoteUserDataSourceProtocol {
     }
     
     func allUsers() -> Observable<Documents<[UserResponseDTO]>> {
-        return provider.request(UserTarget.users)
+        return provider.request(UserTarget.allUsers)
     }
     
     func editProfile(id: String, request: EditProfileRequestDTO) -> Observable<UserResponseDTO> {
         return provider.request(UserTarget.editProfile(id, request))
+    }
+    
+    func editLanguages(id: String, request: EditLanguagesRequestDTO) -> Observable<UserResponseDTO> {
+        return provider.request(UserTarget.editLanguages(id, request))
+    }
+    
+    func editCareers(id: String, request: EditCareersRequestDTO) -> Observable<UserResponseDTO> {
+        return provider.request(UserTarget.editCareers(id, request))
+    }
+    
+    func editCategorys(id: String, request: EditCategorysRequestDTO) -> Observable<UserResponseDTO> {
+        return provider.request(UserTarget.editCategorys(id, request))
     }
     
     func uploadProfileImage(id: String, imageData: Data) -> Observable<URL> {
@@ -55,13 +67,21 @@ struct RemoteUserDataSource: RemoteUserDataSourceProtocol {
             return Disposables.create()
         }
     }
+    
+    func updateIDs(id: String, request: UpdateStudyIDsRequestDTO) -> Observable<UserResponseDTO> {
+        return provider.request(UserTarget.updateIDs(id, request))
+    }
 }
 
 enum UserTarget {
     case user(String)
     case createUser(UserRequestDTO)
-    case users
+    case allUsers
     case editProfile(String, EditProfileRequestDTO)
+    case editLanguages(String, EditLanguagesRequestDTO)
+    case editCareers(String, EditCareersRequestDTO)
+    case editCategorys(String, EditCategorysRequestDTO)
+    case updateIDs(String, UpdateStudyIDsRequestDTO)
 }
 
 extension UserTarget: TargetType {
@@ -71,13 +91,13 @@ extension UserTarget: TargetType {
     
     var method: HTTPMethod {
         switch self {
-        case .user:
-            return .get
-        case .users:
+        case .user, .allUsers:
             return .get
         case .createUser:
             return .post
-        case .editProfile:
+        case .editProfile, .editLanguages, .editCareers, .editCategorys:
+            return .patch
+        case .updateIDs:
             return .patch
         }
     }
@@ -90,7 +110,7 @@ extension UserTarget: TargetType {
     
     var path: String {
         switch self {
-        case .users:
+        case .allUsers:
             return ""
         case let .user(id):
             return "/\(id)"
@@ -101,6 +121,16 @@ extension UserTarget: TargetType {
             + "/?updateMask.fieldPaths=name"
             + "&updateMask.fieldPaths=introduce"
             + "&updateMask.fieldPaths=profileImageURLString"
+        case let .editLanguages(id, _):
+            return "/\(id)" + "/?updateMask.fieldPaths=languages"
+        case let .editCareers(id, _):
+            return "/\(id)" + "/?updateMask.fieldPaths=careers"
+        case let .editCategorys(id, _):
+            return "/\(id)" + "/?updateMask.fieldPaths=categorys"
+        case let .updateIDs(id, _):
+            return "/\(id)"
+            + "/?updateMask.fieldPaths=chatRoomIDs"
+            + "&updateMask.fieldPaths=studyIDs"
         }
     }
     
@@ -108,11 +138,19 @@ extension UserTarget: TargetType {
         switch self {
         case .user:
             return nil
-        case .users:
+        case .allUsers:
             return nil
         case let .createUser(request):
             return .body(request)
         case let .editProfile(_, request):
+            return .body(request)
+        case let .editLanguages(_, request):
+            return .body(request)
+        case let .editCareers(_, request):
+            return .body(request)
+        case let .editCategorys(_, request):
+            return .body(request)
+        case let .updateIDs(_, request):
             return .body(request)
         }
     }

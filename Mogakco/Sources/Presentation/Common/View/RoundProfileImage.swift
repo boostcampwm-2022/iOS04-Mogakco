@@ -27,7 +27,7 @@ final class RoundProfileImageView: UIImageView {
     
     private func layout(_ length: Double) {
         contentMode = .scaleAspectFill
-        image = UIImage(systemName: "person")
+        image = Image.profileDefault
         
         snp.makeConstraints {
             $0.width.height.equalTo(length)

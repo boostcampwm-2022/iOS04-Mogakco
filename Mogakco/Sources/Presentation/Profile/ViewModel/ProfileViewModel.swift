@@ -42,6 +42,7 @@ final class ProfileViewModel: ViewModel {
         let languages: Observable<[String]>
         let careers: Observable<[String]>
         let categorys: Observable<[String]>
+        let studyRatingList: Observable<[(String, Int)]>
     }
 
     var disposeBag = DisposeBag()
@@ -74,8 +75,8 @@ final class ProfileViewModel: ViewModel {
                 case let .other(user):
                     return viewModel.userUseCase.user(id: user.id)
                 }
-            } 
-        
+            }
+
         return Output(
             isMyProfile: isMyProfile.asObservable(),
             profileImageURL: user
@@ -88,7 +89,8 @@ final class ProfileViewModel: ViewModel {
             introduce: user.map { $0.introduce }.asObservable(),
             languages: user.map { $0.languages }.asObservable(),
             careers: user.map { $0.careers }.asObservable(),
-            categorys: user.map { $0.categorys }.asObservable()
+            categorys: user.map { $0.categorys }.asObservable(),
+            studyRatingList: userUseCase.myStudyRatingList().asObservable()
         )
     }
     

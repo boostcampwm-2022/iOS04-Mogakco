@@ -27,7 +27,7 @@ final class StudyDetailViewController: ViewController {
     }
     private let participantsView = StudyInfoView(frame: .zero).then {
         $0.textLabel.text = "2/3 참여"
-        $0.imageView.image = UIImage(systemName: "person.2")
+        $0.imageView.image = Image.profileDefault
     }
     
     private let locationView = StudyInfoView(frame: .zero).then {
@@ -154,7 +154,7 @@ final class StudyDetailViewController: ViewController {
         output.studyDetail
             .subscribe(onNext: { [weak self] in
                 self?.studyTitleLabel.text = $0.title
-                self?.dateView.textLabel.text = "\($0.date)"
+                self?.dateView.textLabel.text = $0.date.toCompactDateString()
                 self?.participantsView.textLabel.text = "\($0.userIDs.count)/\($0.maxUserCount)"
                 self?.locationView.textLabel.text = $0.place
                 self?.studyInfoDescription.text = $0.content
@@ -316,7 +316,7 @@ extension StudyDetailViewController: UICollectionViewDataSource {
             
             cell.prepareForReuse()
             
-            if let cellUserInfo = viewModel.participantCellInfp(index: indexPath.row) {
+            if let cellUserInfo = viewModel.participantCellInfo(index: indexPath.row) {
                 cell.setInfo(imageURLString: "프로필사진", name: cellUserInfo.name, description: cellUserInfo.introduce)
             } else {
                 cell.setInfo(imageURLString: "person", name: "김신오이", description: "iOS 개발자")
