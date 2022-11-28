@@ -28,7 +28,7 @@ class HashtagSelectViewController: ViewController {
         $0.showsHorizontalScrollIndicator = false
         $0.clipsToBounds = false
         $0.allowsMultipleSelection = true
-        $0.register(BadgeCell.self, forCellWithReuseIdentifier: BadgeCell.identifier)
+        $0.register(HashtagBadgeCell.self, forCellWithReuseIdentifier: HashtagBadgeCell.identifier)
         $0.register(
             HashtagHeader.self,
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
@@ -152,8 +152,8 @@ extension HashtagSelectViewController: UICollectionViewDataSource {
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
         guard let cell = hashtagListCollectionView.dequeueReusableCell(
-            withReuseIdentifier: BadgeCell.identifier,
-            for: indexPath) as? BadgeCell
+            withReuseIdentifier: HashtagBadgeCell.identifier,
+            for: indexPath) as? HashtagBadgeCell
         else { return UICollectionViewCell() }
         
         cell.prepareForReuse()
@@ -170,7 +170,7 @@ extension HashtagSelectViewController: UICollectionViewDataSource {
         _ collectionView: UICollectionView,
         didSelectItemAt indexPath: IndexPath
     ) {
-        guard let cell = collectionView.cellForItem(at: indexPath) as? BadgeCell else { return }
+        guard let cell = collectionView.cellForItem(at: indexPath) as? HashtagBadgeCell else { return }
         cellSelect.onNext(indexPath.row)
         cell.select()
     }
@@ -179,7 +179,7 @@ extension HashtagSelectViewController: UICollectionViewDataSource {
         _ collectionView: UICollectionView,
         didDeselectItemAt indexPath: IndexPath
     ) {
-        guard let cell = collectionView.cellForItem(at: indexPath) as? BadgeCell else { return }
+        guard let cell = collectionView.cellForItem(at: indexPath) as? HashtagBadgeCell else { return }
         cellSelect.onNext(indexPath.row)
         cell.deselect()
     }
@@ -201,14 +201,14 @@ extension HashtagSelectViewController: UICollectionViewDelegateFlowLayout {
         sizeForItemAt indexPath: IndexPath
     ) -> CGSize {
         guard let title = viewModel.cellInfo(index: indexPath.row)?.title else {
-            return CGSize(width: BadgeCell.addWidth, height: BadgeCell.height)
+            return CGSize(width: HashtagBadgeCell.addWidth, height: HashtagBadgeCell.height)
         }
         
         return CGSize(
             width: title.size(
                 withAttributes: [NSAttributedString.Key.font: UIFont.mogakcoFont.mediumRegular]
-            ).width + BadgeCell.addWidth,
-            height: BadgeCell.height
+            ).width + HashtagBadgeCell.addWidth,
+            height: HashtagBadgeCell.height
         )
     }
     
