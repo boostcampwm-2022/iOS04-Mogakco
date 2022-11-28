@@ -6,7 +6,7 @@
 //  Copyright © 2022 Mogakco. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 enum Category: String, CaseIterable, Hashtag {
     case artificialIntelligence = "ai"
@@ -41,5 +41,9 @@ enum Category: String, CaseIterable, Hashtag {
         case .interview: return "인터뷰"
         case .machineLearning: return "머신러닝"
         }
+    }
+    
+    var image: UIImage {
+        return UIImage(named: id) ?? UIImage()
     }
 }

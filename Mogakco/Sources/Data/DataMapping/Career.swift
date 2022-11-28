@@ -6,7 +6,7 @@
 //  Copyright © 2022 Mogakco. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 enum Career: String, CaseIterable, Hashtag {
     case baemin
@@ -33,5 +33,9 @@ enum Career: String, CaseIterable, Hashtag {
         case .toss: return "토스"
         case .worksMobile: return "웍스모바일"
         }
+    }
+    
+    var image: UIImage {
+        return UIImage(named: id) ?? UIImage()
     }
 }
