@@ -13,4 +13,5 @@ protocol ProfileTabCoordinatorProtocol: AnyObject {
     func showEditProfile()
     func showChat()
     func showSelectHashtag(kindHashtag: KindHashtag)
+    func editFinished()
 }

@@ -60,4 +60,8 @@ final class ProfileTabCoordinator: Coordinator, ProfileTabCoordinatorProtocol {
     
     func showSelectHashtag(kindHashtag: KindHashtag) {
     }
+    
+    func editFinished() {
+        navigationController.popViewController(animated: true)
+    }
 }
