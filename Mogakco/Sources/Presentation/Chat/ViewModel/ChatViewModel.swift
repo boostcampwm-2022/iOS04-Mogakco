@@ -29,9 +29,10 @@ final class ChatViewModel: ViewModel {
         let messages: Observable<[Chat]>
     }
     
-    var disposeBag = DisposeBag()
-    weak var coordinator: Coordinator?
+    
     private let chatUseCase: ChatUseCaseProtocol
+    weak var coordinator: Coordinator?
+    var disposeBag = DisposeBag()
     let chatRoomID: String
     
     init(
@@ -108,5 +109,9 @@ final class ChatViewModel: ViewModel {
             sendMessage: sendMessage,
             messages: messages
         )
+    }
+    
+    func userID() -> Observable<User> {
+        return chatUseCase.myProfile()
     }
 }
