@@ -176,8 +176,8 @@ final class ProfileViewController: ViewController {
             .asDriver(onErrorJustReturn: [])
             .drive(languageListView.hashtagCollectionView.rx.items) { collectionView, index, language in
                 guard let cell = collectionView.dequeueReusableCell(
-                    withReuseIdentifier: BadgeCell.identifier,
-                    for: IndexPath(row: index, section: 0)) as? BadgeCell else {
+                    withReuseIdentifier: HashtagBadgeCell.identifier,
+                    for: IndexPath(row: index, section: 0)) as? HashtagBadgeCell else {
                     return UICollectionViewCell()
                 }
                 let hashtag = Languages.idToHashtag(id: language)
@@ -190,8 +190,8 @@ final class ProfileViewController: ViewController {
             .asDriver(onErrorJustReturn: [])
             .drive(careerListView.hashtagCollectionView.rx.items) { collectionView, index, career in
                 guard let cell = collectionView.dequeueReusableCell(
-                    withReuseIdentifier: BadgeCell.identifier,
-                    for: IndexPath(row: index, section: 0)) as? BadgeCell else {
+                    withReuseIdentifier: HashtagBadgeCell.identifier,
+                    for: IndexPath(row: index, section: 0)) as? HashtagBadgeCell else {
                     return UICollectionViewCell()
                 }
                 let hashtag = Career.idToHashtag(id: career)
@@ -204,8 +204,8 @@ final class ProfileViewController: ViewController {
             .asDriver(onErrorJustReturn: [])
             .drive(categoryListView.hashtagCollectionView.rx.items) { collectionView, index, category in
                 guard let cell = collectionView.dequeueReusableCell(
-                    withReuseIdentifier: BadgeCell.identifier,
-                    for: IndexPath(row: index, section: 0)) as? BadgeCell else {
+                    withReuseIdentifier: HashtagBadgeCell.identifier,
+                    for: IndexPath(row: index, section: 0)) as? HashtagBadgeCell else {
                     return UICollectionViewCell()
                 }
                 let hashtag = Category.idToHashtag(id: category)
