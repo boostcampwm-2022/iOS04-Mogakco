@@ -24,13 +24,13 @@ struct ChatResponseDTO: Codable {
         case id, userID, message, chatRoomID, date, readUserIDs
     }
     
-    init(dictionary: [String: Any]) {
-        self.id = StringValue(value: dictionary["id"] as? String ?? "")
-        self.userID = StringValue(value: dictionary["userID"] as? String ?? "")
-        self.message = StringValue(value: dictionary["message"] as? String ?? "")
-        self.chatRoomID = StringValue(value: dictionary["chatRoomID"] as? String ?? "")
-        self.date = IntegerValue(value: dictionary["date"] as? String ?? "")
-        self.readUserIDs = ArrayValue(values: dictionary["readUserIDs"] as? [StringValue] ?? [StringValue(value: "")])
+    init(chat: Chat) {
+        self.id = StringValue(value: chat.id)
+        self.userID = StringValue(value: chat.userID)
+        self.message = StringValue(value: chat.message)
+        self.chatRoomID = StringValue(value: chat.chatRoomID)
+        self.date = IntegerValue(value: "\(chat.date)")
+        self.readUserIDs = ArrayValue(values: chat.readUserIDs.map { StringValue(value: $0) })
     }
     
     init(from decoder: Decoder) throws {
