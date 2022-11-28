@@ -10,5 +10,5 @@ import Foundation
 
 protocol Hashtag {
     var title: String { get }
-    func hashtagTitle() -> String
+    var displayTitle: String { get }
 }

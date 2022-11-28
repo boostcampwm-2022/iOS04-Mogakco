@@ -126,7 +126,7 @@ final class StudyCell: UICollectionViewCell, Identifiable {
     private func addCategoryHashtag(tag: String) {
         let label = UILabel()
         label.font = UIFont(name: SFPro.regular.rawValue, size: 12)
-        label.text = Category(rawValue: tag)?.hashtagTitle()
+        label.text = Category(rawValue: tag)?.displayTitle
         hashtagStackView.addArrangedSubview(label)
     }
     
@@ -134,7 +134,7 @@ final class StudyCell: UICollectionViewCell, Identifiable {
         tags.forEach {
             let label = UILabel()
             label.font = UIFont(name: SFPro.regular.rawValue, size: 12)
-            label.text = Languages(rawValue: $0)?.hashtagTitle()
+            label.text = Languages(rawValue: $0)?.displayTitle
             hashtagStackView.addArrangedSubview(label)
         }
     }
