@@ -14,10 +14,14 @@ final class ProfileViewController: ViewController {
 
     enum Constant {
         static let headerViewTitle = "프로필"
+        static let languageHashtagListViewTitle = "언어"
+        static let careerHashtagListViewTitle = "경력"
+        static let categoryHashtagListViewTitle = "카테고리"
         static let headerViewHeight = 68.0
         static let profileViewHeight = 200.0
         static let hashtagViewHeight = 100.0
         static let studyRatingListView = 200.0
+        static let bottomMarginViewHeight = 60.0
     }
     
     private let scrollView = UIScrollView().then {
@@ -31,7 +35,7 @@ final class ProfileViewController: ViewController {
         self.careerListView,
         self.categoryListView,
         self.studyRatingListView,
-        self.marginView
+        self.bottomMarginView
     ]).then {
         $0.spacing = 4.0
         $0.axis = .vertical
@@ -48,21 +52,21 @@ final class ProfileViewController: ViewController {
     }
     
     private let languageListView = HashtagListView().then {
-        $0.titleLabel.text = "언어"
+        $0.titleLabel.text = Constant.languageHashtagListViewTitle
         $0.snp.makeConstraints {
             $0.height.equalTo(Constant.hashtagViewHeight)
         }
     }
     
     private let careerListView = HashtagListView().then {
-        $0.titleLabel.text = "경력"
+        $0.titleLabel.text = Constant.careerHashtagListViewTitle
         $0.snp.makeConstraints {
             $0.height.equalTo(Constant.hashtagViewHeight)
         }
     }
     
     private let categoryListView = HashtagListView().then {
-        $0.titleLabel.text = "카테고리"
+        $0.titleLabel.text = Constant.categoryHashtagListViewTitle
         $0.snp.makeConstraints {
             $0.height.equalTo(Constant.hashtagViewHeight)
         }
@@ -74,9 +78,9 @@ final class ProfileViewController: ViewController {
         }
     }
     
-    private let marginView = UIView().then {
+    private let bottomMarginView = UIView().then {
         $0.snp.makeConstraints {
-            $0.height.equalTo(200.0)
+            $0.height.equalTo(Constant.bottomMarginViewHeight)
         }
     }
     
@@ -173,47 +177,9 @@ final class ProfileViewController: ViewController {
     }
     
     private func bindHashtags(output: ProfileViewModel.Output) {
-        output.languages
-            .asDriver(onErrorJustReturn: [])
-            .drive(languageListView.hashtagCollectionView.rx.items) { collectionView, index, language in
-                guard let cell = collectionView.dequeueReusableCell(
-                    withReuseIdentifier: HashtagBadgeCell.identifier,
-                    for: IndexPath(row: index, section: 0)) as? HashtagBadgeCell else {
-                    return UICollectionViewCell()
-                }
-                let hashtag = Languages.idToHashtag(id: language)
-                cell.setHashtag(hashtag: hashtag)
-                return cell
-            }
-            .disposed(by: disposeBag)
-        
-        output.careers
-            .asDriver(onErrorJustReturn: [])
-            .drive(careerListView.hashtagCollectionView.rx.items) { collectionView, index, career in
-                guard let cell = collectionView.dequeueReusableCell(
-                    withReuseIdentifier: HashtagBadgeCell.identifier,
-                    for: IndexPath(row: index, section: 0)) as? HashtagBadgeCell else {
-                    return UICollectionViewCell()
-                }
-                let hashtag = Career.idToHashtag(id: career)
-                cell.setHashtag(hashtag: hashtag)
-                return cell
-            }
-            .disposed(by: disposeBag)
-        
-        output.categorys
-            .asDriver(onErrorJustReturn: [])
-            .drive(categoryListView.hashtagCollectionView.rx.items) { collectionView, index, category in
-                guard let cell = collectionView.dequeueReusableCell(
-                    withReuseIdentifier: HashtagBadgeCell.identifier,
-                    for: IndexPath(row: index, section: 0)) as? HashtagBadgeCell else {
-                    return UICollectionViewCell()
-                }
-                let hashtag = Category.idToHashtag(id: category)
-                cell.setHashtag(hashtag: hashtag)
-                return cell
-            }
-            .disposed(by: disposeBag)
+        languageListView.bind(hashtags: output.languages.asDriver(onErrorJustReturn: []))
+        careerListView.bind(hashtags: output.careers.asDriver(onErrorJustReturn: []))
+        categoryListView.bind(hashtags: output.categorys.asDriver(onErrorJustReturn: []))
         
         output.studyRatingList
             .withUnretained(self)

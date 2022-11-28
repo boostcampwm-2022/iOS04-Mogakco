@@ -16,9 +16,12 @@ class StudyRatingListView: UIView {
     }
     
     private let titleLabel = UILabel().then {
-        $0.text = "스터디 참여 top3"
+        $0.text = "스터디 참여 Top3"
         $0.font = .mogakcoFont.mediumBold
         $0.textColor = .mogakcoColor.typographyPrimary
+        $0.snp.makeConstraints {
+            $0.height.equalTo(Constant.studyRatingViewHeight)
+        }
     }
 
     private let firstStudyRatingView = StudyRatingView().then {
@@ -34,6 +37,16 @@ class StudyRatingListView: UIView {
     }
     
     private let thirdStudyRatingView = StudyRatingView().then {
+        $0.snp.makeConstraints {
+            $0.height.equalTo(Constant.studyRatingViewHeight)
+        }
+    }
+    
+    private let emptyLabel = UILabel().then {
+        $0.text = "아직 참여한 스터디가 없어요"
+        $0.font = .mogakcoFont.caption
+        $0.textColor = .mogakcoColor.typographyPrimary
+        $0.textAlignment = .center
         $0.snp.makeConstraints {
             $0.height.equalTo(Constant.studyRatingViewHeight)
         }
@@ -54,10 +67,10 @@ class StudyRatingListView: UIView {
         zip(studyRatingList, studyRatingViews).forEach { studyRating, studyRatingView in
             studyRatingView.configure(studyRating: studyRating)
         }
-        isHidden = studyRatingList.isEmpty
         firstStudyRatingView.isHidden = studyRatingList.count < 1
         secondStudyRatingView.isHidden = studyRatingList.count < 2
         thirdStudyRatingView.isHidden = studyRatingList.count < 3
+        emptyLabel.isHidden = !studyRatingList.isEmpty
     }
 
     private func layout() {
@@ -69,7 +82,14 @@ class StudyRatingListView: UIView {
     }
     
     private func makeEntireStackView() -> UIStackView {
-        let arrangeViews = [titleLabel, firstStudyRatingView, secondStudyRatingView, thirdStudyRatingView]
+        let arrangeViews = [
+            titleLabel,
+            firstStudyRatingView,
+            secondStudyRatingView,
+            thirdStudyRatingView,
+            emptyLabel,
+            UIView()
+        ]
         return UIStackView(arrangedSubviews: arrangeViews).then {
             $0.axis = .vertical
             $0.spacing = 4.0
@@ -77,4 +97,6 @@ class StudyRatingListView: UIView {
             $0.isLayoutMarginsRelativeArrangement = true
         }
     }
+    
+    
 }
