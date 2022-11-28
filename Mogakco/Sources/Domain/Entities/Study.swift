@@ -20,3 +20,18 @@ struct Study {
     let languages: [String]
     let category: String
 }
+
+extension Study {
+    init(study: Study, userIDs: [String]) {
+        self.id = study.id
+        self.chatRoomID = study.chatRoomID
+        self.userIDs = userIDs
+        self.title = study.title
+        self.content = study.content
+        self.date = study.date
+        self.place = study.place
+        self.maxUserCount = study.maxUserCount
+        self.languages = study.languages
+        self.category = study.category
+    }
+}
