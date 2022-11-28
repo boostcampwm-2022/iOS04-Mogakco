@@ -162,7 +162,7 @@ extension HashtagSelectViewController: UICollectionViewDataSource {
         if viewModel.isSelected(index: indexPath.row) {
             cell.select()
         }
-        cell.setInfo(iconName: cellInfo?.title, title: cellInfo?.displayTitle)
+        cell.setInfo(iconName: cellInfo?.id, title: cellInfo?.title)
         return cell
     }
     
@@ -200,7 +200,7 @@ extension HashtagSelectViewController: UICollectionViewDelegateFlowLayout {
         layout collectionViewLayout: UICollectionViewLayout,
         sizeForItemAt indexPath: IndexPath
     ) -> CGSize {
-        guard let title = viewModel.cellInfo(index: indexPath.row)?.displayTitle else {
+        guard let title = viewModel.cellInfo(index: indexPath.row)?.title else {
             return CGSize(width: BadgeCell.addWidth, height: BadgeCell.height)
         }
         
