@@ -26,7 +26,7 @@ enum Category: String, CaseIterable, Hashtag {
         return self.rawValue
     }
     
-    func hashtagTitle() -> String {
+    var displayTitle: String {
         switch self {
         case .artificialIntelligence: return "AI"
         case .algorithm: return "알고리즘"
