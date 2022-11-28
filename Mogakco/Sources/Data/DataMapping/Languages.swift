@@ -41,7 +41,7 @@ enum Languages: String, CaseIterable, Hashtag {
         return self.rawValue
     }
     
-    func hashtagTitle() -> String {
+    var displayTitle: String {
         switch self {
         case .cLang: return "C"
         case .cShop: return "C#"
