@@ -16,7 +16,7 @@ final class ChatListViewController: UIViewController {
     
     enum Constant {
         static let headerViewTitle = "채팅 목록"
-        static let headerViewHeight = 68.0
+        static let headerViewHeight = Layout.tapbarHeaderViewHeight
     }
     
     private let headerView = TitleHeaderView().then {

@@ -13,4 +13,5 @@ enum Layout {
     static let textFieldHeight: CGFloat = 56
     static let textViewHeight: CGFloat = 56
     static let buttonBottomInset: CGFloat = 16
+    static let tapbarHeaderViewHeight: CGFloat = 68
 }
