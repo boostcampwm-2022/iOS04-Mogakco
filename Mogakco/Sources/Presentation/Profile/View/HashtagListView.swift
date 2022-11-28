@@ -15,7 +15,7 @@ final class HashtagListView: UIView {
     
     let titleLabel = UILabel().then {
         $0.font = UIFont.mogakcoFont.smallBold
-        $0.text = "해시태크"
+        $0.text = "해시태그"
         $0.textColor = UIColor.mogakcoColor.typographyPrimary
     }
     
