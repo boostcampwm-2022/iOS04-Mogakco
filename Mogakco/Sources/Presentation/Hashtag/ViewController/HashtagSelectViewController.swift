@@ -158,11 +158,11 @@ extension HashtagSelectViewController: UICollectionViewDataSource {
         
         cell.prepareForReuse()
         
-        let cellInfo = viewModel.cellInfo(index: indexPath.row)
+        let cellHashtag = viewModel.cellInfo(index: indexPath.row)
         if viewModel.isSelected(index: indexPath.row) {
             cell.select()
         }
-        cell.setInfo(iconName: cellInfo?.id, title: cellInfo?.title)
+        cell.setHashtag(hashtag: cellHashtag)
         return cell
     }
     
