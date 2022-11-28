@@ -46,10 +46,8 @@ struct UserUseCase: UserUseCaseProtocol {
             })
     }
     
-    func myStudyRatingList() -> Observable<[(String, Int)]> {
-        return userRepository.load()
-            .map { $0.studyIDs }
-            .flatMap { studyRepository.list(ids: $0) }
+    func studyRatingList(studyIDs: [String]) -> Observable<[(String, Int)]> {
+        return studyRepository.list(ids: studyIDs)
             .map { $0.map { $0.category } }
             .map { $0.countDictionary }
             .map { $0.sorted { $0.value < $1.value }.map { ($0.key, $0.value) } }
