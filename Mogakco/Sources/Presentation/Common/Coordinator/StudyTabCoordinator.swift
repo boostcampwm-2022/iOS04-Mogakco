@@ -59,14 +59,24 @@ final class StudyTabCoordinator: Coordinator, StudyTabCoordinatorProtocol {
             localUserDataSource: localUserDataSource,
             remoteUserDataSource: remoteUserDataSource
         )
+        let chatRoomRepository = ChatRoomRepository(
+            chatRoomDataSource: ChatRoomDataSource(provider: Provider.default),
+            remoteUserDataSource: remoteUserDataSource
+        )
         let userUseCase = UserUseCase(userRepository: userRepository, studyRepository: studyRepository)
+        let joinStudyUseCase = JoinStudyUseCase(
+            studyRepository: studyRepository,
+            chatRoomRepository: chatRoomRepository,
+            userRepository: userRepository
+        )
         
         let viewModel = StudyDetailViewModel(
             studyID: id,
             coordinator: self,
             studyUsecase: studyUseCase,
             hashtagUseCase: hashtagUseCase,
-            userUseCase: userUseCase
+            userUseCase: userUseCase,
+            joinStudyUseCase: joinStudyUseCase
         )
         let viewController = StudyDetailViewController(viewModel: viewModel)
         navigationController.tabBarController?.navigationController?.pushViewController(viewController, animated: true)
