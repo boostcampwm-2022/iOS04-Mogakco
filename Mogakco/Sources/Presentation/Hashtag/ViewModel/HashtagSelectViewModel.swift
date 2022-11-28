@@ -48,13 +48,13 @@ class HashtagSelectedViewModel: HashtagViewModel {
         case .language:
             guard let profileProps = profileProps else { return }
             let languageProps = profileProps.toLanguageProps(
-                languages: selectedHashtag.map { $0.title }
+                languages: selectedHashtag.map { $0.id }
             )
             coordinator?.showCareer(languageProps: languageProps)
             
         case .career:
             guard let languageProps = languageProps else { return }
-            let signupProps = languageProps.toSignupProps(careers: selectedHashtag.map { $0.title })
+            let signupProps = languageProps.toSignupProps(careers: selectedHashtag.map { $0.id })
             signUseCase?.signup(signupProps: signupProps)
             .subscribe { [weak self] _ in
                 self?.coordinator?.finish(success: true)

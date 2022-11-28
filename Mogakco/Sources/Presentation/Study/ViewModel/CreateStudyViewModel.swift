@@ -66,8 +66,8 @@ final class CreateStudyViewModel: ViewModel {
                     date: $0.2,
                     place: $0.3,
                     maxUserCount: $0.4,
-                    languages: $0.5.map { $0.title },
-                    category: $0.6.title
+                    languages: $0.5.map { $0.id },
+                    category: $0.6.id
                 )
             }
         
