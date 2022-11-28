@@ -18,6 +18,20 @@ enum Career: String, CaseIterable, Hashtag {
     case toss
     case worksMobile
     
+    static func idToHashtag(id: String) -> Hashtag? {
+        switch id {
+        case "baemin": return Career.baemin
+        case "carrot": return Career.carrot
+        case "facebook": return Career.facebook
+        case "kakao": return Career.kakao
+        case "line": return Career.line
+        case "naver": return Career.naver
+        case "toss": return Career.toss
+        case "worksMobile": return Career.worksMobile
+        default: return nil
+        }
+    }
+    
     var id: String {
         return self.rawValue
     }
