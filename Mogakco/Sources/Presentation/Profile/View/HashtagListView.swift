@@ -13,6 +13,10 @@ import RxSwift
 
 final class HashtagListView: UIView {
     
+    enum Constant {
+        static let editButtonSize = CGSize(width: 45.0, height: 22.0)
+    }
+    
     let titleLabel = UILabel().then {
         $0.font = UIFont.mogakcoFont.smallBold
         $0.text = "해시태그"
@@ -24,12 +28,11 @@ final class HashtagListView: UIView {
         $0.layer.cornerRadius = 8.0
         $0.setTitle("편집", for: .normal)
         $0.setTitleColor(UIColor.mogakcoColor.typographyPrimary, for: .normal)
-        $0.titleLabel?.font = UIFont.mogakcoFont.smallBold
+        $0.titleLabel?.font = UIFont.mogakcoFont.caption
         $0.setBackgroundColor(.white, for: .normal)
         $0.titleLabel?.textAlignment = .center
         $0.snp.makeConstraints {
-            $0.width.equalTo(45.0)
-            $0.height.equalTo(22.0)
+            $0.size.equalTo(Constant.editButtonSize)
         }
     }
 
@@ -46,7 +49,18 @@ final class HashtagListView: UIView {
         $0.bounces = false
         layout.scrollDirection = .horizontal
         $0.isPagingEnabled = false
+            $0.dataSource = nil
+            $0.delegate = nil
     }
+    
+    private let emptyLabel = UILabel().then {
+        $0.text = "편집 버튼을 눌러 나만의 해시태크를 설정해보세요!"
+        $0.font = .mogakcoFont.caption
+        $0.textColor = .mogakcoColor.typographyPrimary
+        $0.textAlignment = .center
+    }
+    
+    private let disposeBag = DisposeBag()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -57,8 +71,28 @@ final class HashtagListView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    func bind(hashtags: Driver<[String]>) {
+        hashtags
+            .drive(hashtagCollectionView.rx.items) { collectionView, index, language in
+                guard let cell = collectionView.dequeueReusableCell(
+                    withReuseIdentifier: BadgeCell.identifier,
+                    for: IndexPath(row: index, section: 0)) as? BadgeCell else {
+                    return UICollectionViewCell()
+                }
+                cell.setInfo(iconName: language, title: language)
+                return cell
+            }
+            .disposed(by: disposeBag)
+        
+        hashtags
+            .map { !$0.isEmpty }
+            .drive(emptyLabel.rx.isHidden)
+            .disposed(by: disposeBag)
+    }
+    
     private func layout() {
         layoutEntireStackView()
+        layoutEmtpyLabel()
     }
     
     private func layoutEntireStackView() {
@@ -83,6 +117,13 @@ final class HashtagListView: UIView {
             $0.axis = .horizontal
             $0.layoutMargins = .init(top: 0.0, left: 16.0, bottom: 0.0, right: 16.0)
             $0.isLayoutMarginsRelativeArrangement = true
+        }
+    }
+    
+    private func layoutEmtpyLabel() {
+        addSubview(emptyLabel)
+        emptyLabel.snp.makeConstraints {
+            $0.edges.equalTo(hashtagCollectionView)
         }
     }
 }
