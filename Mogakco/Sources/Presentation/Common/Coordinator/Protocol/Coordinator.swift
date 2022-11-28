@@ -23,4 +23,8 @@ extension Coordinator {
     func pop(animated: Bool) {
         navigationController.popViewController(animated: animated)
     }
+    
+    func popTabbar(animated: Bool) {
+        navigationController.tabBarController?.navigationController?.popViewController(animated: animated) 
+    }
 }
