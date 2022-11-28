@@ -266,9 +266,7 @@ final class StudyDetailViewController: ViewController {
     
     private func layoutStudyJoinButton() {
         studyJoinButton.snp.makeConstraints {
-            $0.top.equalTo(participantsCollectionView.snp.bottom).offset(50)
-            $0.leading.trailing.equalToSuperview().inset(16)
-            $0.bottom.equalToSuperview()
+            $0.leading.trailing.bottom.equalTo(view.safeAreaLayoutGuide).inset(16)
             $0.height.equalTo(Layout.buttonHeight)
         }
     }
