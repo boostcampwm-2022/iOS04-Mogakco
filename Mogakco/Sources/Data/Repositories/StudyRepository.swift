@@ -100,6 +100,9 @@ struct StudyRepository: StudyRepositoryProtocol {
                         )
                     )
                 }
+                .flatMap {
+                    localUserDataSource.save(user: $0.toDomain())
+                }
             
             Observable
                 .zip(createStudy, createChatRoom, updateUser)
