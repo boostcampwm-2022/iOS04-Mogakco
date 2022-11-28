@@ -9,34 +9,55 @@
 import RxSwift
 import Foundation
 
-struct CreateStudyUseCase: CreateStudyUseCaseProtocol {
+class CreateStudyUseCase: CreateStudyUseCaseProtocol {
     
     private let studyRepository: StudyRepositoryProtocol
     private let userRepository: UserRepositoryProtocol
+    private let chatRoomRepository: ChatRoomRepositoryProtocol
+    private let disposeBag = DisposeBag()
     
     init(
         studyRepository: StudyRepositoryProtocol,
-        userRepository: UserRepositoryProtocol
+        userRepository: UserRepositoryProtocol,
+        chatRoomRepository: ChatRoomRepositoryProtocol
     ) {
         self.studyRepository = studyRepository
         self.userRepository = userRepository
+        self.chatRoomRepository = chatRoomRepository
     }
     
     func create(study: Study) -> Observable<Void> {
-        var study = study
-        return userRepository.load()
-            .map { $0.id }
-            .map { study.userIDs.append($0) }
-            .flatMap { studyRepository.create(study: study) } // 1. 스터디 생성
-//            .flatMap { } // 2. 채팅방 생성
-            .flatMap { _ in userRepository.load() } // 3. 유저 업데이트
-            .flatMap {
-                userRepository.updateIDs(
-                    id: $0.id,
-                    chatRoomIDs: $0.chatRoomIDs + [study.id],
-                    studyIDs: $0.studyIDs + [study.id]
-                )
-            }
-            .map { _ in return () }
+        
+        return Observable<Void>.create { [weak self] emitter in
+        
+            guard let self = self else { return Disposables.create() }
+            
+            let user = self.userRepository.load()
+            
+            let createStudy = user
+                .map { Study(study: study, userIDs: [$0.id]) }
+                .flatMap { self.studyRepository.create(study: $0) }
+            
+            let createChatRoom = user
+                .flatMap { user in
+                    self.chatRoomRepository.create(studyID: study.id, userIDs: [user.id])
+                }
+            
+            let updateUser = user
+                .flatMap { user in
+                    self.userRepository.updateIDs(
+                        id: user.id,
+                        chatRoomIDs: user.chatRoomIDs + [study.id],
+                        studyIDs: user.chatRoomIDs + [study.id]
+                    )
+                }
+            
+            Observable
+                .zip(createStudy, createChatRoom, updateUser)
+                .subscribe { _ in emitter.onNext(()) }
+                .disposed(by: self.disposeBag)
+            
+            return Disposables.create()
+        }
     }
 }
