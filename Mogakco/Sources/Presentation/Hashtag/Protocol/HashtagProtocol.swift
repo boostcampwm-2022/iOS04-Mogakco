@@ -6,9 +6,10 @@
 //  Copyright © 2022 Mogakco. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 protocol Hashtag {
+    var id: String { get }
     var title: String { get }
-    var displayTitle: String { get }
+    //    var image: UIImage { get }
 }

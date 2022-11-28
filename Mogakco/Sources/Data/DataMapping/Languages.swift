@@ -37,11 +37,11 @@ enum Languages: String, CaseIterable, Hashtag {
         return names
     }
     
-    var title: String {
+    var id: String {
         return self.rawValue
     }
     
-    var displayTitle: String {
+    var title: String {
         switch self {
         case .cLang: return "C"
         case .cShop: return "C#"

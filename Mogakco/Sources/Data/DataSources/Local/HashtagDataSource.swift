@@ -47,7 +47,7 @@ struct HashtagDataSource: HashtagDataSourceProtocol {
             }
             
             tagList.forEach {
-                if tagTitle.contains($0.title) {selectedTags.append($0)}
+                if tagTitle.contains($0.id) {selectedTags.append($0)}
             }
             
             emitter.onNext(selectedTags)

@@ -71,7 +71,7 @@ class HashtagViewModel: ViewModel {
     
     func isSelected(index: Int) -> Bool {
         guard let hashtag = cellInfo(index: index) else { return false }
-        if selectedHashtag.contains(where: { $0.title == hashtag.title }) { return true }
+        if selectedHashtag.contains(where: { $0.id == hashtag.id }) { return true }
         
         return false
     }
@@ -87,7 +87,7 @@ class HashtagViewModel: ViewModel {
     private func selectHashtag(index: Int) {
         guard let hashTag = cellInfo(index: index) else { return }
         
-        if let removeIndex = selectedHashtag.firstIndex(where: { $0.title == hashTag.title }) {
+        if let removeIndex = selectedHashtag.firstIndex(where: { $0.id == hashTag.id }) {
             selectedHashtag.remove(at: removeIndex)
         } else {
             selectedHashtag.append(hashTag)
