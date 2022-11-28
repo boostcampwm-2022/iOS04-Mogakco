@@ -17,9 +17,7 @@ final class StudyListViewController: ViewController {
     
     private let header = StudyListHeader()
     
-    private lazy var refreshControl = UIRefreshControl().then {
-        $0.addTarget(self, action: #selector(refreshCollection), for: .valueChanged)
-    }
+    private lazy var refreshControl = UIRefreshControl()
     
     private lazy var collectionView = UICollectionView(
         frame: .zero,
@@ -68,7 +66,8 @@ final class StudyListViewController: ViewController {
         let input = StudyListViewModel.Input(
             viewWillAppear: self.rx.viewWillAppear.map { _ in () }.asObservable(),
             plusButtonTapped: header.plusButton.rx.tap.asObservable(),
-            cellSelected: collectionView.rx.itemSelected.asObservable()
+            cellSelected: collectionView.rx.itemSelected.asObservable(),
+            refresh: refreshControl.rx.controlEvent(.valueChanged).asObservable()
         )
         
         let output = viewModel.transform(input: input)
@@ -80,6 +79,12 @@ final class StudyListViewController: ViewController {
             )) { _, study, cell in
                 cell.setup(study)
             }
+            .disposed(by: disposeBag)
+        
+        output.studyList
+            .subscribe(onNext: { [weak self] _ in
+                self?.refreshControl.endRefreshing()
+            })
             .disposed(by: disposeBag)
     }
     
@@ -115,13 +120,6 @@ final class StudyListViewController: ViewController {
             section.interGroupSpacing = 16
             section.contentInsets = .init(top: 1, leading: 16, bottom: 16, trailing: 16)
             return section
-        }
-    }
-    
-    @objc private func refreshCollection() {
-        print("새로고침")
-        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(3)) { [weak self] in
-            self?.refreshControl.endRefreshing()
         }
     }
 }
