@@ -10,15 +10,26 @@ import RxSwift
 
 struct StudyRepository: StudyRepositoryProtocol {
 
-    private let dataSource: StudyDataSourceProtocol
+    private let studyDataSource: StudyDataSourceProtocol
+    private let localUserDataSource: LocalUserDataSourceProtocol
+    private let remoteUserDataSource: RemoteUserDataSourceProtocol
+    private let chatRoomDataSource: ChatRoomDataSourceProtocol
     private let disposeBag = DisposeBag()
     
-    init(dataSource: StudyDataSourceProtocol) {
-        self.dataSource = dataSource
+    init(
+        studyDataSource: StudyDataSourceProtocol,
+        localUserDataSource: LocalUserDataSourceProtocol,
+        remoteUserDataSource: RemoteUserDataSourceProtocol,
+        chatRoomDataSource: ChatRoomDataSourceProtocol
+    ) {
+        self.studyDataSource = studyDataSource
+        self.localUserDataSource = localUserDataSource
+        self.remoteUserDataSource = remoteUserDataSource
+        self.chatRoomDataSource = chatRoomDataSource
     }
     
     func list(sort: StudySort, filters: [StudyFilter]) -> Observable<[Study]> {
-        return dataSource.list()
+        return studyDataSource.list()
             .map { $0.documents.map { $0.toDomain() } }
             .map { studys -> [Study] in
                 switch sort {
@@ -46,25 +57,62 @@ struct StudyRepository: StudyRepositoryProtocol {
     }
     
     func list(ids: [String]) -> Observable<[Study]> {
-        return dataSource.list()
+        return studyDataSource.list()
             .map { $0.documents.map { $0.toDomain() } }
             .map { $0.filter { ids.contains($0.id) } }
     }
     
     func detail(id: String) -> Observable<Study> {
-        return dataSource.detail(id: id)
+        return studyDataSource.detail(id: id)
             .map { $0.toDomain() }
     }
     
     func create(study: Study) -> Observable<Study> {
-        let studyDTO = StudyRequestDTO(study: study)
-        return dataSource.create(study: studyDTO)
-            .map { $0.toDomain() }
+        
+        return Observable<Study>.create { emitter in
+            
+            let user = localUserDataSource.load()
+            
+            let createStudy = user
+                .map { Study(study: study, userIDs: [$0.id]) }
+                .map { StudyRequestDTO(study: $0) }
+                .flatMap { studyDataSource.create(study: $0) }
+            
+            let createChatRoom = user
+                .map {
+                    CreateChatRoomRequestDTO(
+                        id: study.id,
+                        studyID: study.id,
+                        userIDs: [$0.id]
+                    )
+                }
+                .flatMap {
+                    chatRoomDataSource.create(request: $0)
+                }
+            
+            let updateUser = user
+                .flatMap { user in
+                    remoteUserDataSource.updateIDs(
+                        id: user.id,
+                        request: UpdateStudyIDsRequestDTO(
+                            chatRoomIDs: user.chatRoomIDs + [study.id],
+                            studyIDs: user.chatRoomIDs + [study.id]
+                        )
+                    )
+                }
+            
+            Observable
+                .zip(createStudy, createChatRoom, updateUser)
+                .subscribe { data in emitter.onNext(data.0.toDomain()) }
+                .disposed(by: self.disposeBag)
+            
+            return Disposables.create()
+        }
     }
     
     func updateIDs(id: String, userIDs: [String]) -> Observable<Study> {
         let updateDTO = UpdateUserIDsRequestDTO(userIDs: userIDs)
-        return dataSource.updateIDs(id: id, request: updateDTO)
+        return studyDataSource.updateIDs(id: id, request: updateDTO)
             .map { $0.toDomain() }
     }
 }
