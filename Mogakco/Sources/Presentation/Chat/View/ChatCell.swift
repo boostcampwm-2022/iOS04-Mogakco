@@ -28,12 +28,6 @@ final class ChatCell: UICollectionViewCell, Identifiable {
         $0.layer.cornerRadius = 8
     }
     
-    var chat: Chat? {
-        didSet { configureChat() }
-    }
-    
-    let disposeBag = DisposeBag()
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
         layout()
@@ -83,55 +77,13 @@ final class ChatCell: UICollectionViewCell, Identifiable {
         }
     }
     
-    private func configureChat() {
-        guard let chat = chat else { return }
-        let chatDataSource = ChatDataSource()
-        let localUserDataSource = UserDefaultsUserDataSource()
-        let remoteUserDataSource = RemoteUserDataSource(provider: Provider.default)
+    func isFromCurrentUser(userID: String, chat: Chat) {
+        if userID == chat.userID {
+            layoutMyBubble()
+        } else {
+            layoutOthersBubble()
+        }
         
-        let chatRepository = ChatRepository(chatDataSource: chatDataSource)
-        let userRepository = UserRepository(
-            localUserDataSource: localUserDataSource,
-            remoteUserDataSource: remoteUserDataSource
-        )
-        
-        let chatUseCase = ChatUseCase(
-            chatRepository: chatRepository,
-            userRepository: userRepository
-        )
-        
-        let viewModel = MessageViewModel(
-            chat: chat,
-            chatUseCase: chatUseCase
-        )
-        
-        let output = viewModel.transform()
-        print("@", 2)
-        output.isFromCurrentUser
-            .subscribe { [weak self] bool in
-                print("@@", bool.element)
-                
-            }.disposed(by: disposeBag)
-        print("@", 3)
-        output.isFromCurrentUser
-            .map { $0 ? UIColor.mogakcoColor.backgroundSecondary : UIColor.mogakcoColor.primaryDefault }
-            .bind(to: bubbleContainer.rx.backgroundColor)
-            .disposed(by: disposeBag)
-        print("@", 4)
-        output.isFromCurrentUser
-            .withUnretained(self)
-            .subscribe { _, bool in
-                
-                if bool {
-                    self.layoutMyBubble()
-                    print("DEBUG : true")
-                } else {
-                    self.layoutOthersBubble()
-                    print("DEBUG : false")
-                }
-            }
-            .disposed(by: disposeBag)
-        print("@", 5)
         textView.text = chat.message
     }
     
@@ -139,12 +91,14 @@ final class ChatCell: UICollectionViewCell, Identifiable {
         bubbleContainer.snp.makeConstraints {
             $0.left.equalTo(profileImageView.snp.right).offset(12)
         }
+        bubbleContainer.backgroundColor = .mogakcoColor.backgroundSecondary
     }
     
     private func layoutMyBubble() {
         bubbleContainer.snp.makeConstraints {
             $0.right.equalToSuperview().inset(12)
         }
+        bubbleContainer.backgroundColor = .mogakcoColor.primaryDefault
         profileImageView.isHidden = true
     }
 }
