@@ -12,11 +12,13 @@ import Then
 
 final class ChatRoomTableViewCell: UITableViewCell, Identifiable {
     
-    static let cellHeight = 80.0
-    
-    private lazy var chatRoomImageView = UIImageView().then {
-        $0.image = Image.profileDefault
+    enum Constant {
+        static let cellHeight = 80.0
+        static let noUsersTitle = "유저가 존재하지 않아요!"
+        static let noMessageTitle = "아직 채팅 메세지가 없어요!"
     }
+    
+    private let chatRoomUsersImageView = ChatRoomUsersImageView()
     
     private let chatRoomTitleLabel = UILabel().then {
         $0.textAlignment = .left
@@ -54,20 +56,24 @@ final class ChatRoomTableViewCell: UITableViewCell, Identifiable {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        configureChatRoomImageViewCornerRadius()
         configureUnreadMessageCountLabelCornerRadius()
     }
     
     func configure(chatRoom: ChatRoom) {
-        chatRoomTitleLabel.text = chatRoom.userIDs.joined()
-        latestMessageLabel.text = chatRoom.latestChat?.message ?? ""
-        if let date = chatRoom.latestChat?.date {
-            latestMessageDateLabel.text = String(date)
-        }
-        if let unreadChatCount = chatRoom.unreadChatCount {
-            unreadMessageCountLabel.isHidden = unreadChatCount == 0
-            unreadMessageCountLabel.text = String(unreadChatCount)
-        }
+        chatRoomUsersImageView.configure(
+            imageURLs: (chatRoom.users ?? [])
+                .compactMap { $0.profileImageURLString }
+                .compactMap { URL(string: $0) }
+            )
+        chatRoomTitleLabel.text = chatRoom.users?.map { $0.name }.joined(separator: ", ") ?? Constant.noUsersTitle
+        latestMessageLabel.text = chatRoom.latestChat?.message ?? Constant.noMessageTitle
+        
+        latestMessageDateLabel.text = chatRoom.latestChat?.date.toString
+            .toDate(dateFormat: Format.compactDateFormat)?.relativeTime ?? ""
+        
+        let unreadChatCount = chatRoom.unreadChatCount ?? 0
+        unreadMessageCountLabel.isHidden = unreadChatCount == 0
+        unreadMessageCountLabel.text = String(unreadChatCount)
     }
     
     private func layout() {
@@ -84,10 +90,10 @@ final class ChatRoomTableViewCell: UITableViewCell, Identifiable {
     }
     
     private func makeEntireStackView() -> UIStackView {
-        let arrangedSubviews = [chatRoomImageView, makeEntireLabelStackView()]
+        let arrangedSubviews = [chatRoomUsersImageView, makeEntireLabelStackView()]
         
-        chatRoomImageView.snp.makeConstraints {
-            $0.width.equalTo(chatRoomImageView.snp.height)
+        chatRoomUsersImageView.snp.makeConstraints {
+            $0.width.equalTo(chatRoomUsersImageView.snp.height)
         }
         
         return UIStackView(arrangedSubviews: arrangedSubviews).then {
@@ -117,6 +123,9 @@ final class ChatRoomTableViewCell: UITableViewCell, Identifiable {
     private func makeBottomLabelStackView() -> UIStackView {
         let arrangedSubviews = [latestMessageLabel, unreadMessageCountLabel]
         
+        latestMessageLabel.snp.makeConstraints {
+            $0.height.equalTo(16.0)
+        }
         unreadMessageCountLabel.snp.makeConstraints {
             $0.width.equalTo(unreadMessageCountLabel.snp.height)
         }
@@ -125,10 +134,6 @@ final class ChatRoomTableViewCell: UITableViewCell, Identifiable {
             $0.axis = .horizontal
             $0.spacing = 4.0
         }
-    }
-    
-    private func configureChatRoomImageViewCornerRadius() {
-        chatRoomImageView.layer.cornerRadius = chatRoomImageView.frame.width / 2.0
     }
     
     private func configureUnreadMessageCountLabelCornerRadius() {
