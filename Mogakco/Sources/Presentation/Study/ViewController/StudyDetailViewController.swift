@@ -76,7 +76,7 @@ final class StudyDetailViewController: ViewController {
         layout.scrollDirection = .horizontal
         layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         $0.collectionViewLayout = layout
-        $0.register(BadgeCell.self, forCellWithReuseIdentifier: BadgeCell.identifier)
+        $0.register(HashtagBadgeCell.self, forCellWithReuseIdentifier: HashtagBadgeCell.identifier)
         $0.showsHorizontalScrollIndicator = false
     }
     
@@ -296,8 +296,8 @@ extension StudyDetailViewController: UICollectionViewDataSource {
         switch collectionView {
         case languageCollectionView:
             guard let cell = languageCollectionView.dequeueReusableCell(
-                withReuseIdentifier: BadgeCell.identifier,
-                for: indexPath) as? BadgeCell
+                withReuseIdentifier: HashtagBadgeCell.identifier,
+                for: indexPath) as? HashtagBadgeCell
             else { return UICollectionViewCell() }
             
             cell.prepareForReuse()
@@ -340,8 +340,8 @@ extension StudyDetailViewController: UICollectionViewDelegateFlowLayout {
             return CGSize(
                 width: cellHashtag.title.size(
                     withAttributes: [NSAttributedString.Key.font: UIFont.mogakcoFont.mediumRegular]
-                ).width + BadgeCell.addWidth,
-                height: BadgeCell.height
+                ).width + HashtagBadgeCell.addWidth,
+                height: HashtagBadgeCell.height
             )
         case participantsCollectionView:
             return CGSize(width: ParticipantCell.size.width, height: ParticipantCell.size.height)
