@@ -22,7 +22,7 @@ struct ChatRepository: ChatRepositoryProtocol {
         return chatDataSource.fetch(chatRoomID: chatRoomID).map { $0.map { $0.toDomain() } }
     }
 
-    func send(chat: Chat, to chatRoomID: String) -> Observable<Error?> {
+    func send(chat: Chat, to chatRoomID: String) -> Observable<Void> {
         return chatDataSource.send(chat: chat, to: chatRoomID)
             // TODO: ChatService 객체 만들어야 할 듯
     }

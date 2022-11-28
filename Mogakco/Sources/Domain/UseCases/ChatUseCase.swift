@@ -27,7 +27,7 @@ struct ChatUseCase: ChatUseCaseProtocol {
         return chatRepository.fetch(chatRoomID: chatRoomID)
     }
 
-    func send(chat: Chat, to chatRoomID: String) -> Observable<Error?> {
+    func send(chat: Chat, to chatRoomID: String) -> Observable<Void> {
         return chatRepository.send(chat: chat, to: chatRoomID)
     }
     
