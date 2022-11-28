@@ -41,7 +41,7 @@ final class HashtagListView: UIView {
         layout.sectionInset = UIEdgeInsets(top: 0.0, left: 8.0, bottom: 0.0, right: 8.0)
 
         $0.collectionViewLayout = layout
-        $0.register(BadgeCell.self, forCellWithReuseIdentifier: BadgeCell.identifier)
+        $0.register(HashtagBadgeCell.self, forCellWithReuseIdentifier: HashtagBadgeCell.identifier)
         $0.showsHorizontalScrollIndicator = false
         $0.bounces = false
         layout.scrollDirection = .horizontal

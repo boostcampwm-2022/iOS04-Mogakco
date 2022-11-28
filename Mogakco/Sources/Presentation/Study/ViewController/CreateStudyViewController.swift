@@ -84,7 +84,7 @@ final class CreateStudyViewController: ViewController {
         frame: .zero,
         collectionViewLayout: collectionViewLayout()
     ).then {
-        $0.register(BadgeCell.self, forCellWithReuseIdentifier: BadgeCell.identifier)
+        $0.register(HashtagBadgeCell.self, forCellWithReuseIdentifier: HashtagBadgeCell.identifier)
         $0.showsHorizontalScrollIndicator = false
         $0.snp.makeConstraints {
             $0.height.equalTo(Constant.collectionViewHeight)
@@ -163,8 +163,8 @@ final class CreateStudyViewController: ViewController {
         
         output.languages
             .bind(to: self.languageCollectionView.rx.items(
-                cellIdentifier: BadgeCell.identifier,
-                cellType: BadgeCell.self
+                cellIdentifier: HashtagBadgeCell.identifier,
+                cellType: HashtagBadgeCell.self
             )) { _, hashtag, cell in
                 cell.setHashtag(hashtag: hashtag)
             }

@@ -11,7 +11,7 @@ import UIKit
 import SnapKit
 import Then
 
-final class BadgeCell: UICollectionViewCell, Identifiable {
+final class HashtagBadgeCell: UICollectionViewCell, Identifiable {
     static let addWidth = CGFloat(60)
     static let height = CGFloat(35)
     
