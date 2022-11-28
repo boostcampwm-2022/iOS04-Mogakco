@@ -9,7 +9,6 @@
 import RxSwift
 
 protocol StudyRepositoryProtocol {
-    func list() -> Observable<[Study]>
     func list(sort: StudySort, filters: [StudyFilter]) -> Observable<[Study]>
     func list(ids: [String]) -> Observable<[Study]>
     func detail(id: String) -> Observable<Study>
