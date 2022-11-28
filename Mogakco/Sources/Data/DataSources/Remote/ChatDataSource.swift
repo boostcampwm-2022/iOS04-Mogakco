@@ -26,7 +26,7 @@ struct ChatDataSource: ChatDataSourceProtocol {
                         guard let data = try? JSONSerialization.data(withJSONObject: dictionary),
                         let chat = try? JSONDecoder().decode(Chat.self, from: data)
                         else { return }
-
+                        
                         chats.append(ChatResponseDTO(chat: chat))
                         emitter.onNext(chats)
                     }
@@ -36,12 +36,12 @@ struct ChatDataSource: ChatDataSourceProtocol {
         }
     }
     
-    func send(chat: Chat, to chatRoomID: String) -> Observable<Error?> {
+    func send(chat: Chat, to chatRoomID: String) -> Observable<Void> {
         return Observable.create { emitter in
             Collection.ChatRoom.document(chatRoomID)
                 .collection("chats")
-                .addDocument(data: chat.toDictionary()) { data in
-                    emitter.onNext(data)
+                .addDocument(data: chat.toDictionary()) { _ in
+                    emitter.onNext(())
                 }
             return Disposables.create()
         }

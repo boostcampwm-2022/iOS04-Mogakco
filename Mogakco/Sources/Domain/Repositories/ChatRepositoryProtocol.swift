@@ -10,5 +10,5 @@ import RxSwift
 
 protocol ChatRepositoryProtocol {
     func fetch(chatRoomID: String) -> Observable<[Chat]>
-    func send(chat: Chat, to chatRoomID: String) -> Observable<Error?> // Chat으로?
+    func send(chat: Chat, to chatRoomID: String) -> Observable<Void> // Chat으로?
 }
