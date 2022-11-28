@@ -17,6 +17,7 @@ final class StudyListViewModel: ViewModel {
         let viewWillAppear: Observable<Void>
         let plusButtonTapped: Observable<Void>
         let cellSelected: Observable<IndexPath>
+        let refresh: Observable<Void>
     }
     
     struct Output {
@@ -66,6 +67,14 @@ final class StudyListViewModel: ViewModel {
             }
             .disposed(by: disposeBag)
  
-        return Output(studyList: studyList)
+        input.refresh
+            .withUnretained(self)
+            .flatMap { $0.0.useCase.list(sort: .latest, filters: []) }
+            .bind(to: studyList)
+            .disposed(by: disposeBag)
+        
+        return Output(
+            studyList: studyList
+        )
     }
 }
