@@ -23,9 +23,11 @@ struct ChatDataSource: ChatDataSourceProtocol {
                 snapshot?.documentChanges.forEach({ change in
                     if change.type == .added {
                         let dictionary = change.document.data()
-                        print("dict ", dictionary)
-                        chats.append(ChatResponseDTO(dictionary: dictionary))
-                        print("DEBUG : ", chats)
+                        guard let data = try? JSONSerialization.data(withJSONObject: dictionary),
+                        let chat = try? JSONDecoder().decode(Chat.self, from: data)
+                        else { return }
+
+                        chats.append(ChatResponseDTO(chat: chat))
                         emitter.onNext(chats)
                     }
                 })
