@@ -154,8 +154,7 @@ final class SetEmailViewController: ViewController {
     
     private func updateButtonLayout(height: CGFloat) {
         button.snp.makeConstraints {
-            $0.left.right.equalToSuperview().inset(16)
-            $0.bottom.equalTo(view.safeAreaLayoutGuide).offset(-height)
+            $0.left.right.bottom.equalTo(view.safeAreaLayoutGuide).inset(16)
             $0.height.equalTo(Layout.buttonHeight)
         }
     }
