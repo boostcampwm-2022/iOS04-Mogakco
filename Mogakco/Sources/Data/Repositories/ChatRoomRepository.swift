@@ -65,7 +65,13 @@ struct ChatRoomRepository: ChatRoomRepositoryProtocol {
             .allUsers()
             .map { $0.documents.map { $0.toDomain() } }
 
-       return Observable.combineLatest(latestChatChatRoomsSb, usersSb)
+       return Observable.combineLatest(
+        latestChatChatRoomsSb
+            .withLatestFrom(chatRoomsSb) { ($0, $1) }
+            .filter { $0.0.count == $0.1.count }
+            .map { $0.0 },
+        usersSb
+       )
            .map { chatRooms, users in
                chatRooms.map { chatRoom in
                    ChatRoom(chatRoom: chatRoom, users: users.filter { chatRoom.userIDs.contains($0.id) })
