@@ -6,7 +6,7 @@
 //  Copyright © 2022 Mogakco. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 enum Languages: String, CaseIterable, Hashtag {
     case cLang = "c"
@@ -62,5 +62,9 @@ enum Languages: String, CaseIterable, Hashtag {
         case .swift: return "Swift"
         case .visualBasic: return "Visual Basic"
         }
+    }
+    
+    var image: UIImage {
+        return UIImage(named: id) ?? UIImage()
     }
 }
