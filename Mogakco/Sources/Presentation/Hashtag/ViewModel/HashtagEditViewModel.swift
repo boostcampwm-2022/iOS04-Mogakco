@@ -14,16 +14,16 @@ import RxCocoa
 class HashtagEditViewModel: HashtagViewModel {
     
     weak var coordinator: ProfileTabCoordinatorProtocol?
-    let userUseCase: UserUseCaseProtocol? // 프로필 업데이트 UseCase
     weak var delegate: HashtagSelectProtocol?
+    let editProfileUseCase: EditProfileUseCaseProtocol
     
      init(
         coordinator: ProfileTabCoordinatorProtocol,
         hashTagUsecase: HashtagUseCaseProtocol,
-        userUseCase: UserUseCaseProtocol,
-        selectedHashtag: [Hashtag]
+        editProfileUseCase: EditProfileUseCaseProtocol,
+        selectedHashtag: [Hashtag] = []
      ) {
-         self.userUseCase = userUseCase
+         self.editProfileUseCase = editProfileUseCase
          self.coordinator = coordinator
          super.init(hashTagUsecase: hashTagUsecase)
          self.selectedHashtag = selectedHashtag
@@ -32,7 +32,7 @@ class HashtagEditViewModel: HashtagViewModel {
     override func transform(input: Input) -> Output {
         
         input.nextButtonTapped
-            .subscribe(onNext: { [weak self]  in
+            .subscribe(onNext: { [weak self] in
                 self?.tapButton()
             })
             .disposed(by: disposeBag)
@@ -41,8 +41,19 @@ class HashtagEditViewModel: HashtagViewModel {
     }
     
     private func tapButton() {
-        // 1. userUseCase 에서 업데이트
-        delegate?.selectedHashtag(kind: kind, hashTags: selectedHashtag) // 2. 상위 뷰컨에 전달
-        // 3. 화면이동
+        let hashtagTitles = selectedHashtag.map { $0.title }
+        let changeProfile: Observable<Void>
+        
+        switch kind {
+        case .language: changeProfile = editProfileUseCase.editLanguages(languages: hashtagTitles)
+        case .career: changeProfile = editProfileUseCase.editCareers(careers: hashtagTitles)
+        case .category: changeProfile = editProfileUseCase.editCategorys(categorys: hashtagTitles)
+        }
+        
+        changeProfile
+            .subscribe(onNext: { [weak self] in
+                self?.coordinator?.editFinished()
+            })
+            .disposed(by: disposeBag)
     }
 }
