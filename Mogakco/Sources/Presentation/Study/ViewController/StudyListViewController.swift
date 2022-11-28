@@ -17,15 +17,21 @@ final class StudyListViewController: ViewController {
     
     private let header = StudyListHeader()
     
+    private lazy var refreshControl = UIRefreshControl().then {
+        $0.addTarget(self, action: #selector(refreshCollection), for: .valueChanged)
+    }
+    
     private lazy var collectionView = UICollectionView(
         frame: .zero,
         collectionViewLayout: collectionViewLayout()
     ).then {
+        $0.refreshControl = refreshControl
         $0.showsVerticalScrollIndicator = false
         $0.showsHorizontalScrollIndicator = false
         $0.showsVerticalScrollIndicator = false
         $0.register(StudyCell.self, forCellWithReuseIdentifier: StudyCell.identifier)
     }
+    
     
     private let viewModel: StudyListViewModel
 //    private let viewWillAppear = PublishSubject<Void>()
@@ -109,6 +115,13 @@ final class StudyListViewController: ViewController {
             section.interGroupSpacing = 16
             section.contentInsets = .init(top: 1, leading: 16, bottom: 16, trailing: 16)
             return section
+        }
+    }
+    
+    @objc private func refreshCollection() {
+        print("새로고침")
+        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(3)) { [weak self] in
+            self?.refreshControl.endRefreshing()
         }
     }
 }
