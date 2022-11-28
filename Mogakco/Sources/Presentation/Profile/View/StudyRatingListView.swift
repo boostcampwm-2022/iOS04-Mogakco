@@ -12,11 +12,13 @@ import UIKit
 class StudyRatingListView: UIView {
     
     enum Constant {
+        static let studyRatingListTitle = "스터디 참여 Top3"
+        static let emptyText = "아직 참여한 스터디가 없어요"
         static let studyRatingViewHeight = 40.0
     }
     
     private let titleLabel = UILabel().then {
-        $0.text = "스터디 참여 Top3"
+        $0.text = Constant.studyRatingListTitle
         $0.font = .mogakcoFont.mediumBold
         $0.textColor = .mogakcoColor.typographyPrimary
         $0.snp.makeConstraints {
@@ -43,7 +45,7 @@ class StudyRatingListView: UIView {
     }
     
     private let emptyLabel = UILabel().then {
-        $0.text = "아직 참여한 스터디가 없어요"
+        $0.text = Constant.emptyText
         $0.font = .mogakcoFont.caption
         $0.textColor = .mogakcoColor.typographyPrimary
         $0.textAlignment = .center
@@ -97,6 +99,4 @@ class StudyRatingListView: UIView {
             $0.isLayoutMarginsRelativeArrangement = true
         }
     }
-    
-    
 }

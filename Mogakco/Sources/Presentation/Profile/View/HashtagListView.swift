@@ -14,12 +14,12 @@ import RxSwift
 final class HashtagListView: UIView {
     
     enum Constant {
+        static let emtpyText = "편집 버튼을 눌러 나만의 해시태크를 설정해보세요"
         static let editButtonSize = CGSize(width: 45.0, height: 22.0)
     }
     
     let titleLabel = UILabel().then {
         $0.font = UIFont.mogakcoFont.smallBold
-        $0.text = "해시태그"
         $0.textColor = UIColor.mogakcoColor.typographyPrimary
     }
     
@@ -54,7 +54,7 @@ final class HashtagListView: UIView {
     }
     
     private let emptyLabel = UILabel().then {
-        $0.text = "편집 버튼을 눌러 나만의 해시태크를 설정해보세요!"
+        $0.text = Constant.emtpyText
         $0.font = .mogakcoFont.caption
         $0.textColor = .mogakcoColor.typographyPrimary
         $0.textAlignment = .center
