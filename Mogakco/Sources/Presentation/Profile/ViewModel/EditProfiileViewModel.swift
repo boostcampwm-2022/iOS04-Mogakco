@@ -113,7 +113,7 @@ final class EditProfiileViewModel: ViewModel {
             }
             .withUnretained(self)
             .subscribe(onNext: { viewModel, _ in
-                viewModel.coordinator?.pop(animated: true)
+                viewModel.coordinator?.popTabbar(animated: true)
             })
             .disposed(by: disposeBag)
     
