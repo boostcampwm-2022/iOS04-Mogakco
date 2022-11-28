@@ -22,11 +22,11 @@ enum Category: String, CaseIterable, Hashtag {
     case interview
     case machineLearning
     
-    var title: String {
+    var id: String {
         return self.rawValue
     }
     
-    var displayTitle: String {
+    var title: String {
         switch self {
         case .artificialIntelligence: return "AI"
         case .algorithm: return "알고리즘"

@@ -41,7 +41,7 @@ class HashtagEditViewModel: HashtagViewModel {
     }
     
     private func tapButton() {
-        let hashtagTitles = selectedHashtag.map { $0.title }
+        let hashtagTitles = selectedHashtag.map { $0.id }
         let changeProfile: Observable<Void>
         
         switch kind {
