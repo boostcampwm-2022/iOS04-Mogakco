@@ -28,6 +28,7 @@ final class ProfileViewModel: ViewModel {
     }
     
     struct Input {
+        let viewWillAppear: Observable<Void>
         let editProfileButtonTapped: Observable<Void>
         let chatButtonTapped: Observable<Void>
         let hashtagEditButtonTapped: Observable<KindHashtag>
@@ -66,7 +67,8 @@ final class ProfileViewModel: ViewModel {
         let type = BehaviorSubject<ProfileType>(value: type)
         let isMyProfile = type
             .map { $0 == .current }
-        let user = type
+        let user = input.viewWillAppear
+            .withLatestFrom(type)
             .withUnretained(self)
             .flatMap { viewModel, type -> Observable<User> in
                 switch type {
