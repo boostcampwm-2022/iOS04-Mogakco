@@ -25,4 +25,18 @@ extension Date {
         formatter.timeZone = TimeZone(abbreviation: "KST")
         return Int(formatter.string(from: self)) ?? 0
     }
+    
+    var relativeTime: String {
+        let formatter = RelativeDateTimeFormatter()
+        formatter.locale = Locale(identifier: "ko_KR")
+        formatter.unitsStyle = .abbreviated
+        return formatter.localizedString(for: self, relativeTo: Date())
+    }
+    
+    func dateToStr() -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyyMMddHHmm"
+        let dateStr = dateFormatter.string(from: self)
+        return dateStr
+    }
 }
