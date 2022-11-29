@@ -313,11 +313,8 @@ extension StudyDetailViewController: UICollectionViewDataSource {
             
             cell.prepareForReuse()
             
-            if let cellUserInfo = viewModel.participantCellInfo(index: indexPath.row) {
-                cell.setInfo(imageURLString: cellUserInfo.profileImageURLString, name: cellUserInfo.name, description: cellUserInfo.introduce)
-            } else {
-                cell.setInfo(imageURLString: "person", name: "김신오이", description: "iOS 개발자")
-            }
+            let cellUserInfo = viewModel.participantCellInfo(index: indexPath.row)
+            cell.setInfo(user: cellUserInfo)
             
             return cell
         default:
