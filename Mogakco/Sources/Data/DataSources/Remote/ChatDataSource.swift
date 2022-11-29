@@ -19,7 +19,7 @@ struct ChatDataSource: ChatDataSourceProtocol {
         return Observable.create { emitter in
             let query = Collection.ChatRoom.document(chatRoomID).collection("chats").order(by: "date")
             
-            let _ = query.addSnapshotListener { snapshot, _ in
+            let listener = query.addSnapshotListener { snapshot, _ in
                 snapshot?.documentChanges.forEach({ change in
                     if change.type == .added {
                         let dictionary = change.document.data()
