@@ -22,6 +22,7 @@ final class StudyListViewModel: ViewModel {
     
     struct Output {
         let studyList: Observable<[Study]>
+        let refreshFinished: Observable<Void>
     }
     
     private weak var coordinator: StudyTabCoordinatorProtocol?
@@ -39,10 +40,12 @@ final class StudyListViewModel: ViewModel {
     func transform(input: Input) -> Output {
         
         let studyList = PublishSubject<[Study]>()
+        let refreshFinished = PublishSubject<Void>()
         
-        input.viewWillAppear
+        Observable.merge([input.viewWillAppear, input.refresh])
             .withUnretained(self)
             .flatMap { $0.0.useCase.list(sort: .latest, filters: []) }
+            .do { _ in refreshFinished.onNext(()) }
             .bind(to: studyList)
             .disposed(by: disposeBag)
         
@@ -66,15 +69,10 @@ final class StudyListViewModel: ViewModel {
                 viewModel.coordinator?.showStudyDetail(id: id)
             }
             .disposed(by: disposeBag)
- 
-        input.refresh
-            .withUnretained(self)
-            .flatMap { $0.0.useCase.list(sort: .latest, filters: []) }
-            .bind(to: studyList)
-            .disposed(by: disposeBag)
         
         return Output(
-            studyList: studyList
+            studyList: studyList,
+            refreshFinished: refreshFinished
         )
     }
 }
