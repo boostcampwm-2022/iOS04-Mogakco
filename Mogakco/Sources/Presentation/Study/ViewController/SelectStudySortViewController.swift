@@ -36,7 +36,7 @@ final class SelectStudySortViewController: ViewController {
             $0.bounces = false
             layout.scrollDirection = .horizontal
             $0.isPagingEnabled = false
-        }
+    }
     
     private let bag = DisposeBag()
     private let viewModel: SelectStudySortViewModel
