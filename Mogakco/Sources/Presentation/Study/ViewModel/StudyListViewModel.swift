@@ -12,12 +12,16 @@ import RxCocoa
 import RxSwift
 
 final class StudyListViewModel: ViewModel {
-   
+    
     struct Input {
         let viewWillAppear: Observable<Void>
         let plusButtonTapped: Observable<Void>
         let cellSelected: Observable<IndexPath>
         let refresh: Observable<Void>
+        let sortButtonTapped: Observable<Void>
+        let languageButtonTapped: Observable<Void>
+        let categoryButtonTapped: Observable<Void>
+        let resetButtonTapped: Observable<Void>
     }
     
     struct Output {
@@ -41,10 +45,22 @@ final class StudyListViewModel: ViewModel {
         
         let studyList = PublishSubject<[Study]>()
         let refreshFinished = PublishSubject<Void>()
-        
-        Observable.merge([input.viewWillAppear, input.refresh])
+        let sort = BehaviorSubject<StudySort>(value: .latest)
+        let languageFilter = BehaviorSubject<StudyFilter?>(value: nil)
+        let categoryFilter = BehaviorSubject<StudyFilter?>(value: nil)
+        let filters = BehaviorSubject<[StudyFilter]>(value: [])
+        let reload = PublishSubject<Void>()
+
+        Observable.merge([
+            input.viewWillAppear,
+            input.refresh,
+            filters.skip(1).map { _ in () },
+            sort.skip(1).map { _ in () }
+        ])
+            .withLatestFrom(Observable.combineLatest(sort, filters))
+            .throttle(.seconds(1), latest: true, scheduler: MainScheduler.instance)
             .withUnretained(self)
-            .flatMap { $0.0.useCase.list(sort: .latest, filters: []) }
+            .flatMap { $0.0.useCase.list(sort: $0.1.0, filters: $0.1.1) }
             .do { _ in refreshFinished.onNext(()) }
             .subscribe(onNext: {
                 studyList.onNext($0)
@@ -71,6 +87,45 @@ final class StudyListViewModel: ViewModel {
                 viewModel.coordinator?.showStudyDetail(id: id)
             }
             .disposed(by: disposeBag)
+        
+        // 필터링
+        input.languageButtonTapped
+            .map { StudyFilter.languages(["python"]) }
+            .subscribe(onNext: {
+                languageFilter.onNext($0)
+            })
+            .disposed(by: disposeBag)
+        
+        input.categoryButtonTapped
+            .map { StudyFilter.category("bigdata") }
+            .subscribe(onNext: {
+                categoryFilter.onNext($0)
+            })
+            .disposed(by: disposeBag)
+        
+        input.resetButtonTapped
+            .subscribe(onNext: {
+                languageFilter.onNext(nil)
+                categoryFilter.onNext(nil)
+                sort.onNext(.latest)
+            })
+            .disposed(by: disposeBag)
+
+        Observable.combineLatest(languageFilter, categoryFilter)
+            .map { [$0, $1].compactMap { $0 } }
+            .subscribe(onNext: {
+                filters.onNext($0)
+            })
+            .disposed(by: disposeBag)
+        
+        // 정렬
+        input.sortButtonTapped
+            .withUnretained(self)
+            .subscribe(onNext: { viewModel, _ in
+                viewModel.coordinator?.showSelectStudySort(studySortObserver: sort.asObserver())
+            })
+            .disposed(by: disposeBag)
+        
         
         return Output(
             studyList: studyList,
