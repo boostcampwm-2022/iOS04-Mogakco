@@ -74,12 +74,33 @@ final class ChatViewModel: ViewModel {
             })
             .disposed(by: disposeBag)
         
+        let studyInfoTap = PublishSubject<Void>()
+        let exitStudyTap = PublishSubject<Void>()
+        let showMemberTap = PublishSubject<Void>()
+        
         input.selectedSidebar
             .map { ChatSidebarMenu(row: $0.row) }
             .subscribe { row in
-                selectedSidebar.on(row)
+                switch row {
+                case .studyInfo: studyInfoTap.onNext(())
+                case .exitStudy: exitStudyTap.onNext(())
+                case .showMember: showMemberTap.onNext(())
+                }
             }
             .disposed(by: disposeBag)
+        
+        exitStudyTap
+            .withUnretained(self)
+            .flatMap { $0.0.leaveStudyUseCase.leaveStudy(id: $0.0.chatRoomID) }
+            .subscribe {
+                selectedSidebar.onNext(.exitStudy)
+            } onError: { error in
+                print(error)
+            }
+            .disposed(by: disposeBag)
+
+        // TODO: 위와 같은 방식으로 studyInfo, showMember추가
+        
         
         input.sendButtonDidTap
             .withLatestFrom(Observable.combineLatest(
