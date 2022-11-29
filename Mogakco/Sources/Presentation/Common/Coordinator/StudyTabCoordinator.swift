@@ -40,7 +40,6 @@ final class StudyTabCoordinator: Coordinator, StudyTabCoordinatorProtocol {
     }
     
     func showStudyDetail(id: String) {
-        let studyDataSource = StudyDataSource(provider: Provider.default)
         let studyRepository = StudyRepository(
             studyDataSource: StudyDataSource(provider: Provider.default),
             localUserDataSource: UserDefaultsUserDataSource(),
@@ -59,10 +58,7 @@ final class StudyTabCoordinator: Coordinator, StudyTabCoordinatorProtocol {
             localUserDataSource: localUserDataSource,
             remoteUserDataSource: remoteUserDataSource
         )
-        let chatRoomRepository = ChatRoomRepository(
-            chatRoomDataSource: ChatRoomDataSource(provider: Provider.default),
-            remoteUserDataSource: remoteUserDataSource
-        )
+
         let userUseCase = UserUseCase(userRepository: userRepository, studyRepository: studyRepository)
         let joinStudyUseCase = JoinStudyUseCase(studyRepository: studyRepository)
         
@@ -74,6 +70,7 @@ final class StudyTabCoordinator: Coordinator, StudyTabCoordinatorProtocol {
             userUseCase: userUseCase,
             joinStudyUseCase: joinStudyUseCase
         )
+        
         let viewController = StudyDetailViewController(viewModel: viewModel)
         navigationController.tabBarController?.navigationController?.pushViewController(viewController, animated: true)
     }
@@ -116,7 +113,10 @@ final class StudyTabCoordinator: Coordinator, StudyTabCoordinatorProtocol {
             chatRoomID: chatRoomID
         )
         let chatViewController = ChatViewController(viewModel: viewModel)
-        navigationController.pushViewController(chatViewController, animated: true)
+        navigationController.tabBarController?.navigationController?.pushViewController(
+            chatViewController,
+            animated: true
+        )
     }
     
     func showCategorySelect(delegate: HashtagSelectProtocol?) {
