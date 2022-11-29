@@ -132,7 +132,7 @@ final class ChatViewController: ViewController {
             }
             .disposed(by: disposeBag)
         
-        output.messages
+        viewModel.messages
             .asDriver(onErrorJustReturn: [])
             .drive(collectionView.rx.items) { [weak self] collectionView, index, chat in
                 
