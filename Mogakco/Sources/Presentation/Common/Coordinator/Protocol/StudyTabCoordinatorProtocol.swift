@@ -8,6 +8,8 @@
 
 import Foundation
 
+import RxSwift
+
 protocol StudyTabCoordinatorProtocol: AnyObject {
     func showStudyList()
     func showStudyDetail(id: String)
@@ -15,5 +17,6 @@ protocol StudyTabCoordinatorProtocol: AnyObject {
     func showChatDetail(chatRoomID: String)
     func showCategorySelect(delegate: HashtagSelectProtocol?)
     func showLanguageSelect(delegate: HashtagSelectProtocol?)
+    func showSelectStudySort(studySortObserver: AnyObserver<StudySort>)
     func goToPrevScreen()
 }
