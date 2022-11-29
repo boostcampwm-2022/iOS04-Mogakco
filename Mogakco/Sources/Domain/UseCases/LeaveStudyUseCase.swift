@@ -11,89 +11,17 @@ import Foundation
 import RxSwift
 
 struct LeaveStudyUseCase: LeaveStudyUseCaseProtocol {
-    let userRepository: UserRepositoryProtocol
     let studyRepository: StudyRepositoryProtocol
-    let chatRoomRepository: ChatRoomRepositoryProtocol
     
     var disposeBag = DisposeBag()
     
     init(
-        userRepository: UserRepositoryProtocol,
-        studyRepository: StudyRepositoryProtocol,
-        chatRoomRepository: ChatRoomRepositoryProtocol
+        studyRepository: StudyRepositoryProtocol
     ) {
-        self.userRepository = userRepository
         self.studyRepository = studyRepository
-        self.chatRoomRepository = chatRoomRepository
     }
     
     func leaveStudy(id: String) -> Observable<Void> {
-        return Observable.create { emitter in
-            
-            userRepository
-                .load()
-                .subscribe {
-                    print("유저정보: \($0)")
-                }
-                .disposed(by: disposeBag)
-            
-            // 0. User 정보 업데이트 받기
-            let userInfo = userRepository
-                .load()
-                .flatMap { userRepository.user(id: $0.id) }
-            
-            // 1. User에서 정보 삭제
-            let updateUser = userInfo
-                .flatMap {
-                    userRepository.updateIDs(
-                        id: $0.id,
-                        chatRoomIDs: $0.chatRoomIDs.filter { $0 != id },
-                        studyIDs: $0.studyIDs.filter { $0 != id }
-                    )
-                }
-                .flatMap {
-                    userRepository.save(user: $0)
-                }
-            
-            // 2. Study에서 정보 삭제
-            let updateStudy = Observable
-                .zip(
-                    userInfo,
-                    studyRepository.detail(id: id)
-                )
-                .flatMap { user, study in
-                    studyRepository.updateIDs(
-                        id: study.id,
-                        userIDs: study.userIDs.filter { $0 != user.id }
-                    )
-                }
-            
-            // 3. ChatRoom에서 정보 삭제
-            let updateChatRoom = Observable
-                .zip(
-                    userInfo,
-                    chatRoomRepository.detail(id: id)
-                )
-                .flatMap { user, chatRoom in
-                    chatRoomRepository.updateIDs(
-                        id: chatRoom.id,
-                        userIDs: chatRoom.userIDs.filter { $0 != user.id }
-                    )
-                }
-            
-            Observable.combineLatest(
-                updateUser,
-                updateStudy,
-                updateChatRoom
-            )
-            .subscribe(onNext: { _ in
-                emitter.onNext(())
-            }, onError: { error in
-                emitter.onError(error)
-            })
-            .disposed(by: disposeBag)
-            
-            return Disposables.create()
-        }
+        return studyRepository.leaveStudy(id: id)
     }
 }
