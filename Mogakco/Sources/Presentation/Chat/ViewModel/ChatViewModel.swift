@@ -26,12 +26,13 @@ final class ChatViewModel: ViewModel {
         let selectedSidebar: Observable<ChatSidebarMenu>
         let inputViewText: Observable<String>
         let sendMessage: Observable<Void>
-        let messages: Observable<[Chat]>
     }
     
     
     private let chatUseCase: ChatUseCaseProtocol
     weak var coordinator: Coordinator?
+    private var chatArray: [Chat] = []
+    var messages = BehaviorRelay<[Chat]>(value: [])
     var disposeBag = DisposeBag()
     let chatRoomID: String
     
@@ -50,12 +51,13 @@ final class ChatViewModel: ViewModel {
         let selectedSidebar = PublishSubject<ChatSidebarMenu>()
         let inputViewText = PublishSubject<String>()
         let sendMessage = PublishSubject<Void>()
-        let messages = PublishSubject<[Chat]>()
 
         chatUseCase.fetch(chatRoomID: self.chatRoomID)
             .withUnretained(self)
             .subscribe { _, chat in
-                messages.onNext(chat)
+                self.chatArray.append(chat)
+                print("## ", self.chatArray.count)
+                self.messages.accept(self.chatArray)
             }
             .disposed(by: disposeBag)
         
@@ -108,8 +110,7 @@ final class ChatViewModel: ViewModel {
             showChatSidebarView: showChatSidebarView,
             selectedSidebar: selectedSidebar,
             inputViewText: inputViewText,
-            sendMessage: sendMessage,
-            messages: messages
+            sendMessage: sendMessage
         )
     }
     
