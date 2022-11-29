@@ -15,4 +15,6 @@ struct Chat: Codable {
     let chatRoomID: String
     let date: Int
     let readUserIDs: [String]
+    var user: User?
+    var isFromCurrentUser: Bool?
 }
