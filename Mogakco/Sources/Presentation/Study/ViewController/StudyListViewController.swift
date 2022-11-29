@@ -30,7 +30,6 @@ final class StudyListViewController: ViewController {
         $0.register(StudyCell.self, forCellWithReuseIdentifier: StudyCell.identifier)
     }
     
-    
     private let viewModel: StudyListViewModel
     
     // MARK: - Inits
