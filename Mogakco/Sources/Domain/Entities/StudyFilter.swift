@@ -8,7 +8,16 @@
 
 import Foundation
 
-enum StudyFilter {
+enum StudyFilter: Equatable {
     case languages([String])
     case category(String)
+    
+    static func == (lhs: Self, rhs: Self) -> Bool {
+        switch (lhs, rhs) {
+        case (.languages, .languages), (.category, .category):
+            return true
+        default:
+            return false
+        }
+    }
 }
