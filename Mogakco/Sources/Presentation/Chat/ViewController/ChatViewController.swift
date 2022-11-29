@@ -61,7 +61,6 @@ final class ChatViewController: ViewController {
     }
     
     lazy var blackScreen = UIView(frame: self.view.bounds)
-    
     private let viewModel: ChatViewModel
     
     init(viewModel: ChatViewModel) {
