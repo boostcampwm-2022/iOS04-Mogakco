@@ -120,9 +120,7 @@ final class StudyTabCoordinator: Coordinator, StudyTabCoordinatorProtocol {
             userRepository: userRepository
         )
         let leaveStudyUseCase = LeaveStudyUseCase(
-            userRepository: userRepository,
-            studyRepository: studyRepository,
-            chatRoomRepository: chatRoomRespository
+            studyRepository: studyRepository
         )
         
         let viewModel = ChatViewModel(

@@ -202,4 +202,77 @@ struct StudyRepository: StudyRepositoryProtocol {
             return Disposables.create()
         }
     }
+    
+    func leaveStudy(id: String) -> Observable<Void> {
+        return Observable.create { emitter in
+            
+            // 0. User 정보 업데이트 받기
+            let userInfo = localUserDataSource
+                .load()
+                .flatMap { remoteUserDataSource.user(id: $0.id) }
+                .map { $0.toDomain() }
+            
+            // 1. User에서 정보 삭제
+            let updateUser = userInfo
+                .flatMap {
+                    remoteUserDataSource.updateIDs(
+                        id: $0.id,
+                        request: UpdateStudyIDsRequestDTO(
+                            chatRoomIDs: $0.chatRoomIDs.filter { $0 != id },
+                            studyIDs: $0.studyIDs.filter { $0 != id }
+                        )
+                    )
+                }
+                .map { $0.toDomain() }
+                .flatMap {
+                    localUserDataSource.save(user: $0)
+                }
+            
+            // 2. Study에서 정보 삭제
+            let updateStudy = Observable
+                .zip(
+                    userInfo,
+                    studyDataSource.detail(id: id)
+                )
+                .map { ($0, $1.toDomain()) }
+                .flatMap { user, study in
+                    studyDataSource.updateIDs(
+                        id: study.id,
+                        request: UpdateUserIDsRequestDTO(
+                            userIDs: study.userIDs.filter { $0 != user.id }
+                        )
+                    )
+                }
+            
+            // 3. ChatRoom에서 정보 삭제
+            let updateChatRoom = Observable
+                .zip(
+                    userInfo,
+                    chatRoomDataSource.detail(id: id)
+                )
+                .map { ($0, $1.toDomain()) }
+                .flatMap { user, chatRoom in
+                    chatRoomDataSource.updateIDs(
+                        id: chatRoom.id,
+                        request: UpdateUserIDsRequestDTO(
+                            userIDs: chatRoom.userIDs.filter { $0 != user.id }
+                        )
+                    )
+                }
+            
+            Observable.combineLatest(
+                updateUser,
+                updateStudy,
+                updateChatRoom
+            )
+            .subscribe(onNext: { _ in
+                emitter.onNext(())
+            }, onError: { error in
+                emitter.onError(error)
+            })
+            .disposed(by: disposeBag)
+            
+            return Disposables.create()
+        }
+    }
 }
