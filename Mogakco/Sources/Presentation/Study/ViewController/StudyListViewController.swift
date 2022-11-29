@@ -81,8 +81,8 @@ final class StudyListViewController: ViewController {
             }
             .disposed(by: disposeBag)
         
-        output.studyList
-            .subscribe(onNext: { [weak self] _ in
+        output.refreshFinished
+            .subscribe(onNext: { [weak self] in
                 self?.refreshControl.endRefreshing()
             })
             .disposed(by: disposeBag)
