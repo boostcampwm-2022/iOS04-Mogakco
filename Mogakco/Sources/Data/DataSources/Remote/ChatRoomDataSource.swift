@@ -40,7 +40,6 @@ struct ChatRoomDataSource: ChatRoomDataSourceProtocol {
 
 enum ChatRoomTarget {
     case list
-    case detail(String)
     case chats(String)
     case create(CreateChatRoomRequestDTO)
     case updateIDs(String, UpdateUserIDsRequestDTO)
