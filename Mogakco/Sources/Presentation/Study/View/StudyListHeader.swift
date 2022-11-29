@@ -84,7 +84,6 @@ final class StudyListHeader: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         layout()
-        bind()
     }
     
     required init?(coder: NSCoder) {
@@ -113,52 +112,10 @@ final class StudyListHeader: UIView {
             make.top.equalTo(topStackView.snp.bottom).offset(10)
         }
     }
-    
-    private func bind() {
-        
-        sortButton.rx.tap
-            .compactMap({ [weak self] in
-                self?.sortButton.isSelected.toggle()
-                let isSelected = self?.sortButton.isSelected
-                return self?.borderColor(isSelected: isSelected ?? false)
-            })
-            .subscribe { [weak self] in
-                self?.sortButton.layer.borderColor = $0.cgColor
-            }
-            .disposed(by: disposeBag)
-        
-        languageButton.rx.tap
-            .compactMap({ [weak self] in
-                self?.languageButton.isSelected.toggle()
-                let isSelected = self?.languageButton.isSelected
-                return self?.borderColor(isSelected: isSelected ?? false)
-            })
-            .subscribe { [weak self] in
-                self?.languageButton.layer.borderColor = $0.cgColor
-            }
-            .disposed(by: disposeBag)
-        
-        categoryButton.rx.tap
-            .compactMap({ [weak self] in
-                self?.categoryButton.isSelected.toggle()
-                let isSelected = self?.categoryButton.isSelected
-                return self?.borderColor(isSelected: isSelected ?? false)
-            })
-            .subscribe { [weak self] in
-                self?.categoryButton.layer.borderColor = $0.cgColor
-            }
-            .disposed(by: disposeBag)
-        
-        resetButton.rx.tap
-            .compactMap({ [weak self] in
-                self?.resetButton.isSelected.toggle()
-                let isSelected = self?.resetButton.isSelected
-                return self?.borderColor(isSelected: isSelected ?? false)
-            })
-            .subscribe { [weak self] in
-                self?.resetButton.layer.borderColor = $0.cgColor
-            }
-            .disposed(by: disposeBag)
+   
+    func attributeButtonBorderColor(button: UIButton?) {
+        guard let button = button else { return }
+        button.layer.borderColor = borderColor(isSelected: button.isSelected).cgColor
     }
     
     private static func configuration(title: String) -> UIButton.Configuration {

@@ -25,8 +25,11 @@ final class StudyListViewModel: ViewModel {
     }
     
     struct Output {
-        let studyList: Observable<[Study]>
-        let refreshFinished: Observable<Void>
+        let studyList: Driver<[Study]>
+        let refreshFinished: Signal<Void>
+        let sortSelected: Driver<Bool>
+        let languageSelected: Driver<Bool>
+        let categorySelected: Driver<Bool>
     }
     
     private weak var coordinator: StudyTabCoordinatorProtocol?
@@ -34,7 +37,7 @@ final class StudyListViewModel: ViewModel {
     private let studyList = PublishSubject<[Study]>()
     private let refreshFinished = PublishSubject<Void>()
     private let sort = BehaviorSubject<StudySort>(value: .latest)
-    private let languagesFilter = BehaviorSubject<[Hashtag]>(value: [])
+    private let languageFilter = BehaviorSubject<[Hashtag]>(value: [])
     private let categoryFilter = BehaviorSubject<Hashtag?>(value: nil)
     private let filters = BehaviorSubject<[StudyFilter]>(value: [])
     private let refresh = PublishSubject<Void>()
@@ -53,8 +56,11 @@ final class StudyListViewModel: ViewModel {
         bindFilterSort(input: input)
         bindScene(input: input)
         return Output(
-            studyList: studyList,
-            refreshFinished: refreshFinished
+            studyList: studyList.asDriver(onErrorJustReturn: []),
+            refreshFinished: refreshFinished.asSignal(onErrorJustReturn: ()),
+            sortSelected: sort.map { $0 != .latest }.asDriver(onErrorJustReturn: false),
+            languageSelected: languageFilter.map { !$0.isEmpty }.asDriver(onErrorJustReturn: false),
+            categorySelected: categoryFilter.map { $0 != nil }.asDriver(onErrorJustReturn: false)
         )
     }
     
@@ -79,20 +85,29 @@ final class StudyListViewModel: ViewModel {
     }
     
     func bindFilterSort(input: Input) {
+        
+        sort
+            .skip(1)
+            .withUnretained(self)
+            .subscribe(onNext: { viewModel, _ in
+                viewModel.refresh.onNext(())
+            })
+            .disposed(by: disposeBag)
+        
         input.resetButtonTapped
             .withUnretained(self)
             .subscribe(onNext: { viewModel, _ in
-                viewModel.languagesFilter.onNext([])
+                viewModel.languageFilter.onNext([])
                 viewModel.categoryFilter.onNext(nil)
                 viewModel.sort.onNext(.latest)
                 viewModel.refresh.onNext(())
             })
             .disposed(by: disposeBag)
 
-        Observable.combineLatest(languagesFilter, categoryFilter)
-            .map { languages, category -> [StudyFilter] in
+        Observable.combineLatest(languageFilter, categoryFilter)
+            .map { language, category -> [StudyFilter] in
                 var newFilter: [StudyFilter] = []
-                newFilter.append(StudyFilter.languages(languages.map { $0.id }))
+                newFilter.append(StudyFilter.languages(language.map { $0.id }))
                 if let category {
                     newFilter.append(StudyFilter.category(category.id))
                 }
@@ -156,7 +171,7 @@ extension StudyListViewModel: HashtagSelectProtocol {
         case .category:
             categoryFilter.onNext(hashTags.first)
         case .language:
-            languagesFilter.onNext(hashTags)
+            languageFilter.onNext(hashTags)
         default:
             break
         }
