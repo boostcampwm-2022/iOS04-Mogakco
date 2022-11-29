@@ -30,7 +30,6 @@ final class ChatViewModel: ViewModel {
     
     
     private let chatUseCase: ChatUseCaseProtocol
-    private let leaveStudyUseCase: LeaveStudyUseCaseProtocol
     weak var coordinator: Coordinator?
     private var chatArray: [Chat] = []
     var messages = BehaviorRelay<[Chat]>(value: [])
@@ -40,12 +39,10 @@ final class ChatViewModel: ViewModel {
     init(
         coordinator: Coordinator,
         chatUseCase: ChatUseCaseProtocol,
-        leaveStudyUseCase: LeaveStudyUseCaseProtocol,
         chatRoomID: String
     ) {
         self.coordinator = coordinator
         self.chatUseCase = chatUseCase
-        self.leaveStudyUseCase = leaveStudyUseCase
         self.chatRoomID = chatRoomID
     }
     
@@ -54,20 +51,19 @@ final class ChatViewModel: ViewModel {
         let selectedSidebar = PublishSubject<ChatSidebarMenu>()
         let inputViewText = PublishSubject<String>()
         let sendMessage = PublishSubject<Void>()
-        let studyInfoTap = PublishSubject<Void>()
-        let exitStudyTap = PublishSubject<Void>()
-        let showMemberTap = PublishSubject<Void>()
-        
-        chatUseCase.fetch(chatRoomID: chatRoomID)
-            .withLatestFrom(messages) { ($0, $1) }
-            .subscribe(onNext: { [weak self] originChats, newChat in
-                self?.messages.accept(newChat + [originChats])
-            })
+
+        chatUseCase.fetch(chatRoomID: self.chatRoomID)
+            .withUnretained(self)
+            .subscribe { _, chat in
+                self.chatArray.append(chat)
+                print("## ", self.chatArray.count)
+                self.messages.accept(self.chatArray)
+            }
             .disposed(by: disposeBag)
         
         input.backButtonDidTap
             .subscribe(onNext: { [weak self] in
-                self?.coordinator?.popTabbar(animated: true)
+                self?.coordinator?.navigationController.popViewController(animated: true)
             })
             .disposed(by: disposeBag)
         
@@ -80,25 +76,10 @@ final class ChatViewModel: ViewModel {
         input.selectedSidebar
             .map { ChatSidebarMenu(row: $0.row) }
             .subscribe { row in
-                switch row {
-                case .studyInfo: studyInfoTap.onNext(())
-                case .exitStudy: exitStudyTap.onNext(())
-                case .showMember: showMemberTap.onNext(())
-                }
+                selectedSidebar.on(row)
             }
             .disposed(by: disposeBag)
         
-        exitStudyTap
-            .withUnretained(self)
-            .flatMap { $0.0.leaveStudyUseCase.leaveStudy(id: $0.0.chatRoomID) }
-            .subscribe {
-                selectedSidebar.onNext(.exitStudy)
-            } onError: { error in
-                print(self.chatRoomID)
-                print(error)
-            }
-            .disposed(by: disposeBag)
-        // TODO: 위와 같은 방식으로 studyInfo, showMember추가
         input.sendButtonDidTap
             .withLatestFrom(Observable.combineLatest(
                 chatUseCase.myProfile(),
@@ -106,16 +87,15 @@ final class ChatViewModel: ViewModel {
             )) { ( $1.0, $1.1 ) }
             .subscribe { [weak self] user, message in
                 guard let self = self else { return }
-
                 self.chatUseCase
                     .send(
                         chat: Chat(
-                            id: UUID().uuidString,
+                            id: self.chatRoomID,
                             userID: user.id,
                             message: message,
                             chatRoomID: self.chatRoomID,
-                            date: Date().toInt(dateFormat: "yyyyMMddHHmmss"),
-                            readUserIDs: [user.id]
+                            date: Date().toInt(dateFormat: "yyyy-MM-dd HH:mm:ss"),
+                            readUserIDs: ["me"]
                         ),
                         to: self.chatRoomID
                     )
@@ -123,8 +103,6 @@ final class ChatViewModel: ViewModel {
                         sendMessage.onNext(())
                     }
                     .disposed(by: self.disposeBag)
-                
-                sendMessage.onNext(())
             }
             .disposed(by: disposeBag)
         
