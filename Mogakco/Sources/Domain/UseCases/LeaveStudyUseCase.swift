@@ -17,6 +17,16 @@ struct LeaveStudyUseCase: LeaveStudyUseCaseProtocol {
     
     var disposeBag = DisposeBag()
     
+    init(
+        userRepository: UserRepositoryProtocol,
+        studyRepository: StudyRepositoryProtocol,
+        chatRoomRepository: ChatRoomRepositoryProtocol
+    ) {
+        self.userRepository = userRepository
+        self.studyRepository = studyRepository
+        self.chatRoomRepository = chatRoomRepository
+    }
+    
     func leaveStudy(id: String) -> Observable<Void> {
         return Observable.create { emitter in
             
