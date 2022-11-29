@@ -30,6 +30,13 @@ struct LeaveStudyUseCase: LeaveStudyUseCaseProtocol {
     func leaveStudy(id: String) -> Observable<Void> {
         return Observable.create { emitter in
             
+            userRepository
+                .load()
+                .subscribe {
+                    print("유저정보: \($0)")
+                }
+                .disposed(by: disposeBag)
+            
             // 0. User 정보 업데이트 받기
             let userInfo = userRepository
                 .load()
