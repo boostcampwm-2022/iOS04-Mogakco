@@ -191,8 +191,7 @@ final class StudyDetailViewController: ViewController {
             laguageLabel,
             languageCollectionView,
             participantsInfoLabel,
-            participantsCollectionView,
-            studyJoinButton
+            participantsCollectionView
         ])
         
         layoutContentScroll()
@@ -265,6 +264,7 @@ final class StudyDetailViewController: ViewController {
     }
     
     private func layoutStudyJoinButton() {
+        view.addSubview(studyJoinButton)
         studyJoinButton.snp.makeConstraints {
             $0.left.right.equalTo(view.safeAreaLayoutGuide).inset(16)
             $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(Layout.buttonBottomInset)
