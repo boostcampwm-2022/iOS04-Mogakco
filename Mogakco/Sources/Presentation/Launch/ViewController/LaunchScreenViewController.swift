@@ -1,5 +1,5 @@
 //
-//  AutoLoginViewController.swift
+//  LaunchScreenViewController.swift
 //  Mogakco
 //
 //  Created by 신소민 on 2022/11/29.
@@ -8,11 +8,11 @@
 
 import UIKit
 
-final class AutoLoginViewController: ViewController {
+final class LaunchScreenViewController: ViewController {
     
-    private let viewModel: AutoLoginViewModel
+    private let viewModel: LaunchScreenViewModel
     
-    init(viewModel: AutoLoginViewModel) {
+    init(viewModel: LaunchScreenViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
@@ -22,7 +22,7 @@ final class AutoLoginViewController: ViewController {
     }
     
     override func bind() {
-        let input = AutoLoginViewModel.Input(
+        let input = LaunchScreenViewModel.Input(
             viewWillAppear: self.rx.viewWillAppear.map { _ in }.asObservable()
         )
         _ = viewModel.transform(input: input)
