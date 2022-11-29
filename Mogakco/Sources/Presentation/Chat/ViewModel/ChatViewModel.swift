@@ -87,15 +87,16 @@ final class ChatViewModel: ViewModel {
             )) { ( $1.0, $1.1 ) }
             .subscribe { [weak self] user, message in
                 guard let self = self else { return }
+
                 self.chatUseCase
                     .send(
                         chat: Chat(
-                            id: self.chatRoomID,
+                            id: UUID().uuidString,
                             userID: user.id,
                             message: message,
                             chatRoomID: self.chatRoomID,
-                            date: Date().toInt(dateFormat: "yyyy-MM-dd HH:mm:ss"),
-                            readUserIDs: ["me"]
+                            date: Date().toInt(dateFormat: "yyyyMMddHHmmss"),
+                            readUserIDs: [user.id]
                         ),
                         to: self.chatRoomID
                     )
