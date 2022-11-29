@@ -66,7 +66,11 @@ final class StudyListViewController: ViewController {
             viewWillAppear: self.rx.viewWillAppear.map { _ in () }.asObservable(),
             plusButtonTapped: header.plusButton.rx.tap.asObservable(),
             cellSelected: collectionView.rx.itemSelected.asObservable(),
-            refresh: refreshControl.rx.controlEvent(.valueChanged).asObservable()
+            refresh: refreshControl.rx.controlEvent(.valueChanged).asObservable(),
+            sortButtonTapped: header.sortButton.rx.tap.asObservable(),
+            languageButtonTapped: header.languageButton.rx.tap.asObservable(),
+            categoryButtonTapped: header.categoryButton.rx.tap.asObservable(),
+            resetButtonTapped: header.resetButton.rx.tap.asObservable()
         )
         
         let output = viewModel.transform(input: input)
