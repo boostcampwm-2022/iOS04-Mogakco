@@ -28,7 +28,7 @@ final class StudyTabCoordinator: Coordinator, StudyTabCoordinatorProtocol {
         let viewController = StudyListViewController(
             viewModel: StudyListViewModel(
                 coordinator: self,
-                useCase: StudyListUseCase(
+                studyListUseCase: StudyListUseCase(
                     repository: StudyRepository(
                         studyDataSource: StudyDataSource(provider: Provider.default),
                         localUserDataSource: UserDefaultsUserDataSource(),
