@@ -77,21 +77,30 @@ final class ChatCell: UICollectionViewCell, Identifiable {
         }
     }
     
-    func isFromCurrentUser(userID: String, chat: Chat) {
-        if userID == chat.userID {
+    func layoutChat(chat: Chat) {
+        guard
+            let isFromCurrentUser = chat.isFromCurrentUser,
+            let user = chat.user else { return }
+
+        if isFromCurrentUser {
             layoutMyBubble()
         } else {
-            layoutOthersBubble()
+            layoutOthersBubble(user: user)
         }
         
         textView.text = chat.message
     }
     
-    private func layoutOthersBubble() {
+    private func layoutOthersBubble(user: User) {
         bubbleContainer.snp.makeConstraints {
             $0.left.equalTo(profileImageView.snp.right).offset(12)
         }
         bubbleContainer.backgroundColor = .mogakcoColor.backgroundSecondary
+        
+        if let urlStr = user.profileImageURLString,
+           let url = URL(string: urlStr) {
+            profileImageView.load(url: url)
+        }
     }
     
     private func layoutMyBubble() {
