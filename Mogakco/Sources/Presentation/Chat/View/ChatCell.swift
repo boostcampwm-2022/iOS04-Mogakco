@@ -40,8 +40,10 @@ final class ChatCell: UICollectionViewCell, Identifiable {
     
     override func prepareForReuse() {
         super.prepareForReuse()
+        profileImageView.isHidden = false
         profileImageView.image = UIImage(systemName: "person")
         textView.text = nil
+        bubbleContainer.snp.removeConstraints()
     }
     
     private func layout() {
@@ -63,8 +65,8 @@ final class ChatCell: UICollectionViewCell, Identifiable {
         addSubview(bubbleContainer)
         
         bubbleContainer.snp.makeConstraints {
-            $0.top.equalToSuperview()
-            $0.width.lessThanOrEqualTo(250)
+            $0.top.bottom.equalToSuperview()
+            $0.width.lessThanOrEqualTo(200)
         }
     }
     
@@ -92,7 +94,7 @@ final class ChatCell: UICollectionViewCell, Identifiable {
     }
     
     private func layoutOthersBubble(user: User) {
-        bubbleContainer.snp.makeConstraints {
+        bubbleContainer.snp.remakeConstraints {
             $0.left.equalTo(profileImageView.snp.right).offset(12)
         }
         bubbleContainer.backgroundColor = .mogakcoColor.backgroundSecondary
@@ -104,7 +106,7 @@ final class ChatCell: UICollectionViewCell, Identifiable {
     }
     
     private func layoutMyBubble() {
-        bubbleContainer.snp.makeConstraints {
+        bubbleContainer.snp.remakeConstraints {
             $0.right.equalToSuperview().inset(12)
         }
         bubbleContainer.backgroundColor = .mogakcoColor.primaryDefault
