@@ -76,7 +76,7 @@ final class StudyListViewController: ViewController {
         let output = viewModel.transform(input: input)
         
         output.studyList
-            .bind(to: self.collectionView.rx.items(
+            .drive(self.collectionView.rx.items(
                 cellIdentifier: StudyCell.identifier,
                 cellType: StudyCell.self
             )) { _, study, cell in
@@ -85,8 +85,29 @@ final class StudyListViewController: ViewController {
             .disposed(by: disposeBag)
         
         output.refreshFinished
-            .subscribe(onNext: { [weak self] in
+            .emit(onNext: { [weak self] in
                 self?.refreshControl.endRefreshing()
+            })
+            .disposed(by: disposeBag)
+        
+        output.sortSelected
+            .drive(onNext: { [weak self] in
+                self?.header.sortButton.isSelected = $0
+                self?.header.attributeButtonBorderColor(button: self?.header.sortButton)
+            })
+            .disposed(by: disposeBag)
+        
+        output.languageSelected
+            .drive(onNext: { [weak self] in
+                self?.header.languageButton.isSelected = $0
+                self?.header.attributeButtonBorderColor(button: self?.header.languageButton)
+            })
+            .disposed(by: disposeBag)
+        
+        output.categorySelected
+            .drive(onNext: { [weak self] in
+                self?.header.categoryButton.isSelected = $0
+                self?.header.attributeButtonBorderColor(button: self?.header.categoryButton)
             })
             .disposed(by: disposeBag)
     }
