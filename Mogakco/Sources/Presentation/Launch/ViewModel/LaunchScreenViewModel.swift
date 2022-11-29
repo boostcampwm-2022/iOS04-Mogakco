@@ -1,5 +1,5 @@
 //
-//  AutoLoginViewModel.swift
+//  LaunchScreenViewModel.swift
 //  Mogakco
 //
 //  Created by 신소민 on 2022/11/29.
@@ -11,7 +11,7 @@ import Foundation
 import RxCocoa
 import RxSwift
 
-final class AutoLoginViewModel: ViewModel {
+final class LaunchScreenViewModel: ViewModel {
     
     struct Input {
         var viewWillAppear: Observable<Void>
@@ -35,6 +35,7 @@ final class AutoLoginViewModel: ViewModel {
         input.viewWillAppear
             .withUnretained(self)
             .flatMap { $0.0.autoLoginUseCase.load() }
+            .delay(.seconds(2), scheduler: MainScheduler.instance)
             .withUnretained(self)
             .subscribe { viewModel, result in
                 if result {
