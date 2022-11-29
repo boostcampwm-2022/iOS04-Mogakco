@@ -67,7 +67,11 @@ final class ChatViewModel: ViewModel {
         
         input.backButtonDidTap
             .subscribe(onNext: { [weak self] in
-                self?.coordinator?.navigationController.tabBarController?.navigationController?.popViewController(animated: true)
+                self?.coordinator?
+                    .navigationController
+                    .tabBarController?
+                    .navigationController?
+                    .popViewController(animated: true)
             })
             .disposed(by: disposeBag)
         
