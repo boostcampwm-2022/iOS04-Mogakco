@@ -96,10 +96,22 @@ final class StudyTabCoordinator: Coordinator, StudyTabCoordinatorProtocol {
         let localUserDataSource = UserDefaultsUserDataSource()
         let remoteUserDataSource = RemoteUserDataSource(provider: Provider.default)
         let chatDataSource = ChatDataSource()
+        let studyDataSource = StudyDataSource(provider: Provider.default)
+        let chatRoomDataSource = ChatRoomDataSource(provider: Provider.default)
         
         let chatRepository = ChatRepository(chatDataSource: chatDataSource)
         let userRepository = UserRepository(
             localUserDataSource: localUserDataSource,
+            remoteUserDataSource: remoteUserDataSource
+        )
+        let studyRepository = StudyRepository(
+            studyDataSource: studyDataSource,
+            localUserDataSource: localUserDataSource,
+            remoteUserDataSource: remoteUserDataSource,
+            chatRoomDataSource: chatRoomDataSource
+        )
+        let chatRoomRespository = ChatRoomRepository(
+            chatRoomDataSource: chatRoomDataSource,
             remoteUserDataSource: remoteUserDataSource
         )
         
@@ -107,9 +119,16 @@ final class StudyTabCoordinator: Coordinator, StudyTabCoordinatorProtocol {
             chatRepository: chatRepository,
             userRepository: userRepository
         )
+        let leaveStudyUseCase = LeaveStudyUseCase(
+            userRepository: userRepository,
+            studyRepository: studyRepository,
+            chatRoomRepository: chatRoomRespository
+        )
+        
         let viewModel = ChatViewModel(
             coordinator: self,
             chatUseCase: chatUseCase,
+            leaveStudyUseCase: leaveStudyUseCase,
             chatRoomID: chatRoomID
         )
         let chatViewController = ChatViewController(viewModel: viewModel)
