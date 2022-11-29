@@ -19,10 +19,24 @@ final class AuthCoordinator: Coordinator, AuthCoordinatorProtocol {
     }
     
     func start() {
-        showLogin()
+        showAutoLogin()
     }
     
     func showAutoLogin() {
+        let viewController = AutoLoginViewController(
+            viewModel: AutoLoginViewModel(
+                coordinator: self,
+                autoLoginUseCase: AutoLoginUseCase(
+                    userRepository: UserRepository(
+                        localUserDataSource: UserDefaultsUserDataSource(),
+                        remoteUserDataSource: RemoteUserDataSource(provider: Provider.default)
+                    ),
+                    tokenRepository: TokenRepository(
+                        keychainManager: KeychainManager(keychain: Keychain()))
+                )
+            )
+        )
+        navigationController.viewControllers = [viewController]
     }
     
     func showLogin() {
@@ -34,9 +48,13 @@ final class AuthCoordinator: Coordinator, AuthCoordinatorProtocol {
             localUserDataSource: localUserDataSource,
             remoteUserDataSource: remoteUserDataSource
         )
+        let tokenRepository = TokenRepository(
+            keychainManager: KeychainManager(keychain: Keychain())
+        )
         let loginUseCase = LoginUseCase(
             authRepository: authRepository,
-            userRepository: userRepository
+            userRepository: userRepository,
+            tokenRepository: tokenRepository
         )
         let viewModel = LoginViewModel(coordinator: self, loginUseCase: loginUseCase)
         let loginViewController = LoginViewController(viewModel: viewModel)

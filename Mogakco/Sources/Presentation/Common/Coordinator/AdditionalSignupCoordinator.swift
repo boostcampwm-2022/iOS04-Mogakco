@@ -66,10 +66,14 @@ final class AdditionalSignupCoordinator: Coordinator, AdditionalSignupCoordinato
             localUserDataSource: userDefaultDataSource,
             remoteUserDataSource: remoteUserDataSouce
         )
+        let tokenRepository = TokenRepository(
+            keychainManager: KeychainManager(keychain: Keychain())
+        )
         let hashtagUseCase = HashtagUsecase(hashtagRepository: hashtagRepository)
         let signupUseCase = SignupUseCase(
             authRepository: authRepository,
-            userRepository: userRepository
+            userRepository: userRepository,
+            tokenRepository: tokenRepository
         )
         let viewModel = HashtagSelectedViewModel(
             coordinator: self,
