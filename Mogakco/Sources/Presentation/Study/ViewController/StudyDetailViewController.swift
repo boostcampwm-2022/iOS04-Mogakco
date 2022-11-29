@@ -321,6 +321,13 @@ extension StudyDetailViewController: UICollectionViewDataSource {
             return UICollectionViewCell()
         }
     }
+    
+    func collectionView(
+        _ collectionView: UICollectionView,
+        didSelectItemAt indexPath: IndexPath
+    ) {
+        viewModel.userSelect(index: indexPath.row)
+    }
 }
 
 extension StudyDetailViewController: UICollectionViewDelegateFlowLayout {
