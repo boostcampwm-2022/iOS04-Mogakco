@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct Authorization: Encodable {
+struct Authorization: Codable {
     let idToken: String
     let email: String
     let refreshToken: String
