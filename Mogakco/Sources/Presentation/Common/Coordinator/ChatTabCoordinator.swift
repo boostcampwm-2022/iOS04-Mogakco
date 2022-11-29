@@ -76,6 +76,9 @@ final class ChatTabCoordinator: Coordinator, ChatTabCoordinatorProtocol {
             chatRoomID: chatRoomID
         )
         let chatViewController = ChatViewController(viewModel: viewModel)
-        navigationController.pushViewController(chatViewController, animated: true)
+        navigationController.tabBarController?.navigationController?.pushViewController(
+            chatViewController,
+            animated: true
+        )
     }
 }
