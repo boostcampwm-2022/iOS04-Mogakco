@@ -80,8 +80,13 @@ final class ParticipantCell: UICollectionViewCell, Identifiable {
         }
     }
     
-    func setInfo(imageURLString: String, name: String, description: String) {
-        imageView.setPhoto(Image.profileDefault)
+    func setInfo(imageURLString: String?, name: String, description: String) {
+        if let imageURLString,
+           let url = URL(string: imageURLString) {
+            imageView.load(url: url)
+        } else {
+            imageView.setPhoto(Image.profileDefault)
+        }
         userNameLabel.text = name
         userDescriptionLabel.text = description
     }
