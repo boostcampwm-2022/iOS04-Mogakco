@@ -15,4 +15,5 @@ protocol StudyRepositoryProtocol {
     func create(study: Study) -> Observable<Study>
     func updateIDs(id: String, userIDs: [String]) -> Observable<Study>
     func join(id: String) -> Observable<Void>
+    func leaveStudy(id: String) -> Observable<Void>
 }
