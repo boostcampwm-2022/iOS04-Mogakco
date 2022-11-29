@@ -8,6 +8,15 @@
 
 import Foundation
 
-enum StudySort {
+enum StudySort: CaseIterable {
     case latest, oldest
+    
+    var title: String {
+        switch self {
+        case .latest:
+            return "최신순"
+        case .oldest:
+            return "오래된순"
+        }
+    }
 }
