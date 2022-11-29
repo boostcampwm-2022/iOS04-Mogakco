@@ -26,13 +26,14 @@ final class ChatViewModel: ViewModel {
         let selectedSidebar: Observable<ChatSidebarMenu>
         let inputViewText: Observable<String>
         let sendMessage: Observable<Void>
-        let messages: Observable<[Chat]>
     }
     
     
     private let chatUseCase: ChatUseCaseProtocol
     private let leaveStudyUseCase: LeaveStudyUseCaseProtocol
     weak var coordinator: Coordinator?
+    private var chatArray: [Chat] = []
+    var messages = BehaviorRelay<[Chat]>(value: [])
     var disposeBag = DisposeBag()
     let chatRoomID: String
     
@@ -53,18 +54,16 @@ final class ChatViewModel: ViewModel {
         let selectedSidebar = PublishSubject<ChatSidebarMenu>()
         let inputViewText = PublishSubject<String>()
         let sendMessage = PublishSubject<Void>()
-        let messages = PublishSubject<[Chat]>()
         let studyInfoTap = PublishSubject<Void>()
         let exitStudyTap = PublishSubject<Void>()
         let showMemberTap = PublishSubject<Void>()
         
-        chatUseCase.fetch(chatRoomID: self.chatRoomID)
-            .withUnretained(self)
-            .subscribe { _, chat in
-                messages.onNext(chat)
-            }
+        chatUseCase.fetch(chatRoomID: chatRoomID)
+            .withLatestFrom(messages) { ($0, $1) }
+            .subscribe(onNext: { [weak self] originChats, newChat in
+                self?.messages.accept(newChat + [originChats])
+            })
             .disposed(by: disposeBag)
-        
         input.backButtonDidTap
             .subscribe(onNext: { [weak self] in
                 self?.coordinator?.popTabbar(animated: true)
@@ -118,7 +117,9 @@ final class ChatViewModel: ViewModel {
                         ),
                         to: self.chatRoomID
                     )
-                    .subscribe { sendMessage.onNext(()) }
+                    .subscribe {
+                        sendMessage.onNext(())
+                    }
                     .disposed(by: self.disposeBag)
             }
             .disposed(by: disposeBag)
@@ -127,8 +128,7 @@ final class ChatViewModel: ViewModel {
             showChatSidebarView: showChatSidebarView,
             selectedSidebar: selectedSidebar,
             inputViewText: inputViewText,
-            sendMessage: sendMessage,
-            messages: messages
+            sendMessage: sendMessage
         )
     }
     
