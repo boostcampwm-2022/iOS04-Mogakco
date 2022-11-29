@@ -22,7 +22,7 @@ struct ChatRoomDataSource: ChatRoomDataSourceProtocol {
     
     func chats(id: String) -> Observable<Documents<[ChatResponseDTO]>> {
         return provider.request(ChatRoomTarget.chats(id))
-            .catchErrorJustReturn(Documents<[ChatResponseDTO]>(documents: []))
+            .catchAndReturn(Documents<[ChatResponseDTO]>(documents: []))
     }
     
     func create(request: CreateChatRoomRequestDTO) -> Observable<ChatRoomResponseDTO> {
