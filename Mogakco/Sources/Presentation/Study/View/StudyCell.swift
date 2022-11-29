@@ -45,6 +45,8 @@ final class StudyCell: UICollectionViewCell, Identifiable {
     private let stateLabel = UILabel().then {
         $0.font = UIFont(name: SFPro.bold.rawValue, size: 16)
         $0.textColor = .mogakcoColor.primaryDefault
+        $0.setContentHuggingPriority(.required, for: .horizontal)
+        $0.setContentCompressionResistancePriority(.required, for: .horizontal)
     }
     
     private let titleLabel = UILabel().then {
@@ -58,8 +60,9 @@ final class StudyCell: UICollectionViewCell, Identifiable {
         [stateLabel, titleLabel].forEach {
             stack.addArrangedSubview($0)
         }
-        stack.spacing = 5
+        stack.spacing = 6
         stack.alignment = .fill
+        stack.distribution = .fillProportionally
         stack.axis = .horizontal
     }
     
