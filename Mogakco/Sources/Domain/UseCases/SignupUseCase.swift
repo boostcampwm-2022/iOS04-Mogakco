@@ -18,14 +18,17 @@ struct SignupUseCase: SignupUseCaseProtocol {
     
     private let authRepository: AuthRepositoryProtocol
     private let userRepository: UserRepositoryProtocol
+    private let tokenRepository: TokenRepositoryProtocol
     private let disposeBag = DisposeBag()
     
     init(
         authRepository: AuthRepositoryProtocol,
-        userRepository: UserRepositoryProtocol
+        userRepository: UserRepositoryProtocol,
+        tokenRepository: TokenRepositoryProtocol
     ) {
         self.authRepository = authRepository
         self.userRepository = userRepository
+        self.tokenRepository = tokenRepository
     }
     
     func signup(signupProps: SignupProps) -> Observable<Void> {
@@ -33,9 +36,8 @@ struct SignupUseCase: SignupUseCaseProtocol {
             return Observable<Void>.error(SignupUseCaseError.imageCompress)
         }
         return authRepository.signup(signupProps: signupProps)
-            .do(onNext: {_ in
-                // TODO: Authroziation save to keychain
-            })
+            .flatMap { tokenRepository.save($0) }
+            .compactMap { $0 }
             .map { $0.localId }
             .map { User(id: $0, signupProps: signupProps) }
             .flatMap { userRepository.create(user: $0, imageData: imageData) }

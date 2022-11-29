@@ -14,21 +14,23 @@ struct LoginUseCase: LoginUseCaseProtocol {
     
     private let authRepository: AuthRepositoryProtocol
     private let userRepository: UserRepositoryProtocol
+    private let tokenRepository: TokenRepositoryProtocol
     private let disposeBag = DisposeBag()
     
     init(
         authRepository: AuthRepositoryProtocol,
-        userRepository: UserRepositoryProtocol
+        userRepository: UserRepositoryProtocol,
+        tokenRepository: TokenRepositoryProtocol
     ) {
         self.authRepository = authRepository
         self.userRepository = userRepository
+        self.tokenRepository = tokenRepository
     }
     
     func login(emailLogin: EmailLogin) -> Observable<Void> {
         return authRepository.login(emailLogin: emailLogin)
-            .do(onNext: { _ in
-                // TODO: Authroziation save to keychain
-            })
+            .flatMap { tokenRepository.save($0) }
+            .compactMap { $0 }
             .map { $0.localId }
             .flatMap { userRepository.user(id: $0) }
             .flatMap { userRepository.save(user: $0) }
