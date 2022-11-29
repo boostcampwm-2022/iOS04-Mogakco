@@ -8,6 +8,8 @@
 
 import UIKit
 
+import RxSwift
+
 final class StudyTabCoordinator: Coordinator, StudyTabCoordinatorProtocol {
     
     weak var delegate: CoordinatorFinishDelegate?
@@ -166,6 +168,20 @@ final class StudyTabCoordinator: Coordinator, StudyTabCoordinatorProtocol {
             viewModel: viewModel
         )
         navigationController.tabBarController?.navigationController?.pushViewController(viewController, animated: true)
+    }
+    
+    func showSelectStudySort(studySortObserver: AnyObserver<StudySort>) {
+        let viewModel = SelectStudySortViewModel(studySortObserver: studySortObserver, coordinator: self)
+        let viewController = SelectStudySortViewController(viewModel: viewModel)
+        viewController.modalPresentationStyle = .pageSheet
+        guard let sheet = viewController.sheetPresentationController else { return }
+        sheet.detents = [
+            .custom(resolver: { _ in
+                return 130.0
+            })
+        ]
+        sheet.prefersGrabberVisible = true
+        navigationController.tabBarController?.present(viewController, animated: true)
     }
     
     func goToPrevScreen() {
