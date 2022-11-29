@@ -104,6 +104,8 @@ final class ChatViewModel: ViewModel {
                         sendMessage.onNext(())
                     }
                     .disposed(by: self.disposeBag)
+                
+                sendMessage.onNext(())
             }
             .disposed(by: disposeBag)
         
