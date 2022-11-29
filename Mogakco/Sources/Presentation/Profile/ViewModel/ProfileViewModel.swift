@@ -40,9 +40,9 @@ final class ProfileViewModel: ViewModel {
         let representativeLanguageImage: Observable<UIImage>
         let name: Observable<String>
         let introduce: Observable<String>
-        let languages: Observable<[String]>
-        let careers: Observable<[String]>
-        let categorys: Observable<[String]>
+        let languages: Observable<[Hashtag]>
+        let careers: Observable<[Hashtag]>
+        let categorys: Observable<[Hashtag]>
         let studyRatingList: Observable<[(String, Int)]>
     }
 
@@ -93,9 +93,18 @@ final class ProfileViewModel: ViewModel {
                 .compactMap { UIImage(named: $0) },
             name: user.map { $0.name }.asObservable(),
             introduce: user.map { $0.introduce }.asObservable(),
-            languages: user.map { $0.languages }.asObservable(),
-            careers: user.map { $0.careers }.asObservable(),
-            categorys: user.map { $0.categorys }.asObservable(),
+            languages: user
+                .map { $0.languages }
+                .map { $0.compactMap { Languages.idToHashtag(id: $0) } }
+                .asObservable(),
+            careers: user
+                .map { $0.languages }
+                .map { $0.compactMap { Career.idToHashtag(id: $0) } }
+                .asObservable(),
+            categorys: user
+                .map { $0.languages }
+                .map { $0.compactMap { Category.idToHashtag(id: $0) } }
+                .asObservable(),
             studyRatingList: studyRatingList.asObservable()
         )
     }
