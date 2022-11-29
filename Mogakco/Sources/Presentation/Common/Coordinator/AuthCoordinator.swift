@@ -23,8 +23,8 @@ final class AuthCoordinator: Coordinator, AuthCoordinatorProtocol {
     }
     
     func showAutoLogin() {
-        let viewController = AutoLoginViewController(
-            viewModel: AutoLoginViewModel(
+        let viewController = LaunchScreenViewController(
+            viewModel: LaunchScreenViewModel(
                 coordinator: self,
                 autoLoginUseCase: AutoLoginUseCase(
                     userRepository: UserRepository(
