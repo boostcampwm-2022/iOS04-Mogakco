@@ -30,41 +30,90 @@ final class StudyListViewModel: ViewModel {
     }
     
     private weak var coordinator: StudyTabCoordinatorProtocol?
-    private let useCase: StudyListUseCaseProtocol
+    private let studyListUseCase: StudyListUseCaseProtocol
+    private let studyList = PublishSubject<[Study]>()
+    private let refreshFinished = PublishSubject<Void>()
+    private let sort = BehaviorSubject<StudySort>(value: .latest)
+    private let languagesFilter = BehaviorSubject<[Hashtag]>(value: [])
+    private let categoryFilter = BehaviorSubject<Hashtag?>(value: nil)
+    private let filters = BehaviorSubject<[StudyFilter]>(value: [])
+    private let refresh = PublishSubject<Void>()
     var disposeBag = DisposeBag()
     
     init(
         coordinator: StudyTabCoordinatorProtocol,
-        useCase: StudyListUseCaseProtocol
+        studyListUseCase: StudyListUseCaseProtocol
     ) {
         self.coordinator = coordinator
-        self.useCase = useCase
+        self.studyListUseCase = studyListUseCase
     }
     
     func transform(input: Input) -> Output {
-        
-        let studyList = PublishSubject<[Study]>()
-        let refreshFinished = PublishSubject<Void>()
-        let sort = BehaviorSubject<StudySort>(value: .latest)
-        let languageFilter = BehaviorSubject<StudyFilter?>(value: nil)
-        let categoryFilter = BehaviorSubject<StudyFilter?>(value: nil)
-        let filters = BehaviorSubject<[StudyFilter]>(value: [])
-        let reload = PublishSubject<Void>()
-
-        Observable.merge([
-            input.viewWillAppear,
-            input.refresh,
-            filters.skip(1).map { _ in () },
-            sort.skip(1).map { _ in () }
-        ])
-            .withLatestFrom(Observable.combineLatest(sort, filters))
-            .throttle(.seconds(1), latest: true, scheduler: MainScheduler.instance)
+        bindRefresh(input: input)
+        bindFilterSort(input: input)
+        bindScene(input: input)
+        return Output(
+            studyList: studyList,
+            refreshFinished: refreshFinished
+        )
+    }
+    
+    func bindRefresh(input: Input) {
+        Observable.merge([input.viewWillAppear, input.refresh])
             .withUnretained(self)
-            .flatMap { $0.0.useCase.list(sort: $0.1.0, filters: $0.1.1) }
-            .do { _ in refreshFinished.onNext(()) }
-            .subscribe(onNext: {
-                studyList.onNext($0)
+            .subscribe(onNext: { viewModel, _ in
+                viewModel.refresh.onNext(())
             })
+            .disposed(by: disposeBag)
+        
+        refresh
+            .withLatestFrom(Observable.combineLatest(sort, filters))
+            .withUnretained(self)
+            .flatMap { viewModel, arguments in
+                let (sort, filters) = arguments
+                return viewModel.studyListUseCase.list(sort: sort, filters: filters)
+            }
+            .do { _ in self.refreshFinished.onNext(()) }
+            .bind(to: studyList)
+            .disposed(by: disposeBag)
+    }
+    
+    func bindFilterSort(input: Input) {
+        input.resetButtonTapped
+            .withUnretained(self)
+            .subscribe(onNext: { viewModel, _ in
+                viewModel.languagesFilter.onNext([])
+                viewModel.categoryFilter.onNext(nil)
+                viewModel.sort.onNext(.latest)
+                viewModel.refresh.onNext(())
+            })
+            .disposed(by: disposeBag)
+
+        Observable.combineLatest(languagesFilter, categoryFilter)
+            .map { languages, category -> [StudyFilter] in
+                var newFilter: [StudyFilter] = []
+                newFilter.append(StudyFilter.languages(languages.map { $0.id }))
+                if let category {
+                    newFilter.append(StudyFilter.category(category.id))
+                }
+                return newFilter
+            }
+            .withUnretained(self)
+            .subscribe(onNext: { viewModel, newFilters in
+                viewModel.filters.onNext(newFilters)
+                viewModel.refresh.onNext(())
+            })
+            .disposed(by: disposeBag)
+    }
+    
+    func bindScene(input: Input) {
+        input.cellSelected
+            .withLatestFrom(Observable.combineLatest(input.cellSelected, studyList))
+            .map { $1[$0.row].id }
+            .withUnretained(self)
+            .subscribe { viewModel, id in
+                viewModel.coordinator?.showStudyDetail(id: id)
+            }
             .disposed(by: disposeBag)
         
         input.plusButtonTapped
@@ -74,62 +123,42 @@ final class StudyListViewModel: ViewModel {
             }
             .disposed(by: disposeBag)
         
-        input.cellSelected
-            .withLatestFrom(
-                Observable.combineLatest(
-                    input.cellSelected,
-                    studyList
-                )
-            )
-            .map { $1[$0.row].id }
-            .withUnretained(self)
-            .subscribe { viewModel, id in
-                viewModel.coordinator?.showStudyDetail(id: id)
-            }
-            .disposed(by: disposeBag)
-        
-        // 필터링
         input.languageButtonTapped
-            .map { StudyFilter.languages(["python"]) }
-            .subscribe(onNext: {
-                languageFilter.onNext($0)
+            .withUnretained(self)
+            .subscribe(onNext: { viewModel, _ in
+                viewModel.coordinator?.showLanguageSelect(delegate: self)
             })
             .disposed(by: disposeBag)
         
         input.categoryButtonTapped
-            .map { StudyFilter.category("bigdata") }
-            .subscribe(onNext: {
-                categoryFilter.onNext($0)
+            .withUnretained(self)
+            .subscribe(onNext: { viewModel, _ in
+                viewModel.coordinator?.showCategorySelect(delegate: self)
             })
             .disposed(by: disposeBag)
         
-        input.resetButtonTapped
-            .subscribe(onNext: {
-                languageFilter.onNext(nil)
-                categoryFilter.onNext(nil)
-                sort.onNext(.latest)
-            })
-            .disposed(by: disposeBag)
-
-        Observable.combineLatest(languageFilter, categoryFilter)
-            .map { [$0, $1].compactMap { $0 } }
-            .subscribe(onNext: {
-                filters.onNext($0)
-            })
-            .disposed(by: disposeBag)
-        
-        // 정렬
         input.sortButtonTapped
             .withUnretained(self)
             .subscribe(onNext: { viewModel, _ in
-                viewModel.coordinator?.showSelectStudySort(studySortObserver: sort.asObserver())
+                viewModel.coordinator?.showSelectStudySort(studySortObserver: viewModel.sort.asObserver())
             })
             .disposed(by: disposeBag)
-        
-        
-        return Output(
-            studyList: studyList,
-            refreshFinished: refreshFinished
-        )
+    }
+}
+
+// MARK: - HashtagSelectProtocol
+
+extension StudyListViewModel: HashtagSelectProtocol {
+    
+    func selectedHashtag(kind: KindHashtag, hashTags: [Hashtag]) {
+        print(hashTags.map { $0.title })
+        switch kind {
+        case .category:
+            categoryFilter.onNext(hashTags.first)
+        case .language:
+            languagesFilter.onNext(hashTags)
+        default:
+            break
+        }
     }
 }
