@@ -110,10 +110,6 @@ final class StudyTabCoordinator: Coordinator, StudyTabCoordinatorProtocol {
             remoteUserDataSource: remoteUserDataSource,
             chatRoomDataSource: chatRoomDataSource
         )
-        let chatRoomRespository = ChatRoomRepository(
-            chatRoomDataSource: chatRoomDataSource,
-            remoteUserDataSource: remoteUserDataSource
-        )
         
         let chatUseCase = ChatUseCase(
             chatRepository: chatRepository,
