@@ -45,7 +45,6 @@ final class StudyCell: UICollectionViewCell, Identifiable {
     private let stateLabel = UILabel().then {
         $0.font = UIFont(name: SFPro.bold.rawValue, size: 16)
         $0.textColor = .mogakcoColor.primaryDefault
-        $0.setContentHuggingPriority(.required, for: .horizontal)
         $0.setContentCompressionResistancePriority(.required, for: .horizontal)
     }
     
