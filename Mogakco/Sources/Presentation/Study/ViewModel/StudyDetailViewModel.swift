@@ -110,8 +110,7 @@ final class StudyDetailViewModel: ViewModel {
                 $0.0.joinStudyUseCase.join(id: $0.0.studyID)
             }
             .withUnretained(self)
-            .subscribe(onNext: { 
-                // TODO: 채팅방 화면 띄우기
+            .subscribe(onNext: {
                 $0.0.coordinator.showChatDetail(chatRoomID: $0.0.studyID)
             }, onError: { error in
                 // TODO: 채팅방 인원이 다 찼을 때 예외처리
