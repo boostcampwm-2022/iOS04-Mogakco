@@ -104,16 +104,15 @@ final class StudyDetailViewModel: ViewModel {
             })
             .disposed(by: disposeBag)
         
-        
         input.studyJoinButtonTapped
             .withUnretained(self)
-            .flatMap { viewModel, _ in
-                viewModel.joinStudyUseCase.join(id: viewModel.studyID)
+            .flatMap {
+                $0.0.joinStudyUseCase.join(id: $0.0.studyID)
             }
             .withUnretained(self)
-            .subscribe(onNext: { viewModel, _ in
+            .subscribe(onNext: { _ in
                 // TODO: 채팅방 화면 띄우기
-                viewModel.coordinator.showChatDetail(chatRoomID: viewModel.studyID)
+                
             }, onError: { error in
                 // TODO: 채팅방 인원이 다 찼을 때 예외처리
                 print("👀:", error)
