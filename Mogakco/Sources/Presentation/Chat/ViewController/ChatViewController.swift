@@ -115,7 +115,7 @@ final class ChatViewController: ViewController {
             sendButtonDidTap: messageInputView.sendButton.rx.tap.asObservable(),
             inputViewText: messageInputView.messageInputTextView.rx.text.orEmpty.asObservable()
         )
-        
+
         let output = viewModel.transform(input: input)
         
         Driver<[ChatSidebarMenu]>.just(ChatSidebarMenu.allCases)
@@ -134,24 +134,14 @@ final class ChatViewController: ViewController {
         
         viewModel.messages
             .asDriver(onErrorJustReturn: [])
-            .drive(collectionView.rx.items) { [weak self] collectionView, index, chat in
+            .drive(collectionView.rx.items) { collectionView, index, chat in
                 
-                guard let self = self,
-                      let cell = collectionView.dequeueReusableCell(
+                guard let cell = collectionView.dequeueReusableCell(
                     withReuseIdentifier: ChatCell.identifier,
                     for: IndexPath(row: index, section: 0)) as? ChatCell else {
                     return UICollectionViewCell()
                 }
-                
-                self.viewModel.userID()
-                    .subscribe(onNext: { user in
-                        cell.isFromCurrentUser(
-                            userID: user.id,
-                            chat: chat
-                        )
-                    })
-                    .disposed(by: self.disposeBag)
-                
+                cell.layoutChat(chat: chat)
                 return cell
             }
             .disposed(by: disposeBag)
