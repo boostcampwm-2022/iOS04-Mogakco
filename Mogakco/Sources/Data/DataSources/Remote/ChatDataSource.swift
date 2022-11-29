@@ -15,20 +15,18 @@ struct ChatDataSource: ChatDataSourceProtocol {
         static let ChatRoom = Firestore.firestore().collection("ChatRoom")
     }
     
-    func fetch(chatRoomID: String) -> Observable<[ChatResponseDTO]> {
+    func fetch(chatRoomID: String) -> Observable<ChatResponseDTO> {
         return Observable.create { emitter in
-            var chats: [ChatResponseDTO] = []
             let query = Collection.ChatRoom.document(chatRoomID).collection("chats").order(by: "date")
-            query.addSnapshotListener { snapshot, _ in
+            
+            let listener = query.addSnapshotListener { snapshot, _ in
                 snapshot?.documentChanges.forEach({ change in
                     if change.type == .added {
                         let dictionary = change.document.data()
                         guard let data = try? JSONSerialization.data(withJSONObject: dictionary),
-                        let chat = try? JSONDecoder().decode(Chat.self, from: data)
+                              let chat = try? JSONDecoder().decode(Chat.self, from: data)
                         else { return }
-                        
-                        chats.append(ChatResponseDTO(chat: chat))
-                        emitter.onNext(chats)
+                        emitter.onNext(ChatResponseDTO(chat: chat))
                     }
                 })
             }

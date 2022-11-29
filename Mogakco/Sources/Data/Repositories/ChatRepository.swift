@@ -18,8 +18,8 @@ struct ChatRepository: ChatRepositoryProtocol {
         self.chatDataSource = chatDataSource
     }
 
-    func fetch(chatRoomID: String) -> Observable<[Chat]> {
-        return chatDataSource.fetch(chatRoomID: chatRoomID).map { $0.map { $0.toDomain() } }
+    func fetch(chatRoomID: String) -> Observable<Chat> {
+        return chatDataSource.fetch(chatRoomID: chatRoomID).map { $0.toDomain() }
     }
 
     func send(chat: Chat, to chatRoomID: String) -> Observable<Void> {
