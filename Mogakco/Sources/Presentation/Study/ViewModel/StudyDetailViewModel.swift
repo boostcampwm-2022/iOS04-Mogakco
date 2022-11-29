@@ -125,6 +125,10 @@ final class StudyDetailViewModel: ViewModel {
         )
     }
     
+    func userSelect(index: Int) {
+        // 
+    }
+    
     func languaegCellInfo(index: Int) -> Hashtag? {
         return try? languages.value()[index]
     }
