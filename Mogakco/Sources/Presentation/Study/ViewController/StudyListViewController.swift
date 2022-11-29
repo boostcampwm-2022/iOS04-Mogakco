@@ -32,7 +32,6 @@ final class StudyListViewController: ViewController {
     
     
     private let viewModel: StudyListViewModel
-//    private let viewWillAppear = PublishSubject<Void>()
     
     // MARK: - Inits
     
