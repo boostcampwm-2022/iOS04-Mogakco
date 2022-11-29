@@ -15,6 +15,8 @@ struct LeaveStudyUseCase: LeaveStudyUseCaseProtocol {
     let studyRepository: StudyRepositoryProtocol
     let chatRoomRepository: ChatRoomRepositoryProtocol
     
+    var disposeBag = DisposeBag()
+    
     func leaveStudy(id: String) -> Observable<Void> {
         return Observable.create { emitter in
             
@@ -50,12 +52,29 @@ struct LeaveStudyUseCase: LeaveStudyUseCaseProtocol {
                 }
             
             // 3. ChatRoom에서 정보 삭제
-//            let updateChatRoom = Observable
-//                .zip(
-//                    userInfo,
-//                    chatRoomRepository.
-//                )
+            let updateChatRoom = Observable
+                .zip(
+                    userInfo,
+                    chatRoomRepository.detail(id: id)
+                )
+                .flatMap { user, chatRoom in
+                    chatRoomRepository.updateIDs(
+                        id: chatRoom.id,
+                        userIDs: chatRoom.userIDs.filter { $0 != user.id }
+                    )
+                }
             
+            Observable.combineLatest(
+                updateUser,
+                updateStudy,
+                updateChatRoom
+            )
+            .subscribe(onNext: { _ in
+                emitter.onNext(())
+            }, onError: { error in
+                emitter.onError(error)
+            })
+            .disposed(by: disposeBag)
             
             return Disposables.create()
         }
