@@ -71,15 +71,15 @@ final class HashtagListView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func bind(hashtags: Driver<[String]>) {
+    func bind(hashtags: Driver<[Hashtag]>) {
         hashtags
-            .drive(hashtagCollectionView.rx.items) { collectionView, index, language in
+            .drive(hashtagCollectionView.rx.items) { collectionView, index, hashtag in
                 guard let cell = collectionView.dequeueReusableCell(
-                    withReuseIdentifier: BadgeCell.identifier,
-                    for: IndexPath(row: index, section: 0)) as? BadgeCell else {
+                    withReuseIdentifier: HashtagBadgeCell.identifier,
+                    for: IndexPath(row: index, section: 0)) as? HashtagBadgeCell else {
                     return UICollectionViewCell()
                 }
-                cell.setInfo(iconName: language, title: language)
+                cell.setHashtag(hashtag: hashtag)
                 return cell
             }
             .disposed(by: disposeBag)
