@@ -31,6 +31,7 @@ final class ChatViewModel: ViewModel {
     
     
     private let chatUseCase: ChatUseCaseProtocol
+    private let leaveStudyUseCase: LeaveStudyUseCaseProtocol
     weak var coordinator: Coordinator?
     var disposeBag = DisposeBag()
     let chatRoomID: String
@@ -38,10 +39,12 @@ final class ChatViewModel: ViewModel {
     init(
         coordinator: Coordinator,
         chatUseCase: ChatUseCaseProtocol,
+        leaveStudyUseCase: LeaveStudyUseCaseProtocol,
         chatRoomID: String
     ) {
         self.coordinator = coordinator
         self.chatUseCase = chatUseCase
+        self.leaveStudyUseCase = leaveStudyUseCase
         self.chatRoomID = chatRoomID
     }
     
