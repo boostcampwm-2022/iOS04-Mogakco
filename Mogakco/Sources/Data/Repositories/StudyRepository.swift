@@ -9,7 +9,11 @@
 import RxSwift
 
 struct StudyRepository: StudyRepositoryProtocol {
-
+    
+    enum StudyRepositoryError: Error {
+        case max
+    }
+    
     private let studyDataSource: StudyDataSourceProtocol
     private let localUserDataSource: LocalUserDataSourceProtocol
     private let remoteUserDataSource: RemoteUserDataSourceProtocol
@@ -119,9 +123,9 @@ struct StudyRepository: StudyRepositoryProtocol {
             .map { $0.toDomain() }
     }
     
-    func join(id: String) -> Observable<Bool> {
+    func join(id: String) -> Observable<Void> {
         
-        return Observable<Bool>.create { emitter in
+        return Observable<Void>.create { emitter in
             
             let canJoinStudy = Observable
                 .zip(
@@ -131,7 +135,7 @@ struct StudyRepository: StudyRepositoryProtocol {
                 .do(onNext: { user, study in
                     if study.userIDs.count >= study.maxUserCount &&
                       !study.userIDs.contains(user.id) {
-                        emitter.onNext(false)
+                        emitter.onError(StudyRepositoryError.max)
                     }
                 })
                 .filter { user, study in
@@ -191,7 +195,7 @@ struct StudyRepository: StudyRepositoryProtocol {
                     updateChatRoom
                 )
                 .subscribe { _ in
-                    emitter.onNext(true)
+                    emitter.onNext(())
                 }
                 .disposed(by: self.disposeBag)
             
