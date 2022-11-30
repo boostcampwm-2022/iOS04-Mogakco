@@ -131,6 +131,37 @@ struct ChatRoomRepository: ChatRoomRepositoryProtocol {
         return userUpdated
     }
     
+    func create(currentUserID: String, otherUserID: String) -> Observable<ChatRoom> {
+        return create(studyID: nil, userIDs: [currentUserID, otherUserID])
+            .flatMap { chatRoom in
+                return Observable.zip(
+                    remoteUserDataSource.user(id: otherUserID)
+                        .map { $0.toDomain() }
+                        .flatMap { otherUser in
+                            remoteUserDataSource.updateIDs(
+                                id: otherUser.id,
+                                request: .init(
+                                    chatRoomIDs: otherUser.chatRoomIDs + [chatRoom.id],
+                                    studyIDs: otherUser.studyIDs
+                                )
+                            )
+                        },
+                    remoteUserDataSource.user(id: currentUserID)
+                        .map { $0.toDomain() }
+                        .flatMap { currentUser in
+                            remoteUserDataSource.updateIDs(
+                                id: currentUser.id,
+                                request: .init(
+                                    chatRoomIDs: currentUser.chatRoomIDs + [chatRoom.id],
+                                    studyIDs: currentUser.studyIDs
+                                )
+                            )
+                        }
+                )
+                .map { _ in chatRoom }
+            }
+    }
+    
     private func unreadChatCount(id: String, chats: [Chat]) -> Int {
         var count = 0
         for chat in chats {
