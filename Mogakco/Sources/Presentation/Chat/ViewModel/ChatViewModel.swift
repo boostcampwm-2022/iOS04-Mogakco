@@ -64,6 +64,7 @@ final class ChatViewModel: ViewModel {
                 self?.messages.accept(newChat + [originChats])
             })
             .disposed(by: disposeBag)
+        
         input.backButtonDidTap
             .subscribe(onNext: { [weak self] in
                 self?.coordinator?.popTabbar(animated: true)
