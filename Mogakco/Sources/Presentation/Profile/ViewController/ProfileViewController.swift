@@ -125,67 +125,56 @@ final class ProfileViewController: ViewController {
     
     private func bindIsMyProfile(output: ProfileViewModel.Output) {
         output.isMyProfile
-            .asDriver(onErrorJustReturn: false)
             .drive(profileView.chatButton.rx.isHidden)
             .disposed(by: disposeBag)
         
         output.isMyProfile
             .map { !$0 }
-            .asDriver(onErrorJustReturn: false)
             .drive(profileView.editProfileButton.rx.isHidden)
             .disposed(by: disposeBag)
         
         output.isMyProfile
             .map { !$0 }
-            .asDriver(onErrorJustReturn: false)
             .drive(languageListView.editButton.rx.isHidden)
             .disposed(by: disposeBag)
         
         output.isMyProfile
             .map { !$0 }
-            .asDriver(onErrorJustReturn: false)
             .drive(careerListView.editButton.rx.isHidden)
             .disposed(by: disposeBag)
         
         output.isMyProfile
             .map { !$0 }
-            .asDriver(onErrorJustReturn: false)
             .drive(categoryListView.editButton.rx.isHidden)
             .disposed(by: disposeBag)
     }
     
     private func bindProfile(output: ProfileViewModel.Output) {
         output.profileImageURL
-            .asDriver(onErrorDriveWith: .empty())
             .drive(profileView.roundProfileImageView.rx.loadImage)
             .disposed(by: disposeBag)
         
         output.representativeLanguageImage
-            .asDriver(onErrorJustReturn: .init())
             .drive(profileView.roundLanguageImageView.rx.image)
             .disposed(by: disposeBag)
         
         output.name
-            .asDriver(onErrorJustReturn: "")
             .drive(profileView.nameLabel.rx.text)
             .disposed(by: disposeBag)
         
         output.introduce
-            .asDriver(onErrorJustReturn: "")
             .drive(profileView.introduceLabel.rx.text)
             .disposed(by: disposeBag)
     }
     
     private func bindHashtags(output: ProfileViewModel.Output) {
-        languageListView.bind(hashtags: output.languages.asDriver(onErrorJustReturn: []))
-        careerListView.bind(hashtags: output.careers.asDriver(onErrorJustReturn: []))
-        categoryListView.bind(hashtags: output.categorys.asDriver(onErrorJustReturn: []))
+        languageListView.bind(hashtags: output.languages)
+        careerListView.bind(hashtags: output.careers)
+        categoryListView.bind(hashtags: output.categorys)
         
         output.studyRatingList
-            .withUnretained(self)
-            .asDriver(onErrorDriveWith: .empty())
-            .drive(onNext: { viewController, studyRatingList in
-                viewController.studyRatingListView.configure(studyRatingList: studyRatingList)
+            .drive(onNext: { [weak self] studyRatingList in
+                self?.studyRatingListView.configure(studyRatingList: studyRatingList)
             })
             .disposed(by: disposeBag)
     }
