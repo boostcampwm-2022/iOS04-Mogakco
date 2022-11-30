@@ -36,7 +36,7 @@ final class StudyStepperView: UIView {
     
     let stepper = UIStepper().then {
         $0.stepValue = 1
-        $0.minimumValue = 0
+        $0.minimumValue = 2
         $0.maximumValue = 8
     }
     
