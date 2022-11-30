@@ -23,11 +23,11 @@ final class SetEmailViewModel: ViewModel {
         let nextButtonEnabled: PublishSubject<Bool>
     }
     
-    private weak var coordinator: RequiredSignupCoordinatorProtocol?
+    private let emailObserver: AnyObserver<String>?
     var disposeBag = DisposeBag()
     
-    init(coordinator: RequiredSignupCoordinatorProtocol?) {
-        self.coordinator = coordinator
+    init(emailObserver: AnyObserver<String>? = nil) {
+        self.emailObserver = emailObserver
     }
 
     func transform(input: Input) -> Output {
@@ -47,8 +47,7 @@ final class SetEmailViewModel: ViewModel {
         input.nextButtonTapped
             .withLatestFrom(input.email)
             .subscribe { [weak self] email in
-                let emailProps = EmailProps(email: email)
-                self?.coordinator?.showPassword(emailProps: emailProps)
+                self?.emailObserver?.onNext(email)
             }
             .disposed(by: disposeBag)
         
