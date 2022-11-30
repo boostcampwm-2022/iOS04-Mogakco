@@ -33,4 +33,10 @@ struct ChatRoomListUseCase: ChatRoomListUseCaseProtocol {
             .load()
             .flatMap { chatRoomRepository.list(id: $0.id, ids: $0.chatRoomIDs) }
     }
+    
+    func leave(chatRoom: ChatRoom) -> Observable<Void> {
+        return userRepository.load()
+            .flatMap { chatRoomRepository.leave(user: $0, chatRoom: chatRoom) }
+            .flatMap { userRepository.save(user: $0) }
+    }
 }
