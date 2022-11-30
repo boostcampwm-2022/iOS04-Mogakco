@@ -20,7 +20,9 @@ final class LoginViewModel: ViewModel {
         let loginButtonTap: Observable<Void>
     }
     
-    struct Output {}
+    struct Output {
+        let presentError: Signal<String>
+    }
     
     var disposeBag = DisposeBag()
     private let loginUseCase: LoginUseCaseProtocol
@@ -36,7 +38,7 @@ final class LoginViewModel: ViewModel {
         enum LoginError: Error, LocalizedError {
             case loginFail
         }
-        
+        let presentAlert = PublishSubject<Error>()
         var userData = EmailLogin(email: "", password: "")
         
         Observable
@@ -53,15 +55,20 @@ final class LoginViewModel: ViewModel {
             .disposed(by: disposeBag)
         
         input.loginButtonTap
-            .flatMap { [weak self] () -> Observable<Void> in
-                guard let self else { return  Observable.error(LoginError.loginFail) }
-                return self.loginUseCase.login(emailLogin: userData)
-            }
+            .withUnretained(self)
+            .flatMap { $0.0.loginUseCase.login(emailLogin: userData).asResult() }
             .subscribe(onNext: { [weak self] in
-                self?.coordinator.finish()
+                switch $0 {
+                case .success:
+                    self?.coordinator.finish()
+                case .failure(let error):
+                    presentAlert.onNext(error)
+                }
             })
             .disposed(by: disposeBag)
             
-        return Output()
+        return Output(
+            presentError: presentAlert.map { $0.localizedDescription }.asSignal(onErrorSignalWith: .empty())
+        )
     }
 }
