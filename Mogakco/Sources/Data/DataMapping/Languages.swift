@@ -28,13 +28,9 @@ enum Languages: String, CaseIterable, Hashtag {
     case swift
     case visualBasic
     
-    static func allNames() -> [String] {
-        var names: [String] = []
-        self.allCases.forEach {
-            names.append($0.rawValue)
-        }
-        
-        return names
+    static func randomImageID() -> String {
+        guard let id = Languages.allCases.randomElement()?.id else { return "swift" }
+        return id
     }
     
     static func idToHashtag(id: String) -> Hashtag? {
