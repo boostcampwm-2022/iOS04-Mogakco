@@ -52,7 +52,11 @@ final class LoginViewController: ViewController {
             loginButtonTap: loginButton.rx.tap.asObservable()
         )
 
-        _ = viewModel.transform(input: input)
+        let output = viewModel.transform(input: input)
+        
+        output.presentError
+            .emit(to: rx.presentAlert)
+            .disposed(by: disposeBag)
     }
     
     override func layout() {
