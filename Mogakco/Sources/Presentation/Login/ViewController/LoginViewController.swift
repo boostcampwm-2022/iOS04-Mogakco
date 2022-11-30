@@ -45,6 +45,11 @@ final class LoginViewController: ViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        animationView.invalidate()
+    }
+    
     override func bind() {
         let input = LoginViewModel.Input(
             email: emailTextField.rx.text.orEmpty.asObservable(),
