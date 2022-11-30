@@ -19,6 +19,7 @@ final class ChatViewModel: ViewModel {
         let selectedSidebar: Observable<IndexPath>
         let sendButtonDidTap: Observable<Void>
         let inputViewText: Observable<String>
+        let pagination: Observable<Void>?
     }
     
     struct Output {
@@ -26,10 +27,12 @@ final class ChatViewModel: ViewModel {
         let selectedSidebar: Observable<ChatSidebarMenu>
         let inputViewText: Observable<String>
         let sendMessage: Observable<Void>
+        let refreshFinished: Observable<Void>
     }
     
-    
+    private var isFirst = true
     private let chatUseCase: ChatUseCaseProtocol
+    private let leaveStudyUseCase: LeaveStudyUseCaseProtocol
     weak var coordinator: Coordinator?
     private var chatArray: [Chat] = []
     var messages = BehaviorRelay<[Chat]>(value: [])
@@ -39,10 +42,12 @@ final class ChatViewModel: ViewModel {
     init(
         coordinator: Coordinator,
         chatUseCase: ChatUseCaseProtocol,
+        leaveStudyUseCase: LeaveStudyUseCaseProtocol,
         chatRoomID: String
     ) {
         self.coordinator = coordinator
         self.chatUseCase = chatUseCase
+        self.leaveStudyUseCase = leaveStudyUseCase
         self.chatRoomID = chatRoomID
     }
     
@@ -51,17 +56,26 @@ final class ChatViewModel: ViewModel {
         let selectedSidebar = PublishSubject<ChatSidebarMenu>()
         let inputViewText = PublishSubject<String>()
         let sendMessage = PublishSubject<Void>()
+        let studyInfoTap = PublishSubject<Void>()
+        let exitStudyTap = PublishSubject<Void>()
+        let showMemberTap = PublishSubject<Void>()
+        let refreshFinished = PublishSubject<Void>()
         
-        chatUseCase.fetchAll(chatRoomID: chatRoomID)
-            .withLatestFrom(messages) { ($0, $1) }
-            .subscribe(onNext: { [weak self] originChats, newChat in
-                self?.messages.accept(newChat + [originChats])
-            })
-            .disposed(by: disposeBag)
+        bindFirebase()
+        backButtonDidTap(input: input)
         
-        input.backButtonDidTap
-            .subscribe(onNext: { [weak self] in
-                self?.coordinator?.navigationController.popViewController(animated: true)
+        input.pagination?
+            .subscribe({ [weak self] _ in
+                guard let self = self else { return }
+                self.chatUseCase
+                    .reload(chatRoomID: self.chatRoomID)
+                    .withLatestFrom(self.messages) { ($0, $1) }
+                    .subscribe(onNext: { orginalChats, newChat in
+                        self.messages.accept([orginalChats] + newChat)
+                    })
+                    .disposed(by: self.disposeBag)
+                
+                refreshFinished.onNext(())
             })
             .disposed(by: disposeBag)
         
@@ -74,10 +88,25 @@ final class ChatViewModel: ViewModel {
         input.selectedSidebar
             .map { ChatSidebarMenu(row: $0.row) }
             .subscribe { row in
-                selectedSidebar.on(row)
+                switch row {
+                case .studyInfo: studyInfoTap.onNext(())
+                case .exitStudy: exitStudyTap.onNext(())
+                case .showMember: showMemberTap.onNext(())
+                }
             }
             .disposed(by: disposeBag)
         
+        exitStudyTap
+            .withUnretained(self)
+            .flatMap { $0.0.leaveStudyUseCase.leaveStudy(id: $0.0.chatRoomID) }
+            .subscribe {
+                selectedSidebar.onNext(.exitStudy)
+            } onError: { error in
+                print(self.chatRoomID)
+                print(error)
+            }
+            .disposed(by: disposeBag)
+        // TODO: 위와 같은 방식으로 studyInfo, showMember추가
         input.sendButtonDidTap
             .withLatestFrom(Observable.combineLatest(
                 chatUseCase.myProfile(),
