@@ -37,6 +37,7 @@ final class ChatViewController: ViewController {
             right: 0)
         layout.itemSize = CGSize(width: view.frame.width, height: 60)
         layout.minimumLineSpacing = 8.0
+        $0.refreshControl = UIRefreshControl()
         $0.collectionViewLayout = layout
         $0.register(ChatCell.self, forCellWithReuseIdentifier: ChatCell.identifier)
         $0.alwaysBounceVertical = true
@@ -113,7 +114,8 @@ final class ChatViewController: ViewController {
             studyInfoButtonDidTap: studyInfoButton.rx.tap.asObservable(),
             selectedSidebar: sidebarView.tableView.rx.itemSelected.asObservable(),
             sendButtonDidTap: messageInputView.sendButton.rx.tap.asObservable(),
-            inputViewText: messageInputView.messageInputTextView.rx.text.orEmpty.asObservable()
+            inputViewText: messageInputView.messageInputTextView.rx.text.orEmpty.asObservable(),
+            pagination: collectionView.refreshControl?.rx.controlEvent(.valueChanged).asObservable()
         )
 
         let output = viewModel.transform(input: input)
@@ -160,6 +162,12 @@ final class ChatViewController: ViewController {
                 self.hideSidebarView()
                 self.sidebarMenuDidTap(row: row)
             }
+            .disposed(by: disposeBag)
+        
+        output.refreshFinished
+            .subscribe(onNext: { [weak self] _ in
+                self?.collectionView.refreshControl?.endRefreshing()
+            })
             .disposed(by: disposeBag)
         
         output.sendMessage
