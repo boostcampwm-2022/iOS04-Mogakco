@@ -86,7 +86,7 @@ enum UserTarget {
 
 extension UserTarget: TargetType {
     var baseURL: String {
-        return "https://firestore.googleapis.com/v1/projects/mogakco-72df7/databases/(default)/documents/User"
+        return Network.baseURLString + "/documents/user"
     }
     
     var method: HTTPMethod {

@@ -48,7 +48,7 @@ enum ChatRoomTarget {
 
 extension ChatRoomTarget: TargetType {
     var baseURL: String {
-        return "https://firestore.googleapis.com/v1/projects/mogakco-72df7/databases/(default)/documents/ChatRoom"
+        return Network.baseURLString + "/documents/chatroom"
     }
     
     var method: HTTPMethod {

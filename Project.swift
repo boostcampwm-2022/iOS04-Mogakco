@@ -75,7 +75,7 @@ class BaseProjectFactory: ProjectFactory {
                 name: projectName,
                 platform: .iOS,
                 product: .app,
-                bundleId: "com.kimshinohlee.\(projectName)",
+                bundleId: "com.codershigh.boostcamp.\(projectName)",
                 deploymentTarget: .iOS(targetVersion: "16.0", devices: [.iphone]),
                 infoPlist: .extendingDefault(with: infoPlist),
                 sources: ["\(projectName)/Sources/**"],
