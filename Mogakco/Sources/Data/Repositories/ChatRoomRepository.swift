@@ -15,13 +15,16 @@ struct ChatRoomRepository: ChatRoomRepositoryProtocol {
     private let disposeBag = DisposeBag()
     private let chatRoomDataSource: ChatRoomDataSourceProtocol
     private let remoteUserDataSource: RemoteUserDataSourceProtocol
+    private let studyDataSource: StudyDataSource
     
     init(
         chatRoomDataSource: ChatRoomDataSourceProtocol,
-        remoteUserDataSource: RemoteUserDataSourceProtocol
+        remoteUserDataSource: RemoteUserDataSourceProtocol,
+        studyDataSource: StudyDataSource
     ) {
         self.chatRoomDataSource = chatRoomDataSource
         self.remoteUserDataSource = remoteUserDataSource
+        self.studyDataSource = studyDataSource
     }
     
     func create(studyID: String?, userIDs: [String]) -> Observable<ChatRoom> {
@@ -35,6 +38,9 @@ struct ChatRoomRepository: ChatRoomRepositoryProtocol {
     }
 
     func list(id: String, ids: [String]) -> Observable<[ChatRoom]> {
+        guard !ids.isEmpty else {
+            return Observable.just([])
+        }
         // 채팅방 모델 호출
         let chatRoomsSb = chatRoomDataSource.list()
             .map { $0.documents.map { $0.toDomain() } }
@@ -88,6 +94,41 @@ struct ChatRoomRepository: ChatRoomRepositoryProtocol {
         let updateDTO = UpdateUserIDsRequestDTO(userIDs: userIDs)
         return chatRoomDataSource.updateIDs(id: id, request: updateDTO)
             .map { $0.toDomain() }
+    }
+    
+    func leave(user: User, chatRoom: ChatRoom) -> Observable<User> {
+        let studyUpdated = studyDataSource.detail(id: chatRoom.studyID ?? "")
+            .map { $0.toDomain() }
+            .flatMap { studyDataSource.updateIDs(
+                id: $0.id,
+                request: .init(userIDs: $0.userIDs.filter { $0 != user.id })
+                )
+            }
+            .map { _ in () }
+            .catch { _ in Observable.just(()) }
+        
+        let chatRoomUpdated = chatRoomDataSource.detail(id: chatRoom.id)
+            .map { $0.toDomain() }
+            .flatMap { chatRoomDataSource.updateIDs(
+                id: $0.id,
+                request: .init(userIDs: $0.userIDs.filter { $0 != user.id })
+                )
+            }
+            .map { _ in () }
+        
+        let userUpdated = Observable.zip(studyUpdated, chatRoomUpdated)
+            .flatMap { _ in
+                remoteUserDataSource.updateIDs(
+                    id: user.id,
+                    request: .init(
+                        chatRoomIDs: user.chatRoomIDs.filter { $0 != chatRoom.id },
+                        studyIDs: user.studyIDs.filter { $0 != chatRoom.studyID ?? "" }
+                    )
+                )
+            }
+            .map { $0.toDomain() }
+
+        return userUpdated
     }
     
     private func unreadChatCount(id: String, chats: [Chat]) -> Int {
