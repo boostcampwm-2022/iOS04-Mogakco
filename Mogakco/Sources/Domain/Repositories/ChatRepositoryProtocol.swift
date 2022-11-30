@@ -9,6 +9,8 @@
 import RxSwift
 
 protocol ChatRepositoryProtocol {
-    func fetch(chatRoomID: String) -> Observable<Chat>
-    func send(chat: Chat, to chatRoomID: String) -> Observable<Void> // Chat으로?
+    func fetchAll(chatRoomID: String) -> Observable<Chat>
+    func reload(chatRoomID: String) -> Observable<Chat>
+    func observe(chatRoomID: String) -> Observable<Chat>
+    func send(chat: Chat, to chatRoomID: String) -> Observable<Void>
 }

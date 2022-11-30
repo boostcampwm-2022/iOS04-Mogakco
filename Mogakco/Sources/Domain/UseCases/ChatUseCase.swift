@@ -22,9 +22,43 @@ struct ChatUseCase: ChatUseCaseProtocol {
         self.userRepository = userRepository
     }
     
-    func fetch(chatRoomID: String) -> Observable<Chat> {
+    func fetchAll(chatRoomID: String) -> Observable<Chat> {
         return chatRepository
-            .fetch(chatRoomID: chatRoomID)
+            .fetchAll(chatRoomID: chatRoomID)
+            .flatMap {
+                var chat = $0
+                return Observable.combineLatest(
+                    userRepository.user(id: chat.userID),
+                    userRepository.load()
+                )
+                .map { chatUserData, myUserData in
+                    chat.user = chatUserData
+                    chat.isFromCurrentUser = chatUserData.id == myUserData.id
+                    return chat
+                }
+            }
+    }
+    
+    func reload(chatRoomID: String) -> Observable<Chat> {
+        return chatRepository
+            .reload(chatRoomID: chatRoomID)
+            .flatMap {
+                var chat = $0
+                return Observable.combineLatest(
+                    userRepository.user(id: chat.userID),
+                    userRepository.load()
+                )
+                .map { chatUserData, myUserData in
+                    chat.user = chatUserData
+                    chat.isFromCurrentUser = chatUserData.id == myUserData.id
+                    return chat
+                }
+            }
+    }
+    
+    func observe(chatRoomID: String) -> Observable<Chat> {
+        return chatRepository
+            .observe(chatRoomID: chatRoomID)
             .flatMap {
                 var chat = $0
                 return Observable.combineLatest(
