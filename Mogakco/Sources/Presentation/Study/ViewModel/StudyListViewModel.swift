@@ -73,7 +73,7 @@ final class StudyListViewModel: ViewModel {
             .disposed(by: disposeBag)
         
         refresh
-            .debounce(.microseconds(300), scheduler: MainScheduler.instance)
+            .debounce(.microseconds(100), scheduler: MainScheduler.instance)
             .withLatestFrom(Observable.combineLatest(sort, filters))
             .withUnretained(self)
             .flatMap { viewModel, arguments in
@@ -112,7 +112,6 @@ final class StudyListViewModel: ViewModel {
             .disposed(by: disposeBag)
 
         Observable.combineLatest(languageFilter, categoryFilter)
-            .debounce(.microseconds(300), scheduler: MainScheduler.instance)
             .map { language, category -> [StudyFilter] in
                 var newFilter: [StudyFilter] = []
                 newFilter.append(StudyFilter.languages(language.map { $0.id }))
