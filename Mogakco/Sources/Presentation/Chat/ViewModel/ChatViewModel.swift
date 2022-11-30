@@ -19,6 +19,7 @@ final class ChatViewModel: ViewModel {
         let selectedSidebar: Observable<IndexPath>
         let sendButtonDidTap: Observable<Void>
         let inputViewText: Observable<String>
+        let pagination: Observable<Void>?
     }
     
     struct Output {
@@ -26,9 +27,10 @@ final class ChatViewModel: ViewModel {
         let selectedSidebar: Observable<ChatSidebarMenu>
         let inputViewText: Observable<String>
         let sendMessage: Observable<Void>
+        let refreshFinished: Observable<Void>
     }
     
-    
+    private var isFirst = true
     private let chatUseCase: ChatUseCaseProtocol
     private let leaveStudyUseCase: LeaveStudyUseCaseProtocol
     weak var coordinator: Coordinator?
@@ -57,17 +59,23 @@ final class ChatViewModel: ViewModel {
         let studyInfoTap = PublishSubject<Void>()
         let exitStudyTap = PublishSubject<Void>()
         let showMemberTap = PublishSubject<Void>()
+        let refreshFinished = PublishSubject<Void>()
         
-        chatUseCase.fetch(chatRoomID: chatRoomID)
-            .withLatestFrom(messages) { ($0, $1) }
-            .subscribe(onNext: { [weak self] originChats, newChat in
-                self?.messages.accept(newChat + [originChats])
-            })
-            .disposed(by: disposeBag)
+        bindFirebase()
+        backButtonDidTap(input: input)
         
-        input.backButtonDidTap
-            .subscribe(onNext: { [weak self] in
-                self?.coordinator?.popTabbar(animated: true)
+        input.pagination?
+            .subscribe({ [weak self] _ in
+                guard let self = self else { return }
+                self.chatUseCase
+                    .reload(chatRoomID: self.chatRoomID)
+                    .withLatestFrom(self.messages) { ($0, $1) }
+                    .subscribe(onNext: { orginalChats, newChat in
+                        self.messages.accept([orginalChats] + newChat)
+                    })
+                    .disposed(by: self.disposeBag)
+                
+                refreshFinished.onNext(())
             })
             .disposed(by: disposeBag)
         
