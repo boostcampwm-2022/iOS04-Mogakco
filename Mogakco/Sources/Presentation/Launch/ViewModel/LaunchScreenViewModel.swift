@@ -19,16 +19,16 @@ final class LaunchScreenViewModel: ViewModel {
     
     struct Output { }
     
-    private let coordinator: AuthCoordinatorProtocol
     private let autoLoginUseCase: AutoLoginUseCaseProtocol
+    private let finishObserver: AnyObserver<Bool>?
     var disposeBag = DisposeBag()
     
     init(
-        coordinator: AuthCoordinatorProtocol,
-        autoLoginUseCase: AutoLoginUseCaseProtocol
+        autoLoginUseCase: AutoLoginUseCaseProtocol,
+        finishObserver: AnyObserver<Bool>? = nil
     ) {
-        self.coordinator = coordinator
         self.autoLoginUseCase = autoLoginUseCase
+        self.finishObserver = finishObserver
     }
     
     func transform(input: Input) -> Output {
@@ -38,11 +38,7 @@ final class LaunchScreenViewModel: ViewModel {
             .delay(.seconds(2), scheduler: MainScheduler.instance)
             .withUnretained(self)
             .subscribe { viewModel, result in
-                if result {
-                    viewModel.coordinator.finish()
-                } else {
-                    viewModel.coordinator.showLogin()
-                }
+                viewModel.finishObserver?.onNext(result)
             }
             .disposed(by: disposeBag)
         return Output()
