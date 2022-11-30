@@ -11,7 +11,7 @@ import Foundation
 protocol ProfileTabCoordinatorProtocol: AnyObject {
     func showProfile()
     func showEditProfile()
-    func showChat()
+    func showChatDetail(chatRoomID: String)
     func showSelectHashtag(kindHashtag: KindHashtag)
     func editFinished()
 }
