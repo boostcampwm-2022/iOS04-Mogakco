@@ -37,6 +37,17 @@ final class ProfileTabCoordinator: Coordinator, ProfileTabCoordinatorProtocol {
                     remoteUserDataSource: RemoteUserDataSource(provider: Provider.default),
                     chatRoomDataSource: ChatRoomDataSource(provider: Provider.default)
                 )
+            ),
+            createChatRoomUseCase: CreateChatRoomUseCase(
+                chatRoomRepository: ChatRoomRepository(
+                    chatRoomDataSource: ChatRoomDataSource(provider: Provider.default),
+                    remoteUserDataSource: RemoteUserDataSource(provider: Provider.default),
+                    studyDataSource: StudyDataSource(provider: Provider.default)
+                ),
+                userRepository: UserRepository(
+                    localUserDataSource: UserDefaultsUserDataSource(),
+                    remoteUserDataSource: RemoteUserDataSource(provider: Provider.default)
+                )
             )
         )
         let viewController = ProfileViewController(viewModel: viewModel)
@@ -58,7 +69,7 @@ final class ProfileTabCoordinator: Coordinator, ProfileTabCoordinatorProtocol {
         navigationController.tabBarController?.navigationController?.pushViewController(viewController, animated: true)
     }
     
-    func showChat() {
+    func showChatDetail(chatRoomID: String) {
     }
     
     func showSelectHashtag(kindHashtag: KindHashtag) {
