@@ -14,6 +14,7 @@ import Then
 
 final class LoginViewController: ViewController {
     
+    private let animationView = AnimationView()
     private let emailTextField = MessageTextField()
     private let secureTextField = SecureTextField()
     
@@ -60,10 +61,21 @@ final class LoginViewController: ViewController {
     }
     
     override func layout() {
+        layoutAnimationView()
         layoutEmailTextField()
         layoutSecureTextField()
         layoutSignupButton()
         layoutLoginButton()
+    }
+    
+    private func layoutAnimationView() {
+        view.addSubview(animationView)
+        
+        animationView.snp.makeConstraints {
+            $0.top.equalToSuperview()
+            $0.leading.trailing.equalTo(view.safeAreaLayoutGuide)
+            $0.bottom.equalTo(view.snp.centerY)
+        }
     }
     
     private func layoutEmailTextField() {
@@ -71,7 +83,7 @@ final class LoginViewController: ViewController {
         
         emailTextField.snp.makeConstraints {
             $0.left.right.equalToSuperview().inset(16)
-            $0.top.equalTo(view.snp.centerY)
+            $0.top.equalTo(view.snp.centerY).offset(40)
         }
     }
     
