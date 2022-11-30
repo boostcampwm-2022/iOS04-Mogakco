@@ -50,6 +50,8 @@ final class ProfileViewModel: ViewModel {
     private let type: ProfileType
     private weak var coordinator: ProfileTabCoordinatorProtocol?
     private let userUseCase: UserUseCase
+    private let user = BehaviorSubject<User?>(value: nil)
+    private let studyRatingList = BehaviorSubject<[(String, Int)]>(value: [])
  
     init(
         type: ProfileType,
@@ -62,51 +64,70 @@ final class ProfileViewModel: ViewModel {
     }
     
     func transform(input: Input) -> Output {
+        bindUser(input: input)
         bindScene(input: input)
 
-        let type = BehaviorSubject<ProfileType>(value: type)
-        let isMyProfile = type
-            .map { $0 == .current }
-        let user = input.viewWillAppear
-            .withLatestFrom(type)
-            .withUnretained(self)
-            .flatMap { viewModel, type -> Observable<User> in
-                switch type {
-                case .current:
-                    return viewModel.userUseCase.myProfile()
-                case let .other(user):
-                    return viewModel.userUseCase.user(id: user.id)
-                }
-            }
-        let studyRatingList = user
-            .map { $0.studyIDs }
-            .withUnretained(self)
-            .flatMap { $0.0.userUseCase.studyRatingList(studyIDs: $0.1) }
-
         return Output(
-            isMyProfile: isMyProfile.asObservable(),
+            isMyProfile: Observable.just(type).map { $0 == .current },
             profileImageURL: user
-                .compactMap { $0.profileImageURLString }
+                .compactMap { $0?.profileImageURLString }
                 .compactMap { URL(string: $0) },
             representativeLanguageImage: user
-                .compactMap { $0.languages.randomElement() }
+                .compactMap { $0?.languages.randomElement() }
                 .compactMap { UIImage(named: $0) },
-            name: user.map { $0.name }.asObservable(),
-            introduce: user.map { $0.introduce }.asObservable(),
+            name: user.compactMap { $0?.name }.asObservable(),
+            introduce: user.compactMap { $0?.introduce }.asObservable(),
             languages: user
-                .map { $0.languages }
+                .compactMap { $0?.languages }
                 .map { $0.compactMap { Languages.idToHashtag(id: $0) } }
                 .asObservable(),
             careers: user
-                .map { $0.languages }
+                .compactMap { $0?.languages }
                 .map { $0.compactMap { Career.idToHashtag(id: $0) } }
                 .asObservable(),
             categorys: user
-                .map { $0.languages }
+                .compactMap { $0?.languages }
                 .map { $0.compactMap { Category.idToHashtag(id: $0) } }
                 .asObservable(),
             studyRatingList: studyRatingList.asObservable()
         )
+    }
+    
+    private func bindUser(input: Input) {
+        input.viewWillAppear
+            .filter { self.type == ProfileType.current }
+            .withUnretained(self)
+            .flatMap { $0.0.userUseCase.myProfile() }
+            .withUnretained(self)
+            .subscribe(onNext: { viewModel, user in
+                viewModel.user.onNext(user)
+            })
+            .disposed(by: disposeBag)
+        
+        input.viewWillAppear
+            .compactMap {
+                switch self.type {
+                case .current:
+                    return nil
+                case let .other(user):
+                    return user
+                }
+            }
+            .withUnretained(self)
+            .subscribe(onNext: { viewModel, user in
+                viewModel.user.onNext(user)
+            })
+            .disposed(by: disposeBag)
+
+        user
+            .compactMap { $0?.studyIDs }
+            .withUnretained(self)
+            .flatMap { $0.0.userUseCase.studyRatingList(studyIDs: $0.1) }
+            .withUnretained(self)
+            .subscribe(onNext: { viewModel, studyRatingList in
+                viewModel.studyRatingList.onNext(studyRatingList)
+            })
+            .disposed(by: disposeBag)
     }
     
     private func bindScene(input: Input) {

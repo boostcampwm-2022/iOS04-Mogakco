@@ -36,7 +36,7 @@ class Provider: ProviderProtocol {
                 .request(urlConvertible)
                 .validate(statusCode: 200 ..< 300)
                 .responseDecodable(of: T.self) { response in
-                    print("@@@@@@@@ REST API @@@@@@@@")
+                    print("@@@@@@@@ REST API \(urlConvertible.urlRequest?.url?.absoluteString ?? "") @@@@@@@@")
                     switch response.result {
                     case let .success(data):
                         emitter.onNext(data)

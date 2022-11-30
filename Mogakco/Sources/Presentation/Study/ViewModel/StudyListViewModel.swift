@@ -73,6 +73,7 @@ final class StudyListViewModel: ViewModel {
             .disposed(by: disposeBag)
         
         refresh
+            .debounce(.microseconds(300), scheduler: MainScheduler.instance)
             .withLatestFrom(Observable.combineLatest(sort, filters))
             .withUnretained(self)
             .flatMap { viewModel, arguments in
@@ -85,8 +86,15 @@ final class StudyListViewModel: ViewModel {
     }
     
     func bindFilterSort(input: Input) {
-        
         sort
+            .skip(1)
+            .withUnretained(self)
+            .subscribe(onNext: { viewModel, _ in
+                viewModel.refresh.onNext(())
+            })
+            .disposed(by: disposeBag)
+        
+        filters
             .skip(1)
             .withUnretained(self)
             .subscribe(onNext: { viewModel, _ in
@@ -100,11 +108,11 @@ final class StudyListViewModel: ViewModel {
                 viewModel.languageFilter.onNext([])
                 viewModel.categoryFilter.onNext(nil)
                 viewModel.sort.onNext(.latest)
-                viewModel.refresh.onNext(())
             })
             .disposed(by: disposeBag)
 
         Observable.combineLatest(languageFilter, categoryFilter)
+            .debounce(.microseconds(300), scheduler: MainScheduler.instance)
             .map { language, category -> [StudyFilter] in
                 var newFilter: [StudyFilter] = []
                 newFilter.append(StudyFilter.languages(language.map { $0.id }))
@@ -116,7 +124,6 @@ final class StudyListViewModel: ViewModel {
             .withUnretained(self)
             .subscribe(onNext: { viewModel, newFilters in
                 viewModel.filters.onNext(newFilters)
-                viewModel.refresh.onNext(())
             })
             .disposed(by: disposeBag)
     }
