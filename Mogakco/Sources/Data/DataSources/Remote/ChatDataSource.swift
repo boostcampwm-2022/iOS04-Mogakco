@@ -12,14 +12,15 @@ import Firebase
 struct ChatDataSource: ChatDataSourceProtocol {
     
     enum Collection {
-        static let ChatRoom = Firestore.firestore().collection("ChatRoom")
+        static let ChatRoom = Firestore.firestore().collection("chatroom")
     }
     
     func fetch(chatRoomID: String) -> Observable<ChatResponseDTO> {
         return Observable.create { emitter in
-            let query = Collection.ChatRoom.document(chatRoomID).collection("chats").order(by: "date")
+            let query = Collection.ChatRoom.document(chatRoomID).collection("chatRoomID").order(by: "date")
             
-            let listener = query.addSnapshotListener { snapshot, _ in
+            let _ = query.addSnapshotListener { snapshot, _ in
+                print("@@@@@@@@ Chat FETCH @@@@@@@@")
                 snapshot?.documentChanges.forEach({ change in
                     if change.type == .added {
                         let dictionary = change.document.data()
@@ -36,8 +37,9 @@ struct ChatDataSource: ChatDataSourceProtocol {
     
     func send(chat: Chat, to chatRoomID: String) -> Observable<Void> {
         return Observable.create { emitter in
+            print("@@@@@@@@ Chat SEND @@@@@@@@")
             Collection.ChatRoom.document(chatRoomID)
-                .collection("chats")
+                .collection("chat")
                 .addDocument(data: chat.toDictionary()) { _ in
                     emitter.onNext(())
                 }

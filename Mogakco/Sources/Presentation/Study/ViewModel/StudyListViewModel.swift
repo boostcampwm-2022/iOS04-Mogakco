@@ -46,7 +46,9 @@ final class StudyListViewModel: ViewModel {
             .withUnretained(self)
             .flatMap { $0.0.useCase.list(sort: .latest, filters: []) }
             .do { _ in refreshFinished.onNext(()) }
-            .bind(to: studyList)
+            .subscribe(onNext: {
+                studyList.onNext($0)
+            })
             .disposed(by: disposeBag)
         
         input.plusButtonTapped
