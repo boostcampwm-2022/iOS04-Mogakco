@@ -63,7 +63,7 @@ final class ProfileViewModel: ViewModel {
     
     func transform(input: Input) -> Output {
         bindScene(input: input)
-        
+
         let type = BehaviorSubject<ProfileType>(value: type)
         let isMyProfile = type
             .map { $0 == .current }

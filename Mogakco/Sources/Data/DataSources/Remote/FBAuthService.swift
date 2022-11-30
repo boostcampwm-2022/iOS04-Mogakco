@@ -33,7 +33,7 @@ enum AuthTarget {
 
 extension AuthTarget: TargetType {
     var baseURL: String {
-        return "https://identitytoolkit.googleapis.com/v1"
+        return Network.authBaseURLString
     }
     
     var method: HTTPMethod {
@@ -52,9 +52,9 @@ extension AuthTarget: TargetType {
     var path: String {
         switch self {
         case .signup:
-            return "/accounts:signUp?key=AIzaSyBXf4UoZJU9Wy7X2-Isy6uaCZv6CpImqY8"
+            return "/accounts:signUp?key=\(Network.webAPIKey)"
         case .login:
-            return "/accounts:signInWithPassword?key=AIzaSyBXf4UoZJU9Wy7X2-Isy6uaCZv6CpImqY8"
+            return "/accounts:signInWithPassword?key=\(Network.webAPIKey)"
         }
     }
     
