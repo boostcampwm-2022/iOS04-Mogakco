@@ -9,7 +9,10 @@
 import RxSwift
 import Firebase
 
-struct ChatDataSource: ChatDataSourceProtocol {
+final class ChatDataSource: ChatDataSourceProtocol {
+    
+    var listener: ListenerRegistration?
+    var page: DocumentSnapshot!
     
     enum Collection {
         static let ChatRoom = Firestore.firestore().collection("chatroom")
