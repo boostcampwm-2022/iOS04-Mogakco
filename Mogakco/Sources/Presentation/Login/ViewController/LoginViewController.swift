@@ -72,9 +72,7 @@ final class LoginViewController: ViewController {
         view.addSubview(animationView)
         
         animationView.snp.makeConstraints {
-            $0.top.equalToSuperview()
-            $0.leading.trailing.equalTo(view.safeAreaLayoutGuide)
-            $0.bottom.equalTo(view.snp.centerY)
+            $0.edges.equalToSuperview()
         }
     }
     
