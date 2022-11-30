@@ -16,11 +16,10 @@ import Then
 final class CreateStudyViewController: ViewController {
     
     enum Constant {
-        static let navigationTitle = "스터디 생성하기"
+        static let navigationTitle = "새로운 스터디"
         static let textFieldHeight = Layout.textFieldHeight + 38
         static let textViewHeight = 120
         static let selectViewHeight = 40
-        static let collectionViewHeight = 100
     }
     
     private let scrollView = UIScrollView().then {
@@ -87,12 +86,12 @@ final class CreateStudyViewController: ViewController {
         $0.register(HashtagBadgeCell.self, forCellWithReuseIdentifier: HashtagBadgeCell.identifier)
         $0.showsHorizontalScrollIndicator = false
         $0.snp.makeConstraints {
-            $0.height.equalTo(Constant.collectionViewHeight)
+            $0.height.equalTo(200)
         }
     }
     
     private let createButton = ValidationButton().then {
-        $0.setTitle(Constant.navigationTitle, for: .normal)
+        $0.setTitle("스터디 생성하기", for: .normal)
         $0.isEnabled = false
         $0.snp.makeConstraints {
             $0.height.equalTo(Layout.buttonHeight)
@@ -121,7 +120,7 @@ final class CreateStudyViewController: ViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
-        title = "새로운 스터디"
+        title = Constant.navigationTitle
         navigationController?.isNavigationBarHidden = false
     }
     
@@ -179,6 +178,16 @@ final class CreateStudyViewController: ViewController {
             .disposed(by: disposeBag)
     }
     
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        languageCollectionView.reloadData()
+        languageCollectionView.layoutIfNeeded()
+        let height = languageCollectionView.contentSize.height
+        languageCollectionView.snp.updateConstraints {
+            $0.height.equalTo(height)
+        }
+    }
+    
     // MARK: - Methods
     
     private func layoutScrollView() {
@@ -233,21 +242,20 @@ final class CreateStudyViewController: ViewController {
             let item = NSCollectionLayoutItem(
                 layoutSize: .init(
                     widthDimension: .estimated(50),
-                    heightDimension: .absolute(30)
+                    heightDimension: .absolute(35)
                 )
             )
-            let group = NSCollectionLayoutGroup.vertical(
+            let group = NSCollectionLayoutGroup.horizontal(
                 layoutSize: .init(
-                    widthDimension: .estimated(50),
-                    heightDimension: .fractionalHeight(1)
+                    widthDimension: .fractionalWidth(1),
+                    heightDimension: .absolute(35)
                 ),
                 subitems: [item]
             )
-            group.interItemSpacing = .fixed(16)
+            group.interItemSpacing = .fixed(12)
             let section = NSCollectionLayoutSection(group: group)
-            section.interGroupSpacing = 16
-            section.orthogonalScrollingBehavior = .continuous
-            section.contentInsets = .init(top: 4, leading: 4, bottom: 4, trailing: 4)
+            section.interGroupSpacing = 12
+            section.contentInsets = .init(top: 4, leading: 4, bottom: 20, trailing: 4)
             return section
         }
     }

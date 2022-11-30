@@ -59,7 +59,7 @@ final class StudyCell: UICollectionViewCell, Identifiable {
         [stateLabel, titleLabel].forEach {
             stack.addArrangedSubview($0)
         }
-        stack.spacing = 6
+        stack.spacing = 5
         stack.alignment = .fill
         stack.distribution = .fillProportionally
         stack.axis = .horizontal
