@@ -27,10 +27,6 @@ final class AnimationView: UIView {
         addImages()
     }
     
-    func resume() {
-        addImages()
-    }
-    
     func invalidate() {
         timers.forEach { $0.invalidate() }
         timers.removeAll()
