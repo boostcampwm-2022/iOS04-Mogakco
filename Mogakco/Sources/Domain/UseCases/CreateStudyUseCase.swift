@@ -6,10 +6,11 @@
 //  Copyright © 2022 Mogakco. All rights reserved.
 //
 
-import RxSwift
 import Foundation
 
-class CreateStudyUseCase: CreateStudyUseCaseProtocol {
+import RxSwift
+
+struct CreateStudyUseCase: CreateStudyUseCaseProtocol {
     
     private let studyRepository: StudyRepositoryProtocol
     private let disposeBag = DisposeBag()
