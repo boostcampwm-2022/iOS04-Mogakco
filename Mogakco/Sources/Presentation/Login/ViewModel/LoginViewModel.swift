@@ -26,12 +26,17 @@ final class LoginViewModel: ViewModel {
     
     var disposeBag = DisposeBag()
     private let loginUseCase: LoginUseCaseProtocol
-    private let coordinator: AuthCoordinatorProtocol
+    private let signUpObserver: AnyObserver<Void>?
+    private let loginObserver: AnyObserver<Bool>?
     
-    
-    init(coordinator: AuthCoordinatorProtocol, loginUseCase: LoginUseCaseProtocol) {
-        self.coordinator = coordinator
+    init(
+        loginUseCase: LoginUseCaseProtocol,
+        signUpObserver: AnyObserver<Void>? = nil,
+        loginObserver: AnyObserver<Bool>? = nil
+    ) {
         self.loginUseCase = loginUseCase
+        self.signUpObserver = signUpObserver
+        self.loginObserver = loginObserver
     }
     
     func transform(input: Input) -> Output {
@@ -50,7 +55,7 @@ final class LoginViewModel: ViewModel {
         
         input.signupButtonTap
             .subscribe(onNext: { [weak self] in
-                self?.coordinator.showRequiredSignup()
+                self?.signUpObserver?.onNext(())
             })
             .disposed(by: disposeBag)
         
@@ -60,7 +65,7 @@ final class LoginViewModel: ViewModel {
             .subscribe(onNext: { [weak self] in
                 switch $0 {
                 case .success:
-                    self?.coordinator.finish()
+                    self?.loginObserver?.onNext(true)
                 case .failure(let error):
                     presentAlert.onNext(error)
                 }
