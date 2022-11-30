@@ -13,4 +13,5 @@ protocol ChatRoomRepositoryProtocol {
     func detail(id: String) -> Observable<ChatRoom>
     func create(studyID: String?, userIDs: [String]) -> Observable<ChatRoom>
     func updateIDs(id: String, userIDs: [String]) -> Observable<ChatRoom>
+    func leave(user: User, chatRoom: ChatRoom) -> Observable<User>
 }
