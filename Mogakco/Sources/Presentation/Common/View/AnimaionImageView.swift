@@ -30,8 +30,8 @@ final class AnimaionImageView: UIView {
         }
         
         let randomRotaionDirection = Double(
-            [Animation.nagativeDirection, Animation.positiveDirection]
-                .randomElement() ?? Animation.positiveDirection
+            [Animation.nagativeVelocity, Animation.positiveVelocity]
+                .randomElement() ?? Animation.positiveVelocity
         )
         
         let rotation = CABasicAnimation(keyPath: "transform.rotation.z")

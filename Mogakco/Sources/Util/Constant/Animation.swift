@@ -15,17 +15,17 @@ enum Animation {
     static let rotateDuration = 10
     
     static let zero: CGFloat = 0
-    static let nagativeDirection: CGFloat = -2
-    static let positiveDirection: CGFloat = 2
+    static let nagativeVelocity: CGFloat = -1
+    static let positiveVelocity: CGFloat = 1
     static let directionProbability: [CGFloat] = [
-        nagativeDirection,
-        nagativeDirection,
-        nagativeDirection,
-        nagativeDirection,
+        nagativeVelocity,
+        nagativeVelocity,
+        nagativeVelocity,
+        nagativeVelocity,
         zero,
-        positiveDirection,
-        positiveDirection,
-        positiveDirection,
-        positiveDirection
+        positiveVelocity,
+        positiveVelocity,
+        positiveVelocity,
+        positiveVelocity
     ]
 }

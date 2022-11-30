@@ -81,15 +81,15 @@ final class AnimationView: UIView {
         let nextYPoint: CGFloat
         
         if current.x < container.minX {
-            nextXPoint = Animation.positiveDirection
+            nextXPoint = Animation.positiveVelocity
         } else if current.x > container.maxX {
-            nextXPoint = Animation.nagativeDirection
+            nextXPoint = Animation.nagativeVelocity
         } else { nextXPoint = nextPoint.x }
         
         if current.y < container.minY {
-            nextYPoint = Animation.positiveDirection
+            nextYPoint = Animation.positiveVelocity
         } else if current.y > container.maxY {
-            nextYPoint = Animation.nagativeDirection
+            nextYPoint = Animation.nagativeVelocity
         } else { nextYPoint = nextPoint.y }
         
         return CGPoint(x: nextXPoint, y: nextYPoint)
