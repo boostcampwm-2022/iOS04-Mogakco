@@ -140,11 +140,37 @@ final class ChatViewModel: ViewModel {
             showChatSidebarView: showChatSidebarView,
             selectedSidebar: selectedSidebar,
             inputViewText: inputViewText,
-            sendMessage: sendMessage
+            sendMessage: sendMessage,
+            refreshFinished: refreshFinished
         )
     }
     
-    func userID() -> Observable<User> {
-        return chatUseCase.myProfile()
+    private func bindFirebase() {
+        chatUseCase.observe(chatRoomID: chatRoomID)
+            .withLatestFrom(messages) { ($0, $1) }
+            .subscribe(onNext: { [weak self] originalChats, newChat in
+                if self?.isFirst == false {
+                    print("self?.isFirst : ", newChat, originalChats)
+                    self?.messages.accept(newChat + [originalChats])
+                } else {
+                    self?.isFirst = false
+                }
+            })
+            .disposed(by: disposeBag)
+        
+        chatUseCase.fetchAll(chatRoomID: chatRoomID)
+            .withLatestFrom(messages) { ($0, $1) }
+            .subscribe(onNext: { [weak self] originChats, newChat in
+                self?.messages.accept([originChats] + newChat)
+            })
+            .disposed(by: disposeBag)
+    }
+    
+    private func backButtonDidTap(input: Input) {
+        input.backButtonDidTap
+            .subscribe(onNext: { [weak self] in
+                self?.coordinator?.popTabbar(animated: true)
+            })
+            .disposed(by: disposeBag)
     }
 }
