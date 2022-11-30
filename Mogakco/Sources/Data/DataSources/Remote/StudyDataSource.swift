@@ -43,7 +43,7 @@ enum StudyTarget {
 
 extension StudyTarget: TargetType {
     var baseURL: String {
-        return "https://firestore.googleapis.com/v1/projects/mogakco-72df7/databases/(default)/documents/Study"
+        return Network.baseURLString + "/documents/study"
     }
     
     var method: HTTPMethod {
