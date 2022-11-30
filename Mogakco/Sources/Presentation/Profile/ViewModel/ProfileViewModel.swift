@@ -35,15 +35,15 @@ final class ProfileViewModel: ViewModel {
     }
     
     struct Output {
-        let isMyProfile: Observable<Bool>
-        let profileImageURL: Observable<URL>
-        let representativeLanguageImage: Observable<UIImage>
-        let name: Observable<String>
-        let introduce: Observable<String>
-        let languages: Observable<[Hashtag]>
-        let careers: Observable<[Hashtag]>
-        let categorys: Observable<[Hashtag]>
-        let studyRatingList: Observable<[(String, Int)]>
+        let isMyProfile: Driver<Bool>
+        let profileImageURL: Driver<URL>
+        let representativeLanguageImage: Driver<UIImage>
+        let name: Driver<String>
+        let introduce: Driver<String>
+        let languages: Driver<[Hashtag]>
+        let careers: Driver<[Hashtag]>
+        let categorys: Driver<[Hashtag]>
+        let studyRatingList: Driver<[(String, Int)]>
     }
 
     var disposeBag = DisposeBag()
@@ -68,28 +68,30 @@ final class ProfileViewModel: ViewModel {
         bindScene(input: input)
 
         return Output(
-            isMyProfile: Observable.just(type).map { $0 == .current },
+            isMyProfile: Driver.just(type).map { $0 == .current },
             profileImageURL: user
                 .compactMap { $0?.profileImageURLString }
-                .compactMap { URL(string: $0) },
+                .compactMap { URL(string: $0) }
+                .asDriver(onErrorDriveWith: .empty()),
             representativeLanguageImage: user
                 .compactMap { $0?.languages.randomElement() }
-                .compactMap { UIImage(named: $0) },
-            name: user.compactMap { $0?.name }.asObservable(),
-            introduce: user.compactMap { $0?.introduce }.asObservable(),
+                .compactMap { UIImage(named: $0) }
+                .asDriver(onErrorDriveWith: .empty()),
+            name: user.compactMap { $0?.name }.asDriver(onErrorJustReturn: ""),
+            introduce: user.compactMap { $0?.introduce }.asDriver(onErrorJustReturn: ""),
             languages: user
                 .compactMap { $0?.languages }
                 .map { $0.compactMap { Languages.idToHashtag(id: $0) } }
-                .asObservable(),
+                .asDriver(onErrorJustReturn: []),
             careers: user
                 .compactMap { $0?.languages }
                 .map { $0.compactMap { Career.idToHashtag(id: $0) } }
-                .asObservable(),
+                .asDriver(onErrorJustReturn: []),
             categorys: user
                 .compactMap { $0?.languages }
                 .map { $0.compactMap { Category.idToHashtag(id: $0) } }
-                .asObservable(),
-            studyRatingList: studyRatingList.asObservable()
+                .asDriver(onErrorJustReturn: []),
+            studyRatingList: studyRatingList.asDriver(onErrorJustReturn: [])
         )
     }
     
