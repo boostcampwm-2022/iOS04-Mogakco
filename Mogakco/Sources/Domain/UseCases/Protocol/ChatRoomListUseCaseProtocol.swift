@@ -10,4 +10,5 @@ import RxSwift
 
 protocol ChatRoomListUseCaseProtocol {
     func chatRooms() -> Observable<[ChatRoom]>
+    func leave(chatRoom: ChatRoom) -> Observable<Void>
 }
