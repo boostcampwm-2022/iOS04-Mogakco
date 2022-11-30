@@ -12,6 +12,9 @@ import SnapKit
 
 final class AnimationView: UIView {
     
+    var animationImages: [AnimationImageView] = []
+    var timers: [Timer] = []
+    
     init() {
         super.init(frame: .zero)
     }
@@ -24,10 +27,22 @@ final class AnimationView: UIView {
         addImages()
     }
     
+    func resume() {
+        addImages()
+    }
+    
+    func invalidate() {
+        timers.forEach { $0.invalidate() }
+        timers.removeAll()
+        animationImages.forEach { $0.removeFromSuperview() }
+        animationImages.removeAll()
+    }
+    
     private func addImages() {
         (0..<Animation.iconCount).forEach { _ in
-            let imageView = AnimaionImageView(frame: randomPosition())
+            let imageView = AnimationImageView(frame: randomPosition())
             addSubview(imageView)
+            animationImages.append(imageView)
             moveView(targetView: imageView)
         }
     }
@@ -46,7 +61,7 @@ final class AnimationView: UIView {
         var currentCenter = CGPoint()
         var nextPoint: CGPoint = randomPoint()
         
-        Timer.scheduledTimer(withTimeInterval: Animation.moveInterval, repeats: true) { [weak self] _ in
+        let moveTimer = Timer.scheduledTimer(withTimeInterval: Animation.moveInterval, repeats: true) { [weak self] _ in
             guard let self else { return }
             targetView.frame = CGRect(
                 x: targetView.frame.minX + nextPoint.x,
@@ -62,6 +77,7 @@ final class AnimationView: UIView {
                 nextPoint: nextPoint
             )
         }
+        timers.append(moveTimer)
     }
     
     private func randomPoint() -> CGPoint {
