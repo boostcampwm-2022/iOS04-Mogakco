@@ -56,6 +56,7 @@ class TextField: UITextField {
         layer.borderWidth = 1
         layer.cornerRadius = 8
         layer.borderColor = validation.color.cgColor
+        backgroundColor = .mogakcoColor.backgroundDefault
         leftViewMode = .always
         rightViewMode = .always
         leftView = UIView(frame: .init(origin: .zero, size: .init(width: 16, height: 0)))
