@@ -165,8 +165,9 @@ final class CreateStudyViewController: ViewController {
             .bind(to: self.languageCollectionView.rx.items(
                 cellIdentifier: HashtagBadgeCell.identifier,
                 cellType: HashtagBadgeCell.self
-            )) { _, hashtag, cell in
+            )) { [weak self] _, hashtag, cell in
                 cell.setHashtag(hashtag: hashtag)
+                self?.updateLayout()
             }
             .disposed(by: disposeBag)
         
@@ -178,9 +179,7 @@ final class CreateStudyViewController: ViewController {
             .disposed(by: disposeBag)
     }
     
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        languageCollectionView.reloadData()
+    private func updateLayout() {
         languageCollectionView.layoutIfNeeded()
         let height = languageCollectionView.contentSize.height
         languageCollectionView.snp.updateConstraints {
