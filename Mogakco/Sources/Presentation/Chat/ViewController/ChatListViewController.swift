@@ -63,12 +63,12 @@ final class ChatListViewController: UIViewController {
     func bind() {
         let input = ChatListViewModel.Input(
             viewWillAppear: rx.viewWillAppear.map { _ in }.asObservable(),
-            selectedChatRoom: chatRoomTableView.rx.modelSelected(ChatRoom.self).asObservable()
+            selectedChatRoom: chatRoomTableView.rx.modelSelected(ChatRoom.self).asObservable(),
+            deletedChatRoom: chatRoomTableView.rx.modelDeleted(ChatRoom.self).asObservable()
         )
         let output = viewModel.transform(input: input)
         
-        output.chatRoomList
-            .asDriver(onErrorJustReturn: [])
+        output.chatRooms
             .drive(chatRoomTableView.rx.items) { tableView, index, chatRoom in
                 guard let cell = tableView.dequeueReusableCell(
                     withIdentifier: ChatRoomTableViewCell.identifier,
