@@ -1,5 +1,5 @@
 //
-//  AnimaionImageView.swift
+//  AnimationImageView.swift
 //  Mogakco
 //
 //  Created by 이주훈 on 2022/11/30.
@@ -10,12 +10,13 @@ import UIKit
 
 import SnapKit
 
-final class AnimaionImageView: UIView {
+final class AnimationImageView: UIView {
     let imageView = UIImageView()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         configRandomImage()
+        addRotation()
     }
     
     required init?(coder: NSCoder) {
@@ -28,7 +29,9 @@ final class AnimaionImageView: UIView {
         imageView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
-        
+    }
+    
+    func addRotation() {
         let randomRotaionDirection = Double(
             [Animation.nagativeVelocity, Animation.positiveVelocity]
                 .randomElement() ?? Animation.positiveVelocity
@@ -39,5 +42,9 @@ final class AnimaionImageView: UIView {
         rotation.duration = CFTimeInterval(Animation.rotateDuration)
         rotation.repeatCount = Float.infinity
         imageView.layer.add(rotation, forKey: "rotationAnimation")
+    }
+    
+    func removeRotation() {
+        imageView.layer.removeAnimation(forKey: "rotationAnimation")
     }
 }
