@@ -50,17 +50,20 @@ final class ProfileViewModel: ViewModel {
     private let type: ProfileType
     private weak var coordinator: ProfileTabCoordinatorProtocol?
     private let userUseCase: UserUseCase
+    private let createChatRoomUseCase: CreateChatRoomUseCase?
     private let user = BehaviorSubject<User?>(value: nil)
     private let studyRatingList = BehaviorSubject<[(String, Int)]>(value: [])
  
     init(
         type: ProfileType,
         coordinator: ProfileTabCoordinatorProtocol,
-        userUseCase: UserUseCase
+        userUseCase: UserUseCase,
+        createChatRoomUseCase: CreateChatRoomUseCase?
     ) {
         self.type = type
         self.coordinator = coordinator
         self.userUseCase = userUseCase
+        self.createChatRoomUseCase = createChatRoomUseCase
     }
     
     func transform(input: Input) -> Output {
@@ -141,9 +144,11 @@ final class ProfileViewModel: ViewModel {
             .disposed(by: disposeBag)
         
         input.chatButtonTapped
-            .withUnretained(self)
-            .subscribe(onNext: { viewModel, _ in
-                viewModel.coordinator?.showChat()
+            .withLatestFrom(user.compactMap { $0 })
+            .compactMap { [weak self] in self?.createChatRoomUseCase?.create(otherUser: $0) }
+            .flatMap { $0 }
+            .subscribe(onNext: { [weak self] chatRoom in
+                self?.coordinator?.showChatDetail(chatRoomID: chatRoom.id)
             })
             .disposed(by: disposeBag)
         
