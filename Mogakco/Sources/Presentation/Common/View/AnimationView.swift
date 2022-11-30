@@ -25,7 +25,7 @@ final class AnimationView: UIView {
     }
     
     private func addImages() {
-        (0..<5).forEach { _ in
+        (0..<Animation.iconCount).forEach { _ in
             let imageView = AnimaionImageView(frame: randomPosition())
             addSubview(imageView)
             moveView(targetView: imageView)
@@ -33,10 +33,12 @@ final class AnimationView: UIView {
     }
     
     private func randomPosition() -> CGRect {
-        let xPosition = Int.random(in: (Int(frame.minX - 50)..<Int(frame.maxX - 50)))
-        let yPosition = Int.random(in: (Int(frame.minY - 50)..<Int(frame.maxY - 50)))
+        let iconHalfSize = CGFloat(Animation.IconSize / 2)
         
-        return CGRect(x: xPosition, y: yPosition, width: 100, height: 100)
+        let xPosition = Int.random(in: (Int(frame.minX - iconHalfSize)..<Int(frame.maxX - iconHalfSize)))
+        let yPosition = Int.random(in: (Int(frame.minY - iconHalfSize)..<Int(frame.maxY - iconHalfSize)))
+        
+        return CGRect(x: xPosition, y: yPosition, width: Animation.IconSize, height: Animation.IconSize)
     }
     
     private func moveView(targetView: UIView) {
@@ -44,7 +46,7 @@ final class AnimationView: UIView {
         var currentCenter = CGPoint()
         var nextPoint: CGPoint = randomPoint()
         
-        Timer.scheduledTimer(withTimeInterval: 0.017, repeats: true) { [weak self] _ in
+        Timer.scheduledTimer(withTimeInterval: Animation.moveInterval, repeats: true) { [weak self] _ in
             guard let self else { return }
             targetView.frame = CGRect(
                 x: targetView.frame.minX + nextPoint.x,
@@ -64,8 +66,8 @@ final class AnimationView: UIView {
     
     private func randomPoint() -> CGPoint {
         while true {
-            guard let xPosition = [-2, -2, -2, -2, 0, 2, 2, 2, 2].randomElement(),
-                  let yPosition = [-2, -2, -2, -2, 0, 2, 2, 2, 2].randomElement(),
+            guard let xPosition = Animation.directionProbability.randomElement(),
+                  let yPosition = Animation.directionProbability.randomElement(),
                   !(xPosition == 0 && yPosition == 0)
             else { continue }
             
@@ -79,15 +81,15 @@ final class AnimationView: UIView {
         let nextYPoint: CGFloat
         
         if current.x < container.minX {
-            nextXPoint = CGFloat(2)
+            nextXPoint = Animation.positiveDirection
         } else if current.x > container.maxX {
-            nextXPoint = CGFloat(-2)
+            nextXPoint = Animation.nagativeDirection
         } else { nextXPoint = nextPoint.x }
         
         if current.y < container.minY {
-            nextYPoint = CGFloat(2)
+            nextYPoint = Animation.positiveDirection
         } else if current.y > container.maxY {
-            nextYPoint = CGFloat(-2)
+            nextYPoint = Animation.nagativeDirection
         } else { nextYPoint = nextPoint.y }
         
         return CGPoint(x: nextXPoint, y: nextYPoint)
