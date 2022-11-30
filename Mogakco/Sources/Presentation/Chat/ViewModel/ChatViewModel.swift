@@ -51,14 +51,12 @@ final class ChatViewModel: ViewModel {
         let selectedSidebar = PublishSubject<ChatSidebarMenu>()
         let inputViewText = PublishSubject<String>()
         let sendMessage = PublishSubject<Void>()
-
-        chatUseCase.fetch(chatRoomID: self.chatRoomID)
-            .withUnretained(self)
-            .subscribe { _, chat in
-                self.chatArray.append(chat)
-                print("## ", self.chatArray.count)
-                self.messages.accept(self.chatArray)
-            }
+        
+        chatUseCase.fetchAll(chatRoomID: chatRoomID)
+            .withLatestFrom(messages) { ($0, $1) }
+            .subscribe(onNext: { [weak self] originChats, newChat in
+                self?.messages.accept(newChat + [originChats])
+            })
             .disposed(by: disposeBag)
         
         input.backButtonDidTap
