@@ -14,7 +14,7 @@ final class AnimationView: UIView {
     
     enum Animation {
         static let iconCount: Int = 5
-        static let IconSize: Int = 100
+        static let iconSize: Int = 100
         static let moveInterval = 0.017
         static let rotateDuration = 10
         
@@ -66,12 +66,12 @@ final class AnimationView: UIView {
     }
     
     private func randomPosition() -> CGRect {
-        let iconHalfSize = CGFloat(Animation.IconSize / 2)
+        let iconHalfSize = CGFloat(Animation.iconSize / 2)
         
-        let xPosition = Int.random(in: (Int(frame.minX - iconHalfSize)..<Int(frame.maxX - iconHalfSize)))
-        let yPosition = Int.random(in: (Int(frame.minY - iconHalfSize)..<Int(frame.maxY - iconHalfSize)))
+        let xPosition = Int.random(in: (Int(frame.minX + iconHalfSize)..<Int(frame.maxX - iconHalfSize)))
+        let yPosition = Int.random(in: (Int(frame.minY + iconHalfSize)..<Int(frame.maxY - iconHalfSize)))
         
-        return CGRect(x: xPosition, y: yPosition, width: Animation.IconSize, height: Animation.IconSize)
+        return CGRect(x: xPosition, y: yPosition, width: Animation.iconSize, height: Animation.iconSize)
     }
     
     private func moveView(targetView: UIView) {
