@@ -10,11 +10,12 @@ import UIKit
 
 class HashtagFlowLayout: UICollectionViewFlowLayout {
     
-    override init() {
+    init(viewFrame: CGRect) {
         super.init()
         minimumInteritemSpacing = 5
         minimumLineSpacing = 5
         scrollDirection = .vertical
+        headerReferenceSize = CGSize(width: viewFrame.width, height: HashtagHeader.height)
     }
     
     required init?(coder: NSCoder) {
