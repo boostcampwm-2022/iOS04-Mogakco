@@ -22,35 +22,35 @@ struct ChatUseCase: ChatUseCaseProtocol {
         self.userRepository = userRepository
     }
     
-    func fetchAll(chatRoomID: String) -> Observable<Chat> {
-        return chatRepository
-            .fetchAll(chatRoomID: chatRoomID)
-            .flatMap {
-                var chat = $0
-                return Observable.combineLatest(
-                    userRepository.user(id: chat.userID),
-                    userRepository.load()
-                )
-                .map { chatUserData, myUserData in
-                    chat.user = chatUserData
-                    chat.isFromCurrentUser = chatUserData.id == myUserData.id
+    func fetchAll(chatRoomID: String) -> Observable<[Chat]> {
+        let users = userRepository.allUsers()
+        let myUser = userRepository.load()
+        let chats = chatRepository.fetchAll(chatRoomID: chatRoomID)
+        return Observable.zip(users, myUser, chats)
+            .map { users, myUser, chats in
+                return chats.map {
+                    var chat = $0
+                    chat.user = users.filter { user in
+                        user.id == myUser.id
+                    }.first
+                    chat.isFromCurrentUser = chat.userID == myUser.id
                     return chat
                 }
             }
     }
     
-    func reload(chatRoomID: String) -> Observable<Chat> {
-        return chatRepository
-            .reload(chatRoomID: chatRoomID)
-            .flatMap {
-                var chat = $0
-                return Observable.combineLatest(
-                    userRepository.user(id: chat.userID),
-                    userRepository.load()
-                )
-                .map { chatUserData, myUserData in
-                    chat.user = chatUserData
-                    chat.isFromCurrentUser = chatUserData.id == myUserData.id
+    func reload(chatRoomID: String) -> Observable<[Chat]> {
+        let users = userRepository.allUsers()
+        let myUser = userRepository.load()
+        let chats = chatRepository.reload(chatRoomID: chatRoomID)
+        return Observable.zip(users, myUser, chats)
+            .map { users, myUser, chats in
+                return chats.map {
+                    var chat = $0
+                    chat.user = users.filter {
+                        $0.id == myUser.id
+                    }.first
+                    chat.isFromCurrentUser = chat.userID == myUser.id
                     return chat
                 }
             }
@@ -65,9 +65,9 @@ struct ChatUseCase: ChatUseCaseProtocol {
                     userRepository.user(id: chat.userID),
                     userRepository.load()
                 )
-                .map { chatUserData, myUserData in
-                    chat.user = chatUserData
-                    chat.isFromCurrentUser = chatUserData.id == myUserData.id
+                .map { chatUser, myUser in
+                    chat.user = chatUser
+                    chat.isFromCurrentUser = chatUser.id == myUser.id
                     return chat
                 }
             }
