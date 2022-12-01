@@ -33,13 +33,12 @@ final class AnimationImageView: UIView {
     
     func addRotation() {
         let randomRotaionDirection = Double(
-            [Animation.nagativeVelocity, Animation.positiveVelocity]
-                .randomElement() ?? Animation.positiveVelocity
+            [AnimationView.Animation.nagativeVelocity, AnimationView.Animation.positiveVelocity]
+                .randomElement() ?? AnimationView.Animation.positiveVelocity
         )
-        
         let rotation = CABasicAnimation(keyPath: "transform.rotation.z")
         rotation.toValue = Double.pi * randomRotaionDirection
-        rotation.duration = CFTimeInterval(Animation.rotateDuration)
+        rotation.duration = CFTimeInterval(AnimationView.Animation.rotateDuration)
         rotation.repeatCount = Float.infinity
         imageView.layer.add(rotation, forKey: "rotationAnimation")
     }
