@@ -8,8 +8,11 @@
 
 import UIKit
 
+import SnapKit
+
 final class LaunchScreenViewController: ViewController {
     
+    private let animationView = AnimationView()
     private let viewModel: LaunchScreenViewModel
     
     init(viewModel: LaunchScreenViewModel) {
@@ -21,10 +24,27 @@ final class LaunchScreenViewController: ViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func layout() {
+        layoutAnimationView()
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        animationView.invalidate()
+    }
+    
     override func bind() {
         let input = LaunchScreenViewModel.Input(
             viewWillAppear: self.rx.viewWillAppear.map { _ in }.asObservable()
         )
         _ = viewModel.transform(input: input)
+    }
+    
+    private func layoutAnimationView() {
+        view.addSubview(animationView)
+        
+        animationView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
     }
 }
