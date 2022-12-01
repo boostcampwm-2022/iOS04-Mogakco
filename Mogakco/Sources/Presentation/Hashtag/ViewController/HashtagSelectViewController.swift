@@ -218,7 +218,6 @@ extension HashtagSelectViewController: UICollectionViewDelegateFlowLayout {
         viewForSupplementaryElementOfKind kind: String,
         at indexPath: IndexPath
     ) -> UICollectionReusableView {
-        
         guard kind == UICollectionView.elementKindSectionHeader,
               let header = hashtagListCollectionView.dequeueReusableSupplementaryView(
                   ofKind: kind,

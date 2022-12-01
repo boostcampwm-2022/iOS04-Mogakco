@@ -73,7 +73,7 @@ final class StudyListViewController: ViewController {
         )
         
         let output = viewModel.transform(input: input)
-        
+
         output.studyList
             .drive(self.collectionView.rx.items(
                 cellIdentifier: StudyCell.identifier,
