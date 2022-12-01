@@ -26,8 +26,8 @@ final class StudyDetailViewModel: ViewModel {
     
     struct Output {
         let studyDetail: Observable<Study>
-        let languageReload: Observable<Void>
-        let userReload: Observable<Void>
+        let languages: Driver<[Hashtag]>
+        let participants: Driver<[User]>
     }
     
     var disposeBag = DisposeBag()
@@ -44,10 +44,9 @@ final class StudyDetailViewModel: ViewModel {
     var participantsCount: Int { (try? participants.value().count) ?? 0 }
 
     func transform(input: Input) -> Output {
-        // TODO: 유저 UseCase에서 불러오기, 언어 불러오기 바인딩
-        let languageReload = PublishSubject<Void>()
-        let userReload = PublishSubject<Void>()
         let studyDetailLoad = PublishSubject<Study>()
+        var languages = BehaviorSubject<[Hashtag]>(value: [])
+        var participants = BehaviorSubject<[User]>(value: [])
         
         studyDetailUseCase?.study(id: studyID)
             .bind(to: studyDetailLoad)
@@ -70,16 +69,6 @@ final class StudyDetailViewModel: ViewModel {
             .bind(to: participants)
             .disposed(by: disposeBag)
         
-        languages
-            .map { _ in () }
-            .bind(to: languageReload)
-            .disposed(by: disposeBag)
-        
-        participants
-            .map { _ in () }
-            .bind(to: userReload)
-            .disposed(by: disposeBag)
-        
         input.studyJoinButtonTapped
             .withUnretained(self)
             .flatMap { $0.0.joinStudyUseCase?.join(id: $0.0.studyID) ?? .empty() }
@@ -98,8 +87,8 @@ final class StudyDetailViewModel: ViewModel {
         
         return Output(
             studyDetail: studyDetailLoad,
-            languageReload: languageReload.asObservable(),
-            userReload: userReload.asObservable()
+            languages: languages.asDriver(onErrorJustReturn: []),
+            participants: participants.asDriver(onErrorJustReturn: [])
         )
     }
     
