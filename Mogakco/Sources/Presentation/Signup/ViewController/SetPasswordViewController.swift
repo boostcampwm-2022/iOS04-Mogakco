@@ -106,8 +106,14 @@ final class SetPasswordViewController: ViewController {
             .disposed(by: disposeBag)
         
         RxKeyboard.instance.visibleHeight
+            .skip(1)
             .drive(onNext: { [weak self] keyboardVisibleHeight in
-                self?.updateButtonLayout(height: keyboardVisibleHeight)
+                guard let self else { return }
+                if keyboardVisibleHeight == 0 {
+                    self.updateButtonLayout(height: self.view.safeAreaInsets.bottom)
+                } else {
+                    self.updateButtonLayout(height: keyboardVisibleHeight)
+                }
             })
             .disposed(by: disposeBag)
     }
@@ -148,10 +154,13 @@ final class SetPasswordViewController: ViewController {
     }
     
     private func updateButtonLayout(height: CGFloat) {
-        button.snp.makeConstraints {
-            $0.left.right.equalTo(view.safeAreaLayoutGuide).inset(16)
-            $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(Layout.buttonBottomInset)
-            $0.height.equalTo(Layout.buttonHeight)
+        UIView.animate(withDuration: 1) { [weak self] in
+            guard let self else { return }
+            self.button.snp.remakeConstraints {
+                $0.left.right.equalTo(self.view.safeAreaLayoutGuide).inset(16)
+                $0.bottom.equalToSuperview().inset(height + 16)
+                $0.height.equalTo(Layout.buttonHeight)
+            }
         }
     }
 }
