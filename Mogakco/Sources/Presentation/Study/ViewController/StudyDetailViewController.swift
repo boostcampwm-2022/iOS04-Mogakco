@@ -74,6 +74,7 @@ final class StudyDetailViewController: ViewController {
         let layout = UICollectionViewFlowLayout()
         layout.minimumLineSpacing = 8
         layout.scrollDirection = .horizontal
+        layout.estimatedItemSize = CGSize(width: HashtagBadgeCell.addWidth, height: HashtagBadgeCell.height)
         layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         $0.collectionViewLayout = layout
         $0.register(HashtagBadgeCell.self, forCellWithReuseIdentifier: HashtagBadgeCell.identifier)
@@ -93,6 +94,10 @@ final class StudyDetailViewController: ViewController {
         let layout = UICollectionViewFlowLayout()
         layout.minimumLineSpacing = 8
         layout.scrollDirection = .horizontal
+        layout.estimatedItemSize = CGSize(
+            width: ParticipantCell.size.width,
+            height: ParticipantCell.size.height
+        )
         layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         $0.collectionViewLayout = layout
         $0.register(ParticipantCell.self, forCellWithReuseIdentifier: ParticipantCell.identifier)
@@ -117,11 +122,6 @@ final class StudyDetailViewController: ViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        configDelegate()
-    }
-    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.isNavigationBarHidden = false
@@ -130,14 +130,6 @@ final class StudyDetailViewController: ViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         navigationController?.isNavigationBarHidden = true
-    }
-    
-    private func configDelegate() {
-        languageCollectionView.delegate = self
-        languageCollectionView.dataSource = self
-        
-        participantsCollectionView.delegate = self
-        participantsCollectionView.dataSource = self
     }
     
     override func layout() {
@@ -164,16 +156,34 @@ final class StudyDetailViewController: ViewController {
             })
             .disposed(by: disposeBag)
         
-        output.languageReload
-            .subscribe(onNext: { [weak self] in
-                self?.languageCollectionView.reloadData()
-            })
+        output.languages
+            .drive(languageCollectionView.rx.items) { collectionView, index, hashtag in
+                guard let cell = collectionView.dequeueReusableCell(
+                    withReuseIdentifier: HashtagBadgeCell.identifier,
+                    for: IndexPath(row: index, section: 0)
+                ) as? HashtagBadgeCell else {
+                    return UICollectionViewCell()
+                }
+                cell.prepareForReuse()
+                cell.setHashtag(hashtag: hashtag)
+                
+                return cell
+            }
             .disposed(by: disposebag)
         
-        output.userReload
-            .subscribe(onNext: { [weak self] in
-                self?.participantsCollectionView.reloadData()
-            })
+        output.participants
+            .drive(participantsCollectionView.rx.items) { collectionView, index, user in
+                guard let cell = collectionView.dequeueReusableCell(
+                    withReuseIdentifier: ParticipantCell.identifier,
+                    for: IndexPath(row: index, section: 0)
+                ) as? ParticipantCell else {
+                    return UICollectionViewCell()
+                }
+                cell.prepareForReuse()
+                cell.setInfo(user: user)
+                
+                return cell
+            }
             .disposed(by: disposebag)
     }
     
@@ -272,87 +282,6 @@ final class StudyDetailViewController: ViewController {
             $0.left.right.equalTo(view.safeAreaLayoutGuide).inset(16)
             $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(Layout.buttonBottomInset)
             $0.height.equalTo(Layout.buttonHeight)
-        }
-    }
-}
-
-// MARK: - CollectionView
-
-extension StudyDetailViewController: UICollectionViewDataSource {
-    
-    func collectionView(
-        _ collectionView: UICollectionView,
-        numberOfItemsInSection section: Int
-    ) -> Int {
-        switch collectionView {
-        case languageCollectionView: return viewModel.languageCount
-        case participantsCollectionView: return viewModel.participantsCount
-        default: return 0
-        }
-    }
-    
-    func collectionView(
-        _ collectionView: UICollectionView,
-        cellForItemAt indexPath: IndexPath
-    ) -> UICollectionViewCell {
-        switch collectionView {
-        case languageCollectionView:
-            guard let cell = languageCollectionView.dequeueReusableCell(
-                withReuseIdentifier: HashtagBadgeCell.identifier,
-                for: indexPath) as? HashtagBadgeCell
-            else { return UICollectionViewCell() }
-            
-            cell.prepareForReuse()
-            let cellHashtag = viewModel.languaegCellInfo(index: indexPath.row)
-            cell.setHashtag(hashtag: cellHashtag)
-            
-            return cell
-        case participantsCollectionView:
-            guard let cell = participantsCollectionView.dequeueReusableCell(
-                withReuseIdentifier: ParticipantCell.identifier,
-                for: indexPath) as? ParticipantCell
-            else { return UICollectionViewCell() }
-            
-            cell.prepareForReuse()
-            
-            let cellUserInfo = viewModel.participantCellInfo(index: indexPath.row)
-            cell.setInfo(user: cellUserInfo)
-            
-            return cell
-        default:
-            return UICollectionViewCell()
-        }
-    }
-    
-    func collectionView(
-        _ collectionView: UICollectionView,
-        didSelectItemAt indexPath: IndexPath
-    ) {
-        viewModel.userSelect(index: indexPath.row)
-    }
-}
-
-extension StudyDetailViewController: UICollectionViewDelegateFlowLayout {
-    func collectionView(
-        _ collectionView: UICollectionView,
-        layout collectionViewLayout: UICollectionViewLayout,
-        sizeForItemAt indexPath: IndexPath
-    ) -> CGSize {
-        switch collectionView {
-        case languageCollectionView:
-            guard let cellHashtag = viewModel.languaegCellInfo(index: indexPath.row) else {
-                return CGSize(width: 0, height: 0)
-            }
-            return CGSize(
-                width: cellHashtag.title.size(
-                    withAttributes: [NSAttributedString.Key.font: UIFont.mogakcoFont.mediumRegular]
-                ).width + HashtagBadgeCell.addWidth,
-                height: HashtagBadgeCell.height
-            )
-        case participantsCollectionView:
-            return CGSize(width: ParticipantCell.size.width, height: ParticipantCell.size.height)
-        default:
-            return CGSize(width: 0, height: 0)
         }
     }
 }
