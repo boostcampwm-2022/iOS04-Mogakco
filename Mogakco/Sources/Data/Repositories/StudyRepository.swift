@@ -50,7 +50,8 @@ struct StudyRepository: StudyRepositoryProtocol {
                             .map { filter in
                                 switch filter {
                                 case .languages(let languages):
-                                    return study.languages.allContains(languages)
+                                    guard !languages.isEmpty else { return true }
+                                    return study.languages.map { languages.contains($0) }.contains(true)
                                 case .category(let category):
                                     return study.category == category
                                 }
