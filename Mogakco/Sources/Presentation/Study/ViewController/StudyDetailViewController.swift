@@ -138,8 +138,10 @@ final class StudyDetailViewController: ViewController {
     }
     
     override func bind() {
+        
         let input = StudyDetailViewModel.Input(
             studyJoinButtonTapped: studyJoinButton.rx.tap.asObservable(),
+            participantCellTapped: participantsCollectionView.rx.itemSelected.asObservable()
             backButtonTapped: backButton.rx.tap.asObservable()
         )
         

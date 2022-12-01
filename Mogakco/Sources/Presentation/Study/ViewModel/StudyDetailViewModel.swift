@@ -21,6 +21,7 @@ final class StudyDetailViewModel: ViewModel {
     
     struct Input {
         let studyJoinButtonTapped: Observable<Void>
+        let participantCellTapped: Observable<IndexPath>
         let backButtonTapped: Observable<Void>
     }
     
@@ -45,8 +46,8 @@ final class StudyDetailViewModel: ViewModel {
 
     func transform(input: Input) -> Output {
         let studyDetailLoad = PublishSubject<Study>()
-        var languages = BehaviorSubject<[Hashtag]>(value: [])
-        var participants = BehaviorSubject<[User]>(value: [])
+        let languages = BehaviorSubject<[Hashtag]>(value: [])
+        let participants = BehaviorSubject<[User]>(value: [])
         
         studyDetailUseCase?.study(id: studyID)
             .bind(to: studyDetailLoad)
@@ -80,6 +81,11 @@ final class StudyDetailViewModel: ViewModel {
             })
             .disposed(by: disposeBag)
         
+        input.participantCellTapped
+            .map { $0.row }
+            .subscribe { index in
+                // TODO: 유저 선택 (코디네이터 리팩토링 후)
+            }
         input.backButtonTapped
             .map { StudyDetailNavigation.back }
             .bind(to: navigation)
