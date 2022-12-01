@@ -172,7 +172,6 @@ final class StudyListViewModel: ViewModel {
 extension StudyListViewModel: HashtagSelectProtocol {
     
     func selectedHashtag(kind: KindHashtag, hashTags: [Hashtag]) {
-        print(hashTags.map { $0.title })
         switch kind {
         case .category:
             categoryFilter.onNext(hashTags.first)
