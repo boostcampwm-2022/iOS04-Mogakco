@@ -12,53 +12,29 @@ import Firebase
 final class ChatDataSource: ChatDataSourceProtocol {
     
     var listener: ListenerRegistration?
-    var page: DocumentSnapshot!
+    var page: DocumentSnapshot?
     
     enum Collection {
-        static let ChatRoom = Firestore.firestore().collection("chatroom")
+        static let chatRoom = Firestore.firestore().collection("chatroom")
     }
     
-    func fetchAll(chatRoomID: String) -> Observable<ChatResponseDTO> {
+    func fetchAll(chatRoomID: String) -> Observable<[ChatResponseDTO]> {
         return Observable.create { emitter in
-            Collection.ChatRoom
+            Collection.chatRoom
                 .document(chatRoomID)
                 .collection("chat")
-                .order(by: "date", descending: true)
-                .limit(to: 10)
+                .order(by: "date")
+                .limit(toLast: 5)
                 .getDocuments { snapshot, _ in
                     if let snapshot = snapshot {
-                        self.page = snapshot.documents.last
-                        snapshot.documents.forEach { change in
-                            let dictionary = change.data()
-                            guard let data = try? JSONSerialization.data(withJSONObject: dictionary),
-                                  let chat = try? JSONDecoder().decode(Chat.self, from: data)
-                            else { return }
-                            emitter.onNext(ChatResponseDTO(chat: chat))
-                        }
-                    }
-                }
-            return Disposables.create()
-        }
-    }
-    
-    func reload(chatRoomID: String) -> Observable<ChatResponseDTO> {
-        return Observable.create { emitter in
-            Collection.ChatRoom
-                .document(chatRoomID)
-                .collection("chat")
-                .order(by: "date", descending: true)
-                .start(afterDocument: self.page)
-                .limit(to: 5)
-                .getDocuments { snapshot, _ in
-                    if let snapshot = snapshot {
-                        self.page = snapshot.documents.last
-                        snapshot.documents.forEach({ change in
-                            let dictionary = change.data()
-                            guard let data = try? JSONSerialization.data(withJSONObject: dictionary),
-                                  let chat = try? JSONDecoder().decode(Chat.self, from: data)
-                            else { return }
-                            emitter.onNext(ChatResponseDTO(chat: chat))
-                        })
+                        self.page = snapshot.documents.first
+
+                        let chats = snapshot.documents
+                            .map { $0.data() }
+                            .compactMap { try? JSONSerialization.data(withJSONObject: $0) }
+                            .compactMap { try? JSONDecoder().decode(Chat.self, from: $0) }
+                            .map { ChatResponseDTO(chat: $0) }
+                        emitter.onNext(chats)
                     }
                 }
             
@@ -66,9 +42,35 @@ final class ChatDataSource: ChatDataSourceProtocol {
         }
     }
     
+    
+    func reload(chatRoomID: String) -> Observable<[ChatResponseDTO]> {
+        
+        return Observable.create { emitter in
+            guard let page = self.page else { return Disposables.create() }
+                Collection.chatRoom
+                    .document(chatRoomID)
+                    .collection("chat")
+                    .order(by: "date")
+                    .end(beforeDocument: page)
+                    .limit(toLast: 5)
+                    .getDocuments { snapshot, _ in
+                        if let snapshot = snapshot {
+                            self.page = snapshot.documents.first
+                            let chats = snapshot.documents
+                                .map { $0.data() }
+                                .compactMap { try? JSONSerialization.data(withJSONObject: $0) }
+                                .compactMap { try? JSONDecoder().decode(Chat.self, from: $0) }
+                                .map { ChatResponseDTO(chat: $0) }
+                            emitter.onNext(chats)
+                        }
+                    }
+            return Disposables.create()
+        }
+    }
+    
     func observe(chatRoomID: String) -> Observable<ChatResponseDTO> {
         return Observable.create { emitter in
-            let query = Collection.ChatRoom.document(chatRoomID).collection("chat").order(by: "date").limit(toLast: 1)
+            let query = Collection.chatRoom.document(chatRoomID).collection("chat").order(by: "date").limit(toLast: 1)
             self.listener = query.addSnapshotListener({ snapshot, _ in
                 if let snapshot = snapshot,
                    let dictionary = snapshot.documents.last?.data() {
@@ -84,7 +86,7 @@ final class ChatDataSource: ChatDataSourceProtocol {
     
     func send(chat: Chat, to chatRoomID: String) -> Observable<Void> {
         return Observable.create { emitter in
-            Collection.ChatRoom
+            Collection.chatRoom
                 .document(chatRoomID)
                 .collection("chat")
                 .addDocument(data: chat.toDictionary()) { _ in
