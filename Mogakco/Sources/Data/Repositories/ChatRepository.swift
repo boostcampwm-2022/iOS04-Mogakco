@@ -18,12 +18,12 @@ struct ChatRepository: ChatRepositoryProtocol {
         self.chatDataSource = chatDataSource
     }
 
-    func fetchAll(chatRoomID: String) -> Observable<Chat> {
-        return chatDataSource.fetchAll(chatRoomID: chatRoomID).map { $0.toDomain() }
+    func fetchAll(chatRoomID: String) -> Observable<[Chat]> {
+        return chatDataSource.fetchAll(chatRoomID: chatRoomID).map { $0.map { $0.toDomain() } }
     }
     
-    func reload(chatRoomID: String) -> Observable<Chat> {
-        return chatDataSource.reload(chatRoomID: chatRoomID).map { $0.toDomain() }
+    func reload(chatRoomID: String) -> Observable<[Chat]> {
+        return chatDataSource.reload(chatRoomID: chatRoomID).map { $0.map { $0.toDomain() } }
     }
     
     func observe(chatRoomID: String) -> Observable<Chat> {
