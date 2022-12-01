@@ -21,9 +21,9 @@ enum KindHashtag {
 
 class HashtagSelectViewController: ViewController {
     
-    private let hashtagListCollectionView = UICollectionView(
+    lazy var hashtagListCollectionView = UICollectionView(
         frame: .zero,
-        collectionViewLayout: HashtagFlowLayout()
+        collectionViewLayout: HashtagFlowLayout(viewFrame: view.frame)
     ).then {
         $0.showsHorizontalScrollIndicator = false
         $0.clipsToBounds = false
@@ -228,13 +228,5 @@ extension HashtagSelectViewController: UICollectionViewDelegateFlowLayout {
         else { return UICollectionReusableView() }
         header.setTitle(kind: self.kind)
         return header
-    }
-    
-    func collectionView(
-        _ collectionView: UICollectionView,
-        layout collectionViewLayout: UICollectionViewLayout,
-        referenceSizeForHeaderInSection section: Int
-    ) -> CGSize {
-        return CGSize(width: view.frame.width, height: HashtagHeader.height)
     }
 }
