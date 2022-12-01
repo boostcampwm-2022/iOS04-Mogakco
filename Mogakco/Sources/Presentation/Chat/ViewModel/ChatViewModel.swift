@@ -70,8 +70,8 @@ final class ChatViewModel: ViewModel {
                 self.chatUseCase
                     .reload(chatRoomID: self.chatRoomID)
                     .withLatestFrom(self.messages) { ($0, $1) }
-                    .subscribe(onNext: { orginalChats, newChat in
-                        self.messages.accept([orginalChats] + newChat)
+                    .subscribe(onNext: { newChat, originalChats in
+                        self.messages.accept(newChat + originalChats)
                     })
                     .disposed(by: self.disposeBag)
                 
@@ -148,10 +148,10 @@ final class ChatViewModel: ViewModel {
     private func bindFirebase() {
         chatUseCase.observe(chatRoomID: chatRoomID)
             .withLatestFrom(messages) { ($0, $1) }
-            .subscribe(onNext: { [weak self] originalChats, newChat in
+            .subscribe(onNext: { [weak self] newChat, originalChats in
                 if self?.isFirst == false {
                     print("self?.isFirst : ", newChat, originalChats)
-                    self?.messages.accept(newChat + [originalChats])
+                    self?.messages.accept( originalChats + [newChat])
                 } else {
                     self?.isFirst = false
                 }
@@ -160,8 +160,9 @@ final class ChatViewModel: ViewModel {
         
         chatUseCase.fetchAll(chatRoomID: chatRoomID)
             .withLatestFrom(messages) { ($0, $1) }
-            .subscribe(onNext: { [weak self] originChats, newChat in
-                self?.messages.accept([originChats] + newChat)
+            .subscribe(onNext: { [weak self] newChat, originalChat in
+                
+                self?.messages.accept(newChat + originalChat)
             })
             .disposed(by: disposeBag)
     }
