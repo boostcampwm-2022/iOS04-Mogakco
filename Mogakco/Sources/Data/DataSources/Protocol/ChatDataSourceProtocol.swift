@@ -9,8 +9,8 @@
 import RxSwift
 
 protocol ChatDataSourceProtocol {
-    func fetchAll(chatRoomID: String) -> Observable<ChatResponseDTO>
-    func reload(chatRoomID: String) -> Observable<ChatResponseDTO>
+    func fetchAll(chatRoomID: String) -> Observable<[ChatResponseDTO]>
+    func reload(chatRoomID: String) -> Observable<[ChatResponseDTO]>
     func observe(chatRoomID: String) -> Observable<ChatResponseDTO> 
     func send(chat: Chat, to chatRoomID: String) -> Observable<Void>
 }
