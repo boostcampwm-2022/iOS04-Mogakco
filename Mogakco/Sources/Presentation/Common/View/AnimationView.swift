@@ -12,6 +12,28 @@ import SnapKit
 
 final class AnimationView: UIView {
     
+    enum Animation {
+        static let iconCount: Int = 5
+        static let IconSize: Int = 100
+        static let moveInterval = 0.017
+        static let rotateDuration = 10
+        
+        static let zero: CGFloat = 0
+        static let nagativeVelocity: CGFloat = -1
+        static let positiveVelocity: CGFloat = 1
+        static let directionProbability: [CGFloat] = [
+            nagativeVelocity,
+            nagativeVelocity,
+            nagativeVelocity,
+            nagativeVelocity,
+            zero,
+            positiveVelocity,
+            positiveVelocity,
+            positiveVelocity,
+            positiveVelocity
+        ]
+    }
+    
     var animationImages: [AnimationImageView] = []
     var timers: [Timer] = []
     
