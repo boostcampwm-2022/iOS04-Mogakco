@@ -60,7 +60,6 @@ final class SelectStudySortViewController: ViewController {
         let output = viewModel.transform(input: input)
         
         output.studySorts
-        
             .drive(sortCollectionView.rx.items) { collectionView, index, studySort in
                 guard let cell = collectionView.dequeueReusableCell(
                     withReuseIdentifier: StudySortCell.identifier,

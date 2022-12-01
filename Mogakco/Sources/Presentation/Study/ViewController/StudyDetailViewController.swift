@@ -159,32 +159,20 @@ final class StudyDetailViewController: ViewController {
             .disposed(by: disposeBag)
         
         output.languages
-            .drive(languageCollectionView.rx.items) { collectionView, index, hashtag in
-                guard let cell = collectionView.dequeueReusableCell(
-                    withReuseIdentifier: HashtagBadgeCell.identifier,
-                    for: IndexPath(row: index, section: 0)
-                ) as? HashtagBadgeCell else {
-                    return UICollectionViewCell()
-                }
-                cell.prepareForReuse()
+            .drive(languageCollectionView.rx.items(
+                cellIdentifier: HashtagBadgeCell.identifier,
+                cellType: HashtagBadgeCell.self
+            )) { _, hashtag, cell in
                 cell.setHashtag(hashtag: hashtag)
-                
-                return cell
             }
             .disposed(by: disposebag)
         
         output.participants
-            .drive(participantsCollectionView.rx.items) { collectionView, index, user in
-                guard let cell = collectionView.dequeueReusableCell(
-                    withReuseIdentifier: ParticipantCell.identifier,
-                    for: IndexPath(row: index, section: 0)
-                ) as? ParticipantCell else {
-                    return UICollectionViewCell()
-                }
-                cell.prepareForReuse()
+            .drive(participantsCollectionView.rx.items(
+                cellIdentifier: ParticipantCell.identifier,
+                cellType: ParticipantCell.self
+            )) { _, user, cell in
                 cell.setInfo(user: user)
-                
-                return cell
             }
             .disposed(by: disposebag)
     }

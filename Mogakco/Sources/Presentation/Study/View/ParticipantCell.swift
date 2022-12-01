@@ -16,9 +16,13 @@ final class ParticipantCell: UICollectionViewCell, Identifiable {
     
     static let size = CGSize(width: 110, height: 130)
     
-    override func prepareForReuse() {
-        super.prepareForReuse()
+    override init(frame: CGRect) {
+        super.init(frame: frame)
         layout()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     private let imageView = RoundProfileImageView(50)
