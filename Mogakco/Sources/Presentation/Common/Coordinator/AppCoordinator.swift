@@ -2,57 +2,58 @@
 //  AppCoordinator.swift
 //  Mogakco
 //
-//  Created by 신소민 on 2022/11/14.
+//  Created by 신소민 on 2022/12/01.
+//  Copyright © 2022 Mogakco. All rights reserved.
 //
 
 import UIKit
 
-final class AppCoordinator: Coordinator, AppCoordinatorProtocol {
+import RxSwift
+
+final class AppCoordinator: BaseCoordinator<Void> {
     
-    var navigationController: UINavigationController
-    var childCoordinators: [Coordinator] = []
+    let window: UIWindow?
     
-    init(window: UIWindow?) {
-        self.navigationController = UINavigationController()
+    init(_ window: UIWindow?) {
+        self.window = window
+        super.init(UINavigationController())
+    }
+    
+    private func setup(with window: UIWindow?) {
         window?.rootViewController = navigationController
-        window?.backgroundColor = .mogakcoColor.backgroundDefault
         window?.makeKeyAndVisible()
-    }
-
-    func start() {
-        showAuthFlow()
+        window?.backgroundColor = .mogakcoColor.backgroundDefault
     }
     
-    func showAuthFlow() {
-        let authCoordinator = AuthCoordinator(navigationController)
-        childCoordinators.append(authCoordinator)
-        authCoordinator.delegate = self
-        authCoordinator.start()
+    override func start() -> Observable<Void> {
+        setup(with: window)
+        showLogin()
+        return Observable.never()
     }
     
-    func showMainFlow() {
-        let tabCoordinator = TabCoordinator(navigationController)
-        childCoordinators.append(tabCoordinator)
-        tabCoordinator.delegate = self
-        tabCoordinator.start()
+    private func showLogin() {
+        navigationController.setNavigationBarHidden(true, animated: true)
+        let login = MLoginCoordinator(navigationController)
+        coordinator(to: login)
+            .subscribe(onNext: { [weak self] in
+                switch $0 {
+                case .finish:
+                    self?.showTab()
+                }
+            })
+            .disposed(by: disposeBag)
     }
-}
-
-extension AppCoordinator: CoordinatorFinishDelegate {
-
-    func coordinatorDidFinish(child: Coordinator) {
-        finish(child)
-        switch child {
-        case is AuthCoordinator:
-            navigationController.isNavigationBarHidden = true
-            navigationController.viewControllers.removeAll()
-            showMainFlow()
-        case is TabCoordinator:
-            navigationController.isNavigationBarHidden = true
-            navigationController.viewControllers.removeAll()
-            showAuthFlow()
-        default:
-            break
-        }
+    
+    private func showTab() {
+        navigationController.setNavigationBarHidden(true, animated: true)
+        let tab = TabCoordinator(navigationController)
+        coordinator(to: tab)
+            .subscribe(onNext: { [weak self] in
+                switch $0 {
+                case .finish:
+                    self?.showLogin()
+                }
+            })
+            .disposed(by: disposeBag)
     }
 }

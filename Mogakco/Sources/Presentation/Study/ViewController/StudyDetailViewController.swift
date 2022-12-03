@@ -104,6 +104,7 @@ final class StudyDetailViewController: ViewController {
     }
     
     // MARK: - Property
+    
     var viewModel: StudyDetailViewModel
     var disposebag = DisposeBag()
     
@@ -146,7 +147,8 @@ final class StudyDetailViewController: ViewController {
     
     override func bind() {
         let input = StudyDetailViewModel.Input(
-            studyJoinButtonTapped: studyJoinButton.rx.tap.asObservable()
+            studyJoinButtonTapped: studyJoinButton.rx.tap.asObservable(),
+            backButtonTapped: backButton.rx.tap.asObservable()
         )
         
         let output = viewModel.transform(input: input)

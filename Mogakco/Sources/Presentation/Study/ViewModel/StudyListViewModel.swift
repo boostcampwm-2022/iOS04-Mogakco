@@ -11,6 +11,14 @@ import Foundation
 import RxCocoa
 import RxSwift
 
+enum StudyListNavigation {
+    case create
+    case detail(id: String)
+    case sort
+    case languageFilter(filters: [Hashtag])
+    case categoryFilter(filters: [Hashtag])
+}
+
 final class StudyListViewModel: ViewModel {
     
     struct Input {
@@ -32,22 +40,18 @@ final class StudyListViewModel: ViewModel {
         let categorySelected: Driver<Bool>
     }
     
-    private weak var coordinator: StudyTabCoordinatorProtocol?
     private let studyListUseCase: StudyListUseCaseProtocol
     private let studyList = PublishSubject<[Study]>()
     private let refreshFinished = PublishSubject<Void>()
-    private let sort = BehaviorSubject<StudySort>(value: .latest)
-    private let languageFilter = BehaviorSubject<[Hashtag]>(value: [])
-    private let categoryFilter = BehaviorSubject<Hashtag?>(value: nil)
     private let filters = BehaviorSubject<[StudyFilter]>(value: [])
     private let refresh = PublishSubject<Void>()
+    let sort = BehaviorSubject<StudySort>(value: .latest)
+    let languageFilter = BehaviorSubject<[Hashtag]>(value: [])
+    let categoryFilter = BehaviorSubject<[Hashtag]>(value: [])
+    let navigation = PublishSubject<StudyListNavigation>()
     var disposeBag = DisposeBag()
     
-    init(
-        coordinator: StudyTabCoordinatorProtocol,
-        studyListUseCase: StudyListUseCaseProtocol
-    ) {
-        self.coordinator = coordinator
+    init(studyListUseCase: StudyListUseCaseProtocol) {
         self.studyListUseCase = studyListUseCase
     }
     
@@ -60,16 +64,14 @@ final class StudyListViewModel: ViewModel {
             refreshFinished: refreshFinished.asSignal(onErrorJustReturn: ()),
             sortSelected: sort.map { $0 != .latest }.asDriver(onErrorJustReturn: false),
             languageSelected: languageFilter.map { !$0.isEmpty }.asDriver(onErrorJustReturn: false),
-            categorySelected: categoryFilter.map { $0 != nil }.asDriver(onErrorJustReturn: false)
+            categorySelected: categoryFilter.map { !$0.isEmpty }.asDriver(onErrorJustReturn: false)
         )
     }
     
     func bindRefresh(input: Input) {
+        
         Observable.merge([input.viewWillAppear, input.refresh])
-            .withUnretained(self)
-            .subscribe(onNext: { viewModel, _ in
-                viewModel.refresh.onNext(())
-            })
+            .bind(to: refresh)
             .disposed(by: disposeBag)
         
         refresh
@@ -88,10 +90,8 @@ final class StudyListViewModel: ViewModel {
     func bindFilterSort(input: Input) {
         sort
             .skip(1)
-            .withUnretained(self)
-            .subscribe(onNext: { viewModel, _ in
-                viewModel.refresh.onNext(())
-            })
+            .map { _ in () }
+            .bind(to: refresh)
             .disposed(by: disposeBag)
         
         filters
@@ -106,7 +106,7 @@ final class StudyListViewModel: ViewModel {
             .withUnretained(self)
             .subscribe(onNext: { viewModel, _ in
                 viewModel.languageFilter.onNext([])
-                viewModel.categoryFilter.onNext(nil)
+                viewModel.categoryFilter.onNext([])
                 viewModel.sort.onNext(.latest)
             })
             .disposed(by: disposeBag)
@@ -115,7 +115,7 @@ final class StudyListViewModel: ViewModel {
             .map { language, category -> [StudyFilter] in
                 var newFilter: [StudyFilter] = []
                 newFilter.append(StudyFilter.languages(language.map { $0.id }))
-                if let category {
+                if let category = category.first {
                     newFilter.append(StudyFilter.category(category.id))
                 }
                 return newFilter
@@ -131,54 +131,32 @@ final class StudyListViewModel: ViewModel {
         input.cellSelected
             .withLatestFrom(Observable.combineLatest(input.cellSelected, studyList))
             .map { $1[$0.row].id }
-            .withUnretained(self)
-            .subscribe { viewModel, id in
-                viewModel.coordinator?.showStudyDetail(id: id)
-            }
+            .map { StudyListNavigation.detail(id: $0) }
+            .bind(to: navigation)
             .disposed(by: disposeBag)
         
         input.plusButtonTapped
-            .withUnretained(self)
-            .subscribe { viewModel, _ in
-                viewModel.coordinator?.showStudyCreate()
-            }
+            .map { StudyListNavigation.create }
+            .bind(to: navigation)
             .disposed(by: disposeBag)
         
         input.languageButtonTapped
             .withUnretained(self)
-            .subscribe(onNext: { viewModel, _ in
-                viewModel.coordinator?.showLanguageSelect(delegate: self)
-            })
+            .compactMap { try? $0.0.languageFilter.value() }
+            .map { StudyListNavigation.languageFilter(filters: $0) }
+            .bind(to: navigation)
             .disposed(by: disposeBag)
         
         input.categoryButtonTapped
             .withUnretained(self)
-            .subscribe(onNext: { viewModel, _ in
-                viewModel.coordinator?.showCategorySelect(delegate: self)
-            })
+            .compactMap { try? $0.0.languageFilter.value() }
+            .map { StudyListNavigation.categoryFilter(filters: $0) }
+            .bind(to: navigation)
             .disposed(by: disposeBag)
-        
+
         input.sortButtonTapped
-            .withUnretained(self)
-            .subscribe(onNext: { viewModel, _ in
-                viewModel.coordinator?.showSelectStudySort(studySortObserver: viewModel.sort.asObserver())
-            })
+            .map { StudyListNavigation.sort }
+            .bind(to: navigation)
             .disposed(by: disposeBag)
-    }
-}
-
-// MARK: - HashtagSelectProtocol
-
-extension StudyListViewModel: HashtagSelectProtocol {
-    
-    func selectedHashtag(kind: KindHashtag, hashTags: [Hashtag]) {
-        switch kind {
-        case .category:
-            categoryFilter.onNext(hashTags.first)
-        case .language:
-            languageFilter.onNext(hashTags)
-        default:
-            break
-        }
     }
 }

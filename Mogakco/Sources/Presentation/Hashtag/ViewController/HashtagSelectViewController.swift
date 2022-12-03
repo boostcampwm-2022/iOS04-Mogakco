@@ -90,7 +90,8 @@ class HashtagSelectViewController: ViewController {
         let input = HashtagViewModel.Input(
             kindHashtag: Observable.just(kind),
             cellSelected: cellSelect.asObservable(),
-            nextButtonTapped: nextButton.rx.tap.asObservable()
+            nextButtonTapped: nextButton.rx.tap.asObservable(),
+            backButtonTapped: backButton.rx.tap.asObservable()
         )
         
         let output = viewModel.transform(input: input)

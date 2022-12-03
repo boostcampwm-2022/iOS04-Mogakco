@@ -7,11 +7,14 @@
 
 import UIKit
 
+import RxSwift
+
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
-    var appCoordinator: Coordinator?
-
+    var appCoordinator: AppCoordinator?
+    let disposeBag = DisposeBag()
+    
     func scene(
         _ scene: UIScene,
         willConnectTo session: UISceneSession,
@@ -19,8 +22,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     ) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         window = UIWindow(windowScene: windowScene)
-        appCoordinator = AppCoordinator(window: window)
+        appCoordinator = AppCoordinator(window)
         appCoordinator?.start()
+            .subscribe()
+            .disposed(by: disposeBag)
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

@@ -1,5 +1,5 @@
 //
-//  EditProfiileViewModel.swift
+//  EditProfileViewModel.swift
 //  Mogakco
 //
 //  Created by 김범수 on 2022/11/16.
@@ -11,20 +11,17 @@ import UIKit
 import RxCocoa
 import RxSwift
 
-final class EditProfiileViewModel: ViewModel {
-    
+enum EditProfileNavigation {
+    case next(Profile)
+    case finish
+    case back
+}
+
+final class EditProfileViewModel: ViewModel {
+
     enum EditType {
-        case create(PasswordProps)
+        case create
         case edit
-        
-        static func == (lhs: EditType, rhs: EditType) -> Bool {
-            switch (lhs, rhs) {
-            case (.create, .create), (.edit, .edit):
-                return true
-            default:
-                return false
-            }
-        }
     }
     
     struct Input {
@@ -32,6 +29,7 @@ final class EditProfiileViewModel: ViewModel {
         let introduce: Observable<String>
         let selectedProfileImage: Observable<UIImage>
         let completeButtonTapped: Observable<Void>
+        let backButtonTapped: Observable<Void>
     }
     
     struct Output {
@@ -43,18 +41,16 @@ final class EditProfiileViewModel: ViewModel {
     
     var disposeBag = DisposeBag()
     private let type: EditType
-    private weak var coordinator: Coordinator?
     private let profileUseCase: ProfileUseCase
     private let editProfileUseCase: EditProfileUseCase
+    let navigation = PublishSubject<EditProfileNavigation>()
     
     init(
         type: EditType,
-        coordinator: Coordinator,
         profileUseCase: ProfileUseCase,
         editProfileUseCase: EditProfileUseCase
     ) {
         self.type = type
-        self.coordinator = coordinator
         self.profileUseCase = profileUseCase
         self.editProfileUseCase = editProfileUseCase
     }
@@ -80,8 +76,7 @@ final class EditProfiileViewModel: ViewModel {
             .bind(to: name)
             .disposed(by: disposeBag)
         
-        name
-            .map { (2...10).contains($0.count) }
+        name.map { (2...10).contains($0.count) }
             .bind(to: inputValidation)
             .disposed(by: disposeBag)
           
@@ -89,16 +84,17 @@ final class EditProfiileViewModel: ViewModel {
             .bind(to: introduce)
             .disposed(by: disposeBag)
         
-        Observable.merge(
-            user
-                .compactMap { $0?.profileImageURLString }
-                .compactMap { URL(string: $0) }
-                .observe(on: ConcurrentDispatchQueueScheduler(queue: .global()))
-                .compactMap { try? Data(contentsOf: $0) }
-                .observe(on: MainScheduler.asyncInstance)
-                .compactMap { UIImage(data: $0) },
-            input.selectedProfileImage
-        )
+        Observable
+            .merge(
+                user
+                    .compactMap { $0?.profileImageURLString }
+                    .compactMap { URL(string: $0) }
+                    .observe(on: ConcurrentDispatchQueueScheduler(queue: .global()))
+                    .compactMap { try? Data(contentsOf: $0) }
+                    .observe(on: MainScheduler.asyncInstance)
+                    .compactMap { UIImage(data: $0) },
+                input.selectedProfileImage
+            )
             .bind(to: image)
             .disposed(by: disposeBag)
 
@@ -111,10 +107,8 @@ final class EditProfiileViewModel: ViewModel {
             .flatMap { name, introduce, image in
                 self.editProfileUseCase.editProfile(name: name, introduce: introduce, image: image)
             }
-            .withUnretained(self)
-            .subscribe(onNext: { viewModel, _ in
-                viewModel.coordinator?.popTabbar(animated: true)
-            })
+            .map { EditProfileNavigation.finish }
+            .bind(to: navigation)
             .disposed(by: disposeBag)
     
         input
@@ -123,9 +117,14 @@ final class EditProfiileViewModel: ViewModel {
             .map { $0 == .edit }
             .filter { !$0 }
             .withLatestFrom( Observable.combineLatest(input.name, input.introduce, image) )
-            .subscribe(onNext: { [weak self] name, introduce, image in
-                self?.pushLanguage(name: name, introduce: introduce, image: image)
-            })
+            .map { Profile(name: $0, introduce: $1, image: $2) }
+            .map { EditProfileNavigation.next($0) }
+            .bind(to: navigation)
+            .disposed(by: disposeBag)
+        
+        input.backButtonTapped
+            .map { EditProfileNavigation.back }
+            .bind(to: navigation)
             .disposed(by: disposeBag)
         
         return Output(
@@ -134,14 +133,5 @@ final class EditProfiileViewModel: ViewModel {
             originProfileImage: image.asObservable(),
             inputValidation: inputValidation.asObservable()
         )
-    }
-    
-    private func pushLanguage(name: String, introduce: String, image: UIImage) {
-        guard let coordinator = self.coordinator as? AdditionalSignupCoordinator,
-              case let EditType.create(passwordProps) = self.type else {
-            return
-        }
-        let profileProps = passwordProps.toProfileProps(name: name, introduce: introduce, profileImage: image)
-        coordinator.showLanguage(profileProps: profileProps)
     }
 }

@@ -89,7 +89,8 @@ final class SetEmailViewController: ViewController {
         
         let input = SetEmailViewModel.Input(
             email: textField.rx.text.orEmpty.asObservable(),
-            nextButtonTapped: button.rx.tap.asObservable()
+            nextButtonTapped: button.rx.tap.asObservable(),
+            backButtonTapped: backButton.rx.tap.asObservable()
         )
         
         let output = viewModel.transform(input: input)
