@@ -22,7 +22,7 @@ final class ProfileCoordinator: BaseCoordinator<ProfileCoordinatorResult> {
     
     init(
         type: ProfileType,
-        hideTabbar: Bool = false,
+        hideTabbar: Bool,
         _ navigationController: UINavigationController
     ) {
         self.type = type
@@ -159,7 +159,7 @@ final class ProfileCoordinator: BaseCoordinator<ProfileCoordinatorResult> {
     
     func showChatRoom(id: String) {
         let chatRoom = ChatRoomCoordinator(id: id, navigationController)
-        coordinator(to: chatRoom)
+        coordinate(to: chatRoom)
             .subscribe(onNext: {
                 switch $0 {
                 case .back: break

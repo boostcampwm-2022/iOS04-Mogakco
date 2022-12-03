@@ -69,7 +69,7 @@ final class SignupLanguageHashtagCoordinator: BaseCoordinator<SignupLanguageHash
         let languageProps = profileProps.toLanguageProps(languages: languages.map { $0.id })
         let career = SignupCareerHashtagCoordinator(languageProps, navigationController)
         
-        coordinator(to: career)
+        coordinate(to: career)
             .subscribe(onNext: { [weak self] in
                 switch $0 {
                 case .finish(let result):

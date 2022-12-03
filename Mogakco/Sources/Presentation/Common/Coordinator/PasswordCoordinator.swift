@@ -62,7 +62,7 @@ final class PasswordCoordinator: BaseCoordinator<PasswrodCoordinatorResult> {
         let passwordProps = emailProps.toPasswordProps(password: password)
         let profile = SignupEditProfileCoordinator(passwordProps, navigationController)
         
-        coordinator(to: profile)
+        coordinate(to: profile)
             .subscribe(onNext: { [weak self] in
                 switch $0 {
                 case .finish(let result):
