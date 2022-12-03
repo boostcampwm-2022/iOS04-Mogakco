@@ -11,8 +11,14 @@ import Foundation
 import RxCocoa
 import RxSwift
 
+enum CreateStudyNavigation {
+    case language([Hashtag])
+    case category([Hashtag])
+    case back
+}
+
 final class CreateStudyViewModel: ViewModel {
-   
+    
     struct Input {
         let title: Observable<String>
         let content: Observable<String>
@@ -22,6 +28,7 @@ final class CreateStudyViewModel: ViewModel {
         let categoryButtonTapped: Observable<Void>
         let languageButtonTapped: Observable<Void>
         let createButtonTapped: Observable<Void>
+        let backButtonTapped: Observable<Void>
     }
     
     struct Output {
@@ -30,17 +37,13 @@ final class CreateStudyViewModel: ViewModel {
         let createButtonEnabled: Observable<Bool>
     }
     
-    private weak var coordinator: StudyTabCoordinatorProtocol?
     private let useCase: CreateStudyUseCaseProtocol
-    private let category = PublishSubject<Hashtag>()
-    private let languages = PublishSubject<[Hashtag]>()
+    let category = BehaviorSubject<[Hashtag]>(value: [])
+    let languages = BehaviorSubject<[Hashtag]>(value: [])
+    let navigation = PublishSubject<CreateStudyNavigation>()
     var disposeBag = DisposeBag()
     
-    init(
-        coordinator: StudyTabCoordinatorProtocol,
-        useCase: CreateStudyUseCaseProtocol
-    ) {
-        self.coordinator = coordinator
+    init(useCase: CreateStudyUseCaseProtocol) {
         self.useCase = useCase
     }
     
@@ -54,7 +57,7 @@ final class CreateStudyViewModel: ViewModel {
                 input.place,
                 input.maxUserCount.map { Int($0) },
                 languages.asObservable(),
-                category.asObservable()
+                category.asObservable().compactMap { $0.first }
             )
             .map {
                 let id = UUID().uuidString
@@ -74,51 +77,37 @@ final class CreateStudyViewModel: ViewModel {
         
         input.categoryButtonTapped
             .withUnretained(self)
-            .subscribe(onNext: { viewModel, _ in
-                viewModel.coordinator?.showCategorySelect(delegate: self)
-            })
+            .compactMap { try? $0.0.category.value() }
+            .map { CreateStudyNavigation.category($0) }
+            .bind(to: navigation)
             .disposed(by: disposeBag)
         
         input.languageButtonTapped
             .withUnretained(self)
-            .subscribe(onNext: { viewModel, _ in
-                viewModel.coordinator?.showLanguageSelect(delegate: self)
-            })
+            .compactMap { try? $0.0.languages.value() }
+            .map { CreateStudyNavigation.language($0) }
+            .bind(to: navigation)
             .disposed(by: disposeBag)
-
+        
         input.createButtonTapped
             .withLatestFrom(study)
             .withUnretained(self)
             .flatMap { viewModel, study in
                 viewModel.useCase.create(study: study)
             }
-            .withUnretained(self)
-            .subscribe(onNext: { viewModel, _ in
-                viewModel.coordinator?.goToPrevScreen()
-            })
+            .map { _ in CreateStudyNavigation.back }
+            .bind(to: navigation)
             .disposed(by: disposeBag)
-
+        
+        input.backButtonTapped
+            .map { CreateStudyNavigation.back }
+            .bind(to: navigation)
+            .disposed(by: disposeBag)
+        
         return Output(
-            category: category,
+            category: category.compactMap { $0.first },
             languages: languages,
             createButtonEnabled: study.map { _ in return true }
         )
-    }
-}
-
-// MARK: - HashtagSelectProtocol
-
-extension CreateStudyViewModel: HashtagSelectProtocol {
-    
-    func selectedHashtag(kind: KindHashtag, hashTags: [Hashtag]) {
-        switch kind {
-        case .category:
-            guard let selected = hashTags.first else { return }
-            category.onNext(selected)
-        case .language:
-            languages.onNext(hashTags)
-        default:
-            break
-        }
     }
 }

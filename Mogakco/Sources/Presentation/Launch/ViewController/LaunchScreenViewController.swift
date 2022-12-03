@@ -24,13 +24,18 @@ final class LaunchScreenViewController: ViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func layout() {
-        layoutAnimationView()
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.isNavigationBarHidden = true
     }
-    
+
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         animationView.invalidate()
+    }
+    
+    override func layout() {
+        layoutAnimationView()
     }
     
     override func bind() {
