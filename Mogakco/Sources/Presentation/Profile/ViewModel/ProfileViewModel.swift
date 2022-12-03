@@ -11,21 +11,28 @@ import UIKit
 import RxCocoa
 import RxSwift
 
-final class ProfileViewModel: ViewModel {
+enum ProfileNavigation {
+    case editProfile
+    case editHashtag(kind: KindHashtag)
+    case chatRoom(id: String)
+    case back
+}
+
+enum ProfileType: Equatable {
+    case current
+    case other(User)
     
-    enum ProfileType: Equatable {
-        case current
-        case other(User)
-        
-        static func == (lhs: Self, rhs: Self) -> Bool {
-            switch (lhs, rhs) {
-            case (.current, .current), (.other, .other):
-                return true
-            default:
-                return false
-            }
+    static func == (lhs: Self, rhs: Self) -> Bool {
+        switch (lhs, rhs) {
+        case (.current, .current), (.other, .other):
+            return true
+        default:
+            return false
         }
     }
+}
+
+final class ProfileViewModel: ViewModel {
     
     struct Input {
         let viewWillAppear: Observable<Void>
@@ -46,22 +53,20 @@ final class ProfileViewModel: ViewModel {
         let studyRatingList: Driver<[(String, Int)]>
     }
 
-    var disposeBag = DisposeBag()
     private let type: ProfileType
-    private weak var coordinator: ProfileTabCoordinatorProtocol?
     private let userUseCase: UserUseCase
     private let createChatRoomUseCase: CreateChatRoomUseCase?
     private let user = BehaviorSubject<User?>(value: nil)
     private let studyRatingList = BehaviorSubject<[(String, Int)]>(value: [])
+    let navigation = PublishSubject<ProfileNavigation>()
+    var disposeBag = DisposeBag()
  
     init(
         type: ProfileType,
-        coordinator: ProfileTabCoordinatorProtocol,
         userUseCase: UserUseCase,
         createChatRoomUseCase: CreateChatRoomUseCase?
     ) {
         self.type = type
-        self.coordinator = coordinator
         self.userUseCase = userUseCase
         self.createChatRoomUseCase = createChatRoomUseCase
     }
@@ -137,26 +142,21 @@ final class ProfileViewModel: ViewModel {
     
     private func bindScene(input: Input) {
         input.editProfileButtonTapped
-            .withUnretained(self)
-            .subscribe(onNext: { viewModel, _ in
-                viewModel.coordinator?.showEditProfile()
-            })
+            .map { .editProfile }
+            .bind(to: navigation)
             .disposed(by: disposeBag)
         
         input.chatButtonTapped
             .withLatestFrom(user.compactMap { $0 })
             .compactMap { [weak self] in self?.createChatRoomUseCase?.create(otherUser: $0) }
             .flatMap { $0 }
-            .subscribe(onNext: { [weak self] chatRoom in
-                self?.coordinator?.showChatDetail(chatRoomID: chatRoom.id)
-            })
+            .map { .chatRoom(id: $0.id) }
+            .bind(to: navigation)
             .disposed(by: disposeBag)
         
         input.hashtagEditButtonTapped
-            .withUnretained(self)
-            .subscribe(onNext: { viewModel, kindHashtag in
-                viewModel.coordinator?.showSelectHashtag(kindHashtag: kindHashtag)
-            })
+            .map { .editHashtag(kind: $0) }
+            .bind(to: navigation)
             .disposed(by: disposeBag)
     }
 }

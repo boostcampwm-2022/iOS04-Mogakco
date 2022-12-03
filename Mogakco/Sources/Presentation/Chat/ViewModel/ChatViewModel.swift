@@ -11,6 +11,12 @@ import UIKit
 import RxCocoa
 import RxSwift
 
+enum ChatRoomNavigation {
+    case profile(type: ProfileType)
+    case study(id: String)
+    case back
+}
+
 final class ChatViewModel: ViewModel {
     
     struct Input {
@@ -31,24 +37,22 @@ final class ChatViewModel: ViewModel {
     }
     
     private var isFirst = true
+    private let chatRoomID: String
     private let chatUseCase: ChatUseCaseProtocol
     private let leaveStudyUseCase: LeaveStudyUseCaseProtocol
-    weak var coordinator: Coordinator?
     private var chatArray: [Chat] = []
     var messages = BehaviorRelay<[Chat]>(value: [])
+    let navigation = PublishSubject<ChatRoomNavigation>()
     var disposeBag = DisposeBag()
-    let chatRoomID: String
     
     init(
-        coordinator: Coordinator,
+        chatRoomID: String,
         chatUseCase: ChatUseCaseProtocol,
-        leaveStudyUseCase: LeaveStudyUseCaseProtocol,
-        chatRoomID: String
+        leaveStudyUseCase: LeaveStudyUseCaseProtocol
     ) {
-        self.coordinator = coordinator
+        self.chatRoomID = chatRoomID
         self.chatUseCase = chatUseCase
         self.leaveStudyUseCase = leaveStudyUseCase
-        self.chatRoomID = chatRoomID
     }
     
     func transform(input: Input) -> Output {
@@ -169,9 +173,8 @@ final class ChatViewModel: ViewModel {
     
     private func backButtonDidTap(input: Input) {
         input.backButtonDidTap
-            .subscribe(onNext: { [weak self] in
-                self?.coordinator?.popTabbar(animated: true)
-            })
+            .map { ChatRoomNavigation.back }
+            .bind(to: navigation)
             .disposed(by: disposeBag)
     }
 }

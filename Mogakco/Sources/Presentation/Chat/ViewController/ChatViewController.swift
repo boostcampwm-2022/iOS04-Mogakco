@@ -43,11 +43,6 @@ final class ChatViewController: ViewController {
         $0.alwaysBounceVertical = true
     }
     
-    let backButton = UIButton().then {
-        $0.setTitle("이전", for: .normal)
-        $0.setTitleColor(.mogakcoColor.primaryDefault, for: .normal)
-    }
-    
     let studyInfoButton = UIButton().then {
         $0.setImage(UIImage(systemName: "line.horizontal.3"), for: .normal)
         $0.tintColor = .mogakcoColor.primaryDefault

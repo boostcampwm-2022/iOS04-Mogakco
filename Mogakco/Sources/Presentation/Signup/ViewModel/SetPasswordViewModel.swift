@@ -11,12 +11,18 @@ import Foundation
 import RxCocoa
 import RxSwift
 
+enum SetPasswordNavigation {
+    case next(password: String)
+    case back
+}
+
 final class SetPasswordViewModel: ViewModel {
     
     struct Input {
         let password: Observable<String>
         let passwordCheck: Observable<String>
         let nextButtonTapped: Observable<Void>
+        let backButtonTapped: Observable<Void>
     }
     
     struct Output {
@@ -25,12 +31,8 @@ final class SetPasswordViewModel: ViewModel {
         let nextButtonEnabled: Observable<Bool>
     }
     
-    private let passwrodObserver: AnyObserver<String>?
+    let navigation = PublishSubject<SetPasswordNavigation>()
     var disposeBag = DisposeBag()
-    
-    init(passwordObserver: AnyObserver<String>? = nil) {
-        self.passwrodObserver = passwordObserver
-    }
 
     func transform(input: Input) -> Output {
         let passwordState = PublishSubject<Bool>()
@@ -61,10 +63,13 @@ final class SetPasswordViewModel: ViewModel {
         
         input.nextButtonTapped
             .withLatestFrom(input.password)
-            .withUnretained(self)
-            .subscribe(onNext: { viewModel, password in
-                viewModel.passwrodObserver?.onNext(password)
-            })
+            .map { SetPasswordNavigation.next(password: $0) }
+            .bind(to: navigation)
+            .disposed(by: disposeBag)
+        
+        input.backButtonTapped
+            .map { SetPasswordNavigation.back }
+            .bind(to: navigation)
             .disposed(by: disposeBag)
         
         return Output(

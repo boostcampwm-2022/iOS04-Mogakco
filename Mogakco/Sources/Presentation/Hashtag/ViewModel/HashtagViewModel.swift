@@ -17,7 +17,9 @@ class HashtagViewModel: ViewModel {
         let kindHashtag: Observable<KindHashtag>
         let cellSelected: Observable<Int>
         let nextButtonTapped: Observable<Void>
+        let backButtonTapped: Observable<Void>
     }
+    
     struct Output {
         let hashtagReload: Observable<Void>
     }
@@ -33,9 +35,7 @@ class HashtagViewModel: ViewModel {
         return count
     }
     
-    init(
-        hashTagUsecase: HashtagUseCaseProtocol
-    ) {
+    init(hashTagUsecase: HashtagUseCaseProtocol) {
         self.hashTagUsecase = hashTagUsecase
     }
     
@@ -72,7 +72,6 @@ class HashtagViewModel: ViewModel {
     func isSelected(index: Int) -> Bool {
         guard let hashtag = cellInfo(index: index) else { return false }
         if selectedHashtag.contains(where: { $0.id == hashtag.id }) { return true }
-        
         return false
     }
     

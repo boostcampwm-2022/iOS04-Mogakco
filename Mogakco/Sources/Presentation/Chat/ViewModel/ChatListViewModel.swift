@@ -11,6 +11,10 @@ import UIKit
 import RxCocoa
 import RxSwift
 
+enum ChatListNavigation {
+    case chatRoom(id: String)
+}
+
 final class ChatListViewModel: ViewModel {
     
     struct Input {
@@ -24,15 +28,12 @@ final class ChatListViewModel: ViewModel {
     }
     
     var disposeBag = DisposeBag()
-    private weak var coordinator: ChatTabCoordinatorProtocol?
     private let chatRoomListUseCase: ChatRoomListUseCaseProtocol
     private let chatRooms = BehaviorSubject<[ChatRoom]>(value: [])
     private let reload = PublishSubject<Void>()
-    init(
-        coordinator: ChatTabCoordinatorProtocol,
-        chatRoomListUseCase: ChatRoomListUseCaseProtocol
-    ) {
-        self.coordinator = coordinator
+    let navigation = PublishSubject<ChatListNavigation>()
+    
+    init(chatRoomListUseCase: ChatRoomListUseCaseProtocol) {
         self.chatRoomListUseCase = chatRoomListUseCase
     }
     
@@ -46,10 +47,8 @@ final class ChatListViewModel: ViewModel {
             .disposed(by: disposeBag)
         
         input.selectedChatRoom
-            .withUnretained(self)
-            .subscribe(onNext: { viewModel, chatRoom in
-                viewModel.coordinator?.showChatDetail(chatRoomID: chatRoom.id)
-            })
+            .map { ChatListNavigation.chatRoom(id: $0.id) }
+            .bind(to: navigation)
             .disposed(by: disposeBag)
         
         reload

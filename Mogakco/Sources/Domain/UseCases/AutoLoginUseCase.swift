@@ -30,7 +30,6 @@ final class AutoLoginUseCase: AutoLoginUseCaseProtocol {
             let token = PublishSubject<User>()
 
             token
-                .debug()
                 .flatMap { self.tokenRepository.load(email: $0.email) }
                 .map { $0 != nil }
                 .bind(to: emitter)
