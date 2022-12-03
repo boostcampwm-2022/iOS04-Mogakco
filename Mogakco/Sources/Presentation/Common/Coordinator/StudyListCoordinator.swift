@@ -137,7 +137,7 @@ final class StudyListCoordinator: BaseCoordinator<StudyListCoordinatorResult> {
             navigationController
         )
         
-        coordinator(to: hashtag)
+        coordinate(to: hashtag)
             .map {
                 if case .finish(let hashtags) = $0 {
                     return hashtags
@@ -152,7 +152,7 @@ final class StudyListCoordinator: BaseCoordinator<StudyListCoordinatorResult> {
     
     func showStudyDetail(id: String) {
         let detail = StudyDetailCoordinator(id: id, navigationController)
-        coordinator(to: detail)
+        coordinate(to: detail)
             .subscribe()
             .disposed(by: disposeBag)
     }

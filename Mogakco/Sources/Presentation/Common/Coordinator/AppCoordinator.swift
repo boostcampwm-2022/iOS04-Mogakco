@@ -34,7 +34,7 @@ final class AppCoordinator: BaseCoordinator<Void> {
     private func showLogin() {
         navigationController.setNavigationBarHidden(true, animated: true)
         let login = MLoginCoordinator(navigationController)
-        coordinator(to: login)
+        coordinate(to: login)
             .subscribe(onNext: { [weak self] in
                 switch $0 {
                 case .finish:
@@ -47,7 +47,7 @@ final class AppCoordinator: BaseCoordinator<Void> {
     private func showTab() {
         navigationController.setNavigationBarHidden(true, animated: true)
         let tab = TabCoordinator(navigationController)
-        coordinator(to: tab)
+        coordinate(to: tab)
             .subscribe(onNext: { [weak self] in
                 switch $0 {
                 case .finish:
