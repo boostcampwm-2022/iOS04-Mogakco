@@ -20,6 +20,7 @@ final class CreateStudyViewController: ViewController {
         static let textFieldHeight = Layout.textFieldHeight + 38
         static let textViewHeight = 120
         static let selectViewHeight = 40
+        static let collectionViewHeight = 100
     }
     
     private let scrollView = UIScrollView().then {
@@ -86,7 +87,7 @@ final class CreateStudyViewController: ViewController {
         $0.register(HashtagBadgeCell.self, forCellWithReuseIdentifier: HashtagBadgeCell.identifier)
         $0.showsHorizontalScrollIndicator = false
         $0.snp.makeConstraints {
-            $0.height.equalTo(200)
+            $0.height.equalTo(Constant.collectionViewHeight)
         }
     }
     
@@ -165,9 +166,8 @@ final class CreateStudyViewController: ViewController {
             .bind(to: self.languageCollectionView.rx.items(
                 cellIdentifier: HashtagBadgeCell.identifier,
                 cellType: HashtagBadgeCell.self
-            )) { [weak self] _, hashtag, cell in
+            )) { _, hashtag, cell in
                 cell.setHashtag(hashtag: hashtag)
-                self?.updateLayout()
             }
             .disposed(by: disposeBag)
         
@@ -177,14 +177,6 @@ final class CreateStudyViewController: ViewController {
                 viewController.categorySelect.content = hashtag.title
             }
             .disposed(by: disposeBag)
-    }
-    
-    private func updateLayout() {
-        languageCollectionView.layoutIfNeeded()
-        let height = languageCollectionView.contentSize.height
-        languageCollectionView.snp.updateConstraints {
-            $0.height.equalTo(height)
-        }
     }
     
     // MARK: - Methods
