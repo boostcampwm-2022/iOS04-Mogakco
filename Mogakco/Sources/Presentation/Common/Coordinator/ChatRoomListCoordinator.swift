@@ -53,7 +53,7 @@ final class ChatRoomListCoordinator: BaseCoordinator<ChatRoomListCoordinatorResu
     
     func showChatRoom(id: String) {
         let chatRoom = ChatRoomCoordinator(id: id, navigationController)
-        coordinator(to: chatRoom)
+        coordinate(to: chatRoom)
             .subscribe(onNext: {
                 switch $0 {
                 case .back: break

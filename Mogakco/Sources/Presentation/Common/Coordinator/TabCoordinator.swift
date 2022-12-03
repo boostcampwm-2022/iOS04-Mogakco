@@ -79,21 +79,21 @@ final class TabCoordinator: BaseCoordinator<TabCoordinatorResult> {
     
     private func showStudyList(_ root: UINavigationController) {
         let child = StudyListCoordinator(root)
-        coordinator(to: child)
+        coordinate(to: child)
             .subscribe()
             .disposed(by: disposeBag)
     }
     
     private func showChatRoomList(_ root: UINavigationController) {
         let child = ChatRoomListCoordinator(root)
-        coordinator(to: child)
+        coordinate(to: child)
             .subscribe()
             .disposed(by: disposeBag)
     }
     
     private func showProfile(_ root: UINavigationController) {
         let child = ProfileCoordinator(type: .current, hideTabbar: false, root)
-        coordinator(to: child)
+        coordinate(to: child)
             .subscribe()
             .disposed(by: disposeBag)
     }
