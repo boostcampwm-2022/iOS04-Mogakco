@@ -11,6 +11,11 @@ import Foundation
 import RxSwift
 import RxCocoa
 
+enum LoginNavigation {
+    case signup
+    case finish
+}
+
 final class LoginViewModel: ViewModel {
     
     struct Input {
@@ -24,19 +29,12 @@ final class LoginViewModel: ViewModel {
         let presentError: Signal<String>
     }
     
-    var disposeBag = DisposeBag()
     private let loginUseCase: LoginUseCaseProtocol
-    private let signUpObserver: AnyObserver<Void>?
-    private let loginObserver: AnyObserver<Bool>?
+    let navigation = PublishSubject<LoginNavigation>()
+    var disposeBag = DisposeBag()
     
-    init(
-        loginUseCase: LoginUseCaseProtocol,
-        signUpObserver: AnyObserver<Void>? = nil,
-        loginObserver: AnyObserver<Bool>? = nil
-    ) {
+    init(loginUseCase: LoginUseCaseProtocol) {
         self.loginUseCase = loginUseCase
-        self.signUpObserver = signUpObserver
-        self.loginObserver = loginObserver
     }
     
     func transform(input: Input) -> Output {
@@ -54,9 +52,8 @@ final class LoginViewModel: ViewModel {
             .disposed(by: disposeBag)
         
         input.signupButtonTap
-            .subscribe(onNext: { [weak self] in
-                self?.signUpObserver?.onNext(())
-            })
+            .map { LoginNavigation.signup }
+            .bind(to: navigation)
             .disposed(by: disposeBag)
         
         input.loginButtonTap
@@ -65,7 +62,7 @@ final class LoginViewModel: ViewModel {
             .subscribe(onNext: { [weak self] in
                 switch $0 {
                 case .success:
-                    self?.loginObserver?.onNext(true)
+                    self?.navigation.onNext(.finish)
                 case .failure(let error):
                     presentAlert.onNext(error)
                 }

@@ -152,7 +152,8 @@ final class CreateStudyViewController: ViewController {
             date: date.asObserver(),
             categoryButtonTapped: categorySelect.button.rx.tap.asObservable(),
             languageButtonTapped: languageSelect.button.rx.tap.asObservable(),
-            createButtonTapped: createButton.rx.tap.asObservable()
+            createButtonTapped: createButton.rx.tap.asObservable(),
+            backButtonTapped: backButton.rx.tap.asObservable()
         )
         
         let output = viewModel.transform(input: input)

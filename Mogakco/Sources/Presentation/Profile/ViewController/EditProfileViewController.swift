@@ -47,11 +47,11 @@ final class EditProfileViewController: ViewController {
         $0.setTitle("완료", for: .normal)
     }
     
-    private var viewModel: EditProfiileViewModel
+    private var viewModel: EditProfileViewModel
     private let imagePicker = UIImagePickerController()
     private let selectedProfileImage = PublishRelay<UIImage>()
     
-    init(viewModel: EditProfiileViewModel) {
+    init(viewModel: EditProfileViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
@@ -78,11 +78,12 @@ final class EditProfileViewController: ViewController {
     }
     
     override func bind() {
-        let input = EditProfiileViewModel.Input(
+        let input = EditProfileViewModel.Input(
             name: nameCountTextField.rx.text.orEmpty.asObservable(),
             introduce: introuceCountTextView.rx.text.orEmpty.asObservable(),
             selectedProfileImage: selectedProfileImage.asObservable(),
-            completeButtonTapped: completeButton.rx.tap.asObservable()
+            completeButtonTapped: completeButton.rx.tap.asObservable(),
+            backButtonTapped: backButton.rx.tap.asObservable()
         )
         
         let output = viewModel.transform(input: input)

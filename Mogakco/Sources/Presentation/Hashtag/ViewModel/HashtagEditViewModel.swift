@@ -12,19 +12,16 @@ import RxSwift
 import RxCocoa
 
 class HashtagEditViewModel: HashtagViewModel {
-    
-    weak var coordinator: ProfileTabCoordinatorProtocol?
-    weak var delegate: HashtagSelectProtocol?
+
     let editProfileUseCase: EditProfileUseCaseProtocol
+    let finish = PublishSubject<Void>()
     
      init(
-        coordinator: ProfileTabCoordinatorProtocol,
         hashTagUsecase: HashtagUseCaseProtocol,
         editProfileUseCase: EditProfileUseCaseProtocol,
         selectedHashtag: [Hashtag] = []
      ) {
          self.editProfileUseCase = editProfileUseCase
-         self.coordinator = coordinator
          super.init(hashTagUsecase: hashTagUsecase)
          self.selectedHashtag = selectedHashtag
     }
@@ -34,6 +31,12 @@ class HashtagEditViewModel: HashtagViewModel {
         input.nextButtonTapped
             .subscribe(onNext: { [weak self] in
                 self?.tapButton()
+            })
+            .disposed(by: disposeBag)
+        
+        input.backButtonTapped
+            .subscribe(onNext: { [weak self] in
+                self?.finish.onNext(())
             })
             .disposed(by: disposeBag)
       
@@ -52,7 +55,7 @@ class HashtagEditViewModel: HashtagViewModel {
         
         changeProfile
             .subscribe(onNext: { [weak self] in
-                self?.coordinator?.editFinished()
+                self?.finish.onNext(())
             })
             .disposed(by: disposeBag)
     }

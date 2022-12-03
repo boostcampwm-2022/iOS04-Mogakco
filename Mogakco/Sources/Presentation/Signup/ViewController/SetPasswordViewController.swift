@@ -75,6 +75,7 @@ final class SetPasswordViewController: ViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         title = Constant.navigationTitle
+        navigationController?.isNavigationBarHidden = false
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -86,7 +87,8 @@ final class SetPasswordViewController: ViewController {
         let input = SetPasswordViewModel.Input(
             password: passwordTextField.rx.text.orEmpty.asObservable(),
             passwordCheck: passwordCheckTextField.rx.text.orEmpty.asObservable(),
-            nextButtonTapped: button.rx.tap.asObservable()
+            nextButtonTapped: button.rx.tap.asObservable(),
+            backButtonTapped: backButton.rx.tap.asObservable()
         )
         
         let output = viewModel.transform(input: input)
