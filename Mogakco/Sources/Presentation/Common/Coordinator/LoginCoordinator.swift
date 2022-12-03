@@ -62,7 +62,7 @@ final class MLoginCoordinator: BaseCoordinator<LoginCoordinatorResult> {
     func showEmail() {
         let email = EmailCoordinator(navigationController)
         
-        coordinator(to: email)
+        coordinate(to: email)
             .subscribe(onNext: { [weak self] in
                 switch $0 {
                 case .finish(let result):

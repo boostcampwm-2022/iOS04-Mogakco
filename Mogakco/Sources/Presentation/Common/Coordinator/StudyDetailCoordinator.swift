@@ -81,7 +81,7 @@ final class StudyDetailCoordinator: BaseCoordinator<StudyDetailCoordinatorResult
     
     func showChatRoom(id: String) {
         let chatRoom = ChatRoomCoordinator(id: id, navigationController)
-        coordinator(to: chatRoom)
+        coordinate(to: chatRoom)
             .subscribe(onNext: {
                 switch $0 {
                 case .back: break
@@ -94,7 +94,7 @@ final class StudyDetailCoordinator: BaseCoordinator<StudyDetailCoordinatorResult
     
     func showProfile(type: ProfileType) {
         let profile = ProfileCoordinator(type: type, hideTabbar: true, navigationController)
-        coordinator(to: profile)
+        coordinate(to: profile)
             .subscribe()
             .disposed(by: disposeBag)
     }

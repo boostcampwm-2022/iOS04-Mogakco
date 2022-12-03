@@ -56,7 +56,7 @@ final class EmailCoordinator: BaseCoordinator<EmailCoordinatorResult> {
         let emailProps = EmailProps(email: email)
         let password = PasswordCoordinator(emailProps, navigationController)
         
-        coordinator(to: password)
+        coordinate(to: password)
             .subscribe(onNext: { [weak self] in
                 switch $0 {
                 case .finish(let result):

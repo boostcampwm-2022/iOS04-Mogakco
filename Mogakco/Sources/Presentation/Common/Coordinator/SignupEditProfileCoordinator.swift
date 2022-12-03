@@ -73,7 +73,7 @@ final class SignupEditProfileCoordinator: BaseCoordinator<SignupEditProfileCoord
         let profileProps = passwordProps.toProfileProps(profile: profile)
         let language = SignupLanguageHashtagCoordinator(profileProps, navigationController)
         
-        coordinator(to: language)
+        coordinate(to: language)
             .subscribe(onNext: { [weak self] in
                 switch $0 {
                 case .finish(let result):
