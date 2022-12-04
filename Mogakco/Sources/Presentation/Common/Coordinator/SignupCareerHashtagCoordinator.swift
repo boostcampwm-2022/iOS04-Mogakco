@@ -37,26 +37,9 @@ final class SignupCareerHashtagCoordinator: BaseCoordinator<SignupCareerHashtagC
     }
     
     func showCareerHashtag() {
-        let viewModel = HashtagSelectedViewModel(
-            hashTagUsecase: HashtagUsecase(
-                hashtagRepository: HashtagRepository(
-                    localHashtagDataSource: HashtagDataSource())
-            ),
-            signUpUseCase: SignupUseCase(
-                authRepository: AuthRepository(
-                    authService: FBAuthService(provider: Provider.default)
-                ),
-                userRepository: UserRepository(
-                    localUserDataSource: UserDefaultsUserDataSource(),
-                    remoteUserDataSource: RemoteUserDataSource(provider: Provider.default)
-                ),
-                tokenRepository: TokenRepository(
-                    keychainManager: KeychainManager(keychain: Keychain())
-                )
-            ),
-            lanugageProps: languageProps
-        )
-        
+        guard let viewModel = DIContainer.shared.container.resolve(HashtagSelectedViewModel.self) else { return }
+        viewModel.languageProps = languageProps
+
         viewModel.navigation
             .subscribe(onNext: { [weak self] in
                 switch $0 {

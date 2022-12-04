@@ -39,13 +39,8 @@ final class SignupLanguageHashtagCoordinator: BaseCoordinator<SignupLanguageHash
     // MARK: - 언어 선택
     
     private func showLanguageHashtag() {
-        let viewModel = HashtagSelectedViewModel(
-            hashTagUsecase: HashtagUsecase(
-                hashtagRepository: HashtagRepository(
-                    localHashtagDataSource: HashtagDataSource())
-            )
-        )
-        
+        guard let viewModel = DIContainer.shared.container.resolve(HashtagSelectedViewModel.self) else { return }
+
         viewModel.navigation
             .subscribe(onNext: { [weak self] in
                 switch $0 {

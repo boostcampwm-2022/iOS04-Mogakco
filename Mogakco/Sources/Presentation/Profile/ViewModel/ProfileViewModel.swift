@@ -148,8 +148,7 @@ final class ProfileViewModel: ViewModel {
         
         input.chatButtonTapped
             .withLatestFrom(user.compactMap { $0 })
-            .compactMap { [weak self] in self?.createChatRoomUseCase?.create(otherUser: $0) }
-            .flatMap { $0 }
+            .flatMap { [weak self] in self?.createChatRoomUseCase?.create(otherUser: $0) ?? .empty() }
             .map { .chatRoom(id: $0.id) }
             .bind(to: navigation)
             .disposed(by: disposeBag)

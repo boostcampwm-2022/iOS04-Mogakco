@@ -10,22 +10,14 @@ import RxSwift
 
 struct ChatUseCase: ChatUseCaseProtocol {
 
-    private let chatRepository: ChatRepositoryProtocol
-    private let userRepository: UserRepositoryProtocol
+    var chatRepository: ChatRepositoryProtocol?
+    var userRepository: UserRepositoryProtocol?
     private let disposeBag = DisposeBag()
 
-    init(
-        chatRepository: ChatRepositoryProtocol,
-        userRepository: UserRepositoryProtocol
-    ) {
-        self.chatRepository = chatRepository
-        self.userRepository = userRepository
-    }
-    
     func fetchAll(chatRoomID: String) -> Observable<[Chat]> {
-        let users = userRepository.allUsers()
-        let myUser = userRepository.load()
-        let chats = chatRepository.fetchAll(chatRoomID: chatRoomID)
+        let users = userRepository?.allUsers() ?? .empty()
+        let myUser = userRepository?.load() ?? .empty()
+        let chats = chatRepository?.fetchAll(chatRoomID: chatRoomID) ?? .empty()
         return Observable.zip(users, myUser, chats)
             .map { users, myUser, chats in
                 return chats.map {
@@ -40,9 +32,9 @@ struct ChatUseCase: ChatUseCaseProtocol {
     }
     
     func reload(chatRoomID: String) -> Observable<[Chat]> {
-        let users = userRepository.allUsers()
-        let myUser = userRepository.load()
-        let chats = chatRepository.reload(chatRoomID: chatRoomID)
+        let users = userRepository?.allUsers() ?? .empty()
+        let myUser = userRepository?.load() ?? .empty()
+        let chats = chatRepository?.reload(chatRoomID: chatRoomID) ?? .empty()
         return Observable.zip(users, myUser, chats)
             .map { users, myUser, chats in
                 return chats.map {
@@ -57,27 +49,27 @@ struct ChatUseCase: ChatUseCaseProtocol {
     }
     
     func observe(chatRoomID: String) -> Observable<Chat> {
-        return chatRepository
+        return chatRepository?
             .observe(chatRoomID: chatRoomID)
             .flatMap {
                 var chat = $0
                 return Observable.combineLatest(
-                    userRepository.user(id: chat.userID),
-                    userRepository.load()
+                    userRepository?.user(id: chat.userID) ?? .empty(),
+                    userRepository?.load() ?? .empty()
                 )
                 .map { chatUser, myUser in
                     chat.user = chatUser
                     chat.isFromCurrentUser = chatUser.id == myUser.id
                     return chat
                 }
-            }
+            } ?? .empty()
     }
     
     func send(chat: Chat, to chatRoomID: String) -> Observable<Void> {
-        return chatRepository.send(chat: chat, to: chatRoomID)
+        return chatRepository?.send(chat: chat, to: chatRoomID) ?? .empty()
     }
     
     func myProfile() -> Observable<User> {
-        return userRepository.load()
+        return userRepository?.load() ?? .empty()
     }
 }

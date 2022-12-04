@@ -27,20 +27,7 @@ final class LoginCoordinator: BaseCoordinator<LoginCoordinatorResult> {
     // MARK: - 로그인
     
     func showLogin() {
-        let viewModel = LoginViewModel(
-            loginUseCase: LoginUseCase(
-                authRepository: AuthRepository(
-                    authService: FBAuthService(provider: Provider.default)
-                ),
-                userRepository: UserRepository(
-                    localUserDataSource: UserDefaultsUserDataSource(),
-                    remoteUserDataSource: RemoteUserDataSource(provider: Provider.default)
-                ),
-                tokenRepository: TokenRepository(
-                    keychainManager: KeychainManager(keychain: Keychain())
-                )
-            )
-        )
+        guard let viewModel = DIContainer.shared.container.resolve(LoginViewModel.self) else { return }
         
         viewModel.navigation
             .subscribe(onNext: { [weak self] in

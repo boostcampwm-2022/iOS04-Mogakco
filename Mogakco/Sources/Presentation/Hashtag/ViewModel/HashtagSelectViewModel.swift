@@ -19,20 +19,10 @@ enum HashtagSelectedeNavigation {
 
 class HashtagSelectedViewModel: HashtagViewModel {
     
-    private let signUseCase: SignupUseCaseProtocol?
-    private let languageProps: LanguageProps?
+    var signUseCase: SignupUseCaseProtocol?
+    var languageProps: LanguageProps?
     let navigation = PublishSubject<HashtagSelectedeNavigation>()
-    
-    init(
-        hashTagUsecase: HashtagUseCaseProtocol,
-        signUpUseCase: SignupUseCaseProtocol? = nil,
-        lanugageProps: LanguageProps? = nil
-    ) {
-        self.signUseCase = signUpUseCase
-        self.languageProps = lanugageProps
-        super.init(hashTagUsecase: hashTagUsecase)
-    }
-    
+
     override func transform(input: Input) -> Output {
 
         input.nextButtonTapped

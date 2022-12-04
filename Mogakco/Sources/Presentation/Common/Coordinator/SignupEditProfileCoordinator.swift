@@ -39,16 +39,8 @@ final class SignupEditProfileCoordinator: BaseCoordinator<SignupEditProfileCoord
     // MARK: - 프로필
     
     func showProfile() {
-        let userRepository = UserRepository(
-            localUserDataSource: UserDefaultsUserDataSource(),
-            remoteUserDataSource: RemoteUserDataSource(provider: Provider.default)
-        )
-        
-        let viewModel = EditProfileViewModel(
-            type: .create,
-            profileUseCase: ProfileUseCase(userRepository: userRepository),
-            editProfileUseCase: EditProfileUseCase(userRepository: userRepository)
-        )
+        guard let viewModel = DIContainer.shared.container.resolve(EditProfileViewModel.self) else { return }
+        viewModel.type = .create
         
         viewModel.navigation
             .subscribe(onNext: { [weak self] in

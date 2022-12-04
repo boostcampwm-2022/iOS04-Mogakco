@@ -10,13 +10,9 @@ import RxSwift
 
 struct StudyDetailUseCase: StudyDetailUseCaseProtocol {
     
-    private let repository: StudyRepositoryProtocol
-    
-    init(repository: StudyRepositoryProtocol) {
-        self.repository = repository
-    }
-    
+    var studyRepository: StudyRepositoryProtocol?
+
     func study(id: String) -> Observable<Study> {
-        return repository.detail(id: id)
+        return studyRepository?.detail(id: id) ?? .empty()
     }
 }

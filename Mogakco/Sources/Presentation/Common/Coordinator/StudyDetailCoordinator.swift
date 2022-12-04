@@ -33,33 +33,9 @@ final class StudyDetailCoordinator: BaseCoordinator<StudyDetailCoordinatorResult
     // MARK: - 스터디 상세
     
     func showStudyDetail() {
-        let studyRepository = StudyRepository(
-            studyDataSource: StudyDataSource(provider: Provider.default),
-            localUserDataSource: UserDefaultsUserDataSource(),
-            remoteUserDataSource: RemoteUserDataSource(provider: Provider.default),
-            chatRoomDataSource: ChatRoomDataSource(provider: Provider.default)
-        )
-        
-        let viewModel = StudyDetailViewModel(
-            studyID: id,
-            studyUsecase: StudyDetailUseCase(repository: studyRepository),
-            hashtagUseCase: HashtagUsecase(
-                hashtagRepository: HashtagRepository(
-                    localHashtagDataSource: HashtagDataSource()
-                )
-            ),
-            userUseCase: UserUseCase(
-                userRepository: UserRepository(
-                    localUserDataSource: UserDefaultsUserDataSource(),
-                    remoteUserDataSource: RemoteUserDataSource(provider: Provider.default)
-                ),
-                studyRepository: studyRepository
-            ),
-            joinStudyUseCase: JoinStudyUseCase(
-                studyRepository: studyRepository
-            )
-        )
-        
+        guard let viewModel = DIContainer.shared.container.resolve(StudyDetailViewModel.self) else { return }
+        viewModel.studyID = id
+
         viewModel.navigation
             .subscribe(onNext: { [weak self] in
                 switch $0 {

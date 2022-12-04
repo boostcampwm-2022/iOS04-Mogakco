@@ -10,11 +10,7 @@ import Foundation
 
 struct KeychainManager: KeychainManagerProtocol {
     
-    private let keychain: KeychainProtocol
-    
-    init(keychain: KeychainProtocol) {
-        self.keychain = keychain
-    }
+    var keychain: KeychainProtocol?
     
     func save(key: String, data: Data) -> Bool {
         let query: [String: Any] = [
@@ -23,7 +19,7 @@ struct KeychainManager: KeychainManagerProtocol {
             kSecValueData as String: data
         ]
         
-        let status = keychain.add(query)
+        let status = keychain?.add(query)
         return status == errSecSuccess ? true : false
     }
     
@@ -35,7 +31,7 @@ struct KeychainManager: KeychainManagerProtocol {
             kSecMatchLimit as String: kSecMatchLimitOne
         ]
         
-        return keychain.search(query)
+        return keychain?.search(query)
     }
     
     func delete(key: String, data: Data) -> Bool {
@@ -45,7 +41,7 @@ struct KeychainManager: KeychainManagerProtocol {
             kSecValueData as String: data
         ]
         
-        let status = keychain.delete(query)
+        let status = keychain?.delete(query)
         return status == errSecSuccess ? true : false
     }
     
@@ -60,7 +56,7 @@ struct KeychainManager: KeychainManagerProtocol {
             kSecValueData as String: data
         ]
 
-        let status = keychain.update(query, with: attributes)
+        let status = keychain?.update(query, with: attributes)
         return status == errSecSuccess ? true : false
     }
 }
