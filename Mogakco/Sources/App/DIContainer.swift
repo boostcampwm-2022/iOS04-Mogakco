@@ -33,13 +33,17 @@ final class DIContainer {
         container.register(ChatRoomDataSourceProtocol.self) { _ in ChatRoomDataSource(provider: provider) }
         container.register(HashtagDataSourceProtocol.self) { _ in HashtagDataSource() }
         container.register(KeychainProtocol.self) { _ in Keychain() }
-        container.register(KeychainManagerProtocol.self) { _ in KeychainManager() }
+        container.register(KeychainManagerProtocol.self) { resolver in
+            var dataSource = KeychainManager()
+            dataSource.keychain = resolver.resolve(KeychainProtocol.self)
+            return dataSource
+        }
     }
     
     private func registerRepositories() {
         container.register(TokenRepositoryProtocol.self) { resolver in
             var repository = TokenRepository()
-            repository.keychainManager = resolver.resolve(KeychainManager.self)
+            repository.keychainManager = resolver.resolve(KeychainManagerProtocol.self)
             return repository
         }
         container.register(AuthRepositoryProtocol.self) { resolver in
@@ -233,7 +237,11 @@ final class DIContainer {
             viewModel.hashTagUsecase = resolver.resolve(HashtagUseCaseProtocol.self)
             return viewModel
         }
-        
-        
+        container.register(ProfileViewModel.self) { resolver in
+            let viewModel = ProfileViewModel()
+            viewModel.userUseCase = resolver.resolve(UserUseCaseProtocol.self)
+            viewModel.createChatRoomUseCase = resolver.resolve(CreateChatRoomUseCaseProtocol.self)
+            return viewModel
+        }
     }
 }
