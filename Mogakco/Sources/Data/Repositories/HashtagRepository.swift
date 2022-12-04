@@ -12,17 +12,13 @@ import RxSwift
 
 struct HashtagRepository: HashtagRepositoryProtocol {
     
-    let localHashtagDataSource: HashtagDataSourceProtocol
-    
-    init(localHashtagDataSource: HashtagDataSourceProtocol) {
-        self.localHashtagDataSource = localHashtagDataSource
-    }
-    
+    var localHashtagDataSource: HashtagDataSourceProtocol?
+
     func loadTagList(kind: KindHashtag) -> Observable<[Hashtag]> {
-        return localHashtagDataSource.loadTagList(kind: kind)
+        return localHashtagDataSource?.loadTagList(kind: kind) ?? .empty()
     }
     
     func loadHashtagByString(kind: KindHashtag, tagTitle: [String]) -> Observable<[Hashtag]> {
-        return localHashtagDataSource.loadHashtagByString(kind: kind, tagTitle: tagTitle)
+        return localHashtagDataSource?.loadHashtagByString(kind: kind, tagTitle: tagTitle) ?? .empty()
     }
 }

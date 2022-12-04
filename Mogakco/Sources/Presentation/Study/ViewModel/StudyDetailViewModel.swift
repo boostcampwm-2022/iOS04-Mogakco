@@ -31,56 +31,42 @@ final class StudyDetailViewModel: ViewModel {
     }
     
     var disposeBag = DisposeBag()
-    private let studyID: String
-    private let studyUseCase: StudyDetailUseCaseProtocol
-    private let hashtagUseCase: HashtagUseCaseProtocol
-    private let userUseCase: UserUseCaseProtocol
-    private let joinStudyUseCase: JoinStudyUseCaseProtocol
+    var studyID: String = ""
+    var studyDetailUseCase: StudyDetailUseCaseProtocol?
+    var hashtagUseCase: HashtagUseCaseProtocol?
+    var userUseCase: UserUseCaseProtocol?
+    var joinStudyUseCase: JoinStudyUseCaseProtocol?
     
     let navigation = PublishSubject<StudyDetailNavigation>()
     var languages = BehaviorSubject<[Hashtag]>(value: [])
     var participants = BehaviorSubject<[User]>(value: [])
     var languageCount: Int { (try? languages.value().count) ?? 0 }
     var participantsCount: Int { (try? participants.value().count) ?? 0 }
-    
-    init(
-        studyID: String,
-        studyUsecase: StudyDetailUseCaseProtocol,
-        hashtagUseCase: HashtagUseCaseProtocol,
-        userUseCase: UserUseCaseProtocol,
-        joinStudyUseCase: JoinStudyUseCase
-    ) {
-        self.studyID = studyID
-        self.studyUseCase = studyUsecase
-        self.hashtagUseCase = hashtagUseCase
-        self.userUseCase = userUseCase
-        self.joinStudyUseCase = joinStudyUseCase
-    }
-    
+
     func transform(input: Input) -> Output {
         // TODO: 유저 UseCase에서 불러오기, 언어 불러오기 바인딩
         let languageReload = PublishSubject<Void>()
         let userReload = PublishSubject<Void>()
         let studyDetailLoad = PublishSubject<Study>()
         
-        studyUseCase.study(id: studyID)
+        studyDetailUseCase?.study(id: studyID)
             .bind(to: studyDetailLoad)
             .disposed(by: disposeBag)
         
         studyDetailLoad
             .withUnretained(self)
             .flatMap {
-                $0.0.hashtagUseCase.loadHashtagByString(
+                $0.0.hashtagUseCase?.loadHashtagByString(
                     kind: .language,
                     tagTitle: $0.1.languages
-                )
+                ) ?? .empty()
             }
             .bind(to: languages)
             .disposed(by: disposeBag)
         
         studyDetailLoad
             .withUnretained(self)
-            .flatMap { $0.0.userUseCase.users(ids: $0.1.userIDs) }
+            .flatMap { $0.0.userUseCase?.users(ids: $0.1.userIDs) ?? .empty() }
             .bind(to: participants)
             .disposed(by: disposeBag)
         
@@ -96,7 +82,7 @@ final class StudyDetailViewModel: ViewModel {
         
         input.studyJoinButtonTapped
             .withUnretained(self)
-            .flatMap { $0.0.joinStudyUseCase.join(id: $0.0.studyID) }
+            .flatMap { $0.0.joinStudyUseCase?.join(id: $0.0.studyID) ?? .empty() }
             .withUnretained(self)
             .subscribe(onNext: {
                 $0.0.navigation.onNext(.chatRoom(id: $0.0.studyID))

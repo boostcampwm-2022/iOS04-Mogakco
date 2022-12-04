@@ -33,8 +33,8 @@ final class EmailCoordinator: BaseCoordinator<EmailCoordinatorResult> {
     // MARK: - 이메일
     
     func showEmail() {
-        let viewModel = SetEmailViewModel()
-        
+        guard let viewModel = DIContainer.shared.container.resolve(SetEmailViewModel.self) else { return }
+
         viewModel.navigation
             .subscribe(onNext: { [weak self] in
                 switch $0 {

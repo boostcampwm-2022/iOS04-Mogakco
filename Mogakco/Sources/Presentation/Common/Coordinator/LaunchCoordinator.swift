@@ -17,20 +17,13 @@ enum LaunchCoordinatorResult {
 final class LaunchCoordinator: BaseCoordinator<LaunchCoordinatorResult> {
     
     override func start() -> Observable<LaunchCoordinatorResult> {
+        guard let viewModel = DIContainer.shared.container.resolve(LaunchScreenViewModel.self) else {
+            return .empty()
+        }
         
         let finish = PublishSubject<Bool>()
-        
-        let viewModel = LaunchScreenViewModel(
-            autoLoginUseCase: AutoLoginUseCase(
-                userRepository: UserRepository(
-                    localUserDataSource: UserDefaultsUserDataSource(),
-                    remoteUserDataSource: RemoteUserDataSource(provider: Provider.default)),
-                tokenRepository: TokenRepository(
-                    keychainManager: KeychainManager(keychain: Keychain())
-                )
-            ),
-            finishObserver: finish.asObserver()
-        )
+        viewModel.finishObserver = finish.asObserver()
+
         let viewController = LaunchScreenViewController(viewModel: viewModel)
         push(viewController, animated: true)
         

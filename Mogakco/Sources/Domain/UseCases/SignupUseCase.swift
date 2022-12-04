@@ -16,31 +16,21 @@ struct SignupUseCase: SignupUseCaseProtocol {
         case imageCompress
     }
     
-    private let authRepository: AuthRepositoryProtocol
-    private let userRepository: UserRepositoryProtocol
-    private let tokenRepository: TokenRepositoryProtocol
+    var authRepository: AuthRepositoryProtocol?
+    var userRepository: UserRepositoryProtocol?
+    var tokenRepository: TokenRepositoryProtocol?
     private let disposeBag = DisposeBag()
-    
-    init(
-        authRepository: AuthRepositoryProtocol,
-        userRepository: UserRepositoryProtocol,
-        tokenRepository: TokenRepositoryProtocol
-    ) {
-        self.authRepository = authRepository
-        self.userRepository = userRepository
-        self.tokenRepository = tokenRepository
-    }
-    
+
     func signup(signupProps: SignupProps) -> Observable<Void> {
         guard let imageData = signupProps.profileImage.jpegData(compressionQuality: 0.5) else {
             return Observable<Void>.error(SignupUseCaseError.imageCompress)
         }
-        return authRepository.signup(signupProps: signupProps)
-            .flatMap { tokenRepository.save($0) }
+        return authRepository?.signup(signupProps: signupProps)
+            .flatMap { tokenRepository?.save($0) ?? .empty() }
             .compactMap { $0 }
             .map { $0.localId }
             .map { User(id: $0, signupProps: signupProps) }
-            .flatMap { userRepository.create(user: $0, imageData: imageData) }
-            .flatMap { userRepository.save(user: $0) }
+            .flatMap { userRepository?.create(user: $0, imageData: imageData) ?? .empty() }
+            .flatMap { userRepository?.save(user: $0) ?? .empty() } ?? .empty()
     }
 }

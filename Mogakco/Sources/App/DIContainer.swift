@@ -10,9 +10,9 @@ import Foundation
 
 import Swinject
 
-final class DependencyInjector {
+final class DIContainer {
     
-    static let shared = DependencyInjector()
+    static let shared = DIContainer()
     let container = Container()
     private init() {}
     

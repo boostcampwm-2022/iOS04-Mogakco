@@ -12,7 +12,7 @@ import RxSwift
 
 protocol UserRepositoryProtocol {
     func save(user: User) -> Observable<Void>
-    func save(userUID: String) -> Observable<Void>
+    func save(userID: String) -> Observable<Void>
     func user(id: String) -> Observable<User>
     func allUsers() -> Observable<[User]>
     func load() -> Observable<User>

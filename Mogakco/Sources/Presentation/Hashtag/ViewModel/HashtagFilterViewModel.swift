@@ -15,14 +15,6 @@ class HashtagFilterViewModel: HashtagViewModel {
  
     let finish = PublishSubject<[Hashtag]>()
     
-    init(
-        hashTagUsecase: HashtagUseCaseProtocol,
-        selectedHashtag: [Hashtag]
-    ) {
-        super.init(hashTagUsecase: hashTagUsecase)
-        self.selectedHashtag = selectedHashtag
-    }
-    
     override func transform(input: Input) -> Output {
 
         input.nextButtonTapped
