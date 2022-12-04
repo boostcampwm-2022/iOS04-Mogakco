@@ -6,19 +6,21 @@
 //
 
 import UIKit
+
 import FirebaseCore
+import Swinject
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
     var window: UIWindow?
-    
+
     func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
         FirebaseApp.configure()
-        
+        DependencyInjector.shared.inject()
         return true
     }
 }
