@@ -53,24 +53,14 @@ final class ProfileViewModel: ViewModel {
         let studyRatingList: Driver<[(String, Int)]>
     }
 
-    private let type: ProfileType
-    private let userUseCase: UserUseCase
-    private let createChatRoomUseCase: CreateChatRoomUseCase?
+    var type: ProfileType = .current
+    var userUseCase: UserUseCaseProtocol?
+    var createChatRoomUseCase: CreateChatRoomUseCaseProtocol?
     private let user = BehaviorSubject<User?>(value: nil)
     private let studyRatingList = BehaviorSubject<[(String, Int)]>(value: [])
     let navigation = PublishSubject<ProfileNavigation>()
     var disposeBag = DisposeBag()
- 
-    init(
-        type: ProfileType,
-        userUseCase: UserUseCase,
-        createChatRoomUseCase: CreateChatRoomUseCase?
-    ) {
-        self.type = type
-        self.userUseCase = userUseCase
-        self.createChatRoomUseCase = createChatRoomUseCase
-    }
-    
+
     func transform(input: Input) -> Output {
         bindUser(input: input)
         bindScene(input: input)
@@ -107,7 +97,7 @@ final class ProfileViewModel: ViewModel {
         input.viewWillAppear
             .filter { self.type == ProfileType.current }
             .withUnretained(self)
-            .flatMap { $0.0.userUseCase.myProfile() }
+            .flatMap { $0.0.userUseCase?.myProfile() ?? .empty() }
             .withUnretained(self)
             .subscribe(onNext: { viewModel, user in
                 viewModel.user.onNext(user)
@@ -132,7 +122,7 @@ final class ProfileViewModel: ViewModel {
         user
             .compactMap { $0?.studyIDs }
             .withUnretained(self)
-            .flatMap { $0.0.userUseCase.studyRatingList(studyIDs: $0.1) }
+            .flatMap { $0.0.userUseCase?.studyRatingList(studyIDs: $0.1) ?? .empty() }
             .withUnretained(self)
             .subscribe(onNext: { viewModel, studyRatingList in
                 viewModel.studyRatingList.onNext(studyRatingList)

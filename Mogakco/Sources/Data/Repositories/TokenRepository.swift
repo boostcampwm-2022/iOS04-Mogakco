@@ -23,7 +23,7 @@ struct TokenRepository: TokenRepositoryProtocol {
             }
             
             guard keychainManager?.save(key: auth.email, data: data) ?? false ||
-                    ((keychainManager?.update(key: auth.email, data: data)) != nil) else {
+                  keychainManager?.update(key: auth.email, data: data) ?? false else {
                 emitter.onNext(nil)
                 return Disposables.create()
             }

@@ -5,7 +5,7 @@ excluded:
   - Tuist
   - ./Mogakco/Sources/App/AppDelegate.swift
   - ./Mogakco/Sources/App/SceneDelegate.swift
-  - ./Mogakco/Sources/App/DependencyInjector.swift
+  - ./Mogakco/Sources/App/DIContainer.swift
   - Project.swift
 
 disabled_rules:

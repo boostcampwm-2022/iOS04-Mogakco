@@ -45,34 +45,8 @@ final class ProfileCoordinator: BaseCoordinator<ProfileCoordinatorResult> {
     // MARK: - 프로필
     
     func showProfile() {
-        let studyRepository = StudyRepository(
-            studyDataSource: StudyDataSource(provider: Provider.default),
-            localUserDataSource: UserDefaultsUserDataSource(),
-            remoteUserDataSource: RemoteUserDataSource(provider: Provider.default),
-            chatRoomDataSource: ChatRoomDataSource(provider: Provider.default)
-        )
-        
-        let viewModel = ProfileViewModel(
-            type: type,
-            userUseCase: UserUseCase(
-                userRepository: UserRepository(
-                    localUserDataSource: UserDefaultsUserDataSource(),
-                    remoteUserDataSource: RemoteUserDataSource(provider: Provider.default)
-                ),
-                studyRepository: studyRepository
-            ),
-            createChatRoomUseCase: CreateChatRoomUseCase(
-                chatRoomRepository: ChatRoomRepository(
-                    chatRoomDataSource: ChatRoomDataSource(provider: Provider.default),
-                    remoteUserDataSource: RemoteUserDataSource(provider: Provider.default),
-                    studyDataSource: StudyDataSource(provider: Provider.default)
-                ),
-                userRepository: UserRepository(
-                    localUserDataSource: UserDefaultsUserDataSource(),
-                    remoteUserDataSource: RemoteUserDataSource(provider: Provider.default)
-                )
-            )
-        )
+        guard let viewModel = DIContainer.shared.container.resolve(ProfileViewModel.self) else { return }
+        viewModel.type = type
         
         viewModel.navigation
             .subscribe(onNext: { [weak self] in
