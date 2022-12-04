@@ -12,48 +12,39 @@ import RxSwift
 
 struct UserRepository: UserRepositoryProtocol {
   
-    private var localUserDataSource: LocalUserDataSourceProtocol
-    private var remoteUserDataSource: RemoteUserDataSourceProtocol
+    var localUserDataSource: LocalUserDataSourceProtocol?
+    var remoteUserDataSource: RemoteUserDataSourceProtocol?
     private let disposeBag = DisposeBag()
-    
-    init(
-        localUserDataSource: LocalUserDataSourceProtocol,
-        remoteUserDataSource: RemoteUserDataSourceProtocol
-    ) {
-        self.localUserDataSource = localUserDataSource
-        self.remoteUserDataSource = remoteUserDataSource
-    }
 
     func save(user: User) -> Observable<Void> {
-        return localUserDataSource.save(user: user)
+        return localUserDataSource?.save(user: user) ?? .empty()
     }
     
-    func save(userUID: String) -> Observable<Void> {
-        return localUserDataSource.saveUID(userUID: userUID)
+    func save(userID: String) -> Observable<Void> {
+        return localUserDataSource?.saveID(userID: userID) ?? .empty()
     }
     
     func user(id: String) -> Observable<User> {
-        return remoteUserDataSource.user(id: id)
-            .map { $0.toDomain() }
+        return remoteUserDataSource?.user(id: id)
+            .map { $0.toDomain() } ?? .empty()
     }
     
     func allUsers() -> Observable<[User]> {
-        return remoteUserDataSource
-            .allUsers()
-            .map { $0.documents.map { $0.toDomain() } }
+        return remoteUserDataSource?.allUsers()
+            .map { $0.documents.map { $0.toDomain() } } ?? .empty()
     }
     
     func load() -> Observable<User> {
-        return localUserDataSource.load()
+        return localUserDataSource?.load() ?? .empty()
     }
     
     func create(user: User, imageData: Data) -> Observable<User> {
-        return remoteUserDataSource.uploadProfileImage(id: user.id, imageData: imageData)
+        return remoteUserDataSource?.uploadProfileImage(id: user.id, imageData: imageData)
             .map { $0.absoluteString }
             .map { User(profileImageURLString: $0, user: user) }
             .map { UserRequestDTO(user: $0) }
-            .flatMap { remoteUserDataSource.create(request: $0) }
-            .map { $0.toDomain() }
+            .flatMap { remoteUserDataSource?.create(request: $0) ?? .empty() }
+            .map { $0.toDomain() } ?? .empty()
     }
     
     func editProfile(
@@ -62,7 +53,7 @@ struct UserRepository: UserRepositoryProtocol {
         introduce: String,
         imageData: Data
     ) -> Observable<User> {
-        return remoteUserDataSource.uploadProfileImage(id: id, imageData: imageData)
+        return remoteUserDataSource?.uploadProfileImage(id: id, imageData: imageData)
             .map { $0.absoluteString }
             .map {
                 EditProfileRequestDTO(
@@ -71,26 +62,26 @@ struct UserRepository: UserRepositoryProtocol {
                     profileImageURLString: $0
                 )
             }
-            .flatMap { remoteUserDataSource.editProfile(id: id, request: $0) }
-            .map { $0.toDomain() }
+            .flatMap { remoteUserDataSource?.editProfile(id: id, request: $0) ?? .empty() }
+            .map { $0.toDomain() } ?? .empty()
     }
     
     func editLanguages(id: String, languages: [String]) -> Observable<User> {
         let request = EditLanguagesRequestDTO(languages: languages)
-        return remoteUserDataSource.editLanguages(id: id, request: request)
-            .map { $0.toDomain() }
+        return remoteUserDataSource?.editLanguages(id: id, request: request)
+            .map { $0.toDomain() } ?? .empty()
     }
     
     func editCareers(id: String, careers: [String]) -> Observable<User> {
         let request = EditCareersRequestDTO(careers: careers)
-        return remoteUserDataSource.editCareers(id: id, request: request)
-            .map { $0.toDomain() }
+        return remoteUserDataSource?.editCareers(id: id, request: request)
+            .map { $0.toDomain() } ?? .empty()
     }
     
     func editCategorys(id: String, categorys: [String]) -> Observable<User> {
         let request = EditCategorysRequestDTO(categorys: categorys)
-        return remoteUserDataSource.editCategorys(id: id, request: request)
-            .map { $0.toDomain() }
+        return remoteUserDataSource?.editCategorys(id: id, request: request)
+            .map { $0.toDomain() } ?? .empty()
     }
     
     func updateIDs(
@@ -99,8 +90,8 @@ struct UserRepository: UserRepositoryProtocol {
         studyIDs: [String]
     ) -> Observable<User> {
         let request = UpdateStudyIDsRequestDTO(chatRoomIDs: chatRoomIDs, studyIDs: studyIDs)
-        return remoteUserDataSource.updateIDs(id: id, request: request)
-            .map { $0.toDomain() }
+        return remoteUserDataSource?.updateIDs(id: id, request: request)
+            .map { $0.toDomain() } ?? .empty()
     }
 }
  

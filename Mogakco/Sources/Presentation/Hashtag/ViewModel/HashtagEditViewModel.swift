@@ -13,19 +13,9 @@ import RxCocoa
 
 class HashtagEditViewModel: HashtagViewModel {
 
-    let editProfileUseCase: EditProfileUseCaseProtocol
+    var editProfileUseCase: EditProfileUseCaseProtocol?
     let finish = PublishSubject<Void>()
-    
-     init(
-        hashTagUsecase: HashtagUseCaseProtocol,
-        editProfileUseCase: EditProfileUseCaseProtocol,
-        selectedHashtag: [Hashtag] = []
-     ) {
-         self.editProfileUseCase = editProfileUseCase
-         super.init(hashTagUsecase: hashTagUsecase)
-         self.selectedHashtag = selectedHashtag
-    }
-    
+
     override func transform(input: Input) -> Output {
         
         input.nextButtonTapped
@@ -48,9 +38,9 @@ class HashtagEditViewModel: HashtagViewModel {
         let changeProfile: Observable<Void>
         
         switch kind {
-        case .language: changeProfile = editProfileUseCase.editLanguages(languages: hashtagTitles)
-        case .career: changeProfile = editProfileUseCase.editCareers(careers: hashtagTitles)
-        case .category: changeProfile = editProfileUseCase.editCategorys(categorys: hashtagTitles)
+        case .language: changeProfile = editProfileUseCase?.editLanguages(languages: hashtagTitles) ?? .empty()
+        case .career: changeProfile = editProfileUseCase?.editCareers(careers: hashtagTitles) ?? .empty()
+        case .category: changeProfile = editProfileUseCase?.editCategorys(categorys: hashtagTitles) ?? .empty()
         }
         
         changeProfile

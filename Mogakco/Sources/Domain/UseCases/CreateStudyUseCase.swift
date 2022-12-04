@@ -12,14 +12,10 @@ import RxSwift
 
 struct CreateStudyUseCase: CreateStudyUseCaseProtocol {
     
-    private let studyRepository: StudyRepositoryProtocol
+    var studyRepository: StudyRepositoryProtocol?
     private let disposeBag = DisposeBag()
-    
-    init(studyRepository: StudyRepositoryProtocol) {
-        self.studyRepository = studyRepository
-    }
-    
+
     func create(study: Study) -> Observable<Study> {
-        return studyRepository.create(study: study)
+        return studyRepository?.create(study: study) ?? .empty()
     }
 }

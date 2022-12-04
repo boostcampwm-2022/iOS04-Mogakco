@@ -40,7 +40,7 @@ final class StudyListViewModel: ViewModel {
         let categorySelected: Driver<Bool>
     }
     
-    private let studyListUseCase: StudyListUseCaseProtocol
+    var studyListUseCase: StudyListUseCaseProtocol?
     private let studyList = PublishSubject<[Study]>()
     private let refreshFinished = PublishSubject<Void>()
     private let filters = BehaviorSubject<[StudyFilter]>(value: [])
@@ -50,11 +50,7 @@ final class StudyListViewModel: ViewModel {
     let categoryFilter = BehaviorSubject<[Hashtag]>(value: [])
     let navigation = PublishSubject<StudyListNavigation>()
     var disposeBag = DisposeBag()
-    
-    init(studyListUseCase: StudyListUseCaseProtocol) {
-        self.studyListUseCase = studyListUseCase
-    }
-    
+
     func transform(input: Input) -> Output {
         bindRefresh(input: input)
         bindFilterSort(input: input)
@@ -80,7 +76,7 @@ final class StudyListViewModel: ViewModel {
             .withUnretained(self)
             .flatMap { viewModel, arguments in
                 let (sort, filters) = arguments
-                return viewModel.studyListUseCase.list(sort: sort, filters: filters)
+                return viewModel.studyListUseCase?.list(sort: sort, filters: filters) ?? .empty()
             }
             .do { _ in self.refreshFinished.onNext(()) }
             .bind(to: studyList)

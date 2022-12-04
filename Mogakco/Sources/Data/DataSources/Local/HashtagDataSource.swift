@@ -11,6 +11,7 @@ import Foundation
 import RxSwift
 
 struct HashtagDataSource: HashtagDataSourceProtocol {
+ 
     func loadTagList(kind: KindHashtag) -> Observable<[Hashtag]> {
         return Observable.create { emitter in
             switch kind {

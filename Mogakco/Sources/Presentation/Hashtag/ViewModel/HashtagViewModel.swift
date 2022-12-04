@@ -24,7 +24,7 @@ class HashtagViewModel: ViewModel {
         let hashtagReload: Observable<Void>
     }
     
-    let hashTagUsecase: HashtagUseCaseProtocol
+    var hashTagUsecase: HashtagUseCaseProtocol?
     var disposeBag = DisposeBag()
     var selectedHashtag: [Hashtag] = []
     let badgeList = BehaviorSubject<[Hashtag]>(value: [])
@@ -35,8 +35,7 @@ class HashtagViewModel: ViewModel {
         return count
     }
     
-    init(hashTagUsecase: HashtagUseCaseProtocol) {
-        self.hashTagUsecase = hashTagUsecase
+    init() {
     }
     
     func transform(input: Input) -> Output {
@@ -76,7 +75,7 @@ class HashtagViewModel: ViewModel {
     }
     
     private func loadTagList(kind: KindHashtag) {
-        hashTagUsecase.loadTagList(kind: kind)
+        hashTagUsecase?.loadTagList(kind: kind)
             .subscribe { [weak self] in
                 self?.badgeList.onNext($0)
             }

@@ -10,19 +10,15 @@ import RxSwift
 
 struct ProfileUseCase: ProfileUseCaseProtocol {
 
-    private let userRepository: UserRepositoryProtocol
+    var userRepository: UserRepositoryProtocol?
     private let disposeBag = DisposeBag()
     
-    init(userRepository: UserRepositoryProtocol) {
-        self.userRepository = userRepository
-    }
-    
     func profile() -> Observable<User> {
-        return userRepository.load()
+        return userRepository?.load()
             .compactMap { $0.id }
-            .flatMap { userRepository.user(id: $0) }
+            .flatMap { userRepository?.user(id: $0) ?? .empty() }
             .do(onNext: {
-                _ = userRepository.save(user: $0)
-            })
+                _ = userRepository?.save(user: $0)
+            }) ?? .empty()
     }
 }

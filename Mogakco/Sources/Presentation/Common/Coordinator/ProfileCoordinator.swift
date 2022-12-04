@@ -101,16 +101,8 @@ final class ProfileCoordinator: BaseCoordinator<ProfileCoordinatorResult> {
     // MARK: - 프로필 수정
     
     func showEditProfile() {
-        let userRepository = UserRepository(
-            localUserDataSource: UserDefaultsUserDataSource(),
-            remoteUserDataSource: RemoteUserDataSource(provider: Provider.default)
-        )
-        
-        let viewModel = EditProfileViewModel(
-            type: .edit,
-            profileUseCase: ProfileUseCase(userRepository: userRepository),
-            editProfileUseCase: EditProfileUseCase(userRepository: userRepository)
-        )
+        guard let viewModel = DIContainer.shared.container.resolve(EditProfileViewModel.self) else { return }
+        viewModel.type = .edit
         
         viewModel.navigation
             .subscribe(onNext: { [weak self] in
@@ -130,20 +122,8 @@ final class ProfileCoordinator: BaseCoordinator<ProfileCoordinatorResult> {
     // MARK: - 프로필 해시태그 수정
     
     func showHashtag(kind: KindHashtag, selectedHashtag: [Hashtag]) {
-        let viewModel = HashtagEditViewModel(
-            hashTagUsecase: HashtagUsecase(
-                hashtagRepository: HashtagRepository(
-                    localHashtagDataSource: HashtagDataSource()
-                )
-            ),
-            editProfileUseCase: EditProfileUseCase(
-                userRepository: UserRepository(
-                    localUserDataSource: UserDefaultsUserDataSource(),
-                    remoteUserDataSource: RemoteUserDataSource(provider: Provider.default)
-                )
-            ),
-            selectedHashtag: selectedHashtag
-        )
+        guard let viewModel = DIContainer.shared.container.resolve(HashtagEditViewModel.self) else { return }
+        viewModel.selectedHashtag = selectedHashtag
         
         viewModel.finish
             .subscribe(onNext: { [weak self] in

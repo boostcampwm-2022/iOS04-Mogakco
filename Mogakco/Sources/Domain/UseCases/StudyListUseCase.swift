@@ -10,13 +10,9 @@ import RxSwift
 
 struct StudyListUseCase: StudyListUseCaseProtocol {
     
-    private let repository: StudyRepositoryProtocol
-    
-    init(repository: StudyRepositoryProtocol) {
-        self.repository = repository
-    }
-    
+    var studyRepository: StudyRepositoryProtocol?
+
     func list(sort: StudySort, filters: [StudyFilter]) -> Observable<[Study]> {
-        return repository.list(sort: sort, filters: filters)
+        return studyRepository?.list(sort: sort, filters: filters) ?? .empty()
     }
 }

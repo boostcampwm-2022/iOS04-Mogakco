@@ -22,17 +22,8 @@ final class StudyListCoordinator: BaseCoordinator<StudyListCoordinatorResult> {
     // MARK: - 스터디 목록
     
     func showStudyList() {
-        let viewModel = StudyListViewModel(
-            studyListUseCase: StudyListUseCase(
-                repository: StudyRepository(
-                    studyDataSource: StudyDataSource(provider: Provider.default),
-                    localUserDataSource: UserDefaultsUserDataSource(),
-                    remoteUserDataSource: RemoteUserDataSource(provider: Provider.default),
-                    chatRoomDataSource: ChatRoomDataSource(provider: Provider.default)
-                )
-            )
-        )
-        
+        guard let viewModel = DIContainer.shared.container.resolve(StudyListViewModel.self) else { return }
+
         viewModel.navigation
             .subscribe(onNext: { [weak self] in
                 switch $0 {
