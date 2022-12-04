@@ -10,22 +10,18 @@ import RxSwift
 
 struct AuthRepository: AuthRepositoryProtocol {
     
-    private var authService: AuthServiceProtocol
+    var authService: AuthServiceProtocol?
     private let disposeBag = DisposeBag()
-    
-    init(authService: AuthServiceProtocol) {
-        self.authService = authService
-    }
     
     func signup(signupProps: SignupProps) -> Observable<Authorization> {
         let request = EmailAuthorizationRequestDTO(signupProps: signupProps)
-        return authService.signup(request)
-            .map { $0.toDomain() }
+        return authService?.signup(request)
+            .map { $0.toDomain() } ?? .empty()
     }
     
     func login(emailLogin: EmailLogin) -> Observable<Authorization> {
         let request = EmailAuthorizationRequestDTO(emailLogin: emailLogin)
-        return authService.login(request)
-            .map { $0.toDomain() }
+        return authService?.login(request)
+            .map { $0.toDomain() } ?? .empty()
     }
 }

@@ -11,17 +11,11 @@ import Foundation
 import RxSwift
 
 struct LeaveStudyUseCase: LeaveStudyUseCaseProtocol {
-    let studyRepository: StudyRepositoryProtocol
+    var studyRepository: StudyRepositoryProtocol?
     
     var disposeBag = DisposeBag()
-    
-    init(
-        studyRepository: StudyRepositoryProtocol
-    ) {
-        self.studyRepository = studyRepository
-    }
-    
+
     func leaveStudy(id: String) -> Observable<Void> {
-        return studyRepository.leaveStudy(id: id)
+        return studyRepository?.leaveStudy(id: id) ?? .empty()
     }
 }

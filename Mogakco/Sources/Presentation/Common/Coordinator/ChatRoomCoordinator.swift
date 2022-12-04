@@ -33,27 +33,9 @@ final class ChatRoomCoordinator: BaseCoordinator<ChatRoomCoordinatorResult> {
     // MARK: - 채팅방
     
     func showChatRoom() {
-        let studyRepository = StudyRepository(
-            studyDataSource: StudyDataSource(provider: Provider.default),
-            localUserDataSource: UserDefaultsUserDataSource(),
-            remoteUserDataSource: RemoteUserDataSource(provider: Provider.default),
-            chatRoomDataSource: ChatRoomDataSource(provider: Provider.default)
-        )
+        guard let viewModel = DIContainer.shared.container.resolve(ChatViewModel.self) else { return }
+        viewModel.chatRoomID = id
 
-        let viewModel = ChatViewModel(
-            chatRoomID: id,
-            chatUseCase: ChatUseCase(
-                chatRepository: ChatRepository(chatDataSource: ChatDataSource()),
-                userRepository: UserRepository(
-                    localUserDataSource: UserDefaultsUserDataSource(),
-                    remoteUserDataSource: RemoteUserDataSource(provider: Provider.default)
-                )
-            ),
-            leaveStudyUseCase: LeaveStudyUseCase(
-                studyRepository: studyRepository
-            )
-        )
-        
         viewModel.navigation
             .subscribe(onNext: { [weak self] in
                 switch $0 {

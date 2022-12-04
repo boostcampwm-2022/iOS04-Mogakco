@@ -40,20 +40,10 @@ final class EditProfileViewModel: ViewModel {
     }
     
     var disposeBag = DisposeBag()
-    private let type: EditType
-    private let profileUseCase: ProfileUseCase
-    private let editProfileUseCase: EditProfileUseCase
+    var type: EditType = .edit
+    var profileUseCase: ProfileUseCaseProtocol?
+    var editProfileUseCase: EditProfileUseCaseProtocol?
     let navigation = PublishSubject<EditProfileNavigation>()
-    
-    init(
-        type: EditType,
-        profileUseCase: ProfileUseCase,
-        editProfileUseCase: EditProfileUseCase
-    ) {
-        self.type = type
-        self.profileUseCase = profileUseCase
-        self.editProfileUseCase = editProfileUseCase
-    }
     
     func transform(input: Input) -> Output {
         let type = BehaviorSubject<EditType>(value: type)
@@ -66,7 +56,7 @@ final class EditProfileViewModel: ViewModel {
         type
             .filter { $0 == .edit }
             .withUnretained(self)
-            .flatMap { $0.0.profileUseCase.profile() }
+            .flatMap { $0.0.profileUseCase?.profile() ?? .empty() }
             .subscribe(onNext: {
                 user.onNext($0)
             })
@@ -105,7 +95,7 @@ final class EditProfileViewModel: ViewModel {
             .filter { $0 }
             .withLatestFrom( Observable.combineLatest(name, introduce, image) )
             .flatMap { name, introduce, image in
-                self.editProfileUseCase.editProfile(name: name, introduce: introduce, image: image)
+                self.editProfileUseCase?.editProfile(name: name, introduce: introduce, image: image) ?? .empty()
             }
             .map { EditProfileNavigation.finish }
             .bind(to: navigation)

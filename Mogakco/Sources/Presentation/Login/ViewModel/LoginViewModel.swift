@@ -29,13 +29,9 @@ final class LoginViewModel: ViewModel {
         let presentError: Signal<String>
     }
     
-    private let loginUseCase: LoginUseCaseProtocol
+    var loginUseCase: LoginUseCaseProtocol?
     let navigation = PublishSubject<LoginNavigation>()
     var disposeBag = DisposeBag()
-    
-    init(loginUseCase: LoginUseCaseProtocol) {
-        self.loginUseCase = loginUseCase
-    }
     
     func transform(input: Input) -> Output {
         enum LoginError: Error, LocalizedError {
@@ -58,7 +54,7 @@ final class LoginViewModel: ViewModel {
         
         input.loginButtonTap
             .withUnretained(self)
-            .flatMap { $0.0.loginUseCase.login(emailLogin: userData).asResult() }
+            .flatMap { $0.0.loginUseCase?.login(emailLogin: userData).asResult() ?? .empty() }
             .subscribe(onNext: { [weak self] in
                 switch $0 {
                 case .success:

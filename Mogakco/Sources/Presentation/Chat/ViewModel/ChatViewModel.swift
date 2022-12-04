@@ -37,24 +37,14 @@ final class ChatViewModel: ViewModel {
     }
     
     private var isFirst = true
-    private let chatRoomID: String
-    private let chatUseCase: ChatUseCaseProtocol
-    private let leaveStudyUseCase: LeaveStudyUseCaseProtocol
+    var chatRoomID: String = ""
+    var chatUseCase: ChatUseCaseProtocol?
+    var leaveStudyUseCase: LeaveStudyUseCaseProtocol?
     private var chatArray: [Chat] = []
     var messages = BehaviorRelay<[Chat]>(value: [])
     let navigation = PublishSubject<ChatRoomNavigation>()
     var disposeBag = DisposeBag()
-    
-    init(
-        chatRoomID: String,
-        chatUseCase: ChatUseCaseProtocol,
-        leaveStudyUseCase: LeaveStudyUseCaseProtocol
-    ) {
-        self.chatRoomID = chatRoomID
-        self.chatUseCase = chatUseCase
-        self.leaveStudyUseCase = leaveStudyUseCase
-    }
-    
+
     func transform(input: Input) -> Output {
         let showChatSidebarView = PublishSubject<Void>()
         let selectedSidebar = PublishSubject<ChatSidebarMenu>()
@@ -71,8 +61,7 @@ final class ChatViewModel: ViewModel {
         input.pagination?
             .subscribe({ [weak self] _ in
                 guard let self = self else { return }
-                self.chatUseCase
-                    .reload(chatRoomID: self.chatRoomID)
+                self.chatUseCase?.reload(chatRoomID: self.chatRoomID)
                     .withLatestFrom(self.messages) { ($0, $1) }
                     .subscribe(onNext: { newChat, originalChats in
                         self.messages.accept(newChat + originalChats)
@@ -102,7 +91,7 @@ final class ChatViewModel: ViewModel {
         
         exitStudyTap
             .withUnretained(self)
-            .flatMap { $0.0.leaveStudyUseCase.leaveStudy(id: $0.0.chatRoomID) }
+            .flatMap { $0.0.leaveStudyUseCase?.leaveStudy(id: $0.0.chatRoomID) ?? .empty() }
             .subscribe {
                 selectedSidebar.onNext(.exitStudy)
             } onError: { error in
@@ -113,13 +102,13 @@ final class ChatViewModel: ViewModel {
         // TODO: 위와 같은 방식으로 studyInfo, showMember추가
         input.sendButtonDidTap
             .withLatestFrom(Observable.combineLatest(
-                chatUseCase.myProfile(),
+                chatUseCase?.myProfile() ?? .empty(),
                 input.inputViewText
             )) { ( $1.0, $1.1 ) }
             .subscribe { [weak self] user, message in
                 guard let self = self else { return }
 
-                self.chatUseCase
+                self.chatUseCase?
                     .send(
                         chat: Chat(
                             id: UUID().uuidString,
@@ -150,7 +139,7 @@ final class ChatViewModel: ViewModel {
     }
     
     private func bindFirebase() {
-        chatUseCase.observe(chatRoomID: chatRoomID)
+        chatUseCase?.observe(chatRoomID: chatRoomID)
             .withLatestFrom(messages) { ($0, $1) }
             .subscribe(onNext: { [weak self] newChat, originalChats in
                 if self?.isFirst == false {
@@ -162,7 +151,7 @@ final class ChatViewModel: ViewModel {
             })
             .disposed(by: disposeBag)
         
-        chatUseCase.fetchAll(chatRoomID: chatRoomID)
+        chatUseCase?.fetchAll(chatRoomID: chatRoomID)
             .withLatestFrom(messages) { ($0, $1) }
             .subscribe(onNext: { [weak self] newChat, originalChat in
                 

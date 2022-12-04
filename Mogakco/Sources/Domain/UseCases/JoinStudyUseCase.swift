@@ -16,16 +16,12 @@ struct JoinStudyUseCase: JoinStudyUseCaseProtocol {
         case max
     }
     
-    private let studyRepository: StudyRepositoryProtocol
+    var studyRepository: StudyRepositoryProtocol?
     private let disposeBag = DisposeBag()
-    
-    init(studyRepository: StudyRepositoryProtocol) {
-        self.studyRepository = studyRepository
-    }
-    
+
     func join(id: String) -> Observable<Void> {
         return Observable<Void>.create { emitter in
-            studyRepository.join(id: id)
+            studyRepository?.join(id: id)
                 .subscribe(onNext: {
                     emitter.onNext($0)
                 }, onError: { _ in

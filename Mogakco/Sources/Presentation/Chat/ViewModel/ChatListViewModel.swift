@@ -28,14 +28,10 @@ final class ChatListViewModel: ViewModel {
     }
     
     var disposeBag = DisposeBag()
-    private let chatRoomListUseCase: ChatRoomListUseCaseProtocol
+    var chatRoomListUseCase: ChatRoomListUseCaseProtocol?
     private let chatRooms = BehaviorSubject<[ChatRoom]>(value: [])
     private let reload = PublishSubject<Void>()
     let navigation = PublishSubject<ChatListNavigation>()
-    
-    init(chatRoomListUseCase: ChatRoomListUseCaseProtocol) {
-        self.chatRoomListUseCase = chatRoomListUseCase
-    }
     
     func transform(input: Input) -> Output {
         
@@ -53,7 +49,7 @@ final class ChatListViewModel: ViewModel {
         
         reload
             .withUnretained(self)
-            .flatMap { viewModel, _ in viewModel.chatRoomListUseCase.chatRooms() }
+            .flatMap { viewModel, _ in viewModel.chatRoomListUseCase?.chatRooms() ?? .empty() }
             .withUnretained(self)
             .subscribe(onNext: { viewModel, chatRooms in
                 viewModel.chatRooms.onNext(chatRooms)
@@ -64,8 +60,8 @@ final class ChatListViewModel: ViewModel {
         
         input.deletedChatRoom
             .withUnretained(self)
-            .flatMap { viewModel, chatRoom in
-                viewModel.chatRoomListUseCase.leave(chatRoom: chatRoom)
+            .compactMap { viewModel, chatRoom in
+                viewModel.chatRoomListUseCase?.leave(chatRoom: chatRoom) ?? .empty()
             }
             .withUnretained(self)
             .subscribe(onNext: { viewModel, _ in

@@ -22,20 +22,7 @@ final class ChatRoomListCoordinator: BaseCoordinator<ChatRoomListCoordinatorResu
     // MARK: - 채팅방 목록
     
     func showChatRoomList() {
-        let viewModel = ChatListViewModel(
-            chatRoomListUseCase: ChatRoomListUseCase(
-                chatRoomRepository: ChatRoomRepository(
-                    chatRoomDataSource: ChatRoomDataSource(provider: Provider.default),
-                    remoteUserDataSource: RemoteUserDataSource(provider: Provider.default),
-                    studyDataSource: StudyDataSource(provider: Provider.default)
-                ),
-                userRepository: UserRepository(
-                    localUserDataSource: UserDefaultsUserDataSource(),
-                    remoteUserDataSource: RemoteUserDataSource(provider: Provider.default)
-                )
-            )
-        )
-        
+        guard let viewModel = DIContainer.shared.container.resolve(ChatListViewModel.self) else { return }
         viewModel.navigation
             .subscribe(onNext: { [weak self] in
                 switch $0 {

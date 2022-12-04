@@ -39,7 +39,7 @@ final class PasswordCoordinator: BaseCoordinator<PasswrodCoordinatorResult> {
     // MARK: - 비밀번호
     
     func showPassword() {
-        let viewModel = SetPasswordViewModel()
+        guard let viewModel = DIContainer.shared.container.resolve(SetPasswordViewModel.self) else { return }
         
         viewModel.navigation
             .subscribe(onNext: { [weak self] in
