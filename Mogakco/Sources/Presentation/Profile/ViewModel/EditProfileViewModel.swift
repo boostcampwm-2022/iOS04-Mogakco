@@ -104,8 +104,7 @@ final class EditProfileViewModel: ViewModel {
         input
             .completeButtonTapped
             .withLatestFrom(type)
-            .map { $0 == .edit }
-            .filter { $0 }
+            .filter { $0 == .edit }
             .withLatestFrom( Observable.combineLatest(name, introduce, image) )
             .flatMap { [weak self] name, introduce, image in
                 self?.editProfileUseCase?.editProfile(name: name, introduce: introduce, image: image) ?? .empty()
@@ -117,8 +116,7 @@ final class EditProfileViewModel: ViewModel {
         input
             .completeButtonTapped
             .withLatestFrom(type)
-            .map { $0 == .edit }
-            .filter { !$0 }
+            .filter { $0 == .create }
             .withLatestFrom( Observable.combineLatest(input.name, input.introduce, image) )
             .map { Profile(name: $0, introduce: $1, image: $2) }
             .map { EditProfileNavigation.next($0) }
