@@ -14,7 +14,7 @@ enum LoginCoordinatorResult {
     case finish
 }
 
-final class MLoginCoordinator: BaseCoordinator<LoginCoordinatorResult> {
+final class LoginCoordinator: BaseCoordinator<LoginCoordinatorResult> {
     
     let finish = PublishSubject<LoginCoordinatorResult>()
     
