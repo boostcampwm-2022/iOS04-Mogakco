@@ -12,7 +12,7 @@ import RxSwift
 import SnapKit
 import Then
 
-final class WithdrawViewController: UIViewController {
+final class WithdrawViewController: ViewController {
     
     private let titleLabel = UILabel().then {
         $0.textAlignment = .left
@@ -59,15 +59,34 @@ final class WithdrawViewController: UIViewController {
         $0.backgroundColor = UIColor.mogakcoColor.primaryDefault
     }
     
+    let viewModel: WithdrawViewModel?
+    
+    init(viewModel: WithdrawViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         bind()
         layout()
     }
     
-    func bind() {}
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.isNavigationBarHidden = false
+    }
     
-    private func layout() {
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        navigationController?.isNavigationBarHidden = true
+    }
+    
+    override func layout() {
         layoutTitleLabel()
         layoutBodyLabel()
         layoutStackView()
@@ -75,6 +94,15 @@ final class WithdrawViewController: UIViewController {
         layoutPasswordTitleLabel()
         layoutSecureTextFiled()
         layoutWithdrawButton()
+    }
+    
+    override func bind() {
+        let input = WithdrawViewModel.Input(
+            backButtonDidTap: backButton.rx.tap.asObservable(),
+            withdrawButtonDidTap: withdrawButton.rx.tap.asObservable()
+        )
+        
+        _ = viewModel?.transform(input: input)
     }
     
     private func layoutTitleLabel() {
