@@ -243,5 +243,12 @@ final class DIContainer {
             viewModel.createChatRoomUseCase = resolver.resolve(CreateChatRoomUseCaseProtocol.self)
             return viewModel
         }
+        container.register(CreateStudyViewModel.self) { resolver in
+            let viewModel = CreateStudyViewModel()
+            viewModel.createStudyUseCase = resolver.resolve(CreateStudyUseCase.self)
+            return viewModel
+        }
+        container.register(SelectStudySortViewModel.self) { _ in SelectStudySortViewModel()
+        }
     }
 }

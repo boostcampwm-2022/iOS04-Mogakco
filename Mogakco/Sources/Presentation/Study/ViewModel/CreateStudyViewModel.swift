@@ -37,16 +37,12 @@ final class CreateStudyViewModel: ViewModel {
         let createButtonEnabled: Observable<Bool>
     }
     
-    private let useCase: CreateStudyUseCaseProtocol
+    var createStudyUseCase: CreateStudyUseCaseProtocol?
     let category = BehaviorSubject<[Hashtag]>(value: [])
     let languages = BehaviorSubject<[Hashtag]>(value: [])
     let navigation = PublishSubject<CreateStudyNavigation>()
     var disposeBag = DisposeBag()
-    
-    init(useCase: CreateStudyUseCaseProtocol) {
-        self.useCase = useCase
-    }
-    
+
     func transform(input: Input) -> Output {
         
         let study = Observable
@@ -93,7 +89,7 @@ final class CreateStudyViewModel: ViewModel {
             .withLatestFrom(study)
             .withUnretained(self)
             .flatMap { viewModel, study in
-                viewModel.useCase.create(study: study)
+                viewModel.createStudyUseCase?.create(study: study) ?? .empty()
             }
             .map { _ in CreateStudyNavigation.back }
             .bind(to: navigation)
