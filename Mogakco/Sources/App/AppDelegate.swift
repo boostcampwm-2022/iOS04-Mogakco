@@ -49,6 +49,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UICollectionViewCell.appearance().backgroundColor = .mogakcoColor.primarySecondary
         UICollectionViewCell.appearance().layer.borderColor = UIColor.mogakcoColor.primaryDefault?.cgColor
         
+        UITableView.appearance().backgroundColor = .mogakcoColor.backgroundDefault
         UITableViewCell.appearance().backgroundColor = .mogakcoColor.primarySecondary
     }
     
