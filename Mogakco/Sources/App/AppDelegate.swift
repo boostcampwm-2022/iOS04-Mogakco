@@ -21,6 +21,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     ) -> Bool {
         FirebaseApp.configure()
         DIContainer.shared.inject()
+        UINavigationBar.appearance().tintColor = UIColor.mogakcoColor.typographyPrimary
         return true
     }
 }
