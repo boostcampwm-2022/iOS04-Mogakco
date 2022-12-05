@@ -24,11 +24,16 @@ struct FBAuthService: AuthServiceProtocol {
     func login(_ request: EmailAuthorizationRequestDTO) -> Observable<AuthorizationResponseDTO> {
         return provider.request(AuthTarget.login(request))
     }
+    
+    func withdraw(_ request: WithdrawRequestDTO) -> Observable<EmptyResponse> {
+        return provider.request(AuthTarget.withdraw(request))
+    }
 }
 
 enum AuthTarget {
     case signup(EmailAuthorizationRequestDTO)
     case login(EmailAuthorizationRequestDTO)
+    case withdraw(WithdrawRequestDTO)
 }
 
 extension AuthTarget: TargetType {
@@ -41,6 +46,8 @@ extension AuthTarget: TargetType {
         case .signup:
             return .post
         case .login:
+            return .post
+        case .withdraw:
             return .post
         }
     }
@@ -55,6 +62,8 @@ extension AuthTarget: TargetType {
             return "/accounts:signUp?key=\(Network.webAPIKey)"
         case .login:
             return "/accounts:signInWithPassword?key=\(Network.webAPIKey)"
+        case .withdraw:
+            return "/accounts:delete?key=\(Network.webAPIKey)"
         }
     }
     
@@ -63,6 +72,8 @@ extension AuthTarget: TargetType {
         case let .signup(request):
             return .body(request)
         case let .login(request):
+            return .body(request)
+        case let .withdraw(request):
             return .body(request)
         }
     }
