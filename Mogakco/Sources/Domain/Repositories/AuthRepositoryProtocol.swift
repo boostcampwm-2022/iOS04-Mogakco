@@ -11,4 +11,5 @@ import RxSwift
 protocol AuthRepositoryProtocol {
     func signup(signupProps: SignupProps) -> Observable<Authorization>
     func login(emailLogin: EmailLogin) -> Observable<Authorization>
+    func withdraw(idToken: String) -> Observable<Void>
 }
