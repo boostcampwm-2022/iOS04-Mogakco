@@ -19,6 +19,7 @@ enum LoginNavigation {
 final class LoginViewModel: ViewModel {
     
     struct Input {
+        let viewWillAppear: Observable<Void>
         let email: Observable<String>
         let password: Observable<String>
         let signupButtonTap: Observable<Void>
@@ -26,25 +27,32 @@ final class LoginViewModel: ViewModel {
     }
     
     struct Output {
+        let presentLogin: Signal<Void>
         let presentError: Signal<String>
     }
     
+    var autoLoginUseCase: AutoLoginUseCaseProtocol?
     var loginUseCase: LoginUseCaseProtocol?
     let navigation = PublishSubject<LoginNavigation>()
     var disposeBag = DisposeBag()
     
     func transform(input: Input) -> Output {
-        enum LoginError: Error, LocalizedError {
-            case loginFail
-        }
+
+        let presentLogin = PublishSubject<Void>()
         let presentAlert = PublishSubject<Error>()
-        var userData = EmailLogin(email: "", password: "")
         
-        Observable
-            .combineLatest(input.email, input.password)
-            .subscribe { email, password in
-                userData = EmailLogin(email: email, password: password)
-            }
+        input.viewWillAppear
+            .withUnretained(self)
+            .flatMap { $0.0.autoLoginUseCase?.load() ?? .empty() }
+            .delay(.seconds(2), scheduler: MainScheduler.instance)
+            .withUnretained(self)
+            .subscribe(onNext: { viewModel, result in
+                if result {
+                    viewModel.navigation.onNext(.finish)
+                } else {
+                    presentLogin.onNext(())
+                }
+            })
             .disposed(by: disposeBag)
         
         input.signupButtonTap
@@ -53,12 +61,15 @@ final class LoginViewModel: ViewModel {
             .disposed(by: disposeBag)
         
         input.loginButtonTap
+            .withLatestFrom(Observable.combineLatest(input.email, input.password))
+            .map { EmailLogin(email: $0, password: $1) }
             .withUnretained(self)
-            .flatMap { $0.0.loginUseCase?.login(emailLogin: userData).asResult() ?? .empty() }
-            .subscribe(onNext: { [weak self] in
-                switch $0 {
+            .flatMap { $0.0.loginUseCase?.login(emailLogin: $0.1).asResult() ?? .empty() }
+            .withUnretained(self)
+            .subscribe(onNext: { viewModel, result in
+                switch result {
                 case .success:
-                    self?.navigation.onNext(.finish)
+                    viewModel.navigation.onNext(.finish)
                 case .failure(let error):
                     presentAlert.onNext(error)
                 }
@@ -66,6 +77,7 @@ final class LoginViewModel: ViewModel {
             .disposed(by: disposeBag)
             
         return Output(
+            presentLogin: presentLogin.asSignal(onErrorSignalWith: .empty()),
             presentError: presentAlert.map { $0.localizedDescription }.asSignal(onErrorSignalWith: .empty())
         )
     }
