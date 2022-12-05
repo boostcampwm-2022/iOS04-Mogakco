@@ -43,8 +43,8 @@ final class StudySortCell: UICollectionViewCell, Identifiable {
     }
     
     private func attribute() {
-        layer.borderWidth = 1.0
-        layer.borderColor = UIColor.mogakcoColor.borderDefault?.cgColor
+        layer.borderWidth = 0.2
+        layer.borderColor = UIColor.mogakcoColor.primarySecondary?.cgColor
         layer.cornerRadius = 8.0
     }
 }
