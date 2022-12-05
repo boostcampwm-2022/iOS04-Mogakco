@@ -63,7 +63,6 @@ final class MessageInputView: UIView {
     
     private func configureUI() {
         backgroundColor = .white
-        addShadow(offset: .init(width: 1, height: 1))
         autoresizingMask = .flexibleHeight
     }
     

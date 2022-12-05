@@ -42,7 +42,6 @@ final class StudyListHeader: UIView {
     
     let sortButton = UIButton().then {
         $0.configuration = configuration(title: "정렬")
-        $0.addShadow(offset: .init(width: 1, height: 1))
         $0.layer.borderWidth = 1
         $0.layer.borderColor = UIColor.clear.cgColor
         $0.layer.cornerRadius = 8
@@ -50,7 +49,6 @@ final class StudyListHeader: UIView {
     
     let languageButton = UIButton().then {
         $0.configuration = configuration(title: "언어")
-        $0.addShadow(offset: .init(width: 1, height: 1))
         $0.layer.borderWidth = 1
         $0.layer.borderColor = UIColor.clear.cgColor
         $0.layer.cornerRadius = 8
@@ -58,7 +56,6 @@ final class StudyListHeader: UIView {
     
     let categoryButton = UIButton().then {
         $0.configuration = configuration(title: "카테고리")
-        $0.addShadow(offset: .init(width: 1, height: 1))
         $0.layer.borderWidth = 1
         $0.layer.borderColor = UIColor.clear.cgColor
         $0.layer.cornerRadius = 8
@@ -66,7 +63,6 @@ final class StudyListHeader: UIView {
     
     let resetButton = UIButton().then {
         $0.configuration = configuration(title: "초기화")
-        $0.addShadow(offset: .init(width: 1, height: 1))
         $0.layer.borderWidth = 1
         $0.layer.borderColor = UIColor.clear.cgColor
         $0.layer.cornerRadius = 8

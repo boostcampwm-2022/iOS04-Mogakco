@@ -24,7 +24,6 @@ final class StudySelectView: UIView {
     var content: String = "" {
         didSet {
             button.configuration = plain(title: content)
-            button.removeShadow()
         }
     }
     
@@ -37,7 +36,6 @@ final class StudySelectView: UIView {
     
     lazy var button = UIButton().then {
         $0.configuration = rounded(title: "선택")
-        $0.addShadow(offset: .init(width: 1, height: 1))
         $0.layer.cornerRadius = 5
     }
     
