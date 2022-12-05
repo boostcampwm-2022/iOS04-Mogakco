@@ -21,7 +21,6 @@ final class LoginCoordinator: BaseCoordinator<LoginCoordinatorResult> {
     override func start() -> Observable<LoginCoordinatorResult> {
         showLogin()
         return finish
-            .do(onNext: { [weak self] _ in self?.pop(animated: false) })
     }
     
     // MARK: - 로그인
@@ -41,7 +40,7 @@ final class LoginCoordinator: BaseCoordinator<LoginCoordinatorResult> {
             .disposed(by: disposeBag)
         
         let viewController = LoginViewController(viewModel: viewModel)
-        push(viewController, animated: true)
+        push(viewController, animated: true, isRoot: true)
     }
     
     // MARK: - 회원가입 (이메일)

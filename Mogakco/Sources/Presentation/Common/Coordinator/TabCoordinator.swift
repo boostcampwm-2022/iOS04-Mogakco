@@ -42,10 +42,9 @@ final class TabCoordinator: BaseCoordinator<TabCoordinatorResult> {
     private let finish = PublishSubject<TabCoordinatorResult>()
     
     override func start() -> Observable<TabCoordinatorResult> {
-        push(tabBarController, animated: true)
+        push(tabBarController, animated: true, isRoot: true)
         setup()
         return finish
-            .do(onNext: { [weak self] _ in self?.pop(animated: true) })
     }
     
     private func setup() {
