@@ -19,18 +19,14 @@ final class SelectStudySortViewModel: ViewModel {
         let studySorts: Driver<[StudySort]>
     }
     
-    private let sortObserver: AnyObserver<StudySort>
+    var sortObserver: AnyObserver<StudySort>?
     let finish = PublishSubject<Void>()
     var disposeBag = DisposeBag()
-    
-    init(sortObserver: AnyObserver<StudySort>) {
-        self.sortObserver = sortObserver
-    }
-    
+
     func transform(input: Input) -> Output {
         input.selectedStudySort
             .subscribe(onNext: { [weak self] in
-                self?.sortObserver.onNext($0)
+                self?.sortObserver?.onNext($0)
                 self?.finish.onNext(())
             })
             .disposed(by: disposeBag)
