@@ -22,9 +22,9 @@ struct ChatUseCase: ChatUseCaseProtocol {
             .map { users, myUser, chats in
                 return chats.map {
                     var chat = $0
-                    chat.user = users.filter { user in
-                        user.id == myUser.id
-                    }.first
+                    chat.user = users.first(where: {
+                        $0.id == myUser.id
+                    })
                     chat.isFromCurrentUser = chat.userID == myUser.id
                     return chat
                 }
@@ -39,9 +39,9 @@ struct ChatUseCase: ChatUseCaseProtocol {
             .map { users, myUser, chats in
                 return chats.map {
                     var chat = $0
-                    chat.user = users.filter {
+                    chat.user = users.first(where: {
                         $0.id == myUser.id
-                    }.first
+                    })
                     chat.isFromCurrentUser = chat.userID == myUser.id
                     return chat
                 }
