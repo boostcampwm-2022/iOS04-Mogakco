@@ -187,13 +187,9 @@ final class DIContainer {
             let viewModel = SetEmailViewModel()
             return viewModel
         }
-        container.register(LaunchScreenViewModel.self) { resolver in
-            let viewModel = LaunchScreenViewModel()
-            viewModel.autoLoginUseCase = resolver.resolve(AutoLoginUseCaseProtocol.self)
-            return viewModel
-        }
         container.register(LoginViewModel.self) { resolver in
             let viewModel = LoginViewModel()
+            viewModel.autoLoginUseCase = resolver.resolve(AutoLoginUseCaseProtocol.self)
             viewModel.loginUseCase = resolver.resolve(LoginUseCaseProtocol.self)
             return viewModel
         }
