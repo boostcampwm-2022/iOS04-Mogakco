@@ -15,8 +15,15 @@ import Then
 final class LoginViewController: ViewController {
     
     private let animationView = AnimationView()
+    
     private let emailTextField = MessageTextField()
+    
     private let secureTextField = SecureTextField()
+    
+    private let textFieldStackView = UIStackView().then {
+        $0.spacing = 8
+        $0.axis = .vertical
+    }
     
     private let signupButton = UIButton().then {
         $0.setTitle("아직 회원이 아니신가요?", for: .normal)
@@ -32,6 +39,10 @@ final class LoginViewController: ViewController {
         $0.layer.borderWidth = 1
         $0.layer.borderColor = UIColor.clear.cgColor
         $0.clipsToBounds = true
+    }
+    
+    private let contentView = UIView().then {
+        $0.alpha = 0
     }
     
     private let viewModel: LoginViewModel
@@ -57,6 +68,7 @@ final class LoginViewController: ViewController {
     
     override func bind() {
         let input = LoginViewModel.Input(
+            viewWillAppear: rx.viewWillAppear.map { _ in }.asObservable(),
             email: emailTextField.rx.text.orEmpty.asObservable(),
             password: secureTextField.rx.text.orEmpty.asObservable(),
             signupButtonTap: signupButton.rx.tap.asObservable(),
@@ -70,10 +82,16 @@ final class LoginViewController: ViewController {
             .disposed(by: disposeBag)
     }
     
+    private func animation() {
+        UIView.animate(withDuration: 0.5, delay: 0) { [weak self] in
+            self?.contentView.alpha = 1
+        }
+    }
+    
     override func layout() {
         layoutAnimationView()
-        layoutEmailTextField()
-        layoutSecureTextField()
+        layoutContentView()
+        layoutTextField()
         layoutSignupButton()
         layoutLoginButton()
     }
@@ -86,39 +104,42 @@ final class LoginViewController: ViewController {
         }
     }
     
-    private func layoutEmailTextField() {
-        view.addSubview(emailTextField)
+    private func layoutContentView() {
+        view.addSubview(contentView)
         
-        emailTextField.snp.makeConstraints {
-            $0.left.right.equalToSuperview().inset(16)
-            $0.top.equalTo(view.snp.centerY).offset(40)
+        contentView.snp.makeConstraints {
+            $0.left.right.equalTo(view.safeAreaLayoutGuide).inset(16)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(Layout.buttonBottomInset)
         }
     }
     
-    private func layoutSecureTextField() {
-        view.addSubview(secureTextField)
+    private func layoutTextField() {
+        let subviews = [emailTextField, secureTextField]
+        subviews.forEach {
+            textFieldStackView.addArrangedSubview($0)
+        }
         
-        secureTextField.snp.makeConstraints {
-            $0.left.right.equalToSuperview().inset(16)
-            $0.top.equalTo(emailTextField.snp.bottom).offset(8)
+        contentView.addSubview(textFieldStackView)
+        textFieldStackView.snp.makeConstraints {
+            $0.top.left.right.equalToSuperview()
         }
     }
     
     private func layoutSignupButton() {
-        view.addSubview(signupButton)
+        contentView.addSubview(signupButton)
         
         signupButton.snp.makeConstraints {
-            $0.right.equalToSuperview().inset(16)
-            $0.top.equalTo(secureTextField.snp.bottom).offset(4)
+            $0.right.equalToSuperview()
+            $0.top.equalTo(textFieldStackView.snp.bottom).offset(4)
         }
     }
     
     private func layoutLoginButton() {
-        view.addSubview(loginButton)
+        contentView.addSubview(loginButton)
         
         loginButton.snp.makeConstraints {
-            $0.left.right.equalTo(view.safeAreaLayoutGuide).inset(16)
-            $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(Layout.buttonBottomInset)
+            $0.top.equalTo(signupButton.snp.bottom).offset(100)
+            $0.left.right.bottom.equalToSuperview()
             $0.height.equalTo(Layout.buttonHeight)
         }
     }
