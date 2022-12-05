@@ -80,12 +80,10 @@ final class HashtagBadgeCell: UICollectionViewCell, Identifiable {
     func select() {
         backgroundColor = .mogakcoColor.backgroundSecondary
         layer.borderWidth = 0.5
-        removeShadow()
     }
     
     func deselect() {
         backgroundColor = .mogakcoColor.backgroundDefault
         layer.borderWidth = 0
-        addShadow(offset: CGSize(width: 4, height: 2))
     }
 }
