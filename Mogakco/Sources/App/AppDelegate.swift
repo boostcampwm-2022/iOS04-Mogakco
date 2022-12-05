@@ -33,19 +33,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         UITextField.appearance().tintColor = .mogakcoColor.primaryDefault
         UITextField.appearance().textColor = .mogakcoColor.typographyPrimary
-        UITextField.appearance().backgroundColor = .mogakcoColor.backgroundSecondary
+        UITextField.appearance().backgroundColor = .mogakcoColor.primarySecondary
         UITextField.appearance().layer.borderColor = UIColor.mogakcoColor.semanticSuccess?.cgColor
         
         UITextView.appearance().textColor = .mogakcoColor.typographyPrimary
-        UITextView.appearance().backgroundColor = .mogakcoColor.backgroundSecondary
-        UITextView.appearance().layer.borderColor = UIColor.mogakcoColor.backgroundSecondary?.cgColor
-        UITextView.appearance().layer.borderColor = UIColor.mogakcoColor.backgroundSecondary?.cgColor
-//        UITextView.appearance().layer.borderColor = UIColor.mogakcoColor.semanticSuccess?.cgColor
+        UITextView.appearance().backgroundColor = .mogakcoColor.primarySecondary
+        UITextView.appearance().layer.borderColor = UIColor.mogakcoColor.primarySecondary?.cgColor
+        UITextView.appearance().layer.borderColor = UIColor.mogakcoColor.primarySecondary?.cgColor
         UITextView.appearance().tintColor = .mogakcoColor.primaryDefault
         
         UICollectionView.appearance().backgroundColor = .mogakcoColor.backgroundDefault
-        UICollectionViewCell.appearance().backgroundColor = .mogakcoColor.backgroundSecondary
-        UICollectionViewCell.appearance().layer.borderColor = UIColor.mogakcoColor.borderDefault?.cgColor
+        UICollectionViewCell.appearance().backgroundColor = .mogakcoColor.primarySecondary
     }
     
 }
