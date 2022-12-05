@@ -40,25 +40,36 @@ final class EditProfileViewModel: ViewModel {
     }
     
     var disposeBag = DisposeBag()
-    var type: EditType = .edit
     var profileUseCase: ProfileUseCaseProtocol?
     var editProfileUseCase: EditProfileUseCaseProtocol?
     let navigation = PublishSubject<EditProfileNavigation>()
+    let type = BehaviorSubject<EditType>(value: .edit)
+    private let user = BehaviorSubject<User?>(value: nil)
+    private let name = BehaviorSubject<String>(value: "")
+    private let introduce = BehaviorSubject<String>(value: "")
+    private let image = BehaviorSubject<UIImage>(value: Image.profileDefault)
+    private let inputValidation = BehaviorSubject<Bool>(value: false)
     
     func transform(input: Input) -> Output {
-        let type = BehaviorSubject<EditType>(value: type)
-        let user = BehaviorSubject<User?>(value: nil)
-        let name = BehaviorSubject<String>(value: "")
-        let introduce = BehaviorSubject<String>(value: "")
-        let image = BehaviorSubject<UIImage>(value: Image.profileDefault)
-        let inputValidation = BehaviorSubject<Bool>(value: false)
-        
+        bindUser(input: input)
+        bindScene(input: input)
+
+        return Output(
+            originName: user.compactMap { $0?.name }.asDriver(onErrorJustReturn: ""),
+            originIntroduce: user.compactMap { $0?.introduce }.asDriver(onErrorJustReturn: ""),
+            originProfileImage: image.asObservable().asDriver(onErrorDriveWith: .empty()),
+            inputValidation: inputValidation.asObservable().asDriver(onErrorJustReturn: false)
+        )
+    }
+    
+    func bindUser(input: Input) {
         type
             .filter { $0 == .edit }
             .withUnretained(self)
             .flatMap { $0.0.profileUseCase?.profile() ?? .empty() }
-            .subscribe(onNext: {
-                user.onNext($0)
+            .withUnretained(self)
+            .subscribe(onNext: { viewModel, user in
+                viewModel.user.onNext(user)
             })
             .disposed(by: disposeBag)
         
@@ -87,20 +98,22 @@ final class EditProfileViewModel: ViewModel {
             )
             .bind(to: image)
             .disposed(by: disposeBag)
-
+    }
+    
+    func bindScene(input: Input) {
         input
             .completeButtonTapped
             .withLatestFrom(type)
             .map { $0 == .edit }
             .filter { $0 }
             .withLatestFrom( Observable.combineLatest(name, introduce, image) )
-            .flatMap { name, introduce, image in
-                self.editProfileUseCase?.editProfile(name: name, introduce: introduce, image: image) ?? .empty()
+            .flatMap { [weak self] name, introduce, image in
+                self?.editProfileUseCase?.editProfile(name: name, introduce: introduce, image: image) ?? .empty()
             }
             .map { EditProfileNavigation.finish }
             .bind(to: navigation)
             .disposed(by: disposeBag)
-    
+        
         input
             .completeButtonTapped
             .withLatestFrom(type)
@@ -116,12 +129,5 @@ final class EditProfileViewModel: ViewModel {
             .map { EditProfileNavigation.back }
             .bind(to: navigation)
             .disposed(by: disposeBag)
-        
-        return Output(
-            originName: user.compactMap { $0?.name }.asDriver(onErrorJustReturn: ""),
-            originIntroduce: user.compactMap { $0?.introduce }.asDriver(onErrorJustReturn: ""),
-            originProfileImage: image.asObservable().asDriver(onErrorDriveWith: .empty()),
-            inputValidation: inputValidation.asObservable().asDriver(onErrorJustReturn: false)
-        )
     }
 }

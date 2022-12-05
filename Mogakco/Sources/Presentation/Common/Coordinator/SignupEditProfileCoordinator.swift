@@ -40,7 +40,7 @@ final class SignupEditProfileCoordinator: BaseCoordinator<SignupEditProfileCoord
     
     func showProfile() {
         guard let viewModel = DIContainer.shared.container.resolve(EditProfileViewModel.self) else { return }
-        viewModel.type = .create
+        viewModel.type.onNext(.create)
         
         viewModel.navigation
             .subscribe(onNext: { [weak self] in
