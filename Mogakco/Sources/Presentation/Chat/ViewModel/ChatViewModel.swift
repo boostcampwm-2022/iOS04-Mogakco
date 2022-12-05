@@ -120,7 +120,7 @@ final class ChatViewModel: ViewModel {
                         ),
                         to: self.chatRoomID
                     )
-                    .subscribe(onNext: { _ in
+                    .subscribe (onNext: {
                         sendMessage.onNext(())
                     })
                     .disposed(by: self.disposeBag)
