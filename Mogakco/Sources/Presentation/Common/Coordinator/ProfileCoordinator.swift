@@ -57,6 +57,8 @@ final class ProfileCoordinator: BaseCoordinator<ProfileCoordinatorResult> {
                     self?.showHashtag(kind: kind, selectedHashtag: [])
                 case .chatRoom(let id):
                     self?.showChatRoom(id: id)
+                case .setting(let email):
+                    self?.setting(email: email)
                 case .back:
                     self?.finish.onNext(.back)
                 }
@@ -70,6 +72,33 @@ final class ProfileCoordinator: BaseCoordinator<ProfileCoordinatorResult> {
         } else {
             push(viewController, animated: true)
         }
+    }
+    
+    // MARK: - 설정화면
+    
+    func setting(email: String) {
+        print("DEBUG : email은 \(email)")
+        guard let viewModel = DIContainer.shared.container.resolve(SettingViewModel.self) else { return
+            print("DIContainer setting 실패")
+        }
+
+        viewModel.navigation
+            .subscribe(onNext: { [weak self] in
+                switch $0 {
+                case .withdraw:
+                    print("DEBUG : withdraw! email은 \(email)")
+                    self?.showWithdraw(email: email)
+                case .logout:
+                    print("DEBUG : logout!")
+                case .back:
+                    self?.popTabbar(animated: true)
+                    print("DEBUG : Back!")
+                }
+            })
+            .disposed(by: disposeBag)
+        
+        let viewController = SettingViewController(viewModel: viewModel)
+        pushTabbar(viewController, animated: true)
     }
     
     // MARK: - 프로필 수정
