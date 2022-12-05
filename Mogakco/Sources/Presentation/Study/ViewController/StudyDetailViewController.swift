@@ -141,7 +141,7 @@ final class StudyDetailViewController: ViewController {
         
         let input = StudyDetailViewModel.Input(
             studyJoinButtonTapped: studyJoinButton.rx.tap.asObservable(),
-            participantCellTapped: participantsCollectionView.rx.itemSelected.asObservable()
+            participantCellTapped: participantsCollectionView.rx.itemSelected.asObservable(),
             backButtonTapped: backButton.rx.tap.asObservable()
         )
         
