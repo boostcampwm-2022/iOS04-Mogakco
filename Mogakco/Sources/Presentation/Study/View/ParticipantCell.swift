@@ -47,11 +47,8 @@ final class ParticipantCell: UICollectionViewCell, Identifiable {
     }
     
     private func layoutView() {
-        backgroundColor = .mogakcoColor.backgroundDefault
         layer.cornerRadius = 10
         layer.borderWidth = 0.2
-        layer.borderColor = UIColor.mogakcoColor.borderDefault?.cgColor
-        
         clipsToBounds = false
     }
     
@@ -60,7 +57,6 @@ final class ParticipantCell: UICollectionViewCell, Identifiable {
         imageView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
             $0.top.equalToSuperview().offset(15)
-//            $0.width.height.equalTo(50)
         }
     }
     
