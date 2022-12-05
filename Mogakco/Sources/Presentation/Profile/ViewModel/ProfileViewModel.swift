@@ -82,11 +82,11 @@ final class ProfileViewModel: ViewModel {
                 .map { $0.compactMap { Languages.idToHashtag(id: $0) } }
                 .asDriver(onErrorJustReturn: []),
             careers: user
-                .compactMap { $0?.languages }
+                .compactMap { $0?.careers }
                 .map { $0.compactMap { Career.idToHashtag(id: $0) } }
                 .asDriver(onErrorJustReturn: []),
             categorys: user
-                .compactMap { $0?.languages }
+                .compactMap { $0?.categorys }
                 .map { $0.compactMap { Category.idToHashtag(id: $0) } }
                 .asDriver(onErrorJustReturn: []),
             studyRatingList: studyRatingList.asDriver(onErrorJustReturn: [])
