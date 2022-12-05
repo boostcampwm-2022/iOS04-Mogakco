@@ -29,7 +29,6 @@ enum ChatSidebarMenu: String, CaseIterable {
 }
 
 final class ChatSidebarView: UIView {
-    
     let tableView = UITableView().then {
         $0.register(
             ChatSidebarTableViewCell.self,
@@ -40,7 +39,7 @@ final class ChatSidebarView: UIView {
         $0.bounces = false
         $0.separatorStyle = .none
         $0.allowsSelection = true
-        $0.backgroundColor = .clear
+        $0.backgroundColor = .mogakcoColor.primarySecondary
     }
     
     override init(frame: CGRect) {
@@ -58,7 +57,7 @@ final class ChatSidebarView: UIView {
     }
     
     private func layoutView() {
-        self.backgroundColor = .white
+        self.backgroundColor = .mogakcoColor.primarySecondary
         self.clipsToBounds = true
     }
     
