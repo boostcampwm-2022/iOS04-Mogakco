@@ -53,20 +53,20 @@ final class ProfileViewModel: ViewModel {
         let studyRatingList: Driver<[(String, Int)]>
     }
 
-    var type: ProfileType = .current
     var userUseCase: UserUseCaseProtocol?
     var createChatRoomUseCase: CreateChatRoomUseCaseProtocol?
-    private let user = BehaviorSubject<User?>(value: nil)
-    private let studyRatingList = BehaviorSubject<[(String, Int)]>(value: [])
     let navigation = PublishSubject<ProfileNavigation>()
     var disposeBag = DisposeBag()
+    let type = BehaviorSubject<ProfileType>(value: .current)
+    private let user = BehaviorSubject<User?>(value: nil)
+    private let studyRatingList = BehaviorSubject<[(String, Int)]>(value: [])
 
     func transform(input: Input) -> Output {
         bindUser(input: input)
         bindScene(input: input)
 
         return Output(
-            isMyProfile: Driver.just(type).map { $0 == .current },
+            isMyProfile: type.map { $0 == .current }.asDriver(onErrorJustReturn: false),
             profileImageURL: user
                 .compactMap { $0?.profileImageURLString }
                 .compactMap { URL(string: $0) }
@@ -95,7 +95,8 @@ final class ProfileViewModel: ViewModel {
     
     private func bindUser(input: Input) {
         input.viewWillAppear
-            .filter { self.type == ProfileType.current }
+            .withLatestFrom(type)
+            .filter { $0 == ProfileType.current }
             .withUnretained(self)
             .flatMap { $0.0.userUseCase?.myProfile() ?? .empty() }
             .withUnretained(self)
@@ -105,8 +106,9 @@ final class ProfileViewModel: ViewModel {
             .disposed(by: disposeBag)
         
         input.viewWillAppear
-            .compactMap {
-                switch self.type {
+            .withLatestFrom(type)
+            .compactMap { type in
+                switch type {
                 case .current:
                     return nil
                 case let .other(user):

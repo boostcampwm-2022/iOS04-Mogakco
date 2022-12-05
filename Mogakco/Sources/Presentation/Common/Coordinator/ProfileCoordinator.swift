@@ -46,7 +46,7 @@ final class ProfileCoordinator: BaseCoordinator<ProfileCoordinatorResult> {
     
     func showProfile() {
         guard let viewModel = DIContainer.shared.container.resolve(ProfileViewModel.self) else { return }
-        viewModel.type = type
+        viewModel.type.onNext(type)
         
         viewModel.navigation
             .subscribe(onNext: { [weak self] in
@@ -76,7 +76,7 @@ final class ProfileCoordinator: BaseCoordinator<ProfileCoordinatorResult> {
     
     func showEditProfile() {
         guard let viewModel = DIContainer.shared.container.resolve(EditProfileViewModel.self) else { return }
-        viewModel.type = .edit
+        viewModel.type.onNext(.edit)
         
         viewModel.navigation
             .subscribe(onNext: { [weak self] in
