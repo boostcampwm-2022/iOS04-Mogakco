@@ -84,11 +84,6 @@ final class ProfileViewController: ViewController {
         }
     }
     
-    let settingButton = UIButton().then {
-        $0.setImage(UIImage(systemName: "line.horizontal.3"), for: .normal)
-        $0.tintColor = .mogakcoColor.primaryDefault
-    }
-    
     private var viewModel: ProfileViewModel
     
     init(viewModel: ProfileViewModel) {
@@ -120,7 +115,7 @@ final class ProfileViewController: ViewController {
                 careerListView.editButton.rx.tap.map { _ in KindHashtag.career },
                 categoryListView.editButton.rx.tap.map { _ in KindHashtag.category }
             ),
-            settingButtonTapped: settingButton.rx.tap.asObservable()
+            settingButtonTapped: headerView.settingButton.rx.tap.asObservable()
         )
         let output = viewModel.transform(input: input)
         
@@ -156,7 +151,7 @@ final class ProfileViewController: ViewController {
         
         output.isMyProfile
             .map { !$0 }
-            .drive(settingButton.rx.isHidden)
+            .drive(headerView.settingButton.rx.isHidden)
             .disposed(by: disposeBag)
     }
     
@@ -193,7 +188,6 @@ final class ProfileViewController: ViewController {
     override func layout() {
         layoutHeaderView()
         layoutScrollView()
-        layoutSettingButton()
     }
     
     private func layoutHeaderView() {
@@ -201,13 +195,6 @@ final class ProfileViewController: ViewController {
         headerView.snp.makeConstraints {
             $0.leading.top.trailing.equalTo(view.safeAreaLayoutGuide)
             $0.height.equalTo(Constant.headerViewHeight)
-        }
-    }
-    
-    private func layoutSettingButton() {
-        view.addSubview(settingButton)
-        settingButton.snp.makeConstraints {
-            $0.top.right.equalTo(headerView).inset(16)
         }
     }
     
