@@ -63,7 +63,6 @@ final class EditProfileViewController: ViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        configureUI()
         configureImagePicker()
         hideKeyboardWhenTappedAround()
     }
@@ -118,12 +117,9 @@ final class EditProfileViewController: ViewController {
             })
             .disposed(by: disposeBag)
     }
-    
-    func configureUI() {
-        configureNavigationBar()
-    }
 
     override func layout() {
+        configureNavigationBar()
         layoutScrollView()
         layoutRoundProfileImageView()
         layoutAddImageButton()
@@ -134,7 +130,10 @@ final class EditProfileViewController: ViewController {
     }
     
     private func configureNavigationBar() {
-        navigationController?.navigationBar.topItem?.title = "프로필 생성"
+        navigationItem.title = "프로필 생성"
+        navigationController?
+            .navigationBar
+            .titleTextAttributes = [.foregroundColor: UIColor.mogakcoColor.typographyPrimary ?? .white]
     }
     
     private func layoutScrollView() {
