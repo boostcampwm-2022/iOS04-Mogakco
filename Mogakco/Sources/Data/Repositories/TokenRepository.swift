@@ -27,7 +27,7 @@ struct TokenRepository: TokenRepositoryProtocol {
                 emitter.onNext(nil)
                 return Disposables.create()
             }
-            print("DEBUG : TokenRepository save Auth is \(auth)")
+            token = auth.idToken
             emitter.onNext(auth)
             return Disposables.create()
         }
@@ -38,11 +38,11 @@ struct TokenRepository: TokenRepositoryProtocol {
             
             guard let data = keychainManager?.load(key: email),
                   let auth = try? JSONDecoder().decode(Authorization.self, from: data) else {
-                print("DEBUG : TokenRepository load fail. Auth is nil")
+                print("DEBUG : load nil")
                 emitter.onNext(nil)
                 return Disposables.create()
             }
-            print("DEBUG : TokenRepository load success. Auth is \(auth)")
+            print("DEBUG : load \(auth)")
             emitter.onNext(auth)
             return Disposables.create()
         }
