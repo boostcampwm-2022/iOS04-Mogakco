@@ -118,6 +118,9 @@ class HashtagSelectViewController: ViewController {
         }
         navigationItem.backButtonTitle = "이전"
         navigationItem.backBarButtonItem?.tintColor = .mogakcoColor.primaryDefault
+        navigationController?
+            .navigationBar
+            .titleTextAttributes = [.foregroundColor: UIColor.mogakcoColor.typographyPrimary ?? .white]
     }
     
     private func layoutHashtagListCollectionView() {

@@ -131,6 +131,7 @@ final class CreateStudyViewController: ViewController {
     }
     
     override func layout() {
+        layoutNavigation()
         layoutCreateButton()
         layoutScrollView()
     }
@@ -180,6 +181,11 @@ final class CreateStudyViewController: ViewController {
     }
     
     // MARK: - Methods
+    private func layoutNavigation() {
+        navigationController?
+            .navigationBar
+            .titleTextAttributes = [.foregroundColor: UIColor.mogakcoColor.typographyPrimary ?? .white]
+    }
     
     private func layoutScrollView() {
         view.addSubview(scrollView)
