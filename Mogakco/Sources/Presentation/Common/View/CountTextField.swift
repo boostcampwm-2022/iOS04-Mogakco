@@ -24,7 +24,10 @@ final class CountTextField: UIView {
     
     var placeholder: String? {
         didSet {
-            textField.placeholder = placeholder
+            textField.attributedPlaceholder = NSAttributedString(
+                string: placeholder ?? "",
+                attributes: [NSAttributedString.Key.foregroundColor: UIColor.mogakcoColor.typographySecondary ?? .white]
+            )
         }
     }
 
