@@ -56,17 +56,8 @@ final class StudyListCoordinator: BaseCoordinator<StudyListCoordinatorResult> {
     // MARK: - 스터디 생성
     
     func showCreateStudy() {
-        let viewModel = CreateStudyViewModel(
-            useCase: CreateStudyUseCase(
-                studyRepository: StudyRepository(
-                    studyDataSource: StudyDataSource(provider: Provider.default),
-                    localUserDataSource: UserDefaultsUserDataSource(),
-                    remoteUserDataSource: RemoteUserDataSource(provider: Provider.default),
-                    chatRoomDataSource: ChatRoomDataSource(provider: Provider.default)
-                )
-            )
-        )
-        
+        guard let viewModel = DIContainer.shared.container.resolve(CreateStudyViewModel.self) else { return }
+
         viewModel.navigation
             .subscribe(onNext: { [weak self] in
                 switch $0 {
@@ -95,8 +86,9 @@ final class StudyListCoordinator: BaseCoordinator<StudyListCoordinatorResult> {
     // MARK: - 스터디 정렬
     
     func showStudySort(sortObserver: AnyObserver<StudySort>) {
-        let viewModel = SelectStudySortViewModel(sortObserver: sortObserver)
-        
+        guard let viewModel = DIContainer.shared.container.resolve(SelectStudySortViewModel.self) else { return }
+        viewModel.sortObserver = sortObserver
+
         viewModel.finish
             .subscribe(onNext: { [weak self] in
                 self?.dismissTabbar(animated: true)
