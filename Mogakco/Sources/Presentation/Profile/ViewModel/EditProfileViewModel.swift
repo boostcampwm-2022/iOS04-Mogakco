@@ -33,10 +33,10 @@ final class EditProfileViewModel: ViewModel {
     }
     
     struct Output {
-        let originName: Observable<String>
-        let originIntroduce: Observable<String>
-        let originProfileImage: Observable<UIImage>
-        let inputValidation: Observable<Bool>
+        let originName: Driver<String>
+        let originIntroduce: Driver<String>
+        let originProfileImage: Driver<UIImage>
+        let inputValidation: Driver<Bool>
     }
     
     var disposeBag = DisposeBag()
@@ -118,10 +118,10 @@ final class EditProfileViewModel: ViewModel {
             .disposed(by: disposeBag)
         
         return Output(
-            originName: user.compactMap { $0?.name },
-            originIntroduce: user.compactMap { $0?.introduce },
-            originProfileImage: image.asObservable(),
-            inputValidation: inputValidation.asObservable()
+            originName: user.compactMap { $0?.name }.asDriver(onErrorJustReturn: ""),
+            originIntroduce: user.compactMap { $0?.introduce }.asDriver(onErrorJustReturn: ""),
+            originProfileImage: image.asObservable().asDriver(onErrorDriveWith: .empty()),
+            inputValidation: inputValidation.asObservable().asDriver(onErrorJustReturn: false)
         )
     }
 }
