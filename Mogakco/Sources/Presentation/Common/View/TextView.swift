@@ -20,6 +20,7 @@ final class TextView: UITextView {
     var placeholder: String? {
         didSet {
             label.text = placeholder
+            label.textColor = .mogakcoColor.typographySecondary
         }
     }
     
@@ -27,7 +28,6 @@ final class TextView: UITextView {
     
     private let label = UILabel().then {
         $0.font = UIFont.mogakcoFont.mediumRegular
-        $0.textColor = UIColor(red: 0.78, green: 0.78, blue: 0.80, alpha: 1.0)
         $0.numberOfLines = 0
     }
     
@@ -49,7 +49,6 @@ final class TextView: UITextView {
     // MARK: Methods
     
     private func setup() {
-        layer.borderWidth = 1
         layer.cornerRadius = 8
         layer.borderColor = (UIColor.mogakcoColor.semanticDisabled ?? .systemGray).cgColor
         textContainerInset = .init(top: 16, left: 16, bottom: 16, right: 16)
