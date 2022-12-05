@@ -122,9 +122,16 @@ final class SetEmailViewController: ViewController {
     // MARK: - Layout
     
     override func layout() {
+        layoutNavigation()
         layoutStackView()
         layoutTextField()
         layoutButton()
+    }
+    
+    private func layoutNavigation() {
+        navigationController?
+            .navigationBar
+            .titleTextAttributes = [.foregroundColor: UIColor.mogakcoColor.typographyPrimary ?? .white]
     }
     
     private func layoutStackView() {
