@@ -24,7 +24,7 @@ final class ChatCell: UICollectionViewCell, Identifiable {
     }
     
     let bubbleContainer = UIView().then {
-        $0.backgroundColor = .mogakcoColor.backgroundSecondary
+        $0.backgroundColor = .mogakcoColor.primarySecondary
         $0.layer.cornerRadius = 8
     }
     
@@ -97,7 +97,7 @@ final class ChatCell: UICollectionViewCell, Identifiable {
         bubbleContainer.snp.remakeConstraints {
             $0.left.equalTo(profileImageView.snp.right).offset(12)
         }
-        bubbleContainer.backgroundColor = .mogakcoColor.backgroundSecondary
+        bubbleContainer.backgroundColor = .mogakcoColor.primarySecondary
         
         if let urlStr = user.profileImageURLString,
            let url = URL(string: urlStr) {

@@ -29,6 +29,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     private func appearance() {
         UINavigationBar.appearance().tintColor = .mogakcoColor.typographyPrimary
         
+        UITabBar.appearance().tintColor = .mogakcoColor.primaryDefault
+        UITabBar.appearance().barTintColor = .mogakcoColor.primaryThird
+        
         UILabel.appearance().textColor = .mogakcoColor.typographyPrimary
         
         UITextField.appearance().tintColor = .mogakcoColor.primaryDefault
@@ -44,6 +47,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         UICollectionView.appearance().backgroundColor = .mogakcoColor.backgroundDefault
         UICollectionViewCell.appearance().backgroundColor = .mogakcoColor.primarySecondary
+        UICollectionViewCell.appearance().layer.borderColor = UIColor.mogakcoColor.primaryDefault?.cgColor
+        
+        UITableViewCell.appearance().backgroundColor = .mogakcoColor.primarySecondary
     }
     
 }
