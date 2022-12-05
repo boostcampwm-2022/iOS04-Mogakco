@@ -49,10 +49,6 @@ final class ParticipantCell: UICollectionViewCell, Identifiable {
         layer.borderColor = UIColor.mogakcoColor.borderDefault?.cgColor
         
         clipsToBounds = false
-        
-        addShadow(
-            offset: CGSize(width: 1, height: 1)
-        )
     }
     
     private func layoutImageView() {
