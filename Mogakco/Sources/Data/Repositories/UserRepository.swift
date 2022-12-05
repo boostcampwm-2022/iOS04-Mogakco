@@ -47,6 +47,12 @@ struct UserRepository: UserRepositoryProtocol {
             .map { $0.toDomain() } ?? .empty()
     }
     
+    func delete(id: String) -> Observable<Void> {
+        print("DELETE : UserRepository \(id)")
+        return remoteUserDataSource?.delete(id)
+            .map { _ in } ?? .empty()
+    }
+    
     func editProfile(
         id: String,
         name: String,
