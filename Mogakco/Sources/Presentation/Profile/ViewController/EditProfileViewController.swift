@@ -11,6 +11,7 @@ import UIKit
 import RxCocoa
 import RxSwift
 import RxKeyboard
+import SnapKit
 
 final class EditProfileViewController: ViewController {
     
