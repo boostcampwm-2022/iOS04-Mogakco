@@ -169,6 +169,13 @@ final class DIContainer {
             useCase.studyRepository = resolver.resolve(StudyRepositoryProtocol.self)
             return useCase
         }
+        container.register(WithdrawUseCaseProtocol.self) { resolver in
+            let useCase = WithdrawUseCase()
+            useCase.userRepository = resolver.resolve(UserRepositoryProtocol.self)
+            useCase.authRepository = resolver.resolve(AuthRepositoryProtocol.self)
+            useCase.tokenRepository = resolver.resolve(TokenRepositoryProtocol.self)
+            return useCase
+        }
     }
     
     private func registerViewModels() {
@@ -249,6 +256,15 @@ final class DIContainer {
             return viewModel
         }
         container.register(SelectStudySortViewModel.self) { _ in SelectStudySortViewModel()
+        }
+        container.register(SettingViewModel.self) { _ in
+            let viewModel = SettingViewModel()
+            return viewModel
+        }
+        container.register(WithdrawViewModel.self) { resolver in
+            let viewModel = WithdrawViewModel()
+            viewModel.withdrawUseCase = resolver.resolve(WithdrawUseCaseProtocol.self)
+            return viewModel
         }
     }
 }
