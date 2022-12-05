@@ -17,6 +17,7 @@ final class ProfileView: UIView {
     }
     
     let roundLanguageImageView = RoundProfileImageView(45.0).then {
+        $0.layer.borderWidth = 0
         $0.snp.makeConstraints {
             $0.size.equalTo(45.0)
         }
