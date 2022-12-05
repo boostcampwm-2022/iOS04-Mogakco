@@ -114,7 +114,8 @@ final class ProfileViewController: ViewController {
                 languageListView.editButton.rx.tap.map { _ in KindHashtag.language },
                 careerListView.editButton.rx.tap.map { _ in KindHashtag.career },
                 categoryListView.editButton.rx.tap.map { _ in KindHashtag.category }
-            )
+            ),
+            settingButtonTapped: headerView.settingButton.rx.tap.asObservable()
         )
         let output = viewModel.transform(input: input)
         
@@ -146,6 +147,11 @@ final class ProfileViewController: ViewController {
         output.isMyProfile
             .map { !$0 }
             .drive(categoryListView.editButton.rx.isHidden)
+            .disposed(by: disposeBag)
+        
+        output.isMyProfile
+            .map { !$0 }
+            .drive(headerView.settingButton.rx.isHidden)
             .disposed(by: disposeBag)
     }
     
