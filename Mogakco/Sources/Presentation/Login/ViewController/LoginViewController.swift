@@ -77,6 +77,12 @@ final class LoginViewController: ViewController {
 
         let output = viewModel.transform(input: input)
         
+        output.presentLogin
+            .emit(onNext: { [weak self] in
+                self?.animation()
+            })
+            .disposed(by: disposeBag)
+        
         output.presentError
             .emit(to: rx.presentAlert)
             .disposed(by: disposeBag)
