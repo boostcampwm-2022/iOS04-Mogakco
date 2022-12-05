@@ -42,6 +42,7 @@ final class HashtagBadgeCell: UICollectionViewCell, Identifiable {
     }
     
     private func layoutView() {
+        layer.borderWidth = 0.2
         layer.cornerRadius = 10
         deselect()
     }
@@ -77,12 +78,10 @@ final class HashtagBadgeCell: UICollectionViewCell, Identifiable {
     }
     
     func select() {
-        backgroundColor = .mogakcoColor.backgroundSecondary
-        layer.borderWidth = 0.5
+        backgroundColor = .mogakcoColor.primaryDefault
     }
     
     func deselect() {
-        backgroundColor = .mogakcoColor.backgroundDefault
-        layer.borderWidth = 0
+        backgroundColor = .mogakcoColor.primarySecondary
     }
 }
