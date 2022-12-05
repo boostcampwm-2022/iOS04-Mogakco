@@ -218,6 +218,9 @@ final class ChatViewController: ViewController {
         
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: backButton)
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: studyInfoButton)
+        navigationController?
+            .navigationBar
+            .titleTextAttributes = [.foregroundColor: UIColor.mogakcoColor.typographyPrimary ?? .white]
     }
     
     // MARK: - Layouts

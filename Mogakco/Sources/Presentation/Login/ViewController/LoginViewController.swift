@@ -27,7 +27,7 @@ final class LoginViewController: ViewController {
     
     private let signupButton = UIButton().then {
         $0.setTitle("아직 회원이 아니신가요?", for: .normal)
-        $0.setTitleColor(.tintColor, for: .normal)
+        $0.setTitleColor(UIColor.mogakcoColor.primaryDefault, for: .normal)
         $0.titleLabel?.font = UIFont.mogakcoFont.smallRegular
     }
     
