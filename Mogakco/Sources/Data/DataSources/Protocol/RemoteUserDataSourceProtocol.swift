@@ -20,4 +20,5 @@ protocol RemoteUserDataSourceProtocol {
     func editCategorys(id: String, request: EditCategorysRequestDTO) -> Observable<UserResponseDTO>
     func uploadProfileImage(id: String, imageData: Data) -> Observable<URL>
     func updateIDs(id: String, request: UpdateStudyIDsRequestDTO) -> Observable<UserResponseDTO>
+    func delete(_ id: String) -> Observable<EmptyResponse>
 }
