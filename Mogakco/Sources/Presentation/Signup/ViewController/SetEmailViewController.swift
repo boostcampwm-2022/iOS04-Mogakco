@@ -71,10 +71,6 @@ final class SetEmailViewController: ViewController {
     
     // MARK: - Methods
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-    }
-    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         title = Constant.navigationTitle
