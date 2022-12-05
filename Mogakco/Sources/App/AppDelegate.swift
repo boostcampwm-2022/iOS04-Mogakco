@@ -20,8 +20,32 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
         FirebaseApp.configure()
+        appearance()
         DIContainer.shared.inject()
-        UINavigationBar.appearance().tintColor = UIColor.mogakcoColor.typographyPrimary
+        
         return true
     }
+    
+    private func appearance() {
+        UINavigationBar.appearance().tintColor = .mogakcoColor.typographyPrimary
+        
+        UILabel.appearance().textColor = .mogakcoColor.typographyPrimary
+        
+        UITextField.appearance().tintColor = .mogakcoColor.primaryDefault
+        UITextField.appearance().textColor = .mogakcoColor.typographyPrimary
+        UITextField.appearance().backgroundColor = .mogakcoColor.backgroundSecondary
+        UITextField.appearance().layer.borderColor = UIColor.mogakcoColor.semanticSuccess?.cgColor
+        
+        UITextView.appearance().textColor = .mogakcoColor.typographyPrimary
+        UITextView.appearance().backgroundColor = .mogakcoColor.backgroundSecondary
+        UITextView.appearance().layer.borderColor = UIColor.mogakcoColor.backgroundSecondary?.cgColor
+        UITextView.appearance().layer.borderColor = UIColor.mogakcoColor.backgroundSecondary?.cgColor
+//        UITextView.appearance().layer.borderColor = UIColor.mogakcoColor.semanticSuccess?.cgColor
+        UITextView.appearance().tintColor = .mogakcoColor.primaryDefault
+        
+        UICollectionView.appearance().backgroundColor = .mogakcoColor.backgroundDefault
+        UICollectionViewCell.appearance().backgroundColor = .mogakcoColor.backgroundSecondary
+        UICollectionViewCell.appearance().layer.borderColor = UIColor.mogakcoColor.borderDefault?.cgColor
+    }
+    
 }

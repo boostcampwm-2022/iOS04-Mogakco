@@ -43,7 +43,6 @@ final class HashtagBadgeCell: UICollectionViewCell, Identifiable {
     
     private func layoutView() {
         layer.cornerRadius = 10
-        layer.borderColor = UIColor.gray.cgColor
         deselect()
     }
     
