@@ -89,34 +89,31 @@ final class EditProfileViewController: ViewController {
         let output = viewModel.transform(input: input)
         
         addImageButton.rx.tap
-            .subscribe(onNext: {
-                self.presentImagePicker()
+            .withUnretained(self)
+            .subscribe(onNext: { viewController, _ in
+                viewController.presentImagePicker()
             })
             .disposed(by: disposeBag)
         
         output.originName
-            .asDriver(onErrorJustReturn: "")
             .drive(nameCountTextField.rx.text)
             .disposed(by: disposeBag)
         
         output.originIntroduce
-            .asDriver(onErrorJustReturn: "")
             .drive(introuceCountTextView.rx.text)
             .disposed(by: disposeBag)
         
         output.originProfileImage
-            .asDriver(onErrorJustReturn: .init())
             .drive(roundProfileImageView.rx.image)
             .disposed(by: disposeBag)
         
         output.inputValidation
-            .asDriver(onErrorJustReturn: false)
             .drive(completeButton.rx.isEnabled)
             .disposed(by: disposeBag)
         
         RxKeyboard.instance.visibleHeight
-            .drive(onNext: { keyboardVisibleHeight in
-                self.scrollView.contentInset.bottom = keyboardVisibleHeight
+            .drive(onNext: { [weak self] keyboardVisibleHeight in
+                self?.scrollView.contentInset.bottom = keyboardVisibleHeight
             })
             .disposed(by: disposeBag)
     }
