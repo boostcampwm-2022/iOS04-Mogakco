@@ -15,6 +15,7 @@ enum ProfileNavigation {
     case editProfile
     case editHashtag(kind: KindHashtag)
     case chatRoom(id: String)
+    case setting(email: String)
     case back
 }
 
@@ -39,6 +40,7 @@ final class ProfileViewModel: ViewModel {
         let editProfileButtonTapped: Observable<Void>
         let chatButtonTapped: Observable<Void>
         let hashtagEditButtonTapped: Observable<KindHashtag>
+        let settingButtonTapped: Observable<Void>
     }
     
     struct Output {
@@ -138,6 +140,11 @@ final class ProfileViewModel: ViewModel {
             .bind(to: navigation)
             .disposed(by: disposeBag)
         
+        input.editProfileButtonTapped
+            .map { .editProfile }
+            .bind(to: navigation)
+            .disposed(by: disposeBag)
+        
         input.chatButtonTapped
             .withLatestFrom(user.compactMap { $0 })
             .flatMap { [weak self] in self?.createChatRoomUseCase?.create(otherUser: $0) ?? .empty() }
@@ -147,6 +154,13 @@ final class ProfileViewModel: ViewModel {
         
         input.hashtagEditButtonTapped
             .map { .editHashtag(kind: $0) }
+            .bind(to: navigation)
+            .disposed(by: disposeBag)
+        
+        input.settingButtonTapped
+            .withLatestFrom(user)
+            .compactMap { $0 }
+            .map { .setting(email: $0.email) }
             .bind(to: navigation)
             .disposed(by: disposeBag)
     }
