@@ -25,6 +25,11 @@ struct RemoteUserDataSource: RemoteUserDataSourceProtocol {
         return provider.request(UserTarget.createUser(request))
     }
     
+    func delete(_ id: String) -> Observable<EmptyResponse> {
+        print("DELETE : RemoteDataSource \(id)")
+        return provider.request(UserTarget.delete(id))
+    }
+    
     func allUsers() -> Observable<Documents<[UserResponseDTO]>> {
         return provider.request(UserTarget.allUsers)
     }
@@ -82,6 +87,7 @@ enum UserTarget {
     case editCareers(String, EditCareersRequestDTO)
     case editCategorys(String, EditCategorysRequestDTO)
     case updateIDs(String, UpdateStudyIDsRequestDTO)
+    case delete(String)
 }
 
 extension UserTarget: TargetType {
@@ -99,6 +105,8 @@ extension UserTarget: TargetType {
             return .patch
         case .updateIDs:
             return .patch
+        case .delete:
+            return .delete
         }
     }
     
@@ -131,14 +139,14 @@ extension UserTarget: TargetType {
             return "/\(id)"
             + "/?updateMask.fieldPaths=chatRoomIDs"
             + "&updateMask.fieldPaths=studyIDs"
+        case let .delete(id):
+            return "/\(id)"
         }
     }
     
     var parameters: RequestParams? {
         switch self {
-        case .user:
-            return nil
-        case .allUsers:
+        case .user, .allUsers, .delete:
             return nil
         case let .createUser(request):
             return .body(request)
