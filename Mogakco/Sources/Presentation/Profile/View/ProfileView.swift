@@ -37,7 +37,6 @@ final class ProfileView: UIView {
     }
     
     let chatButton = UIButton().then {
-        $0.addShadow(offset: .init(width: 5.0, height: 5.0))
         $0.layer.cornerRadius = 12.0
         $0.setTitle("채팅", for: .normal)
         $0.setTitleColor(UIColor.mogakcoColor.typographyPrimary, for: .normal)
@@ -46,7 +45,6 @@ final class ProfileView: UIView {
     }
     
     let editProfileButton = UIButton().then {
-        $0.addShadow(offset: .init(width: 3.0, height: 3.0))
         $0.layer.cornerRadius = 14.0
         $0.setTitle("프로필 편집", for: .normal)
         $0.setTitleColor(UIColor.mogakcoColor.typographyPrimary, for: .normal)

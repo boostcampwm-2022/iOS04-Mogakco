@@ -157,7 +157,6 @@ final class StudyCell: UICollectionViewCell, Identifiable {
         layer.borderWidth = 0.2
         layer.borderColor = UIColor.mogakcoColor.borderDefault?.cgColor
         clipsToBounds = false
-        addShadow(offset: CGSize(width: 1, height: 1), opacity: 0.3, radius: 5)
     }
     
     override func prepareForReuse() {

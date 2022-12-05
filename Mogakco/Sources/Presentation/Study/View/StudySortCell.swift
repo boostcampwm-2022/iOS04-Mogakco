@@ -43,7 +43,6 @@ final class StudySortCell: UICollectionViewCell, Identifiable {
     }
     
     private func attribute() {
-        addShadow(offset: .init(width: 2.0, height: 2.0))
         layer.borderWidth = 1.0
         layer.borderColor = UIColor.mogakcoColor.borderDefault?.cgColor
         layer.cornerRadius = 8.0
