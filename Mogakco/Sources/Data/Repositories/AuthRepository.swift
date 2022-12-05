@@ -24,4 +24,11 @@ struct AuthRepository: AuthRepositoryProtocol {
         return authService?.login(request)
             .map { $0.toDomain() } ?? .empty()
     }
+    
+    func withdraw(idToken: String) -> Observable<Void> {
+        let request = WithdrawRequestDTO(idToken: idToken)
+        return authService?
+            .withdraw(request)
+            .map { _ in } ?? .empty()
+    }
 }
