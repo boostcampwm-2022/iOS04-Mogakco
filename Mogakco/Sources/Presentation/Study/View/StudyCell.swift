@@ -152,10 +152,8 @@ final class StudyCell: UICollectionViewCell, Identifiable {
     }
     
     private func configure() {
-        backgroundColor = .mogakcoColor.backgroundDefault
         layer.cornerRadius = 10
         layer.borderWidth = 0.2
-        layer.borderColor = UIColor.mogakcoColor.borderDefault?.cgColor
         clipsToBounds = false
     }
     

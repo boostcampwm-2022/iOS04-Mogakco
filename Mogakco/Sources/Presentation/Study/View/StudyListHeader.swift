@@ -42,29 +42,26 @@ final class StudyListHeader: UIView {
     
     let sortButton = UIButton().then {
         $0.configuration = configuration(title: "정렬")
-        $0.layer.borderWidth = 1
-        $0.layer.borderColor = UIColor.clear.cgColor
+        $0.layer.borderWidth = 0.8
         $0.layer.cornerRadius = 8
     }
     
     let languageButton = UIButton().then {
         $0.configuration = configuration(title: "언어")
-        $0.layer.borderWidth = 1
-        $0.layer.borderColor = UIColor.clear.cgColor
+        $0.layer.borderWidth = 0.8
         $0.layer.cornerRadius = 8
     }
     
     let categoryButton = UIButton().then {
         $0.configuration = configuration(title: "카테고리")
-        $0.layer.borderWidth = 1
-        $0.layer.borderColor = UIColor.clear.cgColor
+        $0.layer.borderWidth = 0.8
         $0.layer.cornerRadius = 8
     }
     
     let resetButton = UIButton().then {
         $0.configuration = configuration(title: "초기화")
-        $0.layer.borderWidth = 1
-        $0.layer.borderColor = UIColor.clear.cgColor
+        $0.layer.borderColor = UIColor.mogakcoColor.primarySecondary?.cgColor
+        $0.layer.borderWidth = 0.8
         $0.layer.cornerRadius = 8
     }
     
@@ -121,7 +118,7 @@ final class StudyListHeader: UIView {
         
         var configuration = UIButton.Configuration.filled()
         configuration.baseForegroundColor = .mogakcoColor.typographyPrimary
-        configuration.baseBackgroundColor = .mogakcoColor.backgroundDefault
+        configuration.baseBackgroundColor = .mogakcoColor.primaryThird
         configuration.background.cornerRadius = 8
         configuration.attributedTitle = attributedTitle
         configuration.contentInsets = .init(top: 8, leading: 0, bottom: 8, trailing: 0)
