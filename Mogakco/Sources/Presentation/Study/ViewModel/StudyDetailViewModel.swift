@@ -81,11 +81,22 @@ final class StudyDetailViewModel: ViewModel {
             })
             .disposed(by: disposeBag)
         
-        input.participantCellTapped
-            .map { $0.row }
-            .subscribe { index in
-                // TODO: 유저 선택 (코디네이터 리팩토링 후)
-            }
+        // TODO: input.participantCellTapped 가 제대로 동작하지 않음
+        if let userUseCase {
+            Observable.combineLatest(input.participantCellTapped, userUseCase.myProfile())
+                .map { ($0.0.row, $0.1) }
+                .map { (try? participants.value()[$0.0], $0.1) }
+                .withUnretained(self)
+                .subscribe {
+                    if $0.1.0?.id == $0.1.1.id {
+                        $0.0.navigation.onNext(.profile(type: .current))
+                    } else {
+                        $0.0.navigation.onNext(.profile(type: .other($0.1.1)))
+                    }
+                }
+                .disposed(by: disposeBag)
+        }
+        
         input.backButtonTapped
             .map { StudyDetailNavigation.back }
             .bind(to: navigation)
