@@ -90,4 +90,10 @@ extension Reactive where Base: MessageTextField {
             view.validation = validation
         }
     }
+    
+    var message: Binder<String> {
+        return Binder(self.base) { view, text in
+            view.message = text
+        }
+    }
 }
