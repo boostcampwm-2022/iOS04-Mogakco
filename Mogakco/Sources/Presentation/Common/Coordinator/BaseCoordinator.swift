@@ -45,8 +45,11 @@ class BaseCoordinator<ResultType> {
     
     // MARK: - Push ∙ Pop
     
-    func push(_ viewController: UIViewController, animated: Bool) {
+    func push(_ viewController: UIViewController, animated: Bool, isRoot: Bool = false) {
         navigationController.pushViewController(viewController, animated: animated)
+        if isRoot {
+            navigationController.viewControllers = [viewController]
+        }
     }
     
     func pushTabbar(_ viewController: UIViewController, animated: Bool) {
