@@ -18,8 +18,11 @@ final class SetPasswordViewController: ViewController {
     enum Constant {
         static let navigationTitle = "회원가입"
         static let title = "안전한 계정을 위한\n비밀번호를 설정해주세요"
-        static let password = "비밀번호를 입력해주세요"
+        static let password = "영문, 숫자 조합 6자 이상"
         static let passwordCheck = "비밀번호 재입력"
+        static let passwordValidMessage = "안전한 비밀번호입니다."
+        static let passwordInvalidMessage = "영문, 숫자를 포함하여 총 6글자 이상이어야 합니다."
+        static let passwordCheckInvalidMessage = "비밀번호가 일치하지 않습니다."
         static let buttonTitle = "다음"
     }
     
@@ -34,7 +37,7 @@ final class SetPasswordViewController: ViewController {
     
     private let stackView = UIStackView().then {
         $0.axis = .vertical
-        $0.spacing = 8
+        $0.spacing = 10
     }
     
     private let passwordTextField = MessageTextField(isSecure: true).then {
@@ -92,15 +95,25 @@ final class SetPasswordViewController: ViewController {
         )
         
         let output = viewModel.transform(input: input)
-        
+
         output.passwordState
             .map { $0 ? TextField.Validation.valid : TextField.Validation.invalid }
             .bind(to: passwordTextField.rx.validation)
             .disposed(by: disposeBag)
         
+        output.passwordState
+            .map { $0 ? Constant.passwordValidMessage : Constant.passwordInvalidMessage }
+            .bind(to: passwordTextField.rx.message)
+            .disposed(by: disposeBag)
+        
         output.passwordCheckState
             .map { $0 ? TextField.Validation.valid : TextField.Validation.invalid }
             .bind(to: passwordCheckTextField.rx.validation)
+            .disposed(by: disposeBag)
+        
+        output.passwordCheckState
+            .map { $0 ? "" : Constant.passwordCheckInvalidMessage }
+            .bind(to: passwordCheckTextField.rx.message)
             .disposed(by: disposeBag)
         
         output.nextButtonEnabled
