@@ -18,11 +18,6 @@ final class TitleHeaderView: UIView {
         $0.textColor = UIColor.mogakcoColor.typographyPrimary
     }
     
-    let settingButton = UIButton().then {
-        $0.setImage(UIImage(systemName: "info.circle"), for: .normal)
-        $0.tintColor = .mogakcoColor.primaryDefault
-    }
-    
     init() {
         super.init(frame: .zero)
         layout()
@@ -38,7 +33,6 @@ final class TitleHeaderView: UIView {
 
     private func layout() {
         layoutTitleLabel()
-        layoutSettingButton()
     }
     
     private func layoutTitleLabel() {
@@ -46,14 +40,6 @@ final class TitleHeaderView: UIView {
         
         titleLabel.snp.makeConstraints {
             $0.edges.equalToSuperview().inset(16.0)
-        }
-    }
-    
-    private func layoutSettingButton() {
-        addSubview(settingButton)
-        
-        settingButton.snp.makeConstraints {
-            $0.right.equalToSuperview().inset(16)
         }
     }
 }
