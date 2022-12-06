@@ -85,10 +85,12 @@ final class ProfileViewController: ViewController {
         }
     }
     
-    let settingButton = UIButton().then {
+    private let settingButton = UIButton().then {
         $0.setImage(UIImage(systemName: "line.horizontal.3"), for: .normal)
         $0.tintColor = .mogakcoColor.primaryDefault
     }
+
+    private let report = PublishSubject<Void>()
     
     private var viewModel: ProfileViewModel
     
@@ -121,18 +123,24 @@ final class ProfileViewController: ViewController {
                 careerListView.editButton.rx.tap.map { _ in KindHashtag.career },
                 categoryListView.editButton.rx.tap.map { _ in KindHashtag.category }
             ),
-            settingButtonTapped: settingButton.rx.tap.asObservable()
+            settingButtonTapped: settingButton.rx.tap.asObservable(),
+            reportButtonTapped: report.asObservable()
         )
         let output = viewModel.transform(input: input)
         
         bindIsMyProfile(output: output)
         bindProfile(output: output)
         bindHashtags(output: output)
+        bindReportButton()
     }
     
     private func bindIsMyProfile(output: ProfileViewModel.Output) {
         output.isMyProfile
             .drive(profileView.chatButton.rx.isHidden)
+            .disposed(by: disposeBag)
+        
+        output.isMyProfile
+            .drive(profileView.reportButton.rx.isHidden)
             .disposed(by: disposeBag)
         
         output.isMyProfile
@@ -187,6 +195,24 @@ final class ProfileViewController: ViewController {
         output.studyRatingList
             .drive(onNext: { [weak self] studyRatingList in
                 self?.studyRatingListView.configure(studyRatingList: studyRatingList)
+            })
+            .disposed(by: disposeBag)
+    }
+    
+    private func bindReportButton() {
+        profileView.reportButton.rx.tap
+            .subscribe(onNext: { [weak self] in
+                self?.alert(
+                    title: "차단하기",
+                    message: "이 사용자가 직성한 채팅들이 보이지 않게 됩니다.",
+                    actions: [
+                        UIAlertAction.cancel(),
+                        UIAlertAction.destructive(
+                            title: "차단",
+                            handler: { [weak self] _ in self?.report.onNext(()) }
+                        )
+                    ]
+                )
             })
             .disposed(by: disposeBag)
     }

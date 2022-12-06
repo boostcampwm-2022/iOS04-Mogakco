@@ -41,6 +41,7 @@ final class ProfileViewModel: ViewModel {
         let chatButtonTapped: Observable<Void>
         let hashtagEditButtonTapped: Observable<KindHashtag>
         let settingButtonTapped: Observable<Void>
+        let reportButtonTapped: Observable<Void>
     }
     
     struct Output {
@@ -57,6 +58,7 @@ final class ProfileViewModel: ViewModel {
 
     var userUseCase: UserUseCaseProtocol?
     var createChatRoomUseCase: CreateChatRoomUseCaseProtocol?
+    var reportUseCase: ReportUseCaseProtocol?
     let navigation = PublishSubject<ProfileNavigation>()
     var disposeBag = DisposeBag()
     let type = BehaviorSubject<ProfileType>(value: .current)
@@ -161,6 +163,15 @@ final class ProfileViewModel: ViewModel {
             .withLatestFrom(user)
             .compactMap { $0 }
             .map { .setting(email: $0.email) }
+            .bind(to: navigation)
+            .disposed(by: disposeBag)
+
+        input.reportButtonTapped
+            .withLatestFrom(user)
+            .compactMap { $0 }
+            .withUnretained(self)
+            .flatMap { $0.0.reportUseCase?.reportUser(id: $0.1.id) ?? .empty() }
+            .map { _ in .back }
             .bind(to: navigation)
             .disposed(by: disposeBag)
     }
