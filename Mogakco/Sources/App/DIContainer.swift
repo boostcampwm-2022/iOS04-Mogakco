@@ -32,6 +32,7 @@ final class DIContainer {
         container.register(ChatRoomDataSourceProtocol.self) { _ in ChatRoomDataSource(provider: provider) }
         container.register(ChatDataSourceProtocol.self) { _ in ChatDataSource() }
         container.register(HashtagDataSourceProtocol.self) { _ in HashtagDataSource() }
+        container.register(ReportDataSourceProtocol.self) { _ in ReportDataSource() }
         container.register(KeychainProtocol.self) { _ in Keychain() }
         container.register(KeychainManagerProtocol.self) { resolver in
             var dataSource = KeychainManager()
@@ -83,6 +84,11 @@ final class DIContainer {
             var repository = UserRepository()
             repository.localUserDataSource = resolver.resolve(LocalUserDataSourceProtocol.self)
             repository.remoteUserDataSource = resolver.resolve(RemoteUserDataSourceProtocol.self)
+            return repository
+        }
+        container.register(ReportRepositoryProtocol.self) { resolver in
+            var repository = ReportRepository()
+            repository.reportDataSource = resolver.resolve(ReportDataSourceProtocol.self)
             return repository
         }
     }
@@ -179,6 +185,11 @@ final class DIContainer {
             useCase.tokenRepository = resolver.resolve(TokenRepositoryProtocol.self)
             return useCase
         }
+        container.register(ReportUseCaseProtocol.self) { resolver in
+            var useCase = ReportUseCase()
+            useCase.reportRepository = resolver.resolve(ReportRepositoryProtocol.self)
+            return useCase
+        }
     }
     
     private func registerViewModels() {
@@ -231,6 +242,7 @@ final class DIContainer {
             viewModel.studyDetailUseCase = resolver.resolve(StudyDetailUseCaseProtocol.self)
             viewModel.hashtagUseCase = resolver.resolve(HashtagUseCaseProtocol.self)
             viewModel.joinStudyUseCase = resolver.resolve(JoinStudyUseCaseProtocol.self)
+            viewModel.reportUseCase = resolver.resolve(ReportUseCaseProtocol.self)
             return viewModel
         }
         container.register(StudyListViewModel.self) { resolver in
