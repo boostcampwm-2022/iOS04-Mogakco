@@ -16,6 +16,14 @@ import Then
 
 final class ChatViewController: ViewController {
     
+    // MARK: - Properties
+    
+    enum Constant {
+        static let messageInputViewHeight = 100.0
+        static let sidebarZPosition = 100.0
+        static let collectionViewHeight = 60
+    }
+    
     private lazy var messageInputView = MessageInputView().then {
         $0.frame = CGRect(
             x: 0,
