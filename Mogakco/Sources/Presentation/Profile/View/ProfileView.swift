@@ -55,6 +55,15 @@ final class ProfileView: UIView {
         $0.setBackgroundColor(UIColor.mogakcoColor.primarySecondary ?? UIColor.white, for: .normal)
     }
     
+    let reportButton = UIButton().then {
+        $0.clipsToBounds = true
+        $0.layer.cornerRadius = 12.0
+        $0.setTitle("차단", for: .normal)
+        $0.setTitleColor(UIColor.blue, for: .normal)
+        $0.titleLabel?.font = UIFont.mogakcoFont.smallBold
+        $0.setBackgroundColor(UIColor.mogakcoColor.primarySecondary ?? UIColor.white, for: .normal)
+    }
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         layout()
@@ -114,7 +123,7 @@ final class ProfileView: UIView {
     }
     
     private func createButtonStackView() -> UIStackView {
-        let arrangeSubviews = [chatButton, editProfileButton]
+        let arrangeSubviews = [reportButton, chatButton, editProfileButton]
         return UIStackView(arrangedSubviews: arrangeSubviews).then {
             $0.axis = .horizontal
             $0.spacing = 16.0
