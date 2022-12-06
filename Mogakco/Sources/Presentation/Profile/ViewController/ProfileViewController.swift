@@ -204,7 +204,7 @@ final class ProfileViewController: ViewController {
             .subscribe(onNext: { [weak self] in
                 self?.alert(
                     title: "차단하기",
-                    message: "이 사용자가 직성한 채팅들이 보이지 않게 됩니다.",
+                    message: "이 사용자가 작성한 채팅들이 보이지 않게 됩니다.",
                     actions: [
                         UIAlertAction.cancel(),
                         UIAlertAction.destructive(
