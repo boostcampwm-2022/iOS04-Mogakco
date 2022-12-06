@@ -249,6 +249,16 @@ final class ChatViewController: ViewController {
         
         blackScreen.layer.zPosition = Constant.sidebarZPosition
     }
+    
+    private func layoutMessageInputView() {
+        view.addSubview(messageInputView)
+        
+        messageInputView.snp.makeConstraints {
+            $0.bottom.left.right.equalToSuperview()
+            $0.top.equalTo(view.snp.bottom).inset(Constant.messageInputViewHeight)
+        }
+    }
+    
     private func updateMessageInputLayout(height: CGFloat) {
         if height == 0 {
             self.messageInputView.snp.remakeConstraints {
