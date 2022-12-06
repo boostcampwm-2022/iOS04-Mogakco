@@ -8,16 +8,15 @@
 
 import UIKit
 
+import RxSwift
+
 extension UIImageView {
-    func load(url: URL) {
-        DispatchQueue.global().async { [weak self] in
-            if let data = try? Data(contentsOf: url) {
-                if let image = UIImage(data: data) {
-                    DispatchQueue.main.async {
-                        self?.image = image
-                    }
-                }
-            }
-        }
+    func load(url: String, disposeBag: DisposeBag) {
+        DefaultImageCacheService.shared.setImage(url)
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] image in
+                self?.image = UIImage(data: image)
+            })
+            .disposed(by: disposeBag)
     }
 }

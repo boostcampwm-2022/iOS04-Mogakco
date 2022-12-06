@@ -22,6 +22,7 @@ final class ParticipantCell: UICollectionViewCell, Identifiable {
     }
     
     private let imageView = RoundProfileImageView(50)
+    let disposeBag = DisposeBag()
     
     private let userNameLabel = UILabel().then {
         $0.font = .mogakcoFont.mediumBold
@@ -77,9 +78,8 @@ final class ParticipantCell: UICollectionViewCell, Identifiable {
     }
     
     func setInfo(user: User?) {
-        if let imageURLString = user?.profileImageURLString,
-           let url = URL(string: imageURLString) {
-            imageView.load(url: url)
+        if let imageURLString = user?.profileImageURLString {
+            imageView.load(url: imageURLString, disposeBag: disposeBag)
         } else {
             imageView.setPhoto(Image.profileDefault)
         }

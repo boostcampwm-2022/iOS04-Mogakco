@@ -8,6 +8,8 @@
 
 import UIKit
 
+import RxSwift
+
 final class ChatRoomUsersImageView: UIView {
     
     enum Constant {
@@ -42,6 +44,8 @@ final class ChatRoomUsersImageView: UIView {
         $0.distribution = .fillEqually
         $0.alignment = .fill
     }
+    
+    let disposeBag = DisposeBag()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -55,7 +59,7 @@ final class ChatRoomUsersImageView: UIView {
     
     func configure(imageURLs: [URL]) {
         zip(imageURLs.shuffled(), roundImageViews).forEach { imageURL, roundImageView in
-            roundImageView.load(url: imageURL)
+            roundImageView.load(url: "\(imageURL)", disposeBag: disposeBag)
         }
         roundImageViews.enumerated().forEach { index, roundImageView in
             roundImageView.isHidden = imageURLs.count < index + 1

@@ -28,6 +28,8 @@ final class ChatCell: UICollectionViewCell, Identifiable {
         $0.layer.cornerRadius = 8
     }
     
+    let disposeBag = DisposeBag()
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         layout()
@@ -100,9 +102,8 @@ final class ChatCell: UICollectionViewCell, Identifiable {
         }
         bubbleContainer.backgroundColor = .mogakcoColor.backgroundSecondary
         
-        if let urlStr = user.profileImageURLString,
-           let url = URL(string: urlStr) {
-            profileImageView.load(url: url)
+        if let urlStr = user.profileImageURLString {
+            profileImageView.load(url: urlStr, disposeBag: disposeBag)
         }
     }
     

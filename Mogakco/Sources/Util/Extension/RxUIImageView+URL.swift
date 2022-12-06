@@ -12,8 +12,9 @@ import RxSwift
 
 extension Reactive where Base: UIImageView {
     var loadImage: Binder<URL> {
+        let disposeBag = DisposeBag()
         return Binder(base) { base, url in
-            base.load(url: url)
+            base.load(url: "\(url)", disposeBag: disposeBag)
         }
     }
 }
