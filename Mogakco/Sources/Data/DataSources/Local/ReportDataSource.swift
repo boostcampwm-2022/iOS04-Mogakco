@@ -13,8 +13,8 @@ import RxSwift
 struct ReportDataSource: ReportDataSourceProtocol {
     
     enum ReportType: String {
-        case study
-        case user
+        case study = "study report"
+        case user = "user report"
     }
     
     func reportStudy(id: String) -> Observable<Void> {
