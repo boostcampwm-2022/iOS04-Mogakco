@@ -18,7 +18,7 @@ final class ChatSidebarTableViewCell: UITableViewCell, Identifiable {
     var menuLabel = UILabel().then {
         $0.textAlignment = .left
         $0.font = .mogakcoFont.mediumRegular
-        $0.textColor = .mogakcoColor.typographyPrimary
+        $0.textColor = .black
     }
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
