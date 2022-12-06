@@ -105,15 +105,6 @@ final class ChatViewController: ViewController {
         layoutMessageInputView()
     }
     
-    private func layoutMessageInputView() {
-        view.addSubview(messageInputView)
-        
-        messageInputView.snp.makeConstraints {
-            $0.bottom.left.right.equalToSuperview()
-            $0.top.equalTo(view.snp.bottom).inset(100)
-        }
-    }
-    
     private func configure() {
         configureSideBar()
         configureBlackScreen()
@@ -318,6 +309,8 @@ final class ChatViewController: ViewController {
     }
     
     private func hideSidebarView() {
+        navigationItem.leftBarButtonItem?.isHidden = false
+        
         blackScreen.isHidden = true
         blackScreen.frame = self.view.bounds
         
@@ -332,6 +325,8 @@ final class ChatViewController: ViewController {
     }
     
     @objc func blackScreenTapAction(sender: UITapGestureRecognizer) {
+        navigationItem.leftBarButtonItem?.isHidden = false
+        
         blackScreen.isHidden = true
         blackScreen.frame = view.bounds
         
