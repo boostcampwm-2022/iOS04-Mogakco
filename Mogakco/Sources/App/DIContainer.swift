@@ -260,6 +260,7 @@ final class DIContainer {
             let viewModel = ProfileViewModel()
             viewModel.userUseCase = resolver.resolve(UserUseCaseProtocol.self)
             viewModel.createChatRoomUseCase = resolver.resolve(CreateChatRoomUseCaseProtocol.self)
+            viewModel.reportUseCase = resolver.resolve(ReportUseCaseProtocol.self)
             return viewModel
         }
         container.register(CreateStudyViewModel.self) { resolver in
