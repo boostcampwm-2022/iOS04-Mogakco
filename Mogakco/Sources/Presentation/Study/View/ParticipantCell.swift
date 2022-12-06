@@ -28,12 +28,14 @@ final class ParticipantCell: UICollectionViewCell, Identifiable {
     private let imageView = RoundProfileImageView(50)
     
     private let userNameLabel = UILabel().then {
+        $0.textAlignment = .center
         $0.font = .mogakcoFont.mediumBold
         $0.textColor = .mogakcoColor.typographyPrimary
         $0.text = "default User name"
     }
     
     private let userDescriptionLabel = UILabel().then {
+        $0.textAlignment = .center
         $0.font = MogakcoFontFamily.SFProDisplay.semibold.font(size: 14)
         $0.textColor = .mogakcoColor.typographySecondary
         $0.text = "default user desctiption"
@@ -64,6 +66,8 @@ final class ParticipantCell: UICollectionViewCell, Identifiable {
         addSubview(userNameLabel)
         userNameLabel.snp.makeConstraints {
             $0.centerX.equalToSuperview()
+            $0.leading.trailing.equalToSuperview().inset(5)
+            $0.width.equalTo(90)
             $0.top.equalTo(imageView.snp.bottom).offset(15)
         }
     }
@@ -72,7 +76,10 @@ final class ParticipantCell: UICollectionViewCell, Identifiable {
         addSubview(userDescriptionLabel)
         userDescriptionLabel.snp.makeConstraints {
             $0.centerX.equalToSuperview()
+            $0.leading.trailing.equalToSuperview().inset(5)
+            $0.width.equalTo(90)
             $0.top.equalTo(userNameLabel.snp.bottom).offset(5)
+            $0.bottom.equalToSuperview().inset(15)
         }
     }
     
