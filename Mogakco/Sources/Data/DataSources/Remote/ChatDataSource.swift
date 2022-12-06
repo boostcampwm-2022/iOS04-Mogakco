@@ -90,7 +90,7 @@ final class ChatDataSource: ChatDataSourceProtocol {
                 .document(chatRoomID)
                 .collection("chat")
                 .addDocument(data: chat.toDictionary()) { _ in
-                    print("@@@@@@@@ Chat SEND @@@@@@@@")
+                    print("DEBUG : Chat SEND")
                     emitter.onNext(())
                 }
             return Disposables.create()
