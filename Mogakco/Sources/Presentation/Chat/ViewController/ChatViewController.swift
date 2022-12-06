@@ -45,7 +45,7 @@ final class ChatViewController: ViewController {
             bottom: 0,
             right: 0)
         layout.itemSize = CGSize(width: view.frame.width, height: 60)
-        layout.minimumLineSpacing = 8.0
+        layout.minimumLineSpacing = 12.0
         $0.refreshControl = UIRefreshControl()
         $0.collectionViewLayout = layout
         $0.register(ChatCell.self, forCellWithReuseIdentifier: ChatCell.identifier)
@@ -76,6 +76,8 @@ final class ChatViewController: ViewController {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    // MARK: - Lifecycles
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -117,6 +119,8 @@ final class ChatViewController: ViewController {
         configureBlackScreen()
         configureNavigationBar()
     }
+    
+    // MARK: - ViewController Methods
     
     override func bind() {
         let input = ChatViewModel.Input(
@@ -208,7 +212,7 @@ final class ChatViewController: ViewController {
         if height == 0 {
             self.messageInputView.snp.remakeConstraints {
                 $0.bottom.left.right.equalToSuperview()
-                $0.top.equalTo(self.view.snp.bottom).inset(100)
+                $0.top.equalTo(self.view.snp.bottom).inset(Constant.messageInputViewHeight)
             }
         } else {
             UIView.animate(withDuration: 0.5) { [weak self] in
@@ -225,7 +229,7 @@ final class ChatViewController: ViewController {
         if height == 0 {
             self.collectionView.snp.remakeConstraints {
                 $0.top.left.right.equalToSuperview()
-                $0.bottom.equalToSuperview().inset(100)
+                $0.bottom.equalToSuperview().inset(Constant.messageInputViewHeight)
             }
         } else {
             UIView.animate(withDuration: 0.5) { [weak self] in
@@ -238,47 +242,11 @@ final class ChatViewController: ViewController {
         }
     }
     
-    private func configureSideBar() {
-        sidebarView.layer.zPosition = 100
-        sidebarView.tableView.delegate = nil
-        sidebarView.tableView.dataSource = nil
-        self.view.isUserInteractionEnabled = true
-    }
-    
-    private func layoutSideBar() {
-        self.navigationController?.view.addSubview(sidebarView)
-    }
-    
-    private func configureBlackScreen() {
-        blackScreen.backgroundColor = .black.withAlphaComponent(0.5)
-        blackScreen.isHidden = true
-        let tapGestRecognizer = UITapGestureRecognizer(target: self, action: #selector(blackScreenTapAction(sender:)))
-        blackScreen.addGestureRecognizer(tapGestRecognizer)
-    }
-    
-    private func layoutBlackScreen() {
-        view.addSubview(blackScreen)
-        
-        blackScreen.layer.zPosition = 100
-    }
-    
-    private func configureNavigationBar() {
-        navigationItem.title = "채팅"
-        
-        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: backButton)
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: studyInfoButton)
-    }
-    
-    private func layoutCollectionView() {
-        view.addSubview(collectionView)
-
-        collectionView.snp.makeConstraints {
-            $0.top.left.right.equalToSuperview()
-            $0.bottom.equalToSuperview().inset(100)
-        }
-    }
+    // MARK: - Helper Functions
     
     private func showSidebarView() {
+        navigationItem.leftBarButtonItem?.isHidden = true
+
         blackScreen.isHidden = false
         UIView.animate(
             withDuration: 0.3,
@@ -309,17 +277,6 @@ final class ChatViewController: ViewController {
                 width: self.sidebarView.frame.width,
                 height: self.sidebarView.frame.height
             )
-        }
-    }
-    
-    private func sidebarMenuDidTap(row: ChatSidebarMenu) {
-        switch row {
-        case .studyInfo:
-            print("1")
-        case .exitStudy:
-            print("2")
-        case .showMember:
-            print("3")
         }
     }
     
