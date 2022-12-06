@@ -19,13 +19,15 @@ struct UserRequestDTO: Codable {
     private let categorys: ArrayValue<StringValue>
     private let studyIDs: ArrayValue<StringValue>
     private let chatRoomIDs: ArrayValue<StringValue>
+    private let fcmToken: StringValue?
 
     private enum RootKey: String, CodingKey {
         case fields
     }
     
     private enum FieldKeys: String, CodingKey {
-        case id, profileImageURLString, name, introduce, email, languages, careers, categorys, studyIDs, chatRoomIDs
+        case id, profileImageURLString, name, introduce, email, languages,
+             careers, categorys, studyIDs, chatRoomIDs, fcmToken
     }
  
     func encode(to encoder: Encoder) throws {
@@ -41,6 +43,7 @@ struct UserRequestDTO: Codable {
         try fieldContainer.encode(self.categorys, forKey: .categorys)
         try fieldContainer.encode(self.studyIDs, forKey: .studyIDs)
         try fieldContainer.encode(self.chatRoomIDs, forKey: .chatRoomIDs)
+        try fieldContainer.encodeIfPresent(self.fcmToken, forKey: .fcmToken)
     }
     
     init(user: User) {
@@ -54,5 +57,10 @@ struct UserRequestDTO: Codable {
         self.categorys = ArrayValue<StringValue>(values: user.categorys.map { StringValue(value: $0) })
         self.studyIDs = ArrayValue<StringValue>(values: user.studyIDs.map { StringValue(value: $0) })
         self.chatRoomIDs = ArrayValue<StringValue>(values: user.chatRoomIDs.map { StringValue(value: $0) })
+        if let fcmToken = user.fcmToken {
+            self.fcmToken = StringValue(value: fcmToken)
+        } else {
+            self.fcmToken = nil
+        }
     }
 }

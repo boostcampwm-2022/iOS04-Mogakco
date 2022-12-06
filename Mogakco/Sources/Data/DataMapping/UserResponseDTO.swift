@@ -19,13 +19,14 @@ struct UserResponseDTO: Codable {
     private let categorys: ArrayValue<StringValue>
     private let studyIDs: ArrayValue<StringValue>
     private let chatRoomIDs: ArrayValue<StringValue>
-
+    private let fcmToken: StringValue?
+    
     private enum RootKey: String, CodingKey {
         case fields
     }
     
     private enum FieldKeys: String, CodingKey {
-        case id, profileImageURLString, name, introduce, email, languages, careers, categorys, studyIDs, chatRoomIDs
+        case id, profileImageURLString, name, introduce, email, languages, careers, categorys, studyIDs, chatRoomIDs, fcmToken
     }
     
     init(from decoder: Decoder) throws {
@@ -41,6 +42,7 @@ struct UserResponseDTO: Codable {
         self.categorys = try fieldContainer.decode(ArrayValue<StringValue>.self, forKey: .categorys)
         self.studyIDs = try fieldContainer.decode(ArrayValue<StringValue>.self, forKey: .studyIDs)
         self.chatRoomIDs = try fieldContainer.decode(ArrayValue<StringValue>.self, forKey: .chatRoomIDs)
+        self.fcmToken = try fieldContainer.decodeIfPresent(StringValue.self, forKey: .fcmToken)
     }
 
     func toDomain() -> User {
@@ -55,7 +57,8 @@ struct UserResponseDTO: Codable {
             careers: careers.arrayValue.map { $0.value }.flatMap { $0.map { $0.value } },
             categorys: categorys.arrayValue.map { $0.value }.flatMap { $0.map { $0.value } },
             studyIDs: studyIDs.arrayValue.map { $0.value }.flatMap { $0.map { $0.value } },
-            chatRoomIDs: chatRoomIDs.arrayValue.map { $0.value }.flatMap { $0.map { $0.value } }
+            chatRoomIDs: chatRoomIDs.arrayValue.map { $0.value }.flatMap { $0.map { $0.value } },
+            fcmToken: fcmToken?.value
         )
     }
 }

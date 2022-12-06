@@ -12,8 +12,13 @@ import RxSwift
 
 struct UserRepository: UserRepositoryProtocol {
   
+    enum UserRepositoryError: Error {
+        case noFcmToken
+    }
+    
     var localUserDataSource: LocalUserDataSourceProtocol?
     var remoteUserDataSource: RemoteUserDataSourceProtocol?
+    var keyChainManager: KeychainManagerProtocol?
     private let disposeBag = DisposeBag()
 
     func save(user: User) -> Observable<Void> {
@@ -39,9 +44,14 @@ struct UserRepository: UserRepositoryProtocol {
     }
     
     func create(user: User, imageData: Data) -> Observable<User> {
+        var fcmToken = ""
+        if let loadedFcmTokenData = keyChainManager?.load(key: .fcmToken),
+            let loadedFcmToken = String(data: loadedFcmTokenData, encoding: .utf8) {
+            fcmToken = loadedFcmToken
+        }
         return remoteUserDataSource?.uploadProfileImage(id: user.id, imageData: imageData)
             .map { $0.absoluteString }
-            .map { User(profileImageURLString: $0, user: user) }
+            .map { User(profileImageURLString: $0, fcmToken: fcmToken, user: user) }
             .map { UserRequestDTO(user: $0) }
             .flatMap { remoteUserDataSource?.create(request: $0) ?? .empty() }
             .map { $0.toDomain() } ?? .empty()
