@@ -89,6 +89,12 @@ final class ChatViewModel: ViewModel {
             }
             .disposed(by: disposeBag)
         
+        studyInfoTap
+            .subscribe(onNext: {
+                selectedSidebar.onNext(.studyInfo)
+            })
+            .disposed(by: disposeBag)
+        
         exitStudyTap
             .withUnretained(self)
             .flatMap { $0.0.leaveStudyUseCase?.leaveStudy(id: $0.0.chatRoomID) ?? .empty() }
@@ -99,7 +105,13 @@ final class ChatViewModel: ViewModel {
                 print(error)
             }
             .disposed(by: disposeBag)
-        // TODO: 위와 같은 방식으로 studyInfo, showMember추가
+        
+        showMemberTap
+            .subscribe(onNext: {
+                selectedSidebar.onNext(.showMember)
+            })
+            .disposed(by: disposeBag)
+        
         input.sendButtonDidTap
             .withLatestFrom(Observable.combineLatest(
                 chatUseCase?.myProfile() ?? .empty(),
