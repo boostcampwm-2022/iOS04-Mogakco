@@ -13,7 +13,6 @@ final class ChatDataSource: ChatDataSourceProtocol {
     
     var listener: ListenerRegistration?
     var page: DocumentSnapshot?
-    let disposeBag = DisposeBag()
     
     enum Constant {
         static let chatRoom = Firestore.firestore().collection("chatroom")
@@ -54,7 +53,6 @@ final class ChatDataSource: ChatDataSourceProtocol {
                         }
                 }
                 .subscribe { _ in }
-                .disposed(by: self.disposeBag)
             return Disposables.create()
         }
     }
@@ -80,8 +78,7 @@ final class ChatDataSource: ChatDataSourceProtocol {
             Constant.chatRoom
                 .document(chatRoomID)
                 .collection("chat")
-                .document(chat.id)
-                .setData(chat.toDictionary()) { _ in
+                .addDocument(data: chat.toDictionary()) { _ in
                     emitter.onNext(())
                 }
             return Disposables.create()
