@@ -16,6 +16,7 @@ struct ChatRoomRepository: ChatRoomRepositoryProtocol {
     var chatRoomDataSource: ChatRoomDataSourceProtocol?
     var remoteUserDataSource: RemoteUserDataSourceProtocol?
     var studyDataSource: StudyDataSourceProtocol?
+    var pushNotificationService: PushNotificationServiceProtocol?
 
     func create(studyID: String?, userIDs: [String]) -> Observable<ChatRoom> {
         let request = CreateChatRoomRequestDTO(
@@ -35,6 +36,15 @@ struct ChatRoomRepository: ChatRoomRepositoryProtocol {
         let chatRoomsSb = chatRoomDataSource?.list()
             .map { $0.documents.map { $0.toDomain() } }
             .map { $0.filter { ids.contains($0.id) } } ?? .empty()
+        
+        // 채팅방 푸쉬 알림 구독
+        chatRoomsSb
+            .subscribe(onNext: {
+                $0.forEach {
+                    self.pushNotificationService?.subscribeTopic(topic: $0.id)
+                }
+            })
+            .disposed(by: disposeBag)
         
         // 최근 메세지 호출
         let latestChatChatRoomsSb = BehaviorSubject<[ChatRoom]>(value: [])
