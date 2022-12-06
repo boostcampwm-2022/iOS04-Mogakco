@@ -80,6 +80,7 @@ identifier_name:
     - x
     - y
     - z
+    - to
 
 line_length:
   ignores_urls: true

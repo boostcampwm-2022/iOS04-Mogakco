@@ -27,8 +27,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         UNUserNotificationCenter.current().delegate = self
         Messaging.messaging().delegate = self
+        requestNotificationAuthorization()
+        application.registerForRemoteNotifications()
         
         UINavigationBar.appearance().tintColor = UIColor.mogakcoColor.typographyPrimary
+        
         return true
     }
     
@@ -85,7 +88,12 @@ extension AppDelegate : UNUserNotificationCenterDelegate {
         let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
         UNUserNotificationCenter.current().requestAuthorization(
             options: authOptions,
-            completionHandler: { _, _ in }
+            completionHandler: { granted, error in
+                if let error = error {
+                    print(error)
+                }
+                print("notification authorizted: \(granted)")
+            }
         )
     }
     
