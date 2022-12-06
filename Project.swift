@@ -82,7 +82,7 @@ class BaseProjectFactory: ProjectFactory {
                 infoPlist: .extendingDefault(with: infoPlist),
                 sources: ["\(projectName)/Sources/**"],
                 resources: "\(projectName)/Resources/**",
-//                entitlements: "\(projectName).entitlements",
+                entitlements: "\(projectName).entitlements",
                 scripts: [.pre(path: "Scripts/SwiftLintRunScript.sh", arguments: [], name: "SwiftLint")],
                 dependencies: dependencies
             ),
