@@ -55,19 +55,14 @@ final class ChatViewModel: ViewModel {
         let showMemberTap = PublishSubject<Void>()
         let refreshFinished = PublishSubject<Void>()
         
-        bindFirebase()
+        observeFirebase()
+        fetchChats()
         backButtonDidTap(input: input)
         
         input.pagination?
             .subscribe({ [weak self] _ in
                 guard let self = self else { return }
-                self.chatUseCase?.reload(chatRoomID: self.chatRoomID)
-                    .withLatestFrom(self.messages) { ($0, $1) }
-                    .subscribe(onNext: { newChat, originalChats in
-                        self.messages.accept(newChat + originalChats)
-                    })
-                    .disposed(by: self.disposeBag)
-                
+                self.fetchChats()
                 refreshFinished.onNext(())
             })
             .disposed(by: disposeBag)
@@ -148,7 +143,7 @@ final class ChatViewModel: ViewModel {
         )
     }
     
-    private func bindFirebase() {
+    private func observeFirebase() {
         chatUseCase?.observe(chatRoomID: chatRoomID)
             .withLatestFrom(messages) { ($0, $1) }
             .subscribe(onNext: { [weak self] newChat, originalChats in
@@ -160,11 +155,12 @@ final class ChatViewModel: ViewModel {
                 }
             })
             .disposed(by: disposeBag)
-        
-        chatUseCase?.fetchAll(chatRoomID: chatRoomID)
+    }
+    
+    private func fetchChats() {
+        chatUseCase?.fetch(chatRoomID: chatRoomID)
             .withLatestFrom(messages) { ($0, $1) }
             .subscribe(onNext: { [weak self] newChat, originalChat in
-                
                 self?.messages.accept(newChat + originalChat)
             })
             .disposed(by: disposeBag)
