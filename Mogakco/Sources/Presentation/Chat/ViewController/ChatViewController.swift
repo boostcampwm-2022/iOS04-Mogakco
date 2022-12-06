@@ -9,6 +9,7 @@
 import UIKit
 
 import RxCocoa
+import RxKeyboard
 import RxSwift
 import SnapKit
 import Then
@@ -82,10 +83,6 @@ final class ChatViewController: ViewController {
         navigationController?.isNavigationBarHidden = true
     }
     
-    override var inputAccessoryView: UIView? {
-        return messageInputView
-    }
-    
     override var canBecomeFirstResponder: Bool {
         return true
     }
@@ -95,6 +92,16 @@ final class ChatViewController: ViewController {
         layoutCollectionView()
         layoutSideBar()
         layoutBlackScreen()
+        layoutMessageInputView()
+    }
+    
+    private func layoutMessageInputView() {
+        view.addSubview(messageInputView)
+        
+        messageInputView.snp.makeConstraints {
+            $0.bottom.left.right.equalToSuperview()
+            $0.top.equalTo(view.snp.bottom).inset(100)
+        }
     }
     
     private func configure() {
@@ -178,6 +185,49 @@ final class ChatViewController: ViewController {
                 )
             }
             .disposed(by: disposeBag)
+
+        RxKeyboard.instance.visibleHeight
+            .skip(1)
+            .drive(onNext: { [weak self] keyboardVisibleHeight in
+                guard let self else { return }
+                self.updateMessageInputLayout(height: keyboardVisibleHeight)
+                self.updateCollectionViewLayout(height: keyboardVisibleHeight)
+            })
+            .disposed(by: disposeBag)
+    }
+    
+    private func updateMessageInputLayout(height: CGFloat) {
+        if height == 0 {
+            self.messageInputView.snp.remakeConstraints {
+                $0.bottom.left.right.equalToSuperview()
+                $0.top.equalTo(self.view.snp.bottom).inset(100)
+            }
+        } else {
+            UIView.animate(withDuration: 0.5) { [weak self] in
+                guard let self else { return }
+                self.messageInputView.snp.remakeConstraints {
+                    $0.left.right.equalTo(self.view.safeAreaLayoutGuide)
+                    $0.bottom.equalToSuperview().inset(height)
+                }
+            }
+        }
+    }
+    
+    private func updateCollectionViewLayout(height: CGFloat) {
+        if height == 0 {
+            self.collectionView.snp.remakeConstraints {
+                $0.top.left.right.equalToSuperview()
+                $0.bottom.equalToSuperview().inset(100)
+            }
+        } else {
+            UIView.animate(withDuration: 0.5) { [weak self] in
+                guard let self else { return }
+                self.collectionView.snp.remakeConstraints {
+                    $0.top.left.right.equalToSuperview()
+                    $0.bottom.equalTo(self.messageInputView.snp.top)
+                }
+            }
+        }
     }
     
     private func configureSideBar() {
@@ -215,7 +265,8 @@ final class ChatViewController: ViewController {
         view.addSubview(collectionView)
 
         collectionView.snp.makeConstraints {
-            $0.top.left.bottom.right.equalToSuperview()
+            $0.top.left.right.equalToSuperview()
+            $0.bottom.equalToSuperview().inset(100)
         }
     }
     
