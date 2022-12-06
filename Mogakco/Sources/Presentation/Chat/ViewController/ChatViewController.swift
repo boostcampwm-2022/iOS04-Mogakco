@@ -169,7 +169,6 @@ final class ChatViewController: ViewController {
             .withUnretained(self)
             .subscribe { _ in
                 self.messageInputView.messageInputTextView.text = nil
-                self.collectionView.reloadData()
                 self.collectionView.scrollToItem(
                     at: IndexPath(
                         row: self.collectionView.numberOfItems(inSection: 0) - 1,
