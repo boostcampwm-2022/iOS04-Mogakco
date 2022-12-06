@@ -1,5 +1,5 @@
 //
-//  ReporyRepositoryProtocol.swift
+//  ReportRepositoryProtocol.swift
 //  Mogakco
 //
 //  Created by 신소민 on 2022/12/06.
@@ -8,7 +8,7 @@
 
 import RxSwift
 
-protocol ReporyRepositoryProtocol {
+protocol ReportRepositoryProtocol {
     func reportStudy(id: String) -> Observable<Void>
     func reportUser(id: String) -> Observable<Void>
     func loadStudy() -> Observable<[String]>
