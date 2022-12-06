@@ -26,7 +26,8 @@ struct UserResponseDTO: Codable {
     }
     
     private enum FieldKeys: String, CodingKey {
-        case id, profileImageURLString, name, introduce, email, languages, careers, categorys, studyIDs, chatRoomIDs, fcmToken
+        case id, profileImageURLString, name, introduce, email,
+             languages, careers, categorys, studyIDs, chatRoomIDs, fcmToken
     }
     
     init(from decoder: Decoder) throws {
