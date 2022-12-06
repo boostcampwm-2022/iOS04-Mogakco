@@ -96,6 +96,7 @@ final class ChatCell: UICollectionViewCell, Identifiable {
     private func layoutOthersBubble(user: User) {
         bubbleContainer.snp.remakeConstraints {
             $0.left.equalTo(profileImageView.snp.right).offset(12)
+            $0.width.lessThanOrEqualTo(200)
         }
         bubbleContainer.backgroundColor = .mogakcoColor.backgroundSecondary
         
@@ -108,6 +109,7 @@ final class ChatCell: UICollectionViewCell, Identifiable {
     private func layoutMyBubble() {
         bubbleContainer.snp.remakeConstraints {
             $0.right.equalToSuperview().inset(12)
+            $0.width.lessThanOrEqualTo(200)
         }
         bubbleContainer.backgroundColor = .mogakcoColor.primaryDefault
         profileImageView.isHidden = true
