@@ -6,23 +6,46 @@
 //  Copyright © 2022 Mogakco. All rights reserved.
 //
 
+import Foundation
+
 import RxSwift
 
 struct ChatRepository: ChatRepositoryProtocol {
+    
     var chatDataSource: ChatDataSourceProtocol?
+    var reportDataSource: ReportDataSourceProtocol?
     var pushNotificationService: PushNotificationServiceProtocol?
     private let disposeBag = DisposeBag()
 
     func fetchAll(chatRoomID: String) -> Observable<[Chat]> {
-        return chatDataSource?.fetchAll(chatRoomID: chatRoomID).map { $0.map { $0.toDomain() } } ?? .empty()
+        let chats = chatDataSource?.fetchAll(chatRoomID: chatRoomID)
+            .map { $0.map { $0.toDomain() } } ?? .empty()
+        
+        return Observable.combineLatest(chats, reportDataSource?.loadUser() ?? .empty())
+            .map { chats, reportIds in
+                chats.filter { !reportIds.contains($0.userID) }
+            }
     }
     
     func reload(chatRoomID: String) -> Observable<[Chat]> {
-        return chatDataSource?.reload(chatRoomID: chatRoomID).map { $0.map { $0.toDomain() } } ?? .empty()
+        let chats = chatDataSource?.reload(chatRoomID: chatRoomID)
+            .map { $0.map { $0.toDomain() } } ?? .empty()
+        
+        return Observable.combineLatest(chats, reportDataSource?.loadUser() ?? .empty())
+            .map { chats, reportIds in
+                chats.filter { !reportIds.contains($0.userID) }
+            }
     }
     
     func observe(chatRoomID: String) -> Observable<Chat> {
-        return chatDataSource?.observe(chatRoomID: chatRoomID).map { $0.toDomain() } ?? .empty()
+        let chat = chatDataSource?.observe(chatRoomID: chatRoomID)
+            .map { $0.toDomain() } ?? .empty()
+        
+        return Observable.combineLatest(chat, reportDataSource?.loadUser() ?? .empty())
+            .filter { chat, reportIds in
+                !reportIds.contains(chat.userID)
+            }
+            .map { $0.0 }
     }
 
     func send(chat: Chat, to chatRoomID: String) -> Observable<Void> {
