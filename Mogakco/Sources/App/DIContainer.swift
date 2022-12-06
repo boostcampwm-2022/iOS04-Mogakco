@@ -30,7 +30,7 @@ final class DIContainer {
         container.register(LocalUserDataSourceProtocol.self) { _ in UserDefaultsUserDataSource() }
         container.register(StudyDataSourceProtocol.self) { _ in StudyDataSource(provider: provider) }
         container.register(ChatRoomDataSourceProtocol.self) { _ in ChatRoomDataSource(provider: provider) }
-        container.register(ChatRoomDataSourceProtocol.self) { _ in ChatRoomDataSource(provider: provider) }
+        container.register(ChatDataSourceProtocol.self) { _ in ChatDataSource() }
         container.register(HashtagDataSourceProtocol.self) { _ in HashtagDataSource() }
         container.register(KeychainProtocol.self) { _ in Keychain() }
         container.register(KeychainManagerProtocol.self) { resolver in
