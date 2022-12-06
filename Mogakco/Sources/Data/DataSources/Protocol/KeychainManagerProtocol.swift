@@ -9,8 +9,8 @@
 import Foundation
 
 protocol KeychainManagerProtocol {
-    func save(key: String, data: Data) -> Bool
-    func load(key: String) -> Data?
-    func delete(key: String, data: Data) -> Bool
-    func update(key: String, data: Data) -> Bool
+    func save(key: KeychainKey, data: Data) -> Bool
+    func load(key: KeychainKey) -> Data?
+    func delete(key: KeychainKey, data: Data) -> Bool
+    func update(key: KeychainKey, data: Data) -> Bool
 }
