@@ -151,7 +151,6 @@ final class ChatViewController: ViewController {
         viewModel.messages
             .asDriver(onErrorJustReturn: [])
             .drive(collectionView.rx.items) { collectionView, index, chat in
-                
                 guard let cell = collectionView.dequeueReusableCell(
                     withReuseIdentifier: ChatCell.identifier,
                     for: IndexPath(row: index, section: 0)) as? ChatCell else {
@@ -174,7 +173,6 @@ final class ChatViewController: ViewController {
             .subscribe { [weak self] row in
                 guard let self = self else { return }
                 self.hideSidebarView()
-                self.sidebarMenuDidTap(row: row)
             }
             .disposed(by: disposeBag)
         
@@ -208,6 +206,49 @@ final class ChatViewController: ViewController {
             .disposed(by: disposeBag)
     }
     
+    // MARK: - Configures
+    
+    private func configureSideBar() {
+        sidebarView.layer.zPosition = Constant.sidebarZPosition
+        sidebarView.tableView.delegate = nil
+        sidebarView.tableView.dataSource = nil
+        self.view.isUserInteractionEnabled = true
+    }
+    
+    private func configureBlackScreen() {
+        blackScreen.backgroundColor = .black.withAlphaComponent(0.5)
+        blackScreen.isHidden = true
+        let tapGestRecognizer = UITapGestureRecognizer(target: self, action: #selector(blackScreenTapAction(sender:)))
+        blackScreen.addGestureRecognizer(tapGestRecognizer)
+    }
+    
+    private func configureNavigationBar() {
+        navigationItem.title = "채팅"
+        
+        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: backButton)
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: studyInfoButton)
+    }
+    
+    // MARK: - Layouts
+    
+    private func layoutCollectionView() {
+        view.addSubview(collectionView)
+        collectionView.rx.setDelegate(self).disposed(by: disposeBag)
+        collectionView.snp.makeConstraints {
+            $0.top.left.right.equalToSuperview()
+            $0.bottom.equalToSuperview().inset(Constant.messageInputViewHeight)
+        }
+    }
+    
+    private func layoutSideBar() {
+        self.navigationController?.view.addSubview(sidebarView)
+    }
+    
+    private func layoutBlackScreen() {
+        view.addSubview(blackScreen)
+        
+        blackScreen.layer.zPosition = Constant.sidebarZPosition
+    }
     private func updateMessageInputLayout(height: CGFloat) {
         if height == 0 {
             self.messageInputView.snp.remakeConstraints {
