@@ -152,10 +152,9 @@ final class ChatViewController: ViewController {
             .disposed(by: disposeBag)
         
         output.selectedSidebar
-            .subscribe { [weak self] row in
+            .subscribe { [weak self] _ in
                 guard let self = self else { return }
                 self.hideSidebarView()
-                self.sidebarMenuDidTap(row: row)
             }
             .disposed(by: disposeBag)
         
@@ -251,17 +250,6 @@ final class ChatViewController: ViewController {
                 width: self.sidebarView.frame.width,
                 height: self.sidebarView.frame.height
             )
-        }
-    }
-    
-    private func sidebarMenuDidTap(row: ChatSidebarMenu) {
-        switch row {
-        case .studyInfo:
-            print("1")
-        case .exitStudy:
-            print("2")
-        case .showMember:
-            print("3")
         }
     }
     
