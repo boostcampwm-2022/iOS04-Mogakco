@@ -345,3 +345,24 @@ final class ChatViewController: ViewController {
         }
     }
 }
+
+extension ChatViewController: UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let frame = CGRect(
+            x: 0,
+            y: 0,
+            width: view.frame.width,
+            height: 50
+        )
+        
+        let estimatedCell = ChatCell(frame: frame)
+        
+        estimatedCell.layoutChat(chat: viewModel.messages.value[indexPath.item])
+        estimatedCell.layoutIfNeeded()
+        
+        let width = estimatedCell.bubbleContainer.frame.width
+        let height = estimatedCell.bubbleContainer.frame.height
+        
+        return .init(width: view.frame.width, height: height)
+    }
+}
