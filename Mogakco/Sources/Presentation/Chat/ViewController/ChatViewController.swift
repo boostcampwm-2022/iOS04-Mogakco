@@ -161,7 +161,7 @@ final class ChatViewController: ViewController {
             .disposed(by: disposeBag)
         
         output.selectedSidebar
-            .subscribe { [weak self] row in
+            .subscribe { [weak self] _ in
                 guard let self = self else { return }
                 self.hideSidebarView()
             }
