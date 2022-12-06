@@ -14,27 +14,10 @@ struct ChatUseCase: ChatUseCaseProtocol {
     var userRepository: UserRepositoryProtocol?
     private let disposeBag = DisposeBag()
 
-    func fetchAll(chatRoomID: String) -> Observable<[Chat]> {
+    func fetch(chatRoomID: String) -> Observable<[Chat]> {
         let users = userRepository?.allUsers() ?? .empty()
         let myUser = userRepository?.load() ?? .empty()
-        let chats = chatRepository?.fetchAll(chatRoomID: chatRoomID) ?? .empty()
-        return Observable.zip(users, myUser, chats)
-            .map { users, myUser, chats in
-                return chats.map {
-                    var chat = $0
-                    chat.user = users.first(where: { user in
-                        return user.id == chat.userID
-                    })
-                    chat.isFromCurrentUser = chat.userID == myUser.id
-                    return chat
-                }
-            }
-    }
-    
-    func reload(chatRoomID: String) -> Observable<[Chat]> {
-        let users = userRepository?.allUsers() ?? .empty()
-        let myUser = userRepository?.load() ?? .empty()
-        let chats = chatRepository?.reload(chatRoomID: chatRoomID) ?? .empty()
+        let chats = chatRepository?.fetch(chatRoomID: chatRoomID) ?? .empty()
         return Observable.zip(users, myUser, chats)
             .map { users, myUser, chats in
                 return chats.map {
