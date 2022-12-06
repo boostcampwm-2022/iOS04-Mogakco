@@ -38,6 +38,7 @@ final class DIContainer {
             dataSource.keychain = resolver.resolve(KeychainProtocol.self)
             return dataSource
         }
+        container.register(PushNotificationServiceProtocol.self) { _ in PushNotificationService(provider: provider) }
     }
     
     private func registerRepositories() {
@@ -54,6 +55,7 @@ final class DIContainer {
         container.register(ChatRepositoryProtocol.self) { resolver in
             var repository = ChatRepository()
             repository.chatDataSource = resolver.resolve(ChatDataSourceProtocol.self)
+            repository.pushNotificationService = resolver.resolve(PushNotificationServiceProtocol.self)
             return repository
         }
         container.register(ChatRoomRepositoryProtocol.self) { resolver in
@@ -61,6 +63,7 @@ final class DIContainer {
             repository.chatRoomDataSource = resolver.resolve(ChatRoomDataSourceProtocol.self)
             repository.remoteUserDataSource = resolver.resolve(RemoteUserDataSourceProtocol.self)
             repository.studyDataSource = resolver.resolve(StudyDataSourceProtocol.self)
+            repository.pushNotificationService = resolver.resolve(PushNotificationServiceProtocol.self)
             return repository
         }
         container.register(HashtagRepositoryProtocol.self) { resolver in
