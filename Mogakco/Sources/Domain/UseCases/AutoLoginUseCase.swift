@@ -19,7 +19,7 @@ struct AutoLoginUseCase: AutoLoginUseCaseProtocol {
             let token = PublishSubject<User>()
 
             token
-                .flatMap { self.tokenRepository?.load(email: $0.email) ?? .empty() }
+                .flatMap { _ in self.tokenRepository?.load() ?? .empty() }
                 .map { $0 != nil }
                 .bind(to: emitter)
                 .disposed(by: self.disposeBag)
