@@ -9,8 +9,7 @@
 import RxSwift
 
 protocol ChatUseCaseProtocol {
-    func fetchAll(chatRoomID: String) -> Observable<[Chat]>
-    func reload(chatRoomID: String) -> Observable<[Chat]>
+    func fetch(chatRoomID: String) -> Observable<[Chat]>
     func observe(chatRoomID: String) -> Observable<Chat>
     func send(chat: Chat, to chatRoomID: String) -> Observable<Void>
     func myProfile() -> Observable<User> 
