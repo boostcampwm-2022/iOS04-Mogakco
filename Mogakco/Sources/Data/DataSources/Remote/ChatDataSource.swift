@@ -44,7 +44,6 @@ final class ChatDataSource: ChatDataSourceProtocol {
     
     
     func reload(chatRoomID: String) -> Observable<[ChatResponseDTO]> {
-        
         return Observable.create { emitter in
             guard let page = self.page else { return Disposables.create() }
                 Collection.chatRoom
@@ -89,8 +88,8 @@ final class ChatDataSource: ChatDataSourceProtocol {
             Collection.chatRoom
                 .document(chatRoomID)
                 .collection("chat")
-                .addDocument(data: chat.toDictionary()) { _ in
-                    print("@@@@@@@@ Chat SEND @@@@@@@@")
+                .document(chat.id)
+                .setData(chat.toDictionary()) { _ in
                     emitter.onNext(())
                 }
             return Disposables.create()
