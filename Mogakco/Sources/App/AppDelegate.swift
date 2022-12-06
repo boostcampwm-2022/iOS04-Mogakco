@@ -8,12 +8,14 @@
 import UIKit
 
 import FirebaseCore
+import FirebaseMessaging
 import Swinject
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
     var window: UIWindow?
+    let keyChainMananger: KeychainManagerProtocol = KeychainManager()
 
     func application(
         _ application: UIApplication,
@@ -23,10 +25,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         appearance()
         DIContainer.shared.inject()
         
+        UNUserNotificationCenter.current().delegate = self
+        Messaging.messaging().delegate = self
+        
+        UINavigationBar.appearance().tintColor = UIColor.mogakcoColor.typographyPrimary
         return true
     }
     
-    private func appearance() {
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        Messaging.messaging().apnsToken = deviceToken
+    }
+
+	private func appearance() {
         UINavigationBar.appearance().tintColor = .mogakcoColor.typographyPrimary
         
         UITabBar.appearance().tintColor = .mogakcoColor.primaryDefault
@@ -52,5 +62,38 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UITableView.appearance().backgroundColor = .mogakcoColor.backgroundDefault
         UITableViewCell.appearance().backgroundColor = .mogakcoColor.primarySecondary
     }
+}
+
+// MARK: MessagingDelegate
+
+extension AppDelegate : MessagingDelegate {
+    func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
+        guard let fcmToken,
+              let fcmTokenData = fcmToken.data(using: .utf8) else {
+            print("fcm token not exists.")
+            return
+        }
+        _ = keyChainMananger.save(key: .fcmToken, data: fcmTokenData)
+        print("fcmToken:", fcmToken)
+    }
+}
+
+// MARK: Notification
+
+extension AppDelegate : UNUserNotificationCenterDelegate {
+    func requestNotificationAuthorization() {
+        let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
+        UNUserNotificationCenter.current().requestAuthorization(
+            options: authOptions,
+            completionHandler: { _, _ in }
+        )
+    }
     
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        completionHandler([[.banner, .badge, .sound]])
+    }
+    
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        completionHandler()
+    }
 }
