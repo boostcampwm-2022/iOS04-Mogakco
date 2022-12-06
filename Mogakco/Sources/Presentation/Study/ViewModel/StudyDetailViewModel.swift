@@ -23,6 +23,7 @@ final class StudyDetailViewModel: ViewModel {
         let studyJoinButtonTapped: Observable<Void>
         let participantCellTapped: Observable<IndexPath>
         let backButtonTapped: Observable<Void>
+        let reportButtonTapped: Observable<Void>
     }
     
     struct Output {
@@ -37,7 +38,7 @@ final class StudyDetailViewModel: ViewModel {
     var hashtagUseCase: HashtagUseCaseProtocol?
     var userUseCase: UserUseCaseProtocol?
     var joinStudyUseCase: JoinStudyUseCaseProtocol?
-    
+    var reportUseCase: ReportUseCaseProtocol?
     let navigation = PublishSubject<StudyDetailNavigation>()
     var languages = BehaviorSubject<[Hashtag]>(value: [])
     var participants = BehaviorSubject<[User]>(value: [])
@@ -99,6 +100,13 @@ final class StudyDetailViewModel: ViewModel {
         
         input.backButtonTapped
             .map { StudyDetailNavigation.back }
+            .bind(to: navigation)
+            .disposed(by: disposeBag)
+        
+        input.reportButtonTapped
+            .withUnretained(self)
+            .flatMap { $0.0.reportUseCase?.reportStudy(id: $0.0.studyID) ?? .empty() }
+            .map { _ in StudyDetailNavigation.back }
             .bind(to: navigation)
             .disposed(by: disposeBag)
         
