@@ -20,6 +20,7 @@ struct User: Codable {
     let categorys: [String]
     let studyIDs: [String]
     let chatRoomIDs: [String]
+    let fcmToken: String?
 }
 
 extension User {
@@ -35,9 +36,10 @@ extension User {
         self.categorys = []
         self.studyIDs = []
         self.chatRoomIDs = []
+        self.fcmToken = nil
     }
     
-    init(profileImageURLString: String, user: User) {
+    init(profileImageURLString: String, fcmToken: String, user: User) {
         self.id = user.id
         self.profileImageURLString = profileImageURLString
         self.email = user.email
@@ -49,5 +51,6 @@ extension User {
         self.categorys = user.categorys
         self.studyIDs = user.studyIDs
         self.chatRoomIDs = user.chatRoomIDs
+        self.fcmToken = fcmToken
     }
 }
