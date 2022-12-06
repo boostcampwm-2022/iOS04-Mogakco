@@ -10,6 +10,7 @@ import RxSwift
 
 struct ChatRepository: ChatRepositoryProtocol {
     var chatDataSource: ChatDataSourceProtocol?
+    var pushNotificationService: PushNotificationServiceProtocol?
     private let disposeBag = DisposeBag()
 
     func fetchAll(chatRoomID: String) -> Observable<[Chat]> {
@@ -25,7 +26,11 @@ struct ChatRepository: ChatRepositoryProtocol {
     }
 
     func send(chat: Chat, to chatRoomID: String) -> Observable<Void> {
-        return chatDataSource?.send(chat: chat, to: chatRoomID) ?? .empty()
-            // TODO: ChatService 객체 만들어야 할 듯
+        let request = PushNotificationRequestDTO(to: "/topics/\(chatRoomID)",
+                                                 notification: .init(title: chat.user?.name ?? "",
+                                                                     body: chat.message))
+        return chatDataSource?.send(chat: chat, to: chatRoomID)
+            .flatMap { pushNotificationService?.sendTopic(request: request) ?? .empty() }
+            .map { _ in () } ?? .empty()
     }
 }
