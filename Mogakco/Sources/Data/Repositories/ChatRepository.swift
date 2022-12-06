@@ -17,24 +17,8 @@ struct ChatRepository: ChatRepositoryProtocol {
     var pushNotificationService: PushNotificationServiceProtocol?
     private let disposeBag = DisposeBag()
 
-    func fetchAll(chatRoomID: String) -> Observable<[Chat]> {
-        let chats = chatDataSource?.fetchAll(chatRoomID: chatRoomID)
-            .map { $0.map { $0.toDomain() } } ?? .empty()
-        
-        return Observable.combineLatest(chats, reportDataSource?.loadUser() ?? .empty())
-            .map { chats, reportIds in
-                chats.filter { !reportIds.contains($0.userID) }
-            }
-    }
-    
-    func reload(chatRoomID: String) -> Observable<[Chat]> {
-        let chats = chatDataSource?.reload(chatRoomID: chatRoomID)
-            .map { $0.map { $0.toDomain() } } ?? .empty()
-        
-        return Observable.combineLatest(chats, reportDataSource?.loadUser() ?? .empty())
-            .map { chats, reportIds in
-                chats.filter { !reportIds.contains($0.userID) }
-            }
+    func fetch(chatRoomID: String) -> Observable<[Chat]> {
+        return chatDataSource?.fetch(chatRoomID: chatRoomID).map { $0.map { $0.toDomain() } } ?? .empty()
     }
     
     func observe(chatRoomID: String) -> Observable<Chat> {
