@@ -29,6 +29,7 @@ final class DIContainer {
         container.register(RemoteUserDataSourceProtocol.self) { _ in RemoteUserDataSource(provider: provider) }
         container.register(LocalUserDataSourceProtocol.self) { _ in UserDefaultsUserDataSource() }
         container.register(StudyDataSourceProtocol.self) { _ in StudyDataSource(provider: provider) }
+        container.register(ChatDataSourceProtocol.self) { _ in ChatDataSource() }
         container.register(ChatRoomDataSourceProtocol.self) { _ in ChatRoomDataSource(provider: provider) }
         container.register(ChatDataSourceProtocol.self) { _ in ChatDataSource() }
         container.register(HashtagDataSourceProtocol.self) { _ in HashtagDataSource() }
@@ -56,6 +57,7 @@ final class DIContainer {
         container.register(ChatRepositoryProtocol.self) { resolver in
             var repository = ChatRepository()
             repository.chatDataSource = resolver.resolve(ChatDataSourceProtocol.self)
+            repository.reportDataSource = resolver.resolve(ReportDataSourceProtocol.self)
             repository.pushNotificationService = resolver.resolve(PushNotificationServiceProtocol.self)
             return repository
         }
@@ -121,7 +123,7 @@ final class DIContainer {
         }
         container.register(CreateStudyUseCaseProtocol.self) { resolver in
             var useCase = CreateStudyUseCase()
-            useCase.studyRepository = resolver.resolve(StudyRepository.self)
+            useCase.studyRepository = resolver.resolve(StudyRepositoryProtocol.self)
             return useCase
         }
         container.register(EditProfileUseCaseProtocol.self) { resolver in
@@ -265,7 +267,7 @@ final class DIContainer {
         }
         container.register(CreateStudyViewModel.self) { resolver in
             let viewModel = CreateStudyViewModel()
-            viewModel.createStudyUseCase = resolver.resolve(CreateStudyUseCase.self)
+            viewModel.createStudyUseCase = resolver.resolve(CreateStudyUseCaseProtocol.self)
             return viewModel
         }
         container.register(SelectStudySortViewModel.self) { _ in SelectStudySortViewModel()
