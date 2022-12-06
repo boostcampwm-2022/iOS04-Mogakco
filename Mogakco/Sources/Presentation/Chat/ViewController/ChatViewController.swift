@@ -16,14 +16,6 @@ import Then
 
 final class ChatViewController: ViewController {
     
-    // MARK: - Properties
-    
-    enum Constant {
-        static let messageInputViewHeight = 100.0
-        static let sidebarZPosition = 100.0
-        static let collectionViewHeight = 60
-    }
-    
     private lazy var messageInputView = MessageInputView().then {
         $0.frame = CGRect(
             x: 0,
@@ -45,7 +37,7 @@ final class ChatViewController: ViewController {
             bottom: 0,
             right: 0)
         layout.itemSize = CGSize(width: view.frame.width, height: 60)
-        layout.minimumLineSpacing = 12.0
+        layout.minimumLineSpacing = 8.0
         $0.refreshControl = UIRefreshControl()
         $0.collectionViewLayout = layout
         $0.register(ChatCell.self, forCellWithReuseIdentifier: ChatCell.identifier)
@@ -77,8 +69,6 @@ final class ChatViewController: ViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // MARK: - Lifecycles
-    
     override func viewDidLoad() {
         super.viewDidLoad()
     }
@@ -105,13 +95,20 @@ final class ChatViewController: ViewController {
         layoutMessageInputView()
     }
     
+    private func layoutMessageInputView() {
+        view.addSubview(messageInputView)
+        
+        messageInputView.snp.makeConstraints {
+            $0.bottom.left.right.equalToSuperview()
+            $0.top.equalTo(view.snp.bottom).inset(100)
+        }
+    }
+    
     private func configure() {
         configureSideBar()
         configureBlackScreen()
         configureNavigationBar()
     }
-    
-    // MARK: - ViewController Methods
     
     override func bind() {
         let input = ChatViewModel.Input(
@@ -142,6 +139,7 @@ final class ChatViewController: ViewController {
         viewModel.messages
             .asDriver(onErrorJustReturn: [])
             .drive(collectionView.rx.items) { collectionView, index, chat in
+                
                 guard let cell = collectionView.dequeueReusableCell(
                     withReuseIdentifier: ChatCell.identifier,
                     for: IndexPath(row: index, section: 0)) as? ChatCell else {
@@ -164,6 +162,7 @@ final class ChatViewController: ViewController {
             .subscribe { [weak self] row in
                 guard let self = self else { return }
                 self.hideSidebarView()
+                self.sidebarMenuDidTap(row: row)
             }
             .disposed(by: disposeBag)
         
@@ -197,64 +196,11 @@ final class ChatViewController: ViewController {
             .disposed(by: disposeBag)
     }
     
-    // MARK: - Configures
-    
-    private func configureSideBar() {
-        sidebarView.layer.zPosition = Constant.sidebarZPosition
-        sidebarView.tableView.delegate = nil
-        sidebarView.tableView.dataSource = nil
-        self.view.isUserInteractionEnabled = true
-    }
-    
-    private func configureBlackScreen() {
-        blackScreen.backgroundColor = .black.withAlphaComponent(0.5)
-        blackScreen.isHidden = true
-        let tapGestRecognizer = UITapGestureRecognizer(target: self, action: #selector(blackScreenTapAction(sender:)))
-        blackScreen.addGestureRecognizer(tapGestRecognizer)
-    }
-    
-    private func configureNavigationBar() {
-        navigationItem.title = "채팅"
-        
-        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: backButton)
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: studyInfoButton)
-    }
-    
-    // MARK: - Layouts
-    
-    private func layoutCollectionView() {
-        view.addSubview(collectionView)
-        collectionView.rx.setDelegate(self).disposed(by: disposeBag)
-        collectionView.snp.makeConstraints {
-            $0.top.left.right.equalToSuperview()
-            $0.bottom.equalToSuperview().inset(Constant.messageInputViewHeight)
-        }
-    }
-    
-    private func layoutSideBar() {
-        self.navigationController?.view.addSubview(sidebarView)
-    }
-    
-    private func layoutBlackScreen() {
-        view.addSubview(blackScreen)
-        
-        blackScreen.layer.zPosition = Constant.sidebarZPosition
-    }
-    
-    private func layoutMessageInputView() {
-        view.addSubview(messageInputView)
-        
-        messageInputView.snp.makeConstraints {
-            $0.bottom.left.right.equalToSuperview()
-            $0.top.equalTo(view.snp.bottom).inset(Constant.messageInputViewHeight)
-        }
-    }
-    
     private func updateMessageInputLayout(height: CGFloat) {
         if height == 0 {
             self.messageInputView.snp.remakeConstraints {
                 $0.bottom.left.right.equalToSuperview()
-                $0.top.equalTo(self.view.snp.bottom).inset(Constant.messageInputViewHeight)
+                $0.top.equalTo(self.view.snp.bottom).inset(100)
             }
         } else {
             UIView.animate(withDuration: 0.5) { [weak self] in
@@ -271,7 +217,7 @@ final class ChatViewController: ViewController {
         if height == 0 {
             self.collectionView.snp.remakeConstraints {
                 $0.top.left.right.equalToSuperview()
-                $0.bottom.equalToSuperview().inset(Constant.messageInputViewHeight)
+                $0.bottom.equalToSuperview().inset(100)
             }
         } else {
             UIView.animate(withDuration: 0.5) { [weak self] in
@@ -284,11 +230,47 @@ final class ChatViewController: ViewController {
         }
     }
     
-    // MARK: - Helper Functions
+    private func configureSideBar() {
+        sidebarView.layer.zPosition = 100
+        sidebarView.tableView.delegate = nil
+        sidebarView.tableView.dataSource = nil
+        self.view.isUserInteractionEnabled = true
+    }
+    
+    private func layoutSideBar() {
+        self.navigationController?.view.addSubview(sidebarView)
+    }
+    
+    private func configureBlackScreen() {
+        blackScreen.backgroundColor = .black.withAlphaComponent(0.5)
+        blackScreen.isHidden = true
+        let tapGestRecognizer = UITapGestureRecognizer(target: self, action: #selector(blackScreenTapAction(sender:)))
+        blackScreen.addGestureRecognizer(tapGestRecognizer)
+    }
+    
+    private func layoutBlackScreen() {
+        view.addSubview(blackScreen)
+        
+        blackScreen.layer.zPosition = 100
+    }
+    
+    private func configureNavigationBar() {
+        navigationItem.title = "채팅"
+        
+        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: backButton)
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: studyInfoButton)
+    }
+    
+    private func layoutCollectionView() {
+        view.addSubview(collectionView)
+
+        collectionView.snp.makeConstraints {
+            $0.top.left.right.equalToSuperview()
+            $0.bottom.equalToSuperview().inset(100)
+        }
+    }
     
     private func showSidebarView() {
-        navigationItem.leftBarButtonItem?.isHidden = true
-
         blackScreen.isHidden = false
         UIView.animate(
             withDuration: 0.3,
@@ -309,8 +291,6 @@ final class ChatViewController: ViewController {
     }
     
     private func hideSidebarView() {
-        navigationItem.leftBarButtonItem?.isHidden = false
-        
         blackScreen.isHidden = true
         blackScreen.frame = self.view.bounds
         
@@ -324,9 +304,18 @@ final class ChatViewController: ViewController {
         }
     }
     
+    private func sidebarMenuDidTap(row: ChatSidebarMenu) {
+        switch row {
+        case .studyInfo:
+            print("1")
+        case .exitStudy:
+            print("2")
+        case .showMember:
+            print("3")
+        }
+    }
+    
     @objc func blackScreenTapAction(sender: UITapGestureRecognizer) {
-        navigationItem.leftBarButtonItem?.isHidden = false
-        
         blackScreen.isHidden = true
         blackScreen.frame = view.bounds
         
@@ -338,26 +327,5 @@ final class ChatViewController: ViewController {
                 height: self.sidebarView.frame.height
             )
         }
-    }
-}
-
-extension ChatViewController: UICollectionViewDelegateFlowLayout {
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let frame = CGRect(
-            x: 0,
-            y: 0,
-            width: view.frame.width,
-            height: 50
-        )
-        
-        let estimatedCell = ChatCell(frame: frame)
-        
-        estimatedCell.layoutChat(chat: viewModel.messages.value[indexPath.item])
-        estimatedCell.layoutIfNeeded()
-        
-        let width = estimatedCell.bubbleContainer.frame.width
-        let height = estimatedCell.bubbleContainer.frame.height
-        
-        return .init(width: view.frame.width, height: height)
     }
 }
