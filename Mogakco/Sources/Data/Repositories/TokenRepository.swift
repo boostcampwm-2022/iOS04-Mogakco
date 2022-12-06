@@ -22,8 +22,8 @@ struct TokenRepository: TokenRepositoryProtocol {
                 return Disposables.create()
             }
             
-            guard keychainManager?.save(key: auth.email, data: data) ?? false ||
-                  keychainManager?.update(key: auth.email, data: data) ?? false else {
+            guard keychainManager?.save(key: .authorization, data: data) ?? false ||
+                    keychainManager?.update(key: .authorization, data: data) ?? false else {
                 emitter.onNext(nil)
                 return Disposables.create()
             }
@@ -33,10 +33,10 @@ struct TokenRepository: TokenRepositoryProtocol {
         }
     }
     
-    func load(email: String) -> Observable<Authorization?> {
+    func load() -> Observable<Authorization?> {
         return Observable.create { emitter in
             
-            guard let data = keychainManager?.load(key: email),
+            guard let data = keychainManager?.load(key: .authorization),
                   let auth = try? JSONDecoder().decode(Authorization.self, from: data) else {
                 print("DEBUG : TokenRepository load fail. Auth is nil")
                 emitter.onNext(nil)
@@ -56,7 +56,7 @@ struct TokenRepository: TokenRepositoryProtocol {
                 return Disposables.create()
             }
             
-            guard keychainManager?.delete(key: auth.email, data: data) ?? false else {
+            guard keychainManager?.delete(key: .authorization, data: data) ?? false else {
                 emitter.onNext(nil)
                 return Disposables.create()
             }

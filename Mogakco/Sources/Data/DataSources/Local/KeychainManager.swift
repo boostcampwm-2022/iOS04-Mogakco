@@ -8,14 +8,20 @@
 
 import Foundation
 
+enum KeychainKey: String {
+    case userId = "com.codershigh.boostcamp.Mogakco.userId"
+    case fcmToken = "com.codershigh.boostcamp.Mogakco.fcmToken"
+    case authorization = "com.codershigh.boostcamp.Mogakco.authorization"
+}
+
 struct KeychainManager: KeychainManagerProtocol {
     
     var keychain: KeychainProtocol?
     
-    func save(key: String, data: Data) -> Bool {
+    func save(key: KeychainKey, data: Data) -> Bool {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
-            kSecAttrAccount as String: key,
+            kSecAttrAccount as String: key.rawValue,
             kSecValueData as String: data
         ]
         
@@ -23,10 +29,10 @@ struct KeychainManager: KeychainManagerProtocol {
         return status == errSecSuccess ? true : false
     }
     
-    func load(key: String) -> Data? {
+    func load(key: KeychainKey) -> Data? {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
-            kSecAttrAccount as String: key,
+            kSecAttrAccount as String: key.rawValue,
             kSecReturnData as String: true,
             kSecMatchLimit as String: kSecMatchLimitOne
         ]
@@ -34,10 +40,10 @@ struct KeychainManager: KeychainManagerProtocol {
         return keychain?.search(query)
     }
     
-    func delete(key: String, data: Data) -> Bool {
+    func delete(key: KeychainKey, data: Data) -> Bool {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
-            kSecAttrAccount as String: key,
+            kSecAttrAccount as String: key.rawValue,
             kSecValueData as String: data
         ]
         
@@ -45,14 +51,14 @@ struct KeychainManager: KeychainManagerProtocol {
         return status == errSecSuccess ? true : false
     }
     
-    func update(key: String, data: Data) -> Bool {
+    func update(key: KeychainKey, data: Data) -> Bool {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
-            kSecAttrAccount as String: key
+            kSecAttrAccount as String: key.rawValue
         ]
         
         let attributes: [String: Any] = [
-            kSecAttrAccount as String: key,
+            kSecAttrAccount as String: key.rawValue,
             kSecValueData as String: data
         ]
 
