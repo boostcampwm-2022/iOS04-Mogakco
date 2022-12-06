@@ -99,6 +99,8 @@ final class StudyDetailViewController: ViewController {
         $0.setTitle("스터디 참여", for: .normal)
     }
     
+    private let report = PublishSubject<Void>()
+    
     // MARK: - Property
     
     var viewModel: StudyDetailViewModel
@@ -116,11 +118,41 @@ final class StudyDetailViewController: ViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.isNavigationBarHidden = false
+        reportButton()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         navigationController?.isNavigationBarHidden = true
+    }
+            
+    private func reportButton() {
+        let reportButton = UIBarButtonItem(
+            image: UIImage(systemName: "flag"),
+            primaryAction: UIAction { [weak self] _ in
+                self?.alert(
+                    title: "신고하기",
+                    message: "신고하면 확인 후 제재되며, 더 이상 해당 스터디에 참여할 수 없습니다.",
+                    actions: [
+                        UIAlertAction.cancel(),
+                        UIAlertAction.destructive(
+                            title: "신고",
+                            handler: { [weak self] _ in self?.report.onNext(()) }
+                        )
+                    ]
+                )
+            }
+        )
+        reportButton.tintColor = .mogakcoColor.primaryDefault
+        navigationItem.rightBarButtonItem = reportButton
+    }
+
+    private func configDelegate() {
+        languageCollectionView.delegate = self
+        languageCollectionView.dataSource = self
+        
+        participantsCollectionView.delegate = self
+        participantsCollectionView.dataSource = self
     }
     
     override func layout() {
@@ -132,7 +164,8 @@ final class StudyDetailViewController: ViewController {
         let input = StudyDetailViewModel.Input(
             studyJoinButtonTapped: studyJoinButton.rx.tap.asObservable(),
             participantCellTapped: participantsCollectionView.rx.itemSelected.asObservable(),
-            backButtonTapped: backButton.rx.tap.asObservable()
+            backButtonTapped: backButton.rx.tap.asObservable(),
+            reportButtonTapped: report.asObservable()
         )
         
         let output = viewModel.transform(input: input)
