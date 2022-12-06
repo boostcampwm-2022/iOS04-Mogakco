@@ -78,6 +78,7 @@ final class DIContainer {
             repository.remoteUserDataSource = resolver.resolve(RemoteUserDataSourceProtocol.self)
             repository.chatRoomDataSource = resolver.resolve(ChatRoomDataSourceProtocol.self)
             repository.localUserDataSource = resolver.resolve(LocalUserDataSourceProtocol.self)
+            repository.reportDataSource = resolver.resolve(ReportDataSourceProtocol.self)
             return repository
         }
         container.register(UserRepositoryProtocol.self) { resolver in
