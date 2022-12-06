@@ -18,10 +18,12 @@ struct StudyRepository: StudyRepositoryProtocol {
     var localUserDataSource: LocalUserDataSourceProtocol?
     var remoteUserDataSource: RemoteUserDataSourceProtocol?
     var chatRoomDataSource: ChatRoomDataSourceProtocol?
+    var reportDataSource: ReportDataSourceProtocol?
     private let disposeBag = DisposeBag()
 
     func list(sort: StudySort, filters: [StudyFilter]) -> Observable<[Study]> {
-        return studyDataSource?.list()
+        
+        let studys = studyDataSource?.list()
             .map { $0.documents.map { $0.toDomain() } }
             .map { studys -> [Study] in
                 switch sort {
@@ -47,6 +49,11 @@ struct StudyRepository: StudyRepositoryProtocol {
                             .contains(false)
                     }
             } ?? .empty()
+        
+        return Observable.zip(studys, reportDataSource?.loadStudy() ?? .empty())
+            .map { studys, reportIds in
+                studys.filter { !reportIds.contains($0.id) }
+            }
     }
     
     func list(ids: [String]) -> Observable<[Study]> {
