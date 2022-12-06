@@ -14,63 +14,52 @@ final class ChatDataSource: ChatDataSourceProtocol {
     var listener: ListenerRegistration?
     var page: DocumentSnapshot?
     
-    enum Collection {
+    enum Constant {
         static let chatRoom = Firestore.firestore().collection("chatroom")
+        static let pagination = 7
     }
     
-    func fetchAll(chatRoomID: String) -> Observable<[ChatResponseDTO]> {
+    private func query(chatRoomID: String) -> Observable<Query> {
         return Observable.create { emitter in
-            Collection.chatRoom
+            var query = Constant.chatRoom
                 .document(chatRoomID)
                 .collection("chat")
                 .order(by: "date")
-                .limit(toLast: 5)
-                .getDocuments { snapshot, _ in
-                    if let snapshot = snapshot {
-                        self.page = snapshot.documents.first
-
-                        let chats = snapshot.documents
-                            .map { $0.data() }
-                            .compactMap { try? JSONSerialization.data(withJSONObject: $0) }
-                            .compactMap { try? JSONDecoder().decode(Chat.self, from: $0) }
-                            .map { ChatResponseDTO(chat: $0) }
-                        emitter.onNext(chats)
-                    }
-                }
-            
+            if let page = self.page {
+                query = query.end(beforeDocument: page)
+            }
+            emitter.onNext(query)
             return Disposables.create()
         }
     }
     
-    
-    func reload(chatRoomID: String) -> Observable<[ChatResponseDTO]> {
-        
+    func fetch(chatRoomID: String) -> Observable<[ChatResponseDTO]> {
         return Observable.create { emitter in
-            guard let page = self.page else { return Disposables.create() }
-                Collection.chatRoom
-                    .document(chatRoomID)
-                    .collection("chat")
-                    .order(by: "date")
-                    .end(beforeDocument: page)
-                    .limit(toLast: 5)
-                    .getDocuments { snapshot, _ in
-                        if let snapshot = snapshot {
-                            self.page = snapshot.documents.first
-                            let chats = snapshot.documents
-                                .map { $0.data() }
-                                .compactMap { try? JSONSerialization.data(withJSONObject: $0) }
-                                .compactMap { try? JSONDecoder().decode(Chat.self, from: $0) }
-                                .map { ChatResponseDTO(chat: $0) }
-                            emitter.onNext(chats)
+            _ = self.query(chatRoomID: chatRoomID)
+                .map { query in
+                    query.limit(toLast: Constant.pagination)
+                        .getDocuments { snapshot, _ in
+                            if let snapshot = snapshot,
+                               !snapshot.documents.isEmpty {
+                                self.page = snapshot.documents.first
+                                
+                                let chats = snapshot.documents
+                                    .map { $0.data() }
+                                    .compactMap { try? JSONSerialization.data(withJSONObject: $0) }
+                                    .compactMap { try? JSONDecoder().decode(Chat.self, from: $0) }
+                                    .map { ChatResponseDTO(chat: $0) }
+                                emitter.onNext(chats)
+                            }
                         }
-                    }
+                }
+                .subscribe { _ in }
             return Disposables.create()
         }
     }
     
     func observe(chatRoomID: String) -> Observable<ChatResponseDTO> {
         return Observable.create { emitter in
-            let query = Collection.chatRoom.document(chatRoomID).collection("chat").order(by: "date").limit(toLast: 1)
+            let query = Constant.chatRoom.document(chatRoomID).collection("chat").order(by: "date").limit(toLast: 1)
             self.listener = query.addSnapshotListener({ snapshot, _ in
                 if let snapshot = snapshot,
                    let dictionary = snapshot.documents.last?.data() {
@@ -86,11 +75,10 @@ final class ChatDataSource: ChatDataSourceProtocol {
     
     func send(chat: Chat, to chatRoomID: String) -> Observable<Void> {
         return Observable.create { emitter in
-            Collection.chatRoom
+            Constant.chatRoom
                 .document(chatRoomID)
                 .collection("chat")
                 .addDocument(data: chat.toDictionary()) { _ in
-                    print("@@@@@@@@ Chat SEND @@@@@@@@")
                     emitter.onNext(())
                 }
             return Disposables.create()
