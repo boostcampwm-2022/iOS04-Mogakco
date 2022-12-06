@@ -26,9 +26,10 @@ struct ChatRepository: ChatRepositoryProtocol {
     }
 
     func send(chat: Chat, to chatRoomID: String) -> Observable<Void> {
-        let request = PushNotificationRequestDTO(to: "/topics/\(chatRoomID)",
-                                                 notification: .init(title: chat.user?.name ?? "",
-                                                                     body: chat.message))
+        let request = PushNotificationRequestDTO(
+            topic: chatRoomID,
+            title: chat.user?.name ?? "",
+            body: chat.message)
         return chatDataSource?.send(chat: chat, to: chatRoomID)
             .flatMap { pushNotificationService?.sendTopic(request: request) ?? .empty() }
             .map { _ in () } ?? .empty()
