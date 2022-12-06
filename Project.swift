@@ -25,6 +25,7 @@ class BaseProjectFactory: ProjectFactory {
         .external(name: "FirebaseDatabase"),
         .external(name: "FirebaseFirestore"),
         .external(name: "FirebaseStorage"),
+        .external(name: "FirebaseMessaging"),
         .external(name: "Swinject")
     ]
     
