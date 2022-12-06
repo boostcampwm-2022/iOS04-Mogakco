@@ -8,7 +8,7 @@
 
 import RxSwift
 
-struct ReportRepository {
+struct ReportRepository: ReportRepositoryProtocol {
     
     var reportDataSource: ReportDataSourceProtocol?
     
