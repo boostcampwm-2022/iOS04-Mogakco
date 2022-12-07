@@ -16,6 +16,7 @@ final class ChatRoomTableViewCell: UITableViewCell, Identifiable {
         static let cellHeight = 80.0
         static let noUsersTitle = "유저가 존재하지 않아요!"
         static let noMessageTitle = "아직 채팅 메세지가 없어요!"
+        static let subLabelHeight = 16.0
     }
     
     private let chatRoomUsersImageView = ChatRoomUsersImageView()
@@ -23,7 +24,6 @@ final class ChatRoomTableViewCell: UITableViewCell, Identifiable {
     private let chatRoomTitleLabel = UILabel().then {
         $0.textAlignment = .left
         $0.font = UIFont.mogakcoFont.mediumBold
-        $0.textColor = UIColor.mogakcoColor.typographyPrimary
     }
     
     private let latestMessageLabel = UILabel().then {
@@ -40,9 +40,10 @@ final class ChatRoomTableViewCell: UITableViewCell, Identifiable {
     
     private let unreadMessageCountLabel = UILabel().then {
         $0.textAlignment = .center
-        $0.backgroundColor = UIColor.mogakcoColor.primarySecondary
+        $0.backgroundColor = UIColor.mogakcoColor.primaryDefault
         $0.font = UIFont.mogakcoFont.caption
-        $0.textColor = UIColor.mogakcoColor.typographyPrimary
+        $0.layer.cornerRadius = Constant.subLabelHeight / 2.0
+        $0.layer.masksToBounds = true
     }
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -54,12 +55,7 @@ final class ChatRoomTableViewCell: UITableViewCell, Identifiable {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        configureUnreadMessageCountLabelCornerRadius()
-    }
-    
+
     func configure(chatRoom: ChatRoom) {
         chatRoomUsersImageView.configure(
             imageURLs: (chatRoom.users ?? [])
@@ -83,6 +79,10 @@ final class ChatRoomTableViewCell: UITableViewCell, Identifiable {
     
     private func attiribute() {
         backgroundColor = .mogakcoColor.backgroundDefault
+        let selectedBackgroundView = UIView()
+        selectedBackgroundView.backgroundColor = .mogakcoColor.primarySecondary
+        selectedBackgroundView.addShadow(offset: .init(width: 1.0, height: 1.0))
+        self.selectedBackgroundView = selectedBackgroundView
     }
     
     private func layoutEntireStackView() {
@@ -129,20 +129,15 @@ final class ChatRoomTableViewCell: UITableViewCell, Identifiable {
         let arrangedSubviews = [latestMessageLabel, unreadMessageCountLabel]
         
         latestMessageLabel.snp.makeConstraints {
-            $0.height.equalTo(16.0)
+            $0.height.equalTo(Constant.subLabelHeight)
         }
         unreadMessageCountLabel.snp.makeConstraints {
-            $0.width.equalTo(unreadMessageCountLabel.snp.height)
+            $0.size.equalTo(Constant.subLabelHeight)
         }
  
         return UIStackView(arrangedSubviews: arrangedSubviews).then {
             $0.axis = .horizontal
             $0.spacing = 4.0
         }
-    }
-    
-    private func configureUnreadMessageCountLabelCornerRadius() {
-        unreadMessageCountLabel.layer.cornerRadius = unreadMessageCountLabel.frame.width / 2.0
-        unreadMessageCountLabel.layer.masksToBounds = true
     }
 }
