@@ -14,7 +14,7 @@ final class AnimationView: UIView {
     
     enum Animation {
         static let iconCount: Int = 5
-        static let iconSize: Int = 100
+        static let iconSize: Int = 80
         static let moveInterval = 0.017
         static let rotateDuration = 10
         
