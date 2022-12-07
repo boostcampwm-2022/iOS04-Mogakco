@@ -31,7 +31,8 @@ final class WithdrawViewModel: ViewModel {
     let navigation = PublishSubject<WithdrawNavigation>()
     
     func transform(input: Input) -> Output {
-        let withdrawSuccess = PublishSubject<Void>()
+        let deleteInfo = PublishSubject<Void>()
+        let deleteAuth = PublishSubject<Void>()
         
         input.backButtonDidTap
             .map { WithdrawNavigation.back }
@@ -40,24 +41,24 @@ final class WithdrawViewModel: ViewModel {
         
         input.withdrawButtonDidTap
             .subscribe(onNext: { [weak self] in
-                guard let self = self else { return }
-                self.withdrawUseCase?
-                    .withdraw(email: self.email ?? "")
-                    .subscribe(onNext: {
-                        print("DEBUG : withdraw 실행")
-                        withdrawSuccess.onNext(())
-                    })
-                    .disposed(by: self.disposeBag)
-                
+                guard let self else { return }
                 self.withdrawUseCase?.delete()
-                    .subscribe { _ in
-                        print("DEBUG : 아이디 삭제")
-                    }
+                    .subscribe(deleteInfo)
                     .disposed(by: self.disposeBag)
             })
             .disposed(by: disposeBag)
         
-        withdrawSuccess
+        deleteInfo
+            .subscribe(onNext: { [weak self] in
+                guard let self = self,
+                      let email = self.email else { return }
+                self.withdrawUseCase?.withdraw(email: email)
+                    .subscribe(deleteAuth)
+                    .disposed(by: self.disposeBag)
+            })
+            .disposed(by: disposeBag)
+        
+        deleteAuth
             .map { WithdrawNavigation.success }
             .bind(to: navigation)
             .disposed(by: disposeBag)
