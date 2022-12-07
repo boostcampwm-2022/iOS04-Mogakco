@@ -20,6 +20,10 @@ enum ChatRoomNavigation {
 final class ChatViewModel: ViewModel {
     
     struct Input {
+        let viewWillAppear: Observable<Void>
+        let viewWillDisappear: Observable<Void>
+        let willEnterForeground: Observable<Void>
+        let didEnterBackground: Observable<Void>
         let backButtonDidTap: Observable<Void>
         let studyInfoButtonDidTap: Observable<Void>
         let selectedSidebar: Observable<IndexPath>
@@ -40,6 +44,8 @@ final class ChatViewModel: ViewModel {
     var chatRoomID: String = ""
     var chatUseCase: ChatUseCaseProtocol?
     var leaveStudyUseCase: LeaveStudyUseCaseProtocol?
+    var subscribePushNotificationUseCase: SubscribePushNotificationUseCaseProtocol?
+    var unsubscribePushNotificationUseCase: UnsubscribePushNotificationUseCaseProtocol?
     private var chatArray: [Chat] = []
     var messages = BehaviorRelay<[Chat]>(value: [])
     let navigation = PublishSubject<ChatRoomNavigation>()
@@ -54,6 +60,8 @@ final class ChatViewModel: ViewModel {
         let exitStudyTap = PublishSubject<Void>()
         let showMemberTap = PublishSubject<Void>()
         let refreshFinished = PublishSubject<Void>()
+        
+        bindPushNotification(input: input)
         
         observeFirebase()
         fetchChats()
@@ -141,6 +149,30 @@ final class ChatViewModel: ViewModel {
             sendMessage: sendMessage,
             refreshFinished: refreshFinished
         )
+    }
+    
+    private func bindPushNotification(input: Input) {
+        // 채팅방 들어올 시 -> 푸쉬 알림 구독 해제
+        Observable.merge(
+            input.viewWillAppear,
+            input.willEnterForeground
+        )
+        .withUnretained(self)
+        .subscribe(onNext: { viewModel, _ in
+            viewModel.unsubscribePushNotificationUseCase?.excute(topic: viewModel.chatRoomID)
+        })
+        .disposed(by: disposeBag)
+        
+        // 채팅방 나갈 시 -> 푸쉬 알림 구독
+        Observable.merge(
+            input.viewWillDisappear,
+            input.didEnterBackground
+        )
+        .withUnretained(self)
+        .subscribe(onNext: { viewModel, _ in
+            viewModel.subscribePushNotificationUseCase?.excute(topic: viewModel.chatRoomID)
+        })
+        .disposed(by: disposeBag)
     }
     
     private func observeFirebase() {
