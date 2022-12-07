@@ -197,6 +197,16 @@ final class DIContainer {
             useCase.tokenRepository = resolver.resolve(TokenRepositoryProtocol.self)
             return useCase
         }
+        container.register(SubscribePushNotificationUseCaseProtocol.self) { resolver in
+            var useCase = SubscribePushNotificationUseCase()
+            useCase.pushNotificationService = resolver.resolve(PushNotificationServiceProtocol.self)
+            return useCase
+        }
+        container.register(UnsubscribePushNotificationUseCaseProtocol.self) { resolver in
+            var useCase = UnsubscribePushNotificationUseCase()
+            useCase.pushNotificationService = resolver.resolve(PushNotificationServiceProtocol.self)
+            return useCase
+        }
     }
     
     private func registerViewModels() {
