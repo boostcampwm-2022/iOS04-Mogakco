@@ -11,6 +11,7 @@ import UIKit
 import RxSwift
 
 enum ProfileCoordinatorResult {
+    case finish
     case back
 }
 
@@ -77,23 +78,17 @@ final class ProfileCoordinator: BaseCoordinator<ProfileCoordinatorResult> {
     // MARK: - 설정화면
     
     func setting(email: String) {
-        print("DEBUG : email은 \(email)")
-        guard let viewModel = DIContainer.shared.container.resolve(SettingViewModel.self) else { return
-            print("DIContainer setting 실패")
-        }
-
+        guard let viewModel = DIContainer.shared.container.resolve(SettingViewModel.self) else { return }
+        
         viewModel.navigation
             .subscribe(onNext: { [weak self] in
                 switch $0 {
                 case .withdraw:
-                    print("DEBUG : withdraw! email은 \(email)")
                     self?.showWithdraw(email: email)
                 case .logout:
-                    print("DEBUG : logout!")
-                    self?.showLogin()
+                    break
                 case .back:
                     self?.popTabbar(animated: true)
-                    print("DEBUG : Back!")
                 }
             })
             .disposed(by: disposeBag)
@@ -103,21 +98,15 @@ final class ProfileCoordinator: BaseCoordinator<ProfileCoordinatorResult> {
     }
     
     func showWithdraw(email: String) {
-        print("DEBUG : showWithdraw email은 \(email)")
-        guard let viewModel = DIContainer.shared.container.resolve(WithdrawViewModel.self) else { return
-            print("DIContainer 실패")
-        }
-        
+        guard let viewModel = DIContainer.shared.container.resolve(WithdrawViewModel.self) else { return }
         viewModel.email = email
         
         viewModel.navigation
             .subscribe(onNext: { [weak self] in
                 switch $0 {
                 case .success:
-                    print("DEBUG : 회원탈퇴 성공")
-                    self?.showLogin()
+                    self?.finish.onNext(.finish)
                 case .back:
-                    print("DEBUG : 뒤로가기")
                     self?.popTabbar(animated: true)
                 }
             })
@@ -126,10 +115,6 @@ final class ProfileCoordinator: BaseCoordinator<ProfileCoordinatorResult> {
         let viewController = WithdrawViewController(viewModel: viewModel)
         
         pushTabbar(viewController, animated: true)
-    }
-    
-    func showLogin() {
-        navigationController.popToRootViewController(animated: true)
     }
     
     // MARK: - 프로필 수정
@@ -174,9 +159,12 @@ final class ProfileCoordinator: BaseCoordinator<ProfileCoordinatorResult> {
     func showChatRoom(id: String) {
         let chatRoom = ChatRoomCoordinator(id: id, navigationController)
         coordinate(to: chatRoom)
-            .subscribe(onNext: {
+            .subscribe(onNext: { [weak self] in
                 switch $0 {
-                case .back: break
+                case .finish:
+                    self?.finish.onNext(.finish)
+                case .back:
+                    break
                 }
             })
             .disposed(by: disposeBag)

@@ -11,6 +11,7 @@ import UIKit
 import RxSwift
 
 enum ChatRoomCoordinatorResult {
+    case finish
     case back
 }
 
@@ -58,9 +59,12 @@ final class ChatRoomCoordinator: BaseCoordinator<ChatRoomCoordinatorResult> {
     func showStudyDetail(id: String) {
         let study = StudyDetailCoordinator(id: id, navigationController)
         coordinate(to: study)
-            .subscribe(onNext: {
+            .subscribe(onNext: { [weak self] in
                 switch $0 {
-                case .back: break
+                case .finish:
+                    self?.finish.onNext(.finish)
+                case .back:
+                    break
                 }
             })
             .disposed(by: disposeBag)
@@ -71,9 +75,12 @@ final class ChatRoomCoordinator: BaseCoordinator<ChatRoomCoordinatorResult> {
     func showProfile(type: ProfileType) {
         let profile = ProfileCoordinator(type: type, hideTabbar: true, navigationController)
         coordinate(to: profile)
-            .subscribe(onNext: {
+            .subscribe(onNext: { [weak self] in
                 switch $0 {
-                case .back: break
+                case .finish:
+                    self?.finish.onNext(.finish)
+                case .back:
+                    break
                 }
             })
             .disposed(by: disposeBag)
