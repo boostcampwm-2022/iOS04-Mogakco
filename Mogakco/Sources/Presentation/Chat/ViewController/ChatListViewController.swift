@@ -12,7 +12,7 @@ import RxSwift
 import SnapKit
 import Then
 
-final class ChatListViewController: ViewController {
+final class ChatListViewController: UIViewController {
     
     enum Constant {
         static let headerViewTitle = "채팅 목록"
@@ -32,6 +32,7 @@ final class ChatListViewController: ViewController {
     }
 
     private let viewModel: ChatListViewModel
+    private let disposeBag = DisposeBag()
     
     init(viewModel: ChatListViewModel) {
         self.viewModel = viewModel
@@ -58,14 +59,14 @@ final class ChatListViewController: ViewController {
         navigationController?.isNavigationBarHidden = false
     }
     
-    override func bind() {
+    func bind() {
         let input = ChatListViewModel.Input(
             viewWillAppear: rx.viewWillAppear.map { _ in }.asObservable(),
             selectedChatRoom: chatRoomTableView.rx.modelSelected(ChatRoom.self).asObservable(),
             deletedChatRoom: chatRoomTableView.rx.modelDeleted(ChatRoom.self).asObservable()
         )
         let output = viewModel.transform(input: input)
-        
+
         output.chatRooms
             .drive(chatRoomTableView.rx.items) { tableView, index, chatRoom in
                 guard let cell = tableView.dequeueReusableCell(
@@ -83,7 +84,7 @@ final class ChatListViewController: ViewController {
             .disposed(by: disposeBag)
     }
     
-    override func layout() {
+    func layout() {
         layoutHeaderView()
         layoutChatRoomTableView()
     }
