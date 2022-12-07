@@ -74,6 +74,7 @@ final class ChatListViewController: UIViewController {
                     for: IndexPath(row: index, section: 0)) as? ChatRoomTableViewCell else {
                     return UITableViewCell()
                 }
+                cell.selectionStyle = .none
                 cell.configure(chatRoom: chatRoom)
                 return cell
             }
