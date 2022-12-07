@@ -64,7 +64,7 @@ final class AnimationView: UIView {
             Languages.python.id,
             Languages.ruby.id
         ].forEach {
-            let imageView = AnimationImageView(frame: randomPosition(),image: UIImage(named: $0))
+            let imageView = AnimationImageView(frame: randomPosition(), image: UIImage(named: $0))
             addSubview(imageView)
             animationImages.append(imageView)
             moveView(targetView: imageView)
