@@ -29,7 +29,6 @@ final class DIContainer {
         container.register(RemoteUserDataSourceProtocol.self) { _ in RemoteUserDataSource(provider: provider) }
         container.register(LocalUserDataSourceProtocol.self) { _ in UserDefaultsUserDataSource() }
         container.register(StudyDataSourceProtocol.self) { _ in StudyDataSource(provider: provider) }
-        container.register(ChatDataSourceProtocol.self) { _ in ChatDataSource() }
         container.register(ChatRoomDataSourceProtocol.self) { _ in ChatRoomDataSource(provider: provider) }
         container.register(ChatDataSourceProtocol.self) { _ in ChatDataSource() }
         container.register(HashtagDataSourceProtocol.self) { _ in HashtagDataSource() }
