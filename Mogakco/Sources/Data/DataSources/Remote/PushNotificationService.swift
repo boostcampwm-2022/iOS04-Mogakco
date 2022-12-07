@@ -34,6 +34,16 @@ struct PushNotificationService: PushNotificationServiceProtocol {
             }
         }
     }
+    
+    func unsubscribeTopic(topic: String) {
+        Messaging.messaging().unsubscribe(fromTopic: topic) { error in
+            if let error = error {
+                print("Message Subscribe Error \(error)")
+            } else {
+                print("Message Subscribe succeeded")
+            }
+        }
+    }
 }
 
 enum PushNotificationTarget {
