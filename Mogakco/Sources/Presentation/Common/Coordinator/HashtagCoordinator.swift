@@ -38,7 +38,7 @@ final class HashtagCoordinator: BaseCoordinator<HashtagCoordinatorResult> {
     
     func showHashtag() {
         guard let viewModel = DIContainer.shared.container.resolve(HashtagFilterViewModel.self) else { return }
-        viewModel.selectedHashtag = selectedHashtag
+        viewModel.selectedHashtags = selectedHashtag
 
         viewModel.finish
             .map { HashtagCoordinatorResult.finish($0) }

@@ -28,7 +28,7 @@ class HashtagSelectedViewModel: HashtagViewModel {
         input.nextButtonTapped
             .withUnretained(self)
             .filter { $0.0.kind == .language }
-            .map { HashtagSelectedeNavigation.next($0.0.selectedHashtag) }
+            .map { HashtagSelectedeNavigation.next($0.0.selectedHashtags) }
             .bind(to: navigation)
             .disposed(by: disposeBag)
 
@@ -48,7 +48,7 @@ class HashtagSelectedViewModel: HashtagViewModel {
 
     private func signup() {
         guard let languageProps = languageProps else { return }
-        let careers = selectedHashtag.map { $0.id }
+        let careers = selectedHashtags.map { $0.id }
         let signupProps = languageProps.toSignupProps(careers: careers)
         signUseCase?.signup(signupProps: signupProps)
             .subscribe { [weak self] _ in

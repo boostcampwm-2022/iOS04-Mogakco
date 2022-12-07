@@ -22,7 +22,6 @@ final class ChatCell: UICollectionViewCell, Identifiable {
         $0.isScrollEnabled = false
         $0.isEditable = false
     }
-    
     let bubbleContainer = UIView().then {
         $0.backgroundColor = .mogakcoColor.primarySecondary
         $0.layer.cornerRadius = 8

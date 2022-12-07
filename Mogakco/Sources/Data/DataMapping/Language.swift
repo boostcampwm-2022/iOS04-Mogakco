@@ -8,7 +8,7 @@
 
 import UIKit
 
-enum Languages: String, CaseIterable, Hashtag {
+enum Language: String, CaseIterable, Hashtag {
     case cLang = "c"
     case cShop
     case cpp
@@ -29,30 +29,30 @@ enum Languages: String, CaseIterable, Hashtag {
     case visualBasic
     
     static func randomImageID() -> String {
-        guard let id = Languages.allCases.randomElement()?.id else { return "swift" }
+        guard let id = Language.allCases.randomElement()?.id else { return "swift" }
         return id
     }
     
     static func idToHashtag(id: String) -> Hashtag? {
         switch id {
-        case "c": return Languages.cLang
-        case "cShop": return Languages.cShop
-        case "cpp": return Languages.cpp
-        case "dart": return Languages.dart
-        case "go": return Languages.goLang
-        case "haskell": return Languages.haskell
-        case "javaScript": return Languages.javaScript
-        case "kotlin": return Languages.kotlin
-        case "matlab": return Languages.matlab
-        case "objectC": return Languages.objectC
-        case "php": return Languages.php
-        case "python": return Languages.python
-        case "r": return Languages.rLang
-        case "ruby": return Languages.ruby
-        case "rust": return Languages.rust
-        case "scratch": return Languages.scratch
-        case "swift": return Languages.swift
-        case "visualBasic": return Languages.visualBasic
+        case "c": return Language.cLang
+        case "cShop": return Language.cShop
+        case "cpp": return Language.cpp
+        case "dart": return Language.dart
+        case "go": return Language.goLang
+        case "haskell": return Language.haskell
+        case "javaScript": return Language.javaScript
+        case "kotlin": return Language.kotlin
+        case "matlab": return Language.matlab
+        case "objectC": return Language.objectC
+        case "php": return Language.php
+        case "python": return Language.python
+        case "r": return Language.rLang
+        case "ruby": return Language.ruby
+        case "rust": return Language.rust
+        case "scratch": return Language.scratch
+        case "swift": return Language.swift
+        case "visualBasic": return Language.visualBasic
         default: return nil
         }
     }

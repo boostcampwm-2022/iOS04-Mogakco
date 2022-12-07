@@ -24,7 +24,7 @@ final class AnimationImageView: UIView {
     }
     
     private func configRandomImage() {
-        imageView.image = UIImage(named: Languages.randomImageID() )
+        imageView.image = UIImage(named: Language.randomImageID() )
         addSubview(imageView)
         imageView.snp.makeConstraints {
             $0.edges.equalToSuperview()
