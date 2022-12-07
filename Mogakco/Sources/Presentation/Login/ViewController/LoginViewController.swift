@@ -8,6 +8,7 @@
 import UIKit
 
 import RxCocoa
+import RxKeyboard
 import RxSwift
 import SnapKit
 import Then
@@ -16,36 +17,41 @@ final class LoginViewController: ViewController {
     
     private let animationView = AnimationView()
     
-    private let emailTextField = MessageTextField()
+    private let emailTextField = TextField()
     
     private let secureTextField = SecureTextField()
-    
-    private let textFieldStackView = UIStackView().then {
-        $0.spacing = 8
-        $0.axis = .vertical
-    }
-    
-    private let signupButton = UIButton().then {
-        $0.setTitle("아직 회원이 아니신가요?", for: .normal)
-        $0.setTitleColor(UIColor.mogakcoColor.primaryDefault, for: .normal)
-        $0.titleLabel?.font = UIFont.mogakcoFont.smallRegular
-    }
     
     private let loginButton = ValidationButton().then {
         $0.setTitle("로그인", for: .normal)
         $0.titleLabel?.font = UIFont.mogakcoFont.mediumBold
         $0.setTitleColor(UIColor.white, for: .normal)
-        $0.layer.cornerRadius = 8
         $0.layer.borderWidth = 1
         $0.layer.borderColor = UIColor.clear.cgColor
         $0.clipsToBounds = true
+        $0.snp.makeConstraints { make in
+            make.height.equalTo(Layout.smallButtonHeight)
+        }
     }
     
-    private let contentView = UIView().then {
+    private let signupButton = UIButton().then {
+        $0.setTitle("아직 회원이 아니신가요?", for: .normal)
+        $0.setTitleColor(UIColor.mogakcoColor.typographyPrimary, for: .normal)
+        $0.titleLabel?.font = UIFont(name: SFPro.regular.rawValue, size: 13)
+        $0.contentHorizontalAlignment = .leading
+    }
+    
+    private lazy var contentView = UIStackView(arrangedSubviews: [
+        emailTextField, secureTextField, createButtonStackView()
+    ]).then {
         $0.alpha = 0
+        $0.axis = .vertical
+        $0.spacing = 15
+        $0.alignment = .fill
     }
     
     private let viewModel: LoginViewModel
+    
+    // MARK: - Inits
     
     init(viewModel: LoginViewModel) {
         self.viewModel = viewModel
@@ -56,6 +62,8 @@ final class LoginViewController: ViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Methods
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: true)
@@ -64,6 +72,11 @@ final class LoginViewController: ViewController {
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         animationView.invalidate()
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        loginButton.layer.cornerRadius = loginButton.frame.height / 2
     }
     
     override func bind() {
@@ -86,6 +99,14 @@ final class LoginViewController: ViewController {
         output.presentError
             .emit(to: rx.presentAlert)
             .disposed(by: disposeBag)
+        
+        RxKeyboard.instance.visibleHeight
+            .skip(1)
+            .drive(onNext: { [weak self] keyboardVisibleHeight in
+                guard let self else { return }
+                self.updateContentViewLayout(height: keyboardVisibleHeight)
+            })
+            .disposed(by: disposeBag)
     }
     
     private func animation() {
@@ -97,9 +118,6 @@ final class LoginViewController: ViewController {
     override func layout() {
         layoutAnimationView()
         layoutContentView()
-        layoutTextField()
-        layoutSignupButton()
-        layoutLoginButton()
     }
     
     private func layoutAnimationView() {
@@ -114,39 +132,26 @@ final class LoginViewController: ViewController {
         view.addSubview(contentView)
         
         contentView.snp.makeConstraints {
-            $0.left.right.equalTo(view.safeAreaLayoutGuide).inset(16)
-            $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(Layout.buttonBottomInset)
+            $0.left.right.equalTo(view.safeAreaLayoutGuide).inset(40)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide).offset(-100)
         }
     }
     
-    private func layoutTextField() {
-        let subviews = [emailTextField, secureTextField]
-        subviews.forEach {
-            textFieldStackView.addArrangedSubview($0)
-        }
-        
-        contentView.addSubview(textFieldStackView)
-        textFieldStackView.snp.makeConstraints {
-            $0.top.left.right.equalToSuperview()
+    private func createButtonStackView() -> UIStackView {
+        return UIStackView(arrangedSubviews: [loginButton, signupButton]).then {
+            $0.axis = .vertical
+            $0.spacing = 10
         }
     }
     
-    private func layoutSignupButton() {
-        contentView.addSubview(signupButton)
-        
-        signupButton.snp.makeConstraints {
-            $0.right.equalToSuperview()
-            $0.top.equalTo(textFieldStackView.snp.bottom).offset(4)
-        }
-    }
-    
-    private func layoutLoginButton() {
-        contentView.addSubview(loginButton)
-        
-        loginButton.snp.makeConstraints {
-            $0.top.equalTo(signupButton.snp.bottom).offset(100)
-            $0.left.right.bottom.equalToSuperview()
-            $0.height.equalTo(Layout.buttonHeight)
+    private func updateContentViewLayout(height: CGFloat) {
+        let height = height == 0 ? 100 : height
+        UIView.animate(withDuration: 1) { [weak self] in
+            guard let self else { return }
+            self.contentView.snp.remakeConstraints {
+                $0.left.right.equalTo(self.view.safeAreaLayoutGuide).inset(40)
+                $0.bottom.equalTo(self.view.safeAreaLayoutGuide).offset(-height)
+            }
         }
     }
 }
