@@ -88,11 +88,6 @@ final class ChatViewController: ViewController {
         navigationController?.isNavigationBarHidden = false
     }
     
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        navigationController?.isNavigationBarHidden = true
-    }
-    
     override var canBecomeFirstResponder: Bool {
         return true
     }
@@ -116,6 +111,12 @@ final class ChatViewController: ViewController {
     
     override func bind() {
         let input = ChatViewModel.Input(
+            viewWillAppear: rx.viewWillAppear.map { _ in () }.asObservable(),
+            viewWillDisappear: rx.viewWillDisappear.map { _ in () }.asObservable(),
+            willEnterForeground: NotificationCenter.default
+                .rx.notification(UIApplication.willEnterForegroundNotification).map { _ in () },
+            didEnterBackground: NotificationCenter.default
+                .rx.notification(UIApplication.didEnterBackgroundNotification).map { _ in () },
             backButtonDidTap: backButton.rx.tap.asObservable(),
             studyInfoButtonDidTap: studyInfoButton.rx.tap.asObservable(),
             selectedSidebar: sidebarView.tableView.rx.itemSelected.asObservable(),
@@ -123,7 +124,6 @@ final class ChatViewController: ViewController {
             inputViewText: messageInputView.messageInputTextView.rx.text.orEmpty.asObservable(),
             pagination: collectionView.refreshControl?.rx.controlEvent(.valueChanged).asObservable()
         )
-
         let output = viewModel.transform(input: input)
         
         Driver<[ChatSidebarMenu]>.just(ChatSidebarMenu.allCases)
@@ -133,9 +133,7 @@ final class ChatViewController: ViewController {
                     for: IndexPath(row: index, section: 0)) as? ChatSidebarTableViewCell else {
                     return UITableViewCell()
                 }
-
                 cell.menuLabel.text = menu.rawValue
-
                 return cell
             }
             .disposed(by: disposeBag)
