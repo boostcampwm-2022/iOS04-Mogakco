@@ -8,6 +8,7 @@
 import UIKit
 
 import RxSwift
+import RxCocoa
 import Alamofire
 import SnapKit
 import Then
@@ -15,6 +16,8 @@ import Then
 final class ParticipantCell: UICollectionViewCell, Identifiable {
     
     static let size = CGSize(width: 110, height: 130)
+    
+    var disposeBag = DisposeBag()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -84,9 +87,18 @@ final class ParticipantCell: UICollectionViewCell, Identifiable {
     }
     
     func setInfo(user: User?) {
+        let isLoadImage = BehaviorSubject(value: true)
+        
+        isLoadImage
+            .bind(to: imageView.rx.skelton)
+            .disposed(by: disposeBag)
+        
         if let imageURLString = user?.profileImageURLString,
            let url = URL(string: imageURLString) {
             imageView.load(url: url)
+            imageView.loadAndEvent(url: url)
+                .bind(to: imageView.rx.skelton)
+                .disposed(by: disposeBag)
         } else {
             imageView.setPhoto(Image.profileDefault)
         }

@@ -8,6 +8,9 @@
 
 import UIKit
 
+import RxSwift
+import RxCocoa
+
 extension UIImageView {
     func load(url: URL) {
         DispatchQueue.global().async { [weak self] in
@@ -18,6 +21,22 @@ extension UIImageView {
                     }
                 }
             }
+        }
+    }
+    
+    func loadAndEvent(url: URL) -> Observable<Bool> {
+        return Observable.create { emitter in
+            DispatchQueue.global().async { [weak self] in
+                if let data = try? Data(contentsOf: url) {
+                    if let image = UIImage(data: data) {
+                        DispatchQueue.main.async {
+                            self?.image = image
+                            emitter.onNext(false)
+                        }
+                    }
+                }
+            }
+            return Disposables.create()
         }
     }
 }
