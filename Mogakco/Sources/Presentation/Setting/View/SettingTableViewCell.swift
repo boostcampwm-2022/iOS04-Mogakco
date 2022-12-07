@@ -30,13 +30,25 @@ final class SettingTableViewCell: UITableViewCell, Identifiable {
         layout()
     }
     
+    override func layoutSubviews() {
+        super.layoutSubviews()
+
+        contentView.frame = contentView.frame.inset(by: UIEdgeInsets(top: 8.0, left: 0, bottom: 8.0, right: 0))
+    }
+
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
     private func layout() {
-        selectionStyle = .none
+        layoutCell()
         layoutTitleLabel()
+    }
+    
+    private func layoutCell() {
+        selectionStyle = .none
+        backgroundColor = .mogakcoColor.backgroundDefault
     }
     
     private func layoutTitleLabel() {
