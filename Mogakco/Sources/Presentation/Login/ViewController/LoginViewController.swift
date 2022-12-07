@@ -15,6 +15,12 @@ import Then
 
 final class LoginViewController: ViewController {
     
+    enum Constant {
+        static let padding: CGFloat = 40
+    }
+    
+    private let logoView = LogoView()
+    
     private let animationView = AnimationView()
     
     private let emailTextField = TextField()
@@ -117,6 +123,7 @@ final class LoginViewController: ViewController {
     
     override func layout() {
         layoutAnimationView()
+        layoutLogo()
         layoutContentView()
     }
     
@@ -128,11 +135,20 @@ final class LoginViewController: ViewController {
         }
     }
     
+    private func layoutLogo() {
+        view.addSubview(logoView)
+        
+        logoView.snp.makeConstraints {
+            $0.left.right.equalTo(self.view.safeAreaLayoutGuide).inset(Constant.padding)
+            $0.top.equalTo(self.view.safeAreaLayoutGuide).offset(100)
+        }
+    }
+    
     private func layoutContentView() {
         view.addSubview(contentView)
         
         contentView.snp.makeConstraints {
-            $0.left.right.equalTo(view.safeAreaLayoutGuide).inset(40)
+            $0.left.right.equalTo(view.safeAreaLayoutGuide).inset(Constant.padding)
             $0.bottom.equalTo(view.safeAreaLayoutGuide).offset(-100)
         }
     }
@@ -149,7 +165,7 @@ final class LoginViewController: ViewController {
         UIView.animate(withDuration: 1) { [weak self] in
             guard let self else { return }
             self.contentView.snp.remakeConstraints {
-                $0.left.right.equalTo(self.view.safeAreaLayoutGuide).inset(40)
+                $0.left.right.equalTo(self.view.safeAreaLayoutGuide).inset(Constant.padding)
                 $0.bottom.equalTo(self.view.safeAreaLayoutGuide).offset(-height)
             }
         }
