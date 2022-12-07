@@ -60,6 +60,12 @@ final class MessageTextField: UIView {
     
     // MARK: Methods
     
+    func setHeight(_ value: CGFloat) {
+        textField.snp.makeConstraints {
+            $0.height.equalTo(value)
+        }
+    }
+    
     private func layout() {
         layoutTextField()
         layoutLabel()

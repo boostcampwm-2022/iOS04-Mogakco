@@ -34,6 +34,7 @@ final class EditProfileViewController: ViewController {
         $0.title = "이름"
         $0.maxCount = 10
         $0.placeholder = "이름을 입력해주세요."
+        $0.setHeight(Layout.textFieldHeight)
     }
     
     private let introuceCountTextView = CountTextView().then {

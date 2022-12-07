@@ -9,9 +9,12 @@
 import Foundation
 
 enum Layout {
-    static let buttonHeight: CGFloat = 52
-    static let textFieldHeight: CGFloat = 56
-    static let textViewHeight: CGFloat = 56
-    static let buttonBottomInset: CGFloat = 16
+    static let smallButtonHeight: CGFloat = 46
+    static let smallTextFieldHeight: CGFloat = 46
+    static let smallTextViewHeight: CGFloat = 54
+    static let buttonHeight: CGFloat = 50
+    static let textFieldHeight: CGFloat = 54
+    static let textViewHeight: CGFloat = 54
     static let tapbarHeaderViewHeight: CGFloat = 68
+    static let buttonBottomInset: CGFloat = 16
 }

@@ -17,7 +17,6 @@ final class CreateStudyViewController: ViewController {
     
     enum Constant {
         static let navigationTitle = "새로운 스터디"
-        static let textFieldHeight = Layout.textFieldHeight + 38
         static let textViewHeight = 120
         static let selectViewHeight = 40
         static let collectionViewHeight = 100
@@ -31,9 +30,7 @@ final class CreateStudyViewController: ViewController {
     private let titleTextField = CountTextField().then {
         $0.title = "제목"
         $0.placeholder = "제목을 입력해주세요"
-        $0.snp.makeConstraints {
-            $0.height.equalTo(Constant.textFieldHeight)
-        }
+        $0.setHeight(Layout.textFieldHeight)
     }
     
     private let contentTextView = CountTextView().then {
@@ -47,9 +44,7 @@ final class CreateStudyViewController: ViewController {
     private let placeTextField = CountTextField().then {
         $0.title = "지역"
         $0.placeholder = "지역을 입력해주세요"
-        $0.snp.makeConstraints {
-            $0.height.equalTo(Constant.textFieldHeight)
-        }
+        $0.setHeight(Layout.textFieldHeight)
     }
     
     private let countStepper = StudyStepperView().then {
