@@ -100,7 +100,6 @@ final class DIContainer {
         container.register(AutoLoginUseCaseProtocol.self) { resolver in
             var useCase = AutoLoginUseCase()
             useCase.tokenRepository = resolver.resolve(TokenRepositoryProtocol.self)
-            useCase.userRepository = resolver.resolve(UserRepositoryProtocol.self)
             return useCase
         }
         container.register(ChatUseCaseProtocol.self) { resolver in
@@ -182,7 +181,7 @@ final class DIContainer {
             return useCase
         }
         container.register(WithdrawUseCaseProtocol.self) { resolver in
-            let useCase = WithdrawUseCase()
+            var useCase = WithdrawUseCase()
             useCase.userRepository = resolver.resolve(UserRepositoryProtocol.self)
             useCase.authRepository = resolver.resolve(AuthRepositoryProtocol.self)
             useCase.tokenRepository = resolver.resolve(TokenRepositoryProtocol.self)
