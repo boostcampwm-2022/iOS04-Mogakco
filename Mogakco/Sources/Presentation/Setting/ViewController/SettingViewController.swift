@@ -37,6 +37,9 @@ final class SettingViewController: ViewController {
         $0.backgroundColor = .mogakcoColor.backgroundDefault
     }
     
+    private let logoutDidTap = PublishSubject<Void>()
+    private let withdrawDidTap = PublishSubject<Void>()
+    
     var viewModel: SettingViewModel?
     
     init(viewModel: SettingViewModel) {
@@ -66,12 +69,12 @@ final class SettingViewController: ViewController {
     override func bind() {
         
         let input = SettingViewModel.Input(
-            logoutDidTap: tableView.rx.itemSelected.asObservable(),
-            withdrawDidTap: tableView.rx.itemSelected.asObservable(),
+            logoutDidTap: logoutDidTap.asObservable(),
+            withdrawDidTap: withdrawDidTap.asObservable(),
             backButtonDidTap: backButton.rx.tap.asObservable()
         )
         
-        let _ = viewModel?.transform(input: input)
+        _ = viewModel?.transform(input: input)
         
         Driver<[SettingMenu]>
             .just(SettingMenu.allCases)

@@ -34,12 +34,19 @@ final class SettingViewModel: ViewModel {
     func transform(input: Input) -> Output {
         
         input.logoutDidTap
-            .map { _ in .logout }
-            .bind(to: navigation)
+            .subscribe(onNext: { [weak self] in
+                guard let self else { return }
+                print("DEBUG : SettingVM Logout")
+                self.logoutUseCase?
+                    .logout()
+                    .map { SettingNavigation.logout }
+                    .bind(to: self.navigation)
+                    .disposed(by: self.disposeBag)
+            })
             .disposed(by: disposeBag)
         
         input.withdrawDidTap
-            .map { _ in .withdraw }
+            .map { SettingNavigation.withdraw }
             .bind(to: navigation)
             .disposed(by: disposeBag)
         
