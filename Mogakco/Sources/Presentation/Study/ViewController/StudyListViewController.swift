@@ -19,6 +19,8 @@ final class StudyListViewController: ViewController {
     
     private lazy var refreshControl = UIRefreshControl()
     
+    private lazy var collectionContentView = UIView()
+    
     private lazy var collectionView = UICollectionView(
         frame: .zero,
         collectionViewLayout: collectionViewLayout()
@@ -60,6 +62,20 @@ final class StudyListViewController: ViewController {
     }
     
     override func bind() {
+        let isStudyLoading = BehaviorSubject(value: true)
+        let refreshEvent = refreshControl.rx.controlEvent(.valueChanged)
+        
+        isStudyLoading
+            .bind(to: collectionContentView.rx.skelton)
+            .disposed(by: disposeBag)
+        
+        refreshEvent
+            .map { [weak self] () -> Bool in
+                self?.collectionView.isHidden = true
+                return true
+            }
+            .bind(to: collectionContentView.rx.skelton)
+            .disposed(by: disposeBag)
         
         let input = StudyListViewModel.Input(
             viewWillAppear: self.rx.viewWillAppear.map { _ in () }.asObservable(),
@@ -87,15 +103,18 @@ final class StudyListViewController: ViewController {
                 cellType: StudyCell.self
             )) { _, study, cell in
                 cell.setup(study)
+                isStudyLoading.onNext(false)
             }
             .disposed(by: disposeBag)
         
         output.refreshFinished
             .emit(onNext: { [weak self] in
+                isStudyLoading.onNext(false)
+                self?.collectionView.isHidden = false
                 self?.refreshControl.endRefreshing()
             })
             .disposed(by: disposeBag)
-        
+
         output.sortSelected
             .drive(onNext: { [weak self] in
                 self?.header.sortButton.isSelected = $0
@@ -124,10 +143,17 @@ final class StudyListViewController: ViewController {
             $0.top.left.right.equalTo(view.safeAreaLayoutGuide).inset(16)
         }
         
-        view.addSubview(collectionView)
-        collectionView.snp.makeConstraints {
+        collectionContentView.clipsToBounds = true
+        
+        view.addSubview(collectionContentView)
+        collectionContentView.snp.makeConstraints {
             $0.left.right.bottom.equalTo(view.safeAreaLayoutGuide)
             $0.top.equalTo(header.snp.bottom).offset(16)
+        }
+        
+        collectionContentView.addSubview(collectionView)
+        collectionView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
         }
     }
     
