@@ -91,6 +91,6 @@ final class ParticipantCell: UICollectionViewCell, Identifiable {
             imageView.setPhoto(Image.profileDefault)
         }
         userNameLabel.text = user?.name ?? "None"
-        userDescriptionLabel.text = user?.introduce ?? "None"
+        userDescriptionLabel.text = user?.languages.first ?? "None"
     }
 }
