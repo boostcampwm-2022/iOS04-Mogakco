@@ -13,7 +13,7 @@ import RxSwift
 
 enum ProfileNavigation {
     case editProfile
-    case editHashtag(kind: KindHashtag)
+    case editHashtag(kind: KindHashtag, selectedHashtags: [Hashtag])
     case chatRoom(id: String)
     case setting(email: String)
     case back
@@ -83,7 +83,7 @@ final class ProfileViewModel: ViewModel {
             introduce: user.compactMap { $0?.introduce }.asDriver(onErrorJustReturn: ""),
             languages: user
                 .compactMap { $0?.languages }
-                .map { $0.compactMap { Languages.idToHashtag(id: $0) } }
+                .map { $0.compactMap { Language.idToHashtag(id: $0) } }
                 .asDriver(onErrorJustReturn: []),
             careers: user
                 .compactMap { $0?.careers }
@@ -155,7 +155,18 @@ final class ProfileViewModel: ViewModel {
             .disposed(by: disposeBag)
         
         input.hashtagEditButtonTapped
-            .map { .editHashtag(kind: $0) }
+            .withLatestFrom(user.compactMap { $0 }) { ($0, $1) }
+            .map { type, user -> (KindHashtag, [Hashtag]) in
+                switch type {
+                case .language:
+                    return (type, user.languages.compactMap { Language(rawValue: $0) })
+                case .career:
+                    return (type, user.careers.compactMap { Career(rawValue: $0) })
+                case .category:
+                    return (type, user.categorys.compactMap { Category(rawValue: $0) })
+                }
+            }
+            .map { .editHashtag(kind: $0.0, selectedHashtags: $0.1) }
             .bind(to: navigation)
             .disposed(by: disposeBag)
         
