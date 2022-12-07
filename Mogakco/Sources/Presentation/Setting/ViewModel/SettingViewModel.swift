@@ -19,16 +19,15 @@ enum SettingNavigation {
 final class SettingViewModel: ViewModel {
     
     struct Input {
-        let logoutDidTap: Observable<IndexPath>
-        let withdrawDidTap: Observable<IndexPath>
+        let logoutDidTap: Observable<Void>
+        let withdrawDidTap: Observable<Void>
         let backButtonDidTap: Observable<Void>
     }
     
-    struct Output {
-    }
+    struct Output {}
     
     var disposeBag = DisposeBag()
-    let settings = BehaviorSubject(value: ["로그아웃", "회원탈퇴"])
+    var logoutUseCase: LogoutUseCaseProtocol?
     var email: String?
     let navigation = PublishSubject<SettingNavigation>()
     
