@@ -10,7 +10,7 @@ import Foundation
 
 import RxSwift
 
-final class WithdrawUseCase: WithdrawUseCaseProtocol {
+struct WithdrawUseCase: WithdrawUseCaseProtocol {
     
     var userRepository: UserRepositoryProtocol?
     var authRepository: AuthRepositoryProtocol?
@@ -21,16 +21,13 @@ final class WithdrawUseCase: WithdrawUseCaseProtocol {
         print("DEBUG : withdrawUseCase Called \(email)")
         return tokenRepository?.load()
             .compactMap { $0 }
-            .flatMap {
-                 self.authRepository?
-                    .withdraw(idToken: $0.idToken) ?? .empty()
-            } ?? .empty()
+            .flatMap { authRepository?.withdraw(idToken: $0.idToken) ?? .empty() }
+            .flatMap { tokenRepository?.delete() ?? .empty() }
+            .map { _ in return () } ?? .empty()
     }
     
     func delete() -> Observable<Void> {
         return userRepository?.load()
-            .flatMap { [weak self] user in
-                self?.userRepository?.delete(id: user.id) ?? .empty()
-            } ?? .empty()
+            .flatMap { userRepository?.delete(id: $0.id) ?? .empty() } ?? .empty()
     }
 }
