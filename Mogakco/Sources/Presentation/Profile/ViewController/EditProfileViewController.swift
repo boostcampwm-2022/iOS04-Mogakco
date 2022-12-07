@@ -30,6 +30,14 @@ final class EditProfileViewController: ViewController {
     
     private let addImageButton = UIButton()
     
+    private let refreshButton = UIButton().then {
+        $0.setImage(UIImage(systemName: "arrow.counterclockwise"), for: .normal)
+        $0.tintColor = .white
+        $0.backgroundColor = .mogakcoColor.primaryDefault
+        $0.layer.masksToBounds = true
+        $0.layer.cornerRadius = 14.0
+    }
+    
     private let nameCountTextField = CountTextField().then {
         $0.title = "이름"
         $0.maxCount = 10
@@ -134,6 +142,7 @@ final class EditProfileViewController: ViewController {
         layoutScrollView()
         layoutRoundProfileImageView()
         layoutAddImageButton()
+        layoutRefreshButton()
         layoutNameCountTextField()
         layoutIntrouceCountTextField()
         layoutMarginView()
@@ -172,6 +181,15 @@ final class EditProfileViewController: ViewController {
         contentView.addSubview(addImageButton)
         addImageButton.snp.makeConstraints {
             $0.edges.equalTo(roundProfileImageView)
+        }
+    }
+    
+    private func layoutRefreshButton() {
+        contentView.addSubview(refreshButton)
+        refreshButton.snp.makeConstraints {
+            $0.size.equalTo(28.0)
+            $0.trailing.equalTo(roundProfileImageView.snp.trailing).inset(6.0)
+            $0.bottom.equalTo(roundProfileImageView.snp.bottom).inset(6.0)
         }
     }
     

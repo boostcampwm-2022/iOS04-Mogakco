@@ -28,6 +28,7 @@ final class EditProfileViewModel: ViewModel {
         let name: Observable<String>
         let introduce: Observable<String>
         let selectedProfileImage: Observable<UIImage>
+        let refreshButtonTapped: Observable<Void>
         let completeButtonTapped: Observable<Void>
         let backButtonTapped: Observable<Void>
     }
@@ -54,6 +55,7 @@ final class EditProfileViewModel: ViewModel {
     
     func transform(input: Input) -> Output {
         bindUser(input: input)
+        bindImage(input: input)
         bindScene(input: input)
 
         return Output(
@@ -65,7 +67,7 @@ final class EditProfileViewModel: ViewModel {
         )
     }
     
-    func bindUser(input: Input) {
+    private func bindUser(input: Input) {
         type
             .filter { $0 == .edit }
             .withUnretained(self)
@@ -93,7 +95,9 @@ final class EditProfileViewModel: ViewModel {
         Observable.merge(user.compactMap { $0?.introduce }, input.introduce)
             .bind(to: introduce)
             .disposed(by: disposeBag)
-        
+    }
+    
+    private func bindImage(input: Input) {
         Observable
             .merge(
                 user
@@ -107,9 +111,17 @@ final class EditProfileViewModel: ViewModel {
             )
             .bind(to: image)
             .disposed(by: disposeBag)
+        
+        Observable.merge(
+            type.filter { $0 == .create }.map { _ in },
+            input.refreshButtonTapped
+        )
+            .compactMap { Image.profiles.randomElement() }
+            .bind(to: image)
+            .disposed(by: disposeBag)
     }
     
-    func bindScene(input: Input) {
+    private func bindScene(input: Input) {
         input
             .completeButtonTapped
             .withLatestFrom(type)
