@@ -12,7 +12,7 @@ import Then
 import RxSwift
 import RxCocoa
 
-final class StudyDetailViewController: ViewController {
+final class StudyDetailViewController: UIViewController {
     
     private lazy var scrollView = UIScrollView()
     private lazy var contentsView = UIView()
@@ -103,7 +103,7 @@ final class StudyDetailViewController: ViewController {
     
     private let report = PublishSubject<Void>()
     var viewModel: StudyDetailViewModel
-    var disposebag = DisposeBag()
+    var disposeBag = DisposeBag()
     
     init(viewModel: StudyDetailViewModel) {
         self.viewModel = viewModel
@@ -124,13 +124,26 @@ final class StudyDetailViewController: ViewController {
         super.viewWillDisappear(animated)
         navigationController?.isNavigationBarHidden = true
     }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = .mogakcoColor.backgroundDefault
+        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: backButton)
+        layout()
+        bind()
+    }
     
-    override func layout() {
+    let backButton = UIButton().then {
+        $0.setTitle("이전", for: .normal)
+        $0.setTitleColor(.mogakcoColor.primaryDefault, for: .normal)
+    }
+    
+    func layout() {
         navigationLayout()
         layoutSubViews()
     }
     
-    override func bind() {
+    func bind() {
         let input = StudyDetailViewModel.Input(
             studyJoinButtonTapped: studyJoinButton.rx.tap.asObservable(),
             participantCellTapped: participantsCollectionView.rx.itemSelected.asObservable(),
@@ -159,7 +172,7 @@ final class StudyDetailViewController: ViewController {
             )) { _, hashtag, cell in
                 cell.setHashtag(hashtag: hashtag)
             }
-            .disposed(by: disposebag)
+            .disposed(by: disposeBag)
         
         output.participants
             .drive(participantsCollectionView.rx.items(
@@ -168,7 +181,7 @@ final class StudyDetailViewController: ViewController {
             )) { _, user, cell in
                 cell.setInfo(user: user)
             }
-            .disposed(by: disposebag)
+            .disposed(by: disposeBag)
     }
     
     private func navigationLayout() {
@@ -254,6 +267,7 @@ final class StudyDetailViewController: ViewController {
             $0.top.equalTo(participantsInfoLabel.snp.bottom).offset(10)
             $0.leading.trailing.equalToSuperview().inset(16)
             $0.height.equalTo(150)
+            $0.bottom.equalToSuperview()
         }
     }
     

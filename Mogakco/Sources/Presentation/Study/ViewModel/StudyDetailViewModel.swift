@@ -89,10 +89,12 @@ final class StudyDetailViewModel: ViewModel {
                 .map { (try? participants.value()[$0.0], $0.1) }
                 .withUnretained(self)
                 .subscribe {
+                    let user = $0.1.0
                     if $0.1.0?.id == $0.1.1.id {
                         $0.0.navigation.onNext(.profile(type: .current))
                     } else {
-                        $0.0.navigation.onNext(.profile(type: .other($0.1.1)))
+                        guard let other = $0.1.0 else { return }
+                        $0.0.navigation.onNext(.profile(type: .other(other)))
                     }
                 }
                 .disposed(by: disposeBag)
