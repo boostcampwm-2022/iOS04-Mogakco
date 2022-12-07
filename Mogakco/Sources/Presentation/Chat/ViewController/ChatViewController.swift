@@ -99,6 +99,7 @@ final class ChatViewController: ViewController {
     
     override func layout() {
         configure()
+        layoutNavigationBar()
         layoutCollectionView()
         layoutSideBar()
         layoutBlackScreen()
@@ -224,6 +225,16 @@ final class ChatViewController: ViewController {
     }
     
     // MARK: - Layouts
+    
+    private func layoutNavigationBar() {
+        let navBarAppearance = UINavigationBarAppearance()
+        navBarAppearance.backgroundColor = .mogakcoColor.backgroundDefault
+        navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
+        navigationController?.navigationBar.clipsToBounds = true
+        navigationController?.navigationBar.isTranslucent = false
+        navigationItem.standardAppearance = navBarAppearance
+        navigationItem.scrollEdgeAppearance = navBarAppearance
+    }
     
     private func layoutCollectionView() {
         view.addSubview(collectionView)
@@ -358,7 +369,6 @@ extension ChatViewController: UICollectionViewDelegateFlowLayout {
         estimatedCell.layoutChat(chat: viewModel.messages.value[indexPath.item])
         estimatedCell.layoutIfNeeded()
         
-        let width = estimatedCell.bubbleContainer.frame.width
         let height = estimatedCell.bubbleContainer.frame.height
         
         return .init(width: view.frame.width, height: height)
