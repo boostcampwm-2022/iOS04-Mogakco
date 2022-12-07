@@ -47,9 +47,14 @@ final class ChatCell: UICollectionViewCell, Identifiable {
     }
     
     private func layout() {
+        layoutCell()
         layoutProfileImageView()
         layoutBubbleContainerView()
         layoutTextView()
+    }
+    
+    private func layoutCell() {
+        backgroundColor = .mogakcoColor.backgroundDefault
     }
     
     private func layoutProfileImageView() {
