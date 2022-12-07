@@ -19,7 +19,7 @@ class HashtagFilterViewModel: HashtagViewModel {
 
         input.nextButtonTapped
             .subscribe(onNext: { [weak self] in
-                let selectedHashtag = self?.selectedHashtag ?? []
+                let selectedHashtag = self?.selectedHashtags ?? []
                 self?.finish.onNext(selectedHashtag)
             })
             .disposed(by: disposeBag)

@@ -136,7 +136,7 @@ final class StudyCell: UICollectionViewCell, Identifiable {
         tags.forEach {
             let label = UILabel()
             label.font = UIFont(name: SFPro.regular.rawValue, size: 12)
-            label.text = Languages(rawValue: $0)?.title
+            label.text = Language(rawValue: $0)?.title
             hashtagStackView.addArrangedSubview(label)
         }
     }
