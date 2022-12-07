@@ -20,8 +20,8 @@ final class ProfileViewController: ViewController {
         static let categoryHashtagListViewTitle = "카테고리"
         static let headerViewHeight = 68.0
         static let profileViewHeight = 200.0
-        static let hashtagViewHeight = 100.0
         static let studyRatingListView = 200.0
+        static let hashtagViewHeight = 80.0
         static let bottomMarginViewHeight = 60.0
     }
     
