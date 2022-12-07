@@ -28,13 +28,23 @@ class StudyRatingView: UIView {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        attribute()
         layout()
+        attribute()
     }
 
     @available(*, unavailable)
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        setGradient(
+            startColor: .mogakcoColor.gradientStart?.withAlphaComponent(0.45) ?? .systemGray,
+            endColor: .mogakcoColor.gradientEnd?.withAlphaComponent(0.45) ?? .systemGray,
+            startPoint: .init(x: 0.0, y: 0.5),
+            endPoint: .init(x: 1.0, y: 0.5)
+        )
     }
     
     func configure(studyRating: (String, Int)) {
@@ -49,21 +59,23 @@ class StudyRatingView: UIView {
     }
 
     private func layout() {
-        let stackView = makeEntireStackView()
+        let stackView = createEntireStackView()
         addSubview(stackView)
         stackView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
     }
     
-    private func makeEntireStackView() -> UIStackView {
+    private func createEntireStackView() -> UIStackView {
         let arrangeSubviews = [iconImageView, contentLabel, countLabel]
         iconImageView.snp.makeConstraints {
             $0.width.equalTo(iconImageView.snp.height)
         }
         return UIStackView(arrangedSubviews: arrangeSubviews).then {
+            $0.isLayoutMarginsRelativeArrangement = true
+            $0.layoutMargins = .init(top: 0.0, left: 12.0, bottom: 0.0, right: 12.0)
             $0.axis = .horizontal
-            $0.spacing = 4.0
+            $0.spacing = 12.0
         }
     }
 }
