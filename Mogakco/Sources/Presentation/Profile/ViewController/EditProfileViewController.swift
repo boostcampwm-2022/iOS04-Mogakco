@@ -49,7 +49,7 @@ final class EditProfileViewController: ViewController {
     }
     
     private var viewModel: EditProfileViewModel
-    private let imagePicker = UIImagePickerController()
+    private var imagePicker: UIImagePickerController?
     private let selectedProfileImage = PublishRelay<UIImage>()
     
     init(viewModel: EditProfileViewModel) {
@@ -63,13 +63,17 @@ final class EditProfileViewController: ViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        configureImagePicker()
         hideKeyboardWhenTappedAround()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.isNavigationBarHidden = false
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        configureImagePicker()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -203,11 +207,13 @@ final class EditProfileViewController: ViewController {
 
 private extension EditProfileViewController {
     func configureImagePicker() {
-        imagePicker.allowsEditing = true
-        imagePicker.delegate = self
+        imagePicker = UIImagePickerController()
+        imagePicker?.allowsEditing = true
+        imagePicker?.delegate = self
     }
     
     func presentImagePicker() {
+        guard let imagePicker = imagePicker else { return }
         present(imagePicker, animated: true)
     }
 }
