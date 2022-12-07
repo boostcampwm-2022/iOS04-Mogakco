@@ -214,6 +214,8 @@ final class DIContainer {
             let viewModel = ChatViewModel()
             viewModel.chatUseCase = resolver.resolve(ChatUseCaseProtocol.self)
             viewModel.leaveStudyUseCase = resolver.resolve(LeaveStudyUseCaseProtocol.self)
+            viewModel.subscribePushNotificationUseCase = resolver.resolve(SubscribePushNotificationUseCaseProtocol.self)
+            viewModel.unsubscribePushNotificationUseCase = resolver.resolve(UnsubscribePushNotificationUseCaseProtocol.self)
             return viewModel
         }
         container.register(ChatListViewModel.self) { resolver in
