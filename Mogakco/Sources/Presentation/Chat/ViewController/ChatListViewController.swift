@@ -68,7 +68,7 @@ final class ChatListViewController: UIViewController {
         let isChatLoading = BehaviorSubject(value: true)
         
         isChatLoading
-            .bind(to: tableContentsView.rx.skelton)
+            .bind(to: tableContentsView.rx.skeleton)
             .disposed(by: disposeBag)
         
         let input = ChatListViewModel.Input(

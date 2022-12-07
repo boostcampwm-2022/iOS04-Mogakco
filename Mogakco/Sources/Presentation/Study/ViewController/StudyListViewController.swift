@@ -66,7 +66,7 @@ final class StudyListViewController: ViewController {
         let refreshEvent = refreshControl.rx.controlEvent(.valueChanged)
         
         isStudyLoading
-            .bind(to: collectionContentView.rx.skelton)
+            .bind(to: collectionContentView.rx.skeleton)
             .disposed(by: disposeBag)
         
         refreshEvent
@@ -74,7 +74,7 @@ final class StudyListViewController: ViewController {
                 self?.collectionView.isHidden = true
                 return true
             }
-            .bind(to: collectionContentView.rx.skelton)
+            .bind(to: collectionContentView.rx.skeleton)
             .disposed(by: disposeBag)
         
         let input = StudyListViewModel.Input(
