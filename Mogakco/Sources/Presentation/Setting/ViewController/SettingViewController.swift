@@ -86,6 +86,28 @@ final class SettingViewController: ViewController {
                 return cell
             }
             .disposed(by: disposeBag)
+        
+        tableView.rx.itemSelected
+            .map { SettingMenu(row: $0.row) }
+            .subscribe(onNext: { [weak self] row in
+                switch row {
+                case .logout:
+                    self?.alert(
+                        title: "로그아웃",
+                        message: "로그아웃 하시겠어요?",
+                        actions: [
+                            .cancel(),
+                            .destructive(
+                                title: "확인",
+                                handler: { [weak self] _ in self?.logoutDidTap.onNext(()) }
+                            )
+                        ]
+                    )
+                case .withdraw:
+                    self?.withdrawDidTap.onNext(())
+                }
+            })
+            .disposed(by: disposeBag)
     }
     
     override func layout() {
