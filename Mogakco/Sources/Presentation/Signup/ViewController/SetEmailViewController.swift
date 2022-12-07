@@ -48,6 +48,7 @@ final class SetEmailViewController: ViewController {
     
     private let textField = MessageTextField().then {
         $0.placeholder = Constant.placeholder
+        $0.setHeight(Layout.textFieldHeight)
     }
     
     private let button = ValidationButton().then {
