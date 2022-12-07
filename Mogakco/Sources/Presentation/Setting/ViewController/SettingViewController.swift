@@ -111,6 +111,7 @@ final class SettingViewController: ViewController {
     }
     
     override func layout() {
+        layoutNavigationBar()
         layoutTableView()
     }
     
@@ -122,6 +123,16 @@ final class SettingViewController: ViewController {
         navigationItem.title = "설정"
         
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: backButton)
+    }
+    
+    private func layoutNavigationBar() {
+        let navBarAppearance = UINavigationBarAppearance()
+        navBarAppearance.backgroundColor = .mogakcoColor.backgroundDefault
+        navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
+        navigationController?.navigationBar.clipsToBounds = true
+        navigationController?.navigationBar.isTranslucent = false
+        navigationItem.standardAppearance = navBarAppearance
+        navigationItem.scrollEdgeAppearance = navBarAppearance
     }
     
     private func layoutTableView() {
