@@ -40,11 +40,10 @@ struct KeychainManager: KeychainManagerProtocol {
         return keychain?.search(query)
     }
     
-    func delete(key: KeychainKey, data: Data) -> Bool {
+    func delete(key: KeychainKey) -> Bool {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
-            kSecAttrAccount as String: key.rawValue,
-            kSecValueData as String: data
+            kSecAttrAccount as String: key.rawValue
         ]
         
         let status = keychain?.delete(query)
