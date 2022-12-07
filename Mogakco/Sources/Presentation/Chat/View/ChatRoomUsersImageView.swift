@@ -8,6 +8,8 @@
 
 import UIKit
 
+import RxSwift
+
 final class ChatRoomUsersImageView: UIView {
     
     enum Constant {
@@ -53,15 +55,20 @@ final class ChatRoomUsersImageView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configure(imageURLs: [URL]) {
+    func configure(imageURLs: [URL]) -> Observable<Bool> {
+        var observables: [Observable<Bool>] = []
+        
         zip(imageURLs.shuffled(), roundImageViews).forEach { imageURL, roundImageView in
-            roundImageView.load(url: imageURL)
+            observables.append(roundImageView.loadAndEvent(url: imageURL))
+//            roundImageView.load(url: imageURL)
         }
         roundImageViews.enumerated().forEach { index, roundImageView in
             roundImageView.isHidden = imageURLs.count < index + 1
         }
         topHorizontalStackView.isHidden = imageURLs.isEmpty
         bottomHorizontalStackView.isHidden = imageURLs.count < 3
+        
+        return Observable.combineLatest(observables).map {_ in false }
     }
     
     private func layout() {
