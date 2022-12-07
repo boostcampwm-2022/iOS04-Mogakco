@@ -48,6 +48,7 @@ final class ChatRoomTableViewCell: UITableViewCell, Identifiable {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         layout()
+        attiribute()
     }
     
     required init?(coder: NSCoder) {
@@ -78,6 +79,10 @@ final class ChatRoomTableViewCell: UITableViewCell, Identifiable {
     
     private func layout() {
         layoutEntireStackView()
+    }
+    
+    private func attiribute() {
+        backgroundColor = .mogakcoColor.backgroundDefault
     }
     
     private func layoutEntireStackView() {
