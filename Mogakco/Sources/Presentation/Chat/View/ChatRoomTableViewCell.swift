@@ -63,7 +63,7 @@ final class ChatRoomTableViewCell: UITableViewCell, Identifiable {
         let isImageLoading = BehaviorSubject(value: true)
         
         isImageLoading
-            .bind(to: chatRoomUsersImageView.rx.skelton)
+            .bind(to: chatRoomUsersImageView.rx.skeleton)
             .disposed(by: disposeBag)
         
         chatRoomUsersImageView.configure(
