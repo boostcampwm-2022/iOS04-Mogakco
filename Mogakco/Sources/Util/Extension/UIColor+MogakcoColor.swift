@@ -32,4 +32,8 @@ struct MogakcoColor {
     
     // Background
     let backgroundDefault = UIColor(named: "BackgroundDefault")
+    
+    // Gradient
+    let gradientStart = UIColor(named: "gradientStart")
+    let gradientEnd = UIColor(named: "gradientEnd")
 }
