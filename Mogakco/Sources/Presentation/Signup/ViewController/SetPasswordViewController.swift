@@ -42,10 +42,12 @@ final class SetPasswordViewController: ViewController {
     
     private let passwordTextField = MessageTextField(isSecure: true).then {
         $0.placeholder = Constant.password
+        $0.setHeight(Layout.textFieldHeight)
     }
     
     private let passwordCheckTextField = MessageTextField(isSecure: true).then {
         $0.placeholder = Constant.passwordCheck
+        $0.setHeight(Layout.textFieldHeight)
     }
     
     private let button = ValidationButton().then {
