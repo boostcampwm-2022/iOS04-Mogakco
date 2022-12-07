@@ -90,14 +90,14 @@ final class ParticipantCell: UICollectionViewCell, Identifiable {
         let isLoadImage = BehaviorSubject(value: true)
         
         isLoadImage
-            .bind(to: imageView.rx.skelton)
+            .bind(to: imageView.rx.skeleton)
             .disposed(by: disposeBag)
         
         if let imageURLString = user?.profileImageURLString,
            let url = URL(string: imageURLString) {
             imageView.load(url: url)
             imageView.loadAndEvent(url: url)
-                .bind(to: imageView.rx.skelton)
+                .bind(to: imageView.rx.skeleton)
                 .disposed(by: disposeBag)
         } else {
             imageView.setPhoto(Image.profileDefault)
