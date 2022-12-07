@@ -185,6 +185,8 @@ final class DIContainer {
             useCase.userRepository = resolver.resolve(UserRepositoryProtocol.self)
             useCase.authRepository = resolver.resolve(AuthRepositoryProtocol.self)
             useCase.tokenRepository = resolver.resolve(TokenRepositoryProtocol.self)
+            useCase.chatRoomRepository = resolver.resolve(ChatRoomRepositoryProtocol.self)
+            useCase.studyRepository = resolver.resolve(StudyRepositoryProtocol.self)
             return useCase
         }
         container.register(ReportUseCaseProtocol.self) { resolver in
