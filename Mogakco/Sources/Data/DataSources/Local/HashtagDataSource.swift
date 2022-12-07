@@ -25,7 +25,7 @@ struct HashtagDataSource: HashtagDataSourceProtocol {
     }
     
     private func loadLanguage() -> [Hashtag] {
-        return Languages.allCases
+        return Language.allCases
     }
     
     private func loadCareer() -> [Hashtag] {
