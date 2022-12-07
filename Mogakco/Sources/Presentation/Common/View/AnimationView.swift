@@ -57,8 +57,14 @@ final class AnimationView: UIView {
     }
     
     private func addImages() {
-        (0..<Animation.iconCount).forEach { _ in
-            let imageView = AnimationImageView(frame: randomPosition())
+        [
+            Languages.swift.id,
+            Languages.cpp.id,
+            Languages.javaScript.id,
+            Languages.python.id,
+            Languages.ruby.id
+        ].forEach {
+            let imageView = AnimationImageView(frame: randomPosition(),image: UIImage(named: $0))
             addSubview(imageView)
             animationImages.append(imageView)
             moveView(targetView: imageView)
