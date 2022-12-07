@@ -11,7 +11,7 @@ import UIKit
 import RxSwift
 import SnapKit
 
-final class ProfileViewController: ViewController {
+final class ProfileViewController: UIViewController {
 
     enum Constant {
         static let headerViewTitle = "프로필"
@@ -20,8 +20,8 @@ final class ProfileViewController: ViewController {
         static let categoryHashtagListViewTitle = "카테고리"
         static let headerViewHeight = 68.0
         static let profileViewHeight = 200.0
-        static let studyRatingListView = 200.0
         static let hashtagViewHeight = 80.0
+        static let studyRatingListView = 230.0
         static let bottomMarginViewHeight = 60.0
     }
     
@@ -32,14 +32,16 @@ final class ProfileViewController: ViewController {
     
     private lazy var contentStackView = UIStackView(arrangedSubviews: [
         self.profileView,
+        self.boundaryView,
         self.languageListView,
         self.careerListView,
         self.categoryListView,
         self.studyRatingListView,
         self.bottomMarginView
     ]).then {
-        $0.spacing = 4.0
+        $0.spacing = 8.0
         $0.axis = .vertical
+        $0.setCustomSpacing(12.0, after: self.boundaryView)
     }
     
     private let headerView = TitleHeaderView().then {
@@ -49,6 +51,13 @@ final class ProfileViewController: ViewController {
     private let profileView = ProfileView().then {
         $0.snp.makeConstraints {
             $0.height.equalTo(Constant.profileViewHeight)
+        }
+    }
+    
+    private let boundaryView = UIView().then {
+        $0.backgroundColor = .mogakcoColor.primaryDefault
+        $0.snp.makeConstraints {
+            $0.height.equalTo(4.0) 
         }
     }
     
@@ -91,12 +100,14 @@ final class ProfileViewController: ViewController {
     }
 
     private let report = PublishSubject<Void>()
-    
+    private let disposeBag = DisposeBag()
     private var viewModel: ProfileViewModel
     
     init(viewModel: ProfileViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
+        bind()
+        layout()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -113,7 +124,7 @@ final class ProfileViewController: ViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func bind() {
+    func bind() {
         let input = ProfileViewModel.Input(
             viewWillAppear: rx.viewWillAppear.map { _ in }.asObservable(),
             editProfileButtonTapped: profileView.editProfileButton.rx.tap.asObservable(),
@@ -134,7 +145,7 @@ final class ProfileViewController: ViewController {
         bindReportButton()
     }
     
-    private func bindIsMyProfile(output: ProfileViewModel.Output) {
+    func bindIsMyProfile(output: ProfileViewModel.Output) {
         output.isMyProfile
             .drive(profileView.chatButton.rx.isHidden)
             .disposed(by: disposeBag)
@@ -217,7 +228,7 @@ final class ProfileViewController: ViewController {
             .disposed(by: disposeBag)
     }
     
-    override func layout() {
+    func layout() {
         layoutHeaderView()
         layoutScrollView()
         layoutSettingButton()
