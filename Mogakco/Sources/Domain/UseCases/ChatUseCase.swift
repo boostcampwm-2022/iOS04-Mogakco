@@ -23,7 +23,7 @@ struct ChatUseCase: ChatUseCaseProtocol {
                 return chats.map {
                     var chat = $0
                     chat.user = users.first(where: {
-                        $0.id == myUser.id
+                        $0.id == chat.userID
                     })
                     chat.isFromCurrentUser = chat.userID == myUser.id
                     return chat
@@ -40,7 +40,7 @@ struct ChatUseCase: ChatUseCaseProtocol {
                 return chats.map {
                     var chat = $0
                     chat.user = users.first(where: {
-                        $0.id == myUser.id
+                        $0.id == chat.userID
                     })
                     chat.isFromCurrentUser = chat.userID == myUser.id
                     return chat
