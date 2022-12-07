@@ -21,17 +21,16 @@ final class ProfileView: UIView {
         $0.snp.makeConstraints {
             $0.size.equalTo(45.0)
         }
-        $0.setPhoto(MogakcoAsset.swift.image)
     }
     
     let nameLabel = UILabel().then {
-        $0.font = UIFont.mogakcoFont.smallBold
+        $0.font = UIFont.mogakcoFont.mediumBold
         $0.textColor = .mogakcoColor.typographyPrimary
         $0.textAlignment = .left
     }
     
     let introduceLabel = UILabel().then {
-        $0.font = UIFont.mogakcoFont.caption
+        $0.font = UIFont.mogakcoFont.smallBold
         $0.textColor = .mogakcoColor.typographySecondary
         $0.numberOfLines = 0
         $0.textAlignment = .left
@@ -39,7 +38,7 @@ final class ProfileView: UIView {
     
     let chatButton = UIButton().then {
         $0.clipsToBounds = true
-        $0.layer.cornerRadius = 12.0
+        $0.layer.cornerRadius = 10.0
         $0.setTitle("채팅", for: .normal)
         $0.setTitleColor(UIColor.mogakcoColor.typographyPrimary, for: .normal)
         $0.titleLabel?.font = UIFont.mogakcoFont.smallBold
@@ -48,7 +47,7 @@ final class ProfileView: UIView {
     
     let editProfileButton = UIButton().then {
         $0.clipsToBounds = true
-        $0.layer.cornerRadius = 14.0
+        $0.layer.cornerRadius = 10.0
         $0.setTitle("프로필 편집", for: .normal)
         $0.setTitleColor(UIColor.mogakcoColor.typographyPrimary, for: .normal)
         $0.titleLabel?.font = UIFont.mogakcoFont.smallBold
@@ -57,7 +56,7 @@ final class ProfileView: UIView {
     
     let reportButton = UIButton().then {
         $0.clipsToBounds = true
-        $0.layer.cornerRadius = 12.0
+        $0.layer.cornerRadius = 10.0
         $0.setTitle("차단", for: .normal)
         $0.setTitleColor(UIColor.mogakcoColor.typographyPrimary, for: .normal)
         $0.titleLabel?.font = UIFont.mogakcoFont.smallBold
@@ -124,6 +123,11 @@ final class ProfileView: UIView {
     
     private func createButtonStackView() -> UIStackView {
         let arrangeSubviews = [reportButton, chatButton, editProfileButton]
+        arrangeSubviews.forEach {
+            $0.snp.makeConstraints {
+                $0.height.equalTo(48.0)
+            }
+        }
         return UIStackView(arrangedSubviews: arrangeSubviews).then {
             $0.axis = .horizontal
             $0.spacing = 16.0
