@@ -19,7 +19,7 @@ final class WithdrawUseCase: WithdrawUseCaseProtocol {
     
     func withdraw(email: String) -> Observable<Void> {
         print("DEBUG : withdrawUseCase Called \(email)")
-        return tokenRepository?.load(email: email)
+        return tokenRepository?.load()
             .compactMap { $0 }
             .flatMap {
                  self.authRepository?

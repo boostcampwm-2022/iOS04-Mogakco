@@ -15,23 +15,22 @@ import Swinject
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
     var window: UIWindow?
-    let keyChainMananger: KeychainManagerProtocol = KeychainManager()
+    var keyChainMananger: KeychainManagerProtocol?
 
     func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
         FirebaseApp.configure()
-        appearance()
         DIContainer.shared.inject()
+        keyChainMananger = DIContainer.shared.container.resolve(KeychainManagerProtocol.self)
         
         UNUserNotificationCenter.current().delegate = self
         Messaging.messaging().delegate = self
         requestNotificationAuthorization()
         application.registerForRemoteNotifications()
-        
-        UINavigationBar.appearance().tintColor = UIColor.mogakcoColor.typographyPrimary
-        
+
+        appearance()
         return true
     }
     
@@ -76,7 +75,7 @@ extension AppDelegate : MessagingDelegate {
             print("fcm token not exists.")
             return
         }
-        _ = keyChainMananger.save(key: .fcmToken, data: fcmTokenData)
+        _ = keyChainMananger?.save(key: .fcmToken, data: fcmTokenData)
         print("fcmToken:", fcmToken)
     }
 }
