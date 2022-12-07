@@ -28,7 +28,7 @@ final class LoginViewModel: ViewModel {
     
     struct Output {
         let presentLogin: Signal<Void>
-        let presentError: Signal<String>
+        let presentAlert: Signal<Alert>
     }
     
     var autoLoginUseCase: AutoLoginUseCaseProtocol?
@@ -39,7 +39,7 @@ final class LoginViewModel: ViewModel {
     func transform(input: Input) -> Output {
 
         let presentLogin = PublishSubject<Void>()
-        let presentAlert = PublishSubject<Error>()
+        let presentAlert = PublishSubject<Alert>()
         
         input.viewWillAppear
             .withUnretained(self)
@@ -70,15 +70,16 @@ final class LoginViewModel: ViewModel {
                 switch result {
                 case .success:
                     viewModel.navigation.onNext(.finish)
-                case .failure(let error):
-                    presentAlert.onNext(error)
+                case .failure:
+                    let alert = Alert(title: "로그인 실패", message: "로그인 정보를 다시 확인해주세요.", observer: nil)
+                    presentAlert.onNext(alert)
                 }
             })
             .disposed(by: disposeBag)
             
         return Output(
             presentLogin: presentLogin.asSignal(onErrorSignalWith: .empty()),
-            presentError: presentAlert.map { $0.localizedDescription }.asSignal(onErrorSignalWith: .empty())
+            presentAlert: presentAlert.asSignal(onErrorSignalWith: .empty())
         )
     }
 }

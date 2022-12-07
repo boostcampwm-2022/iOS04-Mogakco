@@ -83,7 +83,7 @@ final class LoginViewController: ViewController {
             })
             .disposed(by: disposeBag)
         
-        output.presentError
+        output.presentAlert
             .emit(to: rx.presentAlert)
             .disposed(by: disposeBag)
     }
