@@ -40,30 +40,13 @@ final class StudyListHeader: UIView {
     
     // MARK: - Bottom StackView
     
-    let sortButton = UIButton().then {
-        $0.configuration = configuration(title: "정렬")
-        $0.layer.borderWidth = 0.8
-        $0.layer.cornerRadius = 8
-    }
+    let sortButton = UIButton()
     
-    let languageButton = UIButton().then {
-        $0.configuration = configuration(title: "언어")
-        $0.layer.borderWidth = 0.8
-        $0.layer.cornerRadius = 8
-    }
+    let languageButton = UIButton()
     
-    let categoryButton = UIButton().then {
-        $0.configuration = configuration(title: "카테고리")
-        $0.layer.borderWidth = 0.8
-        $0.layer.cornerRadius = 8
-    }
+    let categoryButton = UIButton()
     
-    let resetButton = UIButton().then {
-        $0.configuration = configuration(title: "초기화")
-        $0.layer.borderColor = UIColor.mogakcoColor.primarySecondary?.cgColor
-        $0.layer.borderWidth = 0.8
-        $0.layer.cornerRadius = 8
-    }
+    let resetButton = UIButton()
     
     private lazy var bottomStackView = UIStackView(
         arrangedSubviews: [sortButton, languageButton, categoryButton, resetButton]
@@ -76,6 +59,7 @@ final class StudyListHeader: UIView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+        attributeButton()
         layout()
     }
     
@@ -105,28 +89,28 @@ final class StudyListHeader: UIView {
             make.top.equalTo(topStackView.snp.bottom).offset(10)
         }
     }
+    
+    private func attributeButton() {
+        zip(
+            [sortButton, languageButton, categoryButton, resetButton],
+            ["정렬", "언어", "카테고리", "초기화"]
+        ).forEach {
+            $0.layer.borderColor = UIColor.clear.cgColor
+            $0.layer.borderWidth = 0.8
+            $0.layer.cornerRadius = 8
+            $0.setTitle($1, for: .normal)
+            $0.titleLabel?.font = UIFont(name: SFPro.regular.rawValue, size: 14) ?? UIFont()
+            $0.setTitleColor(UIColor.mogakcoColor.typographyPrimary, for: .normal)
+            $0.backgroundColor = UIColor.mogakcoColor.primaryThird
+        }
+    }
    
     func attributeButtonBorderColor(button: UIButton?) {
         guard let button = button else { return }
         button.layer.borderColor = borderColor(isSelected: button.isSelected).cgColor
     }
     
-    private static func configuration(title: String) -> UIButton.Configuration {
-        
-        var attributedTitle = AttributedString(title)
-        attributedTitle.font = UIFont(name: SFPro.regular.rawValue, size: 13)
-        
-        var configuration = UIButton.Configuration.filled()
-        configuration.baseForegroundColor = .mogakcoColor.typographyPrimary
-        configuration.baseBackgroundColor = .mogakcoColor.primaryThird
-        configuration.background.cornerRadius = 8
-        configuration.attributedTitle = attributedTitle
-        configuration.contentInsets = .init(top: 8, leading: 0, bottom: 8, trailing: 0)
-        
-        return configuration
-    }
-    
     private func borderColor(isSelected: Bool) -> UIColor {
-        return isSelected ? UIColor.mogakcoColor.primaryDefault ?? .systemGreen : .clear
+        return isSelected ? UIColor.mogakcoColor.primaryDefault ?? .systemOrange : .clear
     }
 }
