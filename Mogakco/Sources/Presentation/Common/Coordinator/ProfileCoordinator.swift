@@ -53,11 +53,11 @@ final class ProfileCoordinator: BaseCoordinator<ProfileCoordinatorResult> {
                 switch $0 {
                 case .editProfile:
                     self?.showEditProfile()
-                case .editHashtag(let kind):
-                    self?.showHashtag(kind: kind, selectedHashtag: [])
-                case .chatRoom(let id):
+                case let .editHashtag(kind: kind, selectedHashtags: selectedHashtags):
+                    self?.showHashtag(kind: kind, selectedHashtags: selectedHashtags)
+                case let .chatRoom(id):
                     self?.showChatRoom(id: id)
-                case .setting(let email):
+                case let .setting(email):
                     self?.setting(email: email)
                 case .back:
                     self?.finish.onNext(.back)
@@ -154,9 +154,9 @@ final class ProfileCoordinator: BaseCoordinator<ProfileCoordinatorResult> {
     
     // MARK: - 프로필 해시태그 수정
     
-    func showHashtag(kind: KindHashtag, selectedHashtag: [Hashtag]) {
+    func showHashtag(kind: KindHashtag, selectedHashtags: [Hashtag]) {
         guard let viewModel = DIContainer.shared.container.resolve(HashtagEditViewModel.self) else { return }
-        viewModel.selectedHashtag = selectedHashtag
+        viewModel.selectedHashtags = selectedHashtags
         
         viewModel.finish
             .subscribe(onNext: { [weak self] in
