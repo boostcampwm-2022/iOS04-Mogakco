@@ -15,6 +15,19 @@ import Then
 
 final class SettingViewController: ViewController {
     
+    enum SettingMenu: String, CaseIterable {
+        
+        case logout = "로그아웃"
+        case withdraw = "회원탈퇴"
+
+        init(row: Int) {
+            switch row {
+            case 0: self = .logout
+            default: self = .withdraw
+            }
+        }
+    }
+    
     private let tableView = UITableView(frame: .zero, style: .grouped).then {
         $0.register(
             SettingTableViewCell.self,
@@ -60,13 +73,13 @@ final class SettingViewController: ViewController {
         
         let _ = viewModel?.transform(input: input)
         
-        viewModel?.settings
-            .asDriver(onErrorJustReturn: [])
+        Driver<[SettingMenu]>
+            .just(SettingMenu.allCases)
             .drive(tableView.rx.items) { tableView, index, menu in
                 guard let cell = tableView.dequeueReusableCell(
                     withIdentifier: SettingTableViewCell.identifier,
                     for: IndexPath(row: index, section: 0)) as? SettingTableViewCell else { return UITableViewCell() }
-                cell.titleLabel.text = menu
+                cell.titleLabel.text = menu.rawValue
                 return cell
             }
             .disposed(by: disposeBag)
