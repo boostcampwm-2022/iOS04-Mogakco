@@ -10,9 +10,13 @@ import UIKit
 
 import RxSwift
 
-enum ChatRoomListCoordinatorResult { }
+enum ChatRoomListCoordinatorResult {
+    case finish
+}
 
 final class ChatRoomListCoordinator: BaseCoordinator<ChatRoomListCoordinatorResult> {
+    
+    private let finish = PublishSubject<ChatRoomListCoordinatorResult>()
     
     override func start() -> Observable<ChatRoomListCoordinatorResult> {
         showChatRoomList()
@@ -41,9 +45,12 @@ final class ChatRoomListCoordinator: BaseCoordinator<ChatRoomListCoordinatorResu
     func showChatRoom(id: String) {
         let chatRoom = ChatRoomCoordinator(id: id, navigationController)
         coordinate(to: chatRoom)
-            .subscribe(onNext: {
+            .subscribe(onNext: { [weak self] in
                 switch $0 {
-                case .back: break
+                case .finish:
+                    self?.finish.onNext(.finish)
+                case .back:
+                    break
                 }
             })
             .disposed(by: disposeBag)

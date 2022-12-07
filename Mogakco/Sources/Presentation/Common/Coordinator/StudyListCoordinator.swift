@@ -10,9 +10,13 @@ import UIKit
 
 import RxSwift
 
-enum StudyListCoordinatorResult { }
+enum StudyListCoordinatorResult {
+    case finish
+}
 
 final class StudyListCoordinator: BaseCoordinator<StudyListCoordinatorResult> {
+    
+    private let finish = PublishSubject<StudyListCoordinatorResult>()
     
     override func start() -> Observable<StudyListCoordinatorResult> {
         showStudyList()
@@ -136,7 +140,14 @@ final class StudyListCoordinator: BaseCoordinator<StudyListCoordinatorResult> {
     func showStudyDetail(id: String) {
         let detail = StudyDetailCoordinator(id: id, navigationController)
         coordinate(to: detail)
-            .subscribe()
+            .subscribe(onNext: { [weak self] in
+                switch $0 {
+                case .finish:
+                    self?.finish.onNext(.finish)
+                case .back:
+                    break
+                }
+            })
             .disposed(by: disposeBag)
     }
 }
