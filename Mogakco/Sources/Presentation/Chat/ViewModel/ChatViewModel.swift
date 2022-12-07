@@ -131,7 +131,8 @@ final class ChatViewModel: ViewModel {
                             message: message,
                             chatRoomID: self.chatRoomID,
                             date: Date().toInt(dateFormat: Format.chatDateFormat),
-                            readUserIDs: [user.id]
+                            readUserIDs: [user.id],
+                            user: user
                         ),
                         to: self.chatRoomID
                     )
