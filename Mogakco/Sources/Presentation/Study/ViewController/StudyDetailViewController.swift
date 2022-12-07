@@ -27,7 +27,7 @@ final class StudyDetailViewController: ViewController {
     }
     private let participantsView = StudyInfoView(frame: .zero).then {
         $0.textLabel.text = "2/3 참여"
-        $0.imageView.image = Image.profileDefault
+        $0.imageView.image = UIImage(systemName: "person.fill")
     }
     
     private let locationView = StudyInfoView(frame: .zero).then {
@@ -268,7 +268,7 @@ final class StudyDetailViewController: ViewController {
     
     private func reportButton() {
         let reportButton = UIBarButtonItem(
-            image: UIImage(systemName: "flag"),
+            image: UIImage(systemName: "exclamationmark.circle"),
             primaryAction: UIAction { [weak self] _ in
                 self?.alert(
                     title: "신고하기",
