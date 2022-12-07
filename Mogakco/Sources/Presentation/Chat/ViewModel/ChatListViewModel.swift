@@ -25,6 +25,7 @@ final class ChatListViewModel: ViewModel {
     
     struct Output {
         let chatRooms: Driver<[ChatRoom]>
+        let loadingFinished: Observable<Bool>
         let alert: Signal<Alert>
     }
     
@@ -82,6 +83,7 @@ final class ChatListViewModel: ViewModel {
         
         return Output(
             chatRooms: chatRooms.asDriver(onErrorJustReturn: []),
+            loadingFinished: chatRooms.skip(1).map { _ in false }.asObservable(),
             alert: alert.asSignal(onErrorSignalWith: .empty())
         )
     }

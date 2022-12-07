@@ -9,6 +9,7 @@ import UIKit
 
 import SnapKit
 import Then
+import RxSwift
 
 final class ChatRoomTableViewCell: UITableViewCell, Identifiable {
     
@@ -18,6 +19,8 @@ final class ChatRoomTableViewCell: UITableViewCell, Identifiable {
         static let noMessageTitle = "아직 채팅 메세지가 없어요!"
         static let subLabelHeight = 16.0
     }
+    
+    var disposeBag = DisposeBag()
     
     private let chatRoomUsersImageView = ChatRoomUsersImageView()
     
@@ -57,11 +60,20 @@ final class ChatRoomTableViewCell: UITableViewCell, Identifiable {
     }
 
     func configure(chatRoom: ChatRoom) {
+        let isImageLoading = BehaviorSubject(value: true)
+        
+        isImageLoading
+            .bind(to: chatRoomUsersImageView.rx.skelton)
+            .disposed(by: disposeBag)
+        
         chatRoomUsersImageView.configure(
             imageURLs: (chatRoom.users ?? [])
                 .compactMap { $0.profileImageURLString }
                 .compactMap { URL(string: $0) }
-            )
+        )
+        .bind(to: isImageLoading)
+        .disposed(by: disposeBag)
+        
         chatRoomTitleLabel.text = chatRoom.users?.map { $0.name }.joined(separator: ", ") ?? Constant.noUsersTitle
         latestMessageLabel.text = chatRoom.latestChat?.message ?? Constant.noMessageTitle
         
@@ -134,7 +146,7 @@ final class ChatRoomTableViewCell: UITableViewCell, Identifiable {
         unreadMessageCountLabel.snp.makeConstraints {
             $0.size.equalTo(Constant.subLabelHeight)
         }
- 
+        
         return UIStackView(arrangedSubviews: arrangedSubviews).then {
             $0.axis = .horizontal
             $0.spacing = 4.0

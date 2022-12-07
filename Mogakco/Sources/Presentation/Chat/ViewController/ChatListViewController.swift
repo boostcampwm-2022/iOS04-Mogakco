@@ -23,6 +23,10 @@ final class ChatListViewController: UIViewController {
         $0.setTitle(Constant.headerViewTitle)
     }
     
+    private let tableContentsView = UIView().then {
+        $0.clipsToBounds = true
+    }
+    
     private let chatRoomTableView = UITableView().then {
         $0.register(ChatRoomTableViewCell.self, forCellReuseIdentifier: ChatRoomTableViewCell.identifier)
         $0.rowHeight = ChatRoomTableViewCell.Constant.cellHeight
@@ -45,8 +49,9 @@ final class ChatListViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        bind()
+        view.backgroundColor = UIColor.mogakcoColor.backgroundDefault
         layout()
+        bind()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -60,6 +65,12 @@ final class ChatListViewController: UIViewController {
     }
     
     func bind() {
+        let isChatLoading = BehaviorSubject(value: true)
+        
+        isChatLoading
+            .bind(to: tableContentsView.rx.skelton)
+            .disposed(by: disposeBag)
+        
         let input = ChatListViewModel.Input(
             viewWillAppear: rx.viewWillAppear.map { _ in }.asObservable(),
             selectedChatRoom: chatRoomTableView.rx.modelSelected(ChatRoom.self)
@@ -82,6 +93,10 @@ final class ChatListViewController: UIViewController {
             }
             .disposed(by: disposeBag)
         
+        output.loadingFinished
+            .bind(to: isChatLoading)
+            .disposed(by: disposeBag)
+
         output.alert
             .emit(to: rx.presentAlert)
             .disposed(by: disposeBag)
@@ -102,11 +117,17 @@ final class ChatListViewController: UIViewController {
     }
     
     private func layoutChatRoomTableView() {
-        view.addSubview(chatRoomTableView)
+        view.addSubview(tableContentsView)
         
-        chatRoomTableView.snp.makeConstraints {
+        tableContentsView.snp.makeConstraints {
             $0.top.equalTo(headerView.snp.bottom)
             $0.leading.trailing.bottom.equalTo(view.safeAreaLayoutGuide)
+        }
+        
+        tableContentsView.addSubview(chatRoomTableView)
+        
+        chatRoomTableView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
         }
     }
 }

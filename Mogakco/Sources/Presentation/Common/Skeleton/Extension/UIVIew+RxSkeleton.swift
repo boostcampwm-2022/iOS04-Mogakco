@@ -14,7 +14,7 @@ import SnapKit
 
 extension UIView {
     func addSkeleton() {
-        if self is UIImageView {
+        if self is UIImageView || self is ChatRoomUsersImageView {
             fillView(loadingView: SkeletonView(frame: frame, type: .image))
         } else {
             fillView(loadingView: SkeletonView(frame: frame, type: .none))
