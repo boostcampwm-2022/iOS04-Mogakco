@@ -70,7 +70,7 @@ final class ChatRoomTableViewCell: UITableViewCell, Identifiable {
         latestMessageLabel.text = chatRoom.latestChat?.message ?? Constant.noMessageTitle
         
         latestMessageDateLabel.text = chatRoom.latestChat?.date.toString
-            .toDate(dateFormat: Format.compactDateFormat)?.relativeTime ?? ""
+            .toDate(dateFormat: Format.chatDateFormat)?.relativeTime ?? ""
         
         let unreadChatCount = chatRoom.unreadChatCount ?? 0
         unreadMessageCountLabel.isHidden = unreadChatCount == 0
