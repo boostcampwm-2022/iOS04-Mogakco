@@ -48,20 +48,10 @@ struct TokenRepository: TokenRepositoryProtocol {
         }
     }
     
-    func delete(_ auth: Authorization) -> Observable<Authorization?> {
+    func delete() -> Observable<Bool> {
         return Observable.create { emitter in
-            
-            guard let data = try? JSONEncoder().encode(auth) else {
-                emitter.onNext(nil)
-                return Disposables.create()
-            }
-            
-            guard keychainManager?.delete(key: .authorization, data: data) ?? false else {
-                emitter.onNext(nil)
-                return Disposables.create()
-            }
-            
-            emitter.onNext(auth)
+            let result = keychainManager?.delete(key: .authorization) ?? false
+            emitter.onNext(result)
             return Disposables.create()
         }
     }
