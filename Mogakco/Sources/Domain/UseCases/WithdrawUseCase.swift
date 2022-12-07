@@ -15,6 +15,8 @@ struct WithdrawUseCase: WithdrawUseCaseProtocol {
     var userRepository: UserRepositoryProtocol?
     var authRepository: AuthRepositoryProtocol?
     var tokenRepository: TokenRepositoryProtocol?
+    var chatRoomRepository: ChatRoomRepositoryProtocol?
+    var studyRepository: StudyRepositoryProtocol?
     private let disposeBag = DisposeBag()
     
     func withdraw(email: String) -> Observable<Void> {
@@ -28,6 +30,21 @@ struct WithdrawUseCase: WithdrawUseCaseProtocol {
     
     func delete() -> Observable<Void> {
         return userRepository?.load()
-            .flatMap { userRepository?.delete(id: $0.id) ?? .empty() } ?? .empty()
+            .map { user in
+                return user.studyIDs.map {
+                    print("DEBUG : DELETE strudy 도는 중")
+                self.studyRepository?.leaveStudy(id: $0)
+                        .subscribe(onNext: { _ in })
+                        .disposed(by: self.disposeBag)
+                }
+                .map { return user }
+            }
+            .map { users in
+                guard let user = users.first else { return }
+                print("DEBUG : DELETE 정보 삭제")
+                userRepository?.delete(id: user.id)
+                    .subscribe(onNext: { _ in })
+                    .disposed(by: self.disposeBag)
+            } ?? .empty()
     }
 }
