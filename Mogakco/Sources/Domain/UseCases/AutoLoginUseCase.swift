@@ -10,29 +10,11 @@ import RxSwift
 
 struct AutoLoginUseCase: AutoLoginUseCaseProtocol {
     
-    var userRepository: UserRepositoryProtocol?
     var tokenRepository: TokenRepositoryProtocol?
     private let disposeBag = DisposeBag()
 
     func load() -> Observable<Bool> {
-        return Observable.create { emitter in
-            let token = PublishSubject<User>()
-
-            token
-                .flatMap { _ in self.tokenRepository?.load() ?? .empty() }
-                .map { $0 != nil }
-                .bind(to: emitter)
-                .disposed(by: self.disposeBag)
-            
-            self.userRepository?.load()
-                .subscribe(onNext: {
-                    token.onNext($0)
-                }, onError: { _ in
-                    emitter.onNext(false)
-                })
-                .disposed(by: self.disposeBag)
-            
-            return Disposables.create()
-        }
+        return tokenRepository?.load()
+            .map { $0 != nil } ?? .empty()
     }
 }
