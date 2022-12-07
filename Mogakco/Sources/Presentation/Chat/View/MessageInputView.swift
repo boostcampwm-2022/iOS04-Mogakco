@@ -16,11 +16,12 @@ import Then
 final class MessageInputView: UIView {
     
     lazy var messageInputTextView = UITextView().then {
+//        $0.layer.borderColor = UIColor.mogakcoColor.primaryDefault?.cgColor
+        $0.layer.borderColor = UIColor.mogakcoColor.primarySecondary?.cgColor
         $0.font = .mogakcoFont.smallRegular
         $0.textAlignment = .left
         $0.layer.cornerRadius = 15
         $0.layer.borderWidth = 1
-        $0.layer.borderColor = UIColor.mogakcoColor.borderDefault?.cgColor
         $0.textContainerInset = UIEdgeInsets(top: 8, left: 10, bottom: 8, right: 30)
         $0.isScrollEnabled = false
     }
@@ -62,7 +63,7 @@ final class MessageInputView: UIView {
     }
     
     private func configureUI() {
-        backgroundColor = .white
+        backgroundColor = .mogakcoColor.backgroundDefault
         autoresizingMask = .flexibleHeight
     }
     

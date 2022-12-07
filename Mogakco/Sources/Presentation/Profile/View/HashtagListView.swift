@@ -24,11 +24,12 @@ final class HashtagListView: UIView {
     }
     
     let editButton = UIButton().then {
+        $0.clipsToBounds = true
         $0.layer.cornerRadius = 8.0
         $0.setTitle("편집", for: .normal)
         $0.setTitleColor(UIColor.mogakcoColor.typographyPrimary, for: .normal)
         $0.titleLabel?.font = UIFont.mogakcoFont.caption
-        $0.setBackgroundColor(.white, for: .normal)
+        $0.setBackgroundColor(UIColor.mogakcoColor.primarySecondary ?? UIColor.white, for: .normal)
         $0.titleLabel?.textAlignment = .center
         $0.snp.makeConstraints {
             $0.size.equalTo(Constant.editButtonSize)

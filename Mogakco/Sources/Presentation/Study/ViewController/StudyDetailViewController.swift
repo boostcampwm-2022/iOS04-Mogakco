@@ -18,7 +18,7 @@ final class StudyDetailViewController: ViewController {
     private lazy var contentsView = UIView()
     private lazy var studyTitleLabel = UILabel().then {
         $0.textColor = .mogakcoColor.typographyPrimary
-        $0.font = UIFont.mogakcoFont.mediumBold
+        $0.font = UIFont.mogakcoFont.title2Bold
         $0.text = "스터디"
     }
     private let dateView = StudyInfoView(frame: .zero).then {
@@ -43,27 +43,18 @@ final class StudyDetailViewController: ViewController {
         $0.axis = .vertical
     }
     
-    private lazy var studyIntroduceLabel = UILabel().then {
-        $0.textColor = .mogakcoColor.typographyPrimary
-        $0.font = UIFont.mogakcoFont.mediumBold
-        $0.text = "스터디 소개"
-    }
     private lazy var studyInfoDescription = UILabel().then {
         $0.numberOfLines = 0
         $0.textColor = .mogakcoColor.typographyPrimary
         $0.font = .mogakcoFont.mediumRegular
         $0.text = """
         모바일에 관심 있으신 분들 함께해요~!
-        모바일에 관심 있으신 분들 함께해요~!
-        모바일에 관심 있으신 분들 함께해요~!
-        모바일에 관심 있으신 분들 함께해요~!
-        모바일에 관심 있으신 분들 함께해요~!
         """
     }
     
     private lazy var laguageLabel = UILabel().then {
         $0.textColor = .mogakcoColor.typographyPrimary
-        $0.font = UIFont.mogakcoFont.mediumBold
+        $0.font = UIFont.mogakcoFont.title2Bold
         $0.text = "언어"
     }
     
@@ -83,7 +74,7 @@ final class StudyDetailViewController: ViewController {
     
     private let participantsInfoLabel = UILabel().then {
         $0.textColor = .mogakcoColor.typographyPrimary
-        $0.font = UIFont.mogakcoFont.mediumBold
+        $0.font = UIFont.mogakcoFont.title2Bold
         $0.text = "참여중인 사람 2/3"
     }
     
@@ -148,6 +139,7 @@ final class StudyDetailViewController: ViewController {
         
         output.studyDetail
             .subscribe(onNext: { [weak self] in
+                self?.navigationItem.title = $0.title
                 self?.studyTitleLabel.text = $0.title
                 self?.dateView.textLabel.text = $0.date.toCompactDateString()
                 self?.participantsView.textLabel.text = "\($0.userIDs.count)/\($0.maxUserCount) 참여"
@@ -179,7 +171,10 @@ final class StudyDetailViewController: ViewController {
     private func navigationLayout() {
         navigationItem.title = "스터디 제목"
         navigationItem.backButtonTitle = "이전"
-        navigationItem.backBarButtonItem?.tintColor = .mogakcoColor.primaryDefault
+        navigationItem.titleView?.tintColor = .mogakcoColor.primaryDefault
+        navigationController?
+            .navigationBar
+            .titleTextAttributes = [.foregroundColor: UIColor.mogakcoColor.typographyPrimary ?? .white]
     }
     
     private func layoutSubViews() {
@@ -188,7 +183,6 @@ final class StudyDetailViewController: ViewController {
         contentsView.addSubViews([
             studyTitleLabel,
             studyInfoStackView,
-            studyIntroduceLabel,
             studyInfoDescription,
             laguageLabel,
             languageCollectionView,
@@ -228,13 +222,8 @@ final class StudyDetailViewController: ViewController {
     }
     
     private func layoutStudyIntroduce() {
-        studyIntroduceLabel.snp.makeConstraints {
-            $0.top.equalTo(studyInfoStackView.snp.bottom) .offset(15)
-            $0.leading.trailing.equalToSuperview().inset(16)
-        }
-        
         studyInfoDescription.snp.makeConstraints {
-            $0.top.equalTo(studyIntroduceLabel.snp.bottom).offset(10)
+            $0.top.equalTo(studyInfoStackView.snp.bottom).offset(10)
             $0.leading.trailing.equalToSuperview().inset(16)
         }
     }

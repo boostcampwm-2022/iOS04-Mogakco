@@ -20,8 +20,37 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
         FirebaseApp.configure()
+        appearance()
         DIContainer.shared.inject()
-        UINavigationBar.appearance().tintColor = UIColor.mogakcoColor.typographyPrimary
+        
         return true
     }
+    
+    private func appearance() {
+        UINavigationBar.appearance().tintColor = .mogakcoColor.typographyPrimary
+        
+        UITabBar.appearance().tintColor = .mogakcoColor.primaryDefault
+        UITabBar.appearance().barTintColor = .mogakcoColor.primaryThird
+        
+        UILabel.appearance().textColor = .mogakcoColor.typographyPrimary
+        
+        UITextField.appearance().tintColor = .mogakcoColor.primaryDefault
+        UITextField.appearance().textColor = .mogakcoColor.typographyPrimary
+        UITextField.appearance().backgroundColor = .mogakcoColor.primarySecondary
+        UITextField.appearance().layer.borderColor = UIColor.mogakcoColor.semanticSuccess?.cgColor
+        
+        UITextView.appearance().textColor = .mogakcoColor.typographyPrimary
+        UITextView.appearance().backgroundColor = .mogakcoColor.primarySecondary
+        UITextView.appearance().layer.borderColor = UIColor.mogakcoColor.primarySecondary?.cgColor
+        UITextView.appearance().layer.borderColor = UIColor.mogakcoColor.primarySecondary?.cgColor
+        UITextView.appearance().tintColor = .mogakcoColor.primaryDefault
+        
+        UICollectionView.appearance().backgroundColor = .mogakcoColor.backgroundDefault
+        UICollectionViewCell.appearance().backgroundColor = .mogakcoColor.primarySecondary
+        UICollectionViewCell.appearance().layer.borderColor = UIColor.mogakcoColor.primaryDefault?.cgColor
+        
+        UITableView.appearance().backgroundColor = .mogakcoColor.backgroundDefault
+        UITableViewCell.appearance().backgroundColor = .mogakcoColor.primarySecondary
+    }
+    
 }

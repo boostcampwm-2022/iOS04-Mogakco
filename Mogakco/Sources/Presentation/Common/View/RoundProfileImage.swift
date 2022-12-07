@@ -35,7 +35,7 @@ final class RoundProfileImageView: UIImageView {
         
         layer.cornerRadius = length / 2
         layer.borderWidth = 1
-        layer.borderColor = UIColor.mogakcoColor.backgroundSecondary?.cgColor
+        layer.borderColor = UIColor.mogakcoColor.primarySecondary?.cgColor
         clipsToBounds = true
     }
 }
