@@ -155,7 +155,6 @@ final class StudyDetailViewController: UIViewController {
         
         output.studyDetail
             .subscribe(onNext: { [weak self] in
-                self?.navigationItem.title = $0.title
                 self?.studyTitleLabel.text = $0.title
                 self?.dateView.textLabel.text = $0.date.toCompactDateString()
                 self?.participantsView.textLabel.text = "\($0.userIDs.count)/\($0.maxUserCount) 참여"
@@ -185,7 +184,7 @@ final class StudyDetailViewController: UIViewController {
     }
     
     private func navigationLayout() {
-        navigationItem.title = "스터디 제목"
+        navigationItem.title = "스터디"
         navigationItem.backButtonTitle = "이전"
         navigationItem.titleView?.tintColor = .mogakcoColor.primaryDefault
         navigationController?
