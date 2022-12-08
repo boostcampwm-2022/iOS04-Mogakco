@@ -30,6 +30,7 @@ final class ChatViewModel: ViewModel {
         let sendButtonDidTap: Observable<Void>
         let inputViewText: Observable<String>
         let pagination: Observable<Void>?
+        let selectedUser: Observable<User>
     }
     
     struct Output {
@@ -141,6 +142,11 @@ final class ChatViewModel: ViewModel {
                     })
                     .disposed(by: self.disposeBag)
             }
+            .disposed(by: disposeBag)
+        
+        input.selectedUser
+            .map { .profile(type: .other($0)) }
+            .bind(to: navigation)
             .disposed(by: disposeBag)
         
         return Output(
