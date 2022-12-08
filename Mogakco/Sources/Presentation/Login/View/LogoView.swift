@@ -15,7 +15,7 @@ final class LogoView: UIView {
     
     private let titleLabel = UILabel().then {
         $0.text = "모 여서\n각 자\n코 딩하자 👨🏻‍💻"
-        $0.numberOfLines = -1
+        $0.numberOfLines = 0
         $0.textColor = UIColor.mogakcoColor.typographyPrimary
     }
     
