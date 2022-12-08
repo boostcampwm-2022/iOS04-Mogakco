@@ -97,7 +97,9 @@ final class ChatCell: UICollectionViewCell, Identifiable {
     func layoutChat(chat: Chat) {
         guard
             let isFromCurrentUser = chat.isFromCurrentUser,
-            let user = chat.user else { return }
+            let user = chat.user else {
+            textView.text = chat.message
+            return layoutOthersBubble(image: UIImage(systemName: "person.fill")) }
 
         if isFromCurrentUser {
             layoutMyBubble()
@@ -108,14 +110,19 @@ final class ChatCell: UICollectionViewCell, Identifiable {
         textView.text = chat.message
     }
     
-    private func layoutOthersBubble(user: User) {
+    private func layoutOthersBubble(user: User? = nil, image: UIImage? = nil) {
         bubbleContainer.snp.remakeConstraints {
             $0.left.equalTo(profileImageView.snp.right).offset(12)
             $0.width.lessThanOrEqualTo(200)
         }
         bubbleContainer.backgroundColor = .mogakcoColor.primarySecondary
         
-        if let urlStr = user.profileImageURLString,
+        if let image = image {
+            profileImageView.image = image
+        }
+        
+        if let user = user,
+           let urlStr = user.profileImageURLString,
            let url = URL(string: urlStr) {
             profileImageView.load(url: url)
         }

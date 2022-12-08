@@ -101,7 +101,6 @@ final class ChatViewModel: ViewModel {
             .withLatestFrom(messages) { ($0, $1) }
             .subscribe(onNext: { [weak self] newChat, originalChats in
                 if self?.isFirst == false {
-                    print("self?.isFirst : ", newChat, originalChats)
                     self?.messages.accept(originalChats + [newChat])
                 } else {
                     self?.isFirst = false
