@@ -20,13 +20,11 @@ struct WithdrawUseCase: WithdrawUseCaseProtocol {
     private let disposeBag = DisposeBag()
     
     func withdraw(email: String) -> Observable<Void> {
-        print("DEBUG : withdrawUseCase Called \(email)")
         return tokenRepository?.load()
             .compactMap { $0 }
-            .flatMap {
-                self.authRepository?
-                    .withdraw(idToken: $0.idToken) ?? .empty()
-            } ?? .empty()
+            .flatMap { authRepository?.withdraw(idToken: $0.idToken) ?? .empty() }
+            .flatMap { tokenRepository?.delete() ?? .empty() }
+            .map { _ in return () } ?? .empty()
     }
     
     func delete() -> Observable<Void> {
