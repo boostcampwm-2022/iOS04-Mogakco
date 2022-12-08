@@ -106,6 +106,7 @@ final class ProfileViewController: UIViewController {
     init(viewModel: ProfileViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
+        view.backgroundColor = .mogakcoColor.backgroundDefault
         bind()
         layout()
     }
