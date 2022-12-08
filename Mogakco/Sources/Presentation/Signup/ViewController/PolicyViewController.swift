@@ -81,9 +81,9 @@ final class PolicyViewController: ViewController {
     
     override func bind() {
         let input = PolicyViewModel.Input(
-            totalPolicy: totalPolicy.checkButton.rx.isSelected,
-            servicePolicy: servicePolicy.checkButton.rx.isSelected,
-            contentPolicy: contentPolicy.checkButton.rx.isSelected,
+            totalPolicy: totalPolicy.checkButton.rx.isSelected.asObservable(),
+            servicePolicy: servicePolicy.checkButton.rx.isSelected.asObservable(),
+            contentPolicy: contentPolicy.checkButton.rx.isSelected.asObservable(),
             nextButtonTapped: button.rx.tap.asObservable(),
             backButtonTapped: backButton.rx.tap.asObservable()
         )
@@ -92,6 +92,14 @@ final class PolicyViewController: ViewController {
         
         output.nextButtonEnabled
             .emit(to: button.rx.isEnabled)
+            .disposed(by: disposeBag)
+        
+        totalPolicy.checkButton.rx.isSelected
+            .withUnretained(self)
+            .subscribe(onNext: {
+                $0.0.servicePolicy.checkButton.rx.isSelected.onNext($0.1)
+                $0.0.contentPolicy.checkButton.rx.isSelected.onNext($0.1)
+            })
             .disposed(by: disposeBag)
     }
     
