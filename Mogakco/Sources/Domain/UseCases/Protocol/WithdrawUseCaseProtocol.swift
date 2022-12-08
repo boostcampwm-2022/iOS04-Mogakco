@@ -11,6 +11,5 @@ import Foundation
 import RxSwift
 
 protocol WithdrawUseCaseProtocol {
-    func withdraw(email: String) -> Observable<Void>
-    func delete() -> Observable<Void>
+    func excute() -> Observable<Void>
 }
