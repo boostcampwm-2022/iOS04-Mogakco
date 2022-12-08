@@ -237,6 +237,10 @@ final class DIContainer {
             let viewModel = SetPasswordViewModel()
             return viewModel
         }
+        container.register(PolicyViewModel.self) { _ in
+            let viewModel = PolicyViewModel()
+            return viewModel
+        }
         container.register(HashtagEditViewModel.self) { resolver in
             let viewModel = HashtagEditViewModel()
             viewModel.hashTagUsecase = resolver.resolve(HashtagUseCaseProtocol.self)
