@@ -44,7 +44,7 @@ final class PolicyViewController: ViewController {
     
     private let contentPolicy = PolicyCheckBox().then {
         $0.setup(
-            body: "개인정보 처리방침",
+            body: "컨텐츠 이용 약관",
             type: .required,
             link: "https://complete-health-026.notion.site/93c1f73ed6414d78a7aaaeb4fe9446ad"
         )
@@ -76,6 +76,7 @@ final class PolicyViewController: ViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         title = "회원가입"
+        navigationController?.isNavigationBarHidden = false
     }
     
     override func bind() {
@@ -118,7 +119,7 @@ final class PolicyViewController: ViewController {
         view.addSubview(button)
         button.snp.makeConstraints {
             $0.left.right.equalToSuperview().inset(16)
-            $0.bottom.equalTo(view.safeAreaLayoutGuide)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(16)
             $0.height.equalTo(Layout.buttonHeight)
         }
     }
