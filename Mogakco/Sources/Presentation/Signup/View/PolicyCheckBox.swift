@@ -40,7 +40,7 @@ final class PolicyCheckBox: UIView {
     private let detailButton = UIButton().then {
         $0.setTitle("자세히", for: .normal)
         $0.titleLabel?.font = UIFont.mogakcoFont.smallRegular
-        $0.tintColor = UIColor.mogakcoColor.primaryDefault
+        $0.setTitleColor(UIColor.mogakcoColor.primaryDefault, for: .normal)
     }
     
     private let disposeBag = DisposeBag()
