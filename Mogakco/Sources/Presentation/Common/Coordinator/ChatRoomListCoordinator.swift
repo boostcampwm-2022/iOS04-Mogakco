@@ -50,7 +50,7 @@ final class ChatRoomListCoordinator: BaseCoordinator<ChatRoomListCoordinatorResu
                 case .finish:
                     self?.finish.onNext(.finish)
                 case .back:
-                    break
+                    self?.setNavigationBarHidden(true, animated: false)
                 }
             })
             .disposed(by: disposeBag)
