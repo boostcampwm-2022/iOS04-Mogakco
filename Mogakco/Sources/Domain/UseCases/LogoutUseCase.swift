@@ -16,9 +16,7 @@ struct LogoutUseCase: LogoutUseCaseProtocol {
     private let disposeBag = DisposeBag()
     
     func logout() -> Observable<Void> {
-        return tokenRepository?.load()
-            .compactMap { $0 }
-            .flatMap { tokenRepository?.delete($0) ?? .empty() }
+        return tokenRepository?.delete()
             .map { _ in } ?? .empty()
     }
 }
