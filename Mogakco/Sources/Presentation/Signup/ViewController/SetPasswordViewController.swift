@@ -169,7 +169,7 @@ final class SetPasswordViewController: ViewController {
         view.addSubview(button)
         button.snp.makeConstraints {
             $0.left.right.equalToSuperview().inset(16)
-            $0.bottom.equalTo(view.safeAreaLayoutGuide)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(16)
         }
     }
     
