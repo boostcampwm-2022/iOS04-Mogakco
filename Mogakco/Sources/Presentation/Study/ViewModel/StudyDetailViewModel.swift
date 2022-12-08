@@ -21,7 +21,7 @@ final class StudyDetailViewModel: ViewModel {
     
     struct Input {
         let studyJoinButtonTapped: Observable<Void>
-        let participantCellTapped: Observable<IndexPath>
+        let selectParticipantCell: Observable<User>
         let backButtonTapped: Observable<Void>
         let reportButtonTapped: Observable<Void>
     }
@@ -82,23 +82,33 @@ final class StudyDetailViewModel: ViewModel {
             })
             .disposed(by: disposeBag)
         
-        // TODO: input.participantCellTapped 가 제대로 동작하지 않음
-        if let userUseCase {
-            Observable.combineLatest(input.participantCellTapped, userUseCase.myProfile())
-                .map { ($0.0.row, $0.1) }
-                .map { (try? participants.value()[$0.0], $0.1) }
-                .withUnretained(self)
-                .subscribe {
-                    let user = $0.1.0
-                    if $0.1.0?.id == $0.1.1.id {
-                        $0.0.navigation.onNext(.profile(type: .current))
-                    } else {
-                        guard let other = $0.1.0 else { return }
-                        $0.0.navigation.onNext(.profile(type: .other(other)))
-                    }
+        Observable.combineLatest(input.selectParticipantCell, userUseCase?.myProfile() ?? .empty())
+            .subscribe(onNext: { [weak self] selectUser, myProfile in
+                guard let self else { return }
+                if selectUser.id == myProfile.id {
+                    self.navigation.onNext(.profile(type: .current))
+                } else {
+                    self.navigation.onNext(.profile(type: .other(selectUser)))
                 }
-                .disposed(by: disposeBag)
-        }
+            })
+            .disposed(by: disposeBag)
+        
+//        if let userUseCase {
+//            Observable.combineLatest(input.selectParticipantCell, userUseCase.myProfile())
+//                .map { ($0.0.row, $0.1) }
+//                .map { (try? participants.value()[$0.0], $0.1) }
+//                .withUnretained(self)
+//                .subscribe {
+//                    let user = $0.1.0
+//                    if $0.1.0?.id == $0.1.1.id {
+//                        $0.0.navigation.onNext(.profile(type: .current))
+//                    } else {
+//                        guard let other = $0.1.0 else { return }
+//                        $0.0.navigation.onNext(.profile(type: .other(other)))
+//                    }
+//                }
+//                .disposed(by: disposeBag)
+//        }
         
         input.backButtonTapped
             .map { StudyDetailNavigation.back }
