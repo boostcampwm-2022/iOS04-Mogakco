@@ -65,6 +65,7 @@ final class DIContainer {
             repository.chatRoomDataSource = resolver.resolve(ChatRoomDataSourceProtocol.self)
             repository.remoteUserDataSource = resolver.resolve(RemoteUserDataSourceProtocol.self)
             repository.studyDataSource = resolver.resolve(StudyDataSourceProtocol.self)
+            repository.pushNotificationService = resolver.resolve(PushNotificationServiceProtocol.self)
             return repository
         }
         container.register(HashtagRepositoryProtocol.self) { resolver in
@@ -79,6 +80,7 @@ final class DIContainer {
             repository.chatRoomDataSource = resolver.resolve(ChatRoomDataSourceProtocol.self)
             repository.localUserDataSource = resolver.resolve(LocalUserDataSourceProtocol.self)
             repository.reportDataSource = resolver.resolve(ReportDataSourceProtocol.self)
+            repository.pushNotificationService = resolver.resolve(PushNotificationServiceProtocol.self)
             return repository
         }
         container.register(UserRepositoryProtocol.self) { resolver in

@@ -6,8 +6,8 @@
 //  Copyright © 2022 Mogakco. All rights reserved.
 //
 
-import Foundation
+import RxSwift
 
 protocol SubscribePushNotificationUseCaseProtocol {
-    func excute(topic: String)
+    func excute(topic: String) -> Observable<Void>
 }
