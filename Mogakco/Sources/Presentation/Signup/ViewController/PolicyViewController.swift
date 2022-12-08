@@ -81,9 +81,9 @@ final class PolicyViewController: ViewController {
     
     override func bind() {
         let input = PolicyViewModel.Input(
-            totalPolicy: totalPolicy.checkButton.rx.isSelected.asObservable(),
-            servicePolicy: servicePolicy.checkButton.rx.isSelected.asObservable(),
-            contentPolicy: contentPolicy.checkButton.rx.isSelected.asObservable(),
+            totalPolicy: totalPolicy.checkButton.rx.isSelected,
+            servicePolicy: servicePolicy.checkButton.rx.isSelected,
+            contentPolicy: contentPolicy.checkButton.rx.isSelected,
             nextButtonTapped: button.rx.tap.asObservable(),
             backButtonTapped: backButton.rx.tap.asObservable()
         )
