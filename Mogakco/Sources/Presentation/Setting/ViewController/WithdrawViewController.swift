@@ -16,7 +16,7 @@ final class WithdrawViewController: ViewController {
     
     private let titleLabel = UILabel().then {
         $0.textAlignment = .left
-        $0.text = "정말 떠나시는 건가요?\n한 번 더 생각해 보지 않으시겠어요?"
+        $0.text = "정말 떠나시는 건가요?\n회원 탈퇴하시면 같은 계정으로 재가입이 불가합니다."
         $0.font = UIFont.mogakcoFont.largeBold
         $0.textColor = UIColor.mogakcoColor.typographyPrimary
     }
@@ -96,7 +96,11 @@ final class WithdrawViewController: ViewController {
             withdrawButtonDidTap: withdrawButton.rx.tap.asObservable()
         )
         
-        _ = viewModel?.transform(input: input)
+        let output = viewModel?.transform(input: input)
+        
+        output?.presentAlert
+            .emit(to: rx.presentAlert)
+            .disposed(by: disposeBag)
     }
     
     private func layoutTitleLabel() {
