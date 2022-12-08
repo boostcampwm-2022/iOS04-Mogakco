@@ -23,28 +23,27 @@ struct WithdrawUseCase: WithdrawUseCaseProtocol {
         print("DEBUG : withdrawUseCase Called \(email)")
         return tokenRepository?.load()
             .compactMap { $0 }
-            .flatMap { authRepository?.withdraw(idToken: $0.idToken) ?? .empty() }
-            .flatMap { tokenRepository?.delete() ?? .empty() }
-            .map { _ in return () } ?? .empty()
+            .flatMap {
+                self.authRepository?
+                    .withdraw(idToken: $0.idToken) ?? .empty()
+            } ?? .empty()
     }
     
     func delete() -> Observable<Void> {
         return userRepository?.load()
-            .map { user in
-                return user.studyIDs.map {
-                    print("DEBUG : DELETE strudy 도는 중")
-                self.studyRepository?.leaveStudy(id: $0)
-                        .subscribe(onNext: { _ in })
-                        .disposed(by: self.disposeBag)
+            .flatMap { user in
+                var observe: [Observable<Void>] = []
+                user.studyIDs.forEach {
+                    observe.append(self.studyRepository?.leaveStudy(id: $0) ?? .empty() )
                 }
-                .map { return user }
+                return Observable
+                    .combineLatest(observe)
+                    .map { _ in return user }
             }
-            .map { users in
-                guard let user = users.first else { return }
-                print("DEBUG : DELETE 정보 삭제")
+            .map { user in
                 userRepository?.delete(id: user.id)
                     .subscribe(onNext: { _ in })
-                    .disposed(by: self.disposeBag)
+                    .disposed(by: disposeBag)
             } ?? .empty()
     }
 }
