@@ -38,7 +38,7 @@ final class PolicyViewController: ViewController {
         $0.setup(
             body: "서비스 이용 약관",
             type: .required,
-            link: "https://complete-health-026.notion.site/28fa997c334b4442b4af9d87174df248"
+            link: Network.servicePolicyURLString
         )
     }
     
@@ -46,7 +46,7 @@ final class PolicyViewController: ViewController {
         $0.setup(
             body: "컨텐츠 이용 약관",
             type: .required,
-            link: "https://complete-health-026.notion.site/93c1f73ed6414d78a7aaaeb4fe9446ad"
+            link: Network.contentPolicyURLString
         )
     }
     
