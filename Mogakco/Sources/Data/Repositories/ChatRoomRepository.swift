@@ -16,6 +16,7 @@ struct ChatRoomRepository: ChatRoomRepositoryProtocol {
     var chatRoomDataSource: ChatRoomDataSourceProtocol?
     var remoteUserDataSource: RemoteUserDataSourceProtocol?
     var studyDataSource: StudyDataSourceProtocol?
+    var pushNotificationService: PushNotificationServiceProtocol?
 
     func create(studyID: String?, userIDs: [String]) -> Observable<ChatRoom> {
         let request = CreateChatRoomRequestDTO(
@@ -103,6 +104,7 @@ struct ChatRoomRepository: ChatRoomRepositoryProtocol {
                 request: .init(userIDs: $0.userIDs.filter { $0 != user.id })
             ) ?? .empty()
             }
+            .flatMap { _ in pushNotificationService?.unsubscribeTopic(topic: chatRoom.id) ?? .empty() }
             .map { _ in () } ?? .empty()
         
         let userUpdated = Observable.zip(studyUpdated, chatRoomUpdated)

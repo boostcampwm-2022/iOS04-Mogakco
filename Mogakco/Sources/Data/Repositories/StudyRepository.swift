@@ -19,6 +19,7 @@ struct StudyRepository: StudyRepositoryProtocol {
     var remoteUserDataSource: RemoteUserDataSourceProtocol?
     var chatRoomDataSource: ChatRoomDataSourceProtocol?
     var reportDataSource: ReportDataSourceProtocol?
+    var pushNotificationService: PushNotificationServiceProtocol?
     private let disposeBag = DisposeBag()
 
     func list(sort: StudySort, filters: [StudyFilter]) -> Observable<[Study]> {
@@ -254,6 +255,7 @@ struct StudyRepository: StudyRepositoryProtocol {
                         )
                     ) ?? .empty()
                 }
+                .flatMap { _ in pushNotificationService?.unsubscribeTopic(topic: id) ?? .empty() }
             
             Observable.combineLatest(
                 updateUser,

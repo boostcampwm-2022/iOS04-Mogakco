@@ -14,7 +14,7 @@ protocol PushNotificationServiceProtocol {
     // 특정 Topic을 구독하고 있는 유저들에게 푸쉬 알림 전송
     func sendTopic(request: PushNotificationRequestDTO) -> Observable<EmptyResponse>
     // Topic 구독
-    func subscribeTopic(topic: String)
+    func subscribeTopic(topic: String) -> Observable<Void>
     // Topic 구독 해제
-    func unsubscribeTopic(topic: String)
+    func unsubscribeTopic(topic: String) -> Observable<Void>
 }

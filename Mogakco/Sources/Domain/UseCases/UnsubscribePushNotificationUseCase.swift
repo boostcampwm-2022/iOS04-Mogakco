@@ -6,13 +6,13 @@
 //  Copyright © 2022 Mogakco. All rights reserved.
 //
 
-import Foundation
+import RxSwift
 
 struct UnsubscribePushNotificationUseCase: UnsubscribePushNotificationUseCaseProtocol {
     
     var pushNotificationService: PushNotificationServiceProtocol?
     
-    func excute(topic: String) {
-        pushNotificationService?.unsubscribeTopic(topic: topic)
+    func excute(topic: String) -> Observable<Void> {
+        return pushNotificationService?.unsubscribeTopic(topic: topic) ?? .empty()
     }
 }

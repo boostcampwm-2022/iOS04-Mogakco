@@ -159,8 +159,8 @@ final class ChatViewModel: ViewModel {
             input.willEnterForeground
         )
         .withUnretained(self)
-        .subscribe(onNext: { viewModel, _ in
-            viewModel.unsubscribePushNotificationUseCase?.excute(topic: viewModel.chatRoomID)
+        .flatMap { $0.0.unsubscribePushNotificationUseCase?.excute(topic: $0.0.chatRoomID) ?? .empty() }
+        .subscribe(onNext: { _ in
         })
         .disposed(by: disposeBag)
         
@@ -170,8 +170,8 @@ final class ChatViewModel: ViewModel {
             input.didEnterBackground
         )
         .withUnretained(self)
-        .subscribe(onNext: { viewModel, _ in
-            viewModel.subscribePushNotificationUseCase?.excute(topic: viewModel.chatRoomID)
+        .flatMap { $0.0.subscribePushNotificationUseCase?.excute(topic: $0.0.chatRoomID) ?? .empty() }
+        .subscribe(onNext: { _ in
         })
         .disposed(by: disposeBag)
     }
