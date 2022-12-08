@@ -47,7 +47,7 @@ final class ProfileCoordinator: BaseCoordinator<ProfileCoordinatorResult> {
     
     func showProfile() {
         guard let viewModel = DIContainer.shared.container.resolve(ProfileViewModel.self) else { return }
-        viewModel.type = type
+        viewModel.type.onNext(type)
         
         viewModel.navigation
             .subscribe(onNext: { [weak self] in
@@ -58,7 +58,7 @@ final class ProfileCoordinator: BaseCoordinator<ProfileCoordinatorResult> {
                     self?.showHashtag(kind: kind, selectedHashtags: selectedHashtags)
                 case let .chatRoom(id):
                     self?.showChatRoom(id: id)
-                case let .setting:
+                case .setting:
                     self?.setting()
                 case .back:
                     self?.finish.onNext(.back)
@@ -120,7 +120,8 @@ final class ProfileCoordinator: BaseCoordinator<ProfileCoordinatorResult> {
     
     func showEditProfile() {
         guard let viewModel = DIContainer.shared.container.resolve(EditProfileViewModel.self) else { return }
-        viewModel.type = .edit
+
+        viewModel.type.onNext(.edit)
         
         viewModel.navigation
             .subscribe(onNext: { [weak self] in
