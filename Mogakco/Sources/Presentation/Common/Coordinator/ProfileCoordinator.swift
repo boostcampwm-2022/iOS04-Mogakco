@@ -86,7 +86,7 @@ final class ProfileCoordinator: BaseCoordinator<ProfileCoordinatorResult> {
                 case .withdraw:
                     self?.showWithdraw(email: email)
                 case .logout:
-                    break
+                    self?.finish.onNext(.finish)
                 case .back:
                     self?.popTabbar(animated: true)
                 }
