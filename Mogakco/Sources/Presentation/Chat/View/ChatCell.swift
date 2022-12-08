@@ -15,6 +15,8 @@ final class ChatCell: UICollectionViewCell, Identifiable {
     
     private let profileImageView = RoundProfileImageView(35)
     
+    let profileImageButton = UIButton()
+    
     let textView = UITextView().then {
         $0.backgroundColor = .clear
         $0.font = UIFont.mogakcoFont.smallBold
@@ -48,6 +50,7 @@ final class ChatCell: UICollectionViewCell, Identifiable {
     private func layout() {
         layoutCell()
         layoutProfileImageView()
+        layoutProfileImageButton()
         layoutBubbleContainerView()
         layoutTextView()
     }
@@ -62,6 +65,14 @@ final class ChatCell: UICollectionViewCell, Identifiable {
         profileImageView.snp.makeConstraints {
             $0.left.equalToSuperview().offset(12)
             $0.top.equalToSuperview().offset(4)
+        }
+    }
+    
+    private func layoutProfileImageButton() {
+        addSubview(profileImageButton)
+        
+        profileImageButton.snp.makeConstraints {
+            $0.edges.equalTo(profileImageView)
         }
     }
     
