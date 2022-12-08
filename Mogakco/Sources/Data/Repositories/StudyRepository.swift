@@ -90,6 +90,9 @@ struct StudyRepository: StudyRepositoryProtocol {
                 .flatMap {
                     chatRoomDataSource?.create(request: $0) ?? .empty()
                 }
+                .flatMap {
+                    pushNotificationService?.subscribeTopic(topic: $0.toDomain().id) ?? .empty()
+                }
             
             let updateUser = user
                 .flatMap { user in
