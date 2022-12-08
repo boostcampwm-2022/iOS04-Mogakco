@@ -49,12 +49,10 @@ final class WithdrawViewModel: ViewModel {
             .disposed(by: disposeBag)
         
         deleteInfo
-            .subscribe(onNext: { [weak self] in
-                guard let self = self,
-                      let email = self.email else { return }
-                self.withdrawUseCase?.withdraw(email: email)
-                    .subscribe(deleteAuth)
-                    .disposed(by: self.disposeBag)
+            .compactMap { self.email }
+            .flatMap { self.withdrawUseCase?.withdraw(email: $0) ?? .empty() }
+            .subscribe(onNext: { _ in
+                deleteAuth.onNext(())
             })
             .disposed(by: disposeBag)
         
