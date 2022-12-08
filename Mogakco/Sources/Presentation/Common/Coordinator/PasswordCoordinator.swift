@@ -45,7 +45,7 @@ final class PasswordCoordinator: BaseCoordinator<PasswrodCoordinatorResult> {
             .subscribe(onNext: { [weak self] in
                 switch $0 {
                 case .next(let password):
-                    self?.showProfile(password: password)
+                    self?.showPolicy(password: password)
                 case .back:
                     self?.finish.onNext(.back)
                 }
@@ -53,6 +53,26 @@ final class PasswordCoordinator: BaseCoordinator<PasswrodCoordinatorResult> {
             .disposed(by: disposeBag)
         
         let viewController = SetPasswordViewController(viewModel: viewModel)
+        push(viewController, animated: true)
+    }
+    
+    // MARK: - 이용 약관
+    
+    func showPolicy(password: String) {
+        guard let viewModel = DIContainer.shared.container.resolve(PolicyViewModel.self) else { return }
+        
+        viewModel.navigation
+            .subscribe(onNext: { [weak self] in
+                switch $0 {
+                case .next:
+                    self?.showProfile(password: password)
+                case .back:
+                    self?.pop(animated: true)
+                }
+            })
+            .disposed(by: disposeBag)
+        
+        let viewController = PolicyViewController(viewModel: viewModel)
         push(viewController, animated: true)
     }
     
