@@ -58,8 +58,8 @@ final class ProfileCoordinator: BaseCoordinator<ProfileCoordinatorResult> {
                     self?.showHashtag(kind: kind, selectedHashtags: selectedHashtags)
                 case let .chatRoom(id):
                     self?.showChatRoom(id: id)
-                case let .setting(email):
-                    self?.setting(email: email)
+                case let .setting:
+                    self?.setting()
                 case .back:
                     self?.finish.onNext(.back)
                 }
@@ -77,14 +77,14 @@ final class ProfileCoordinator: BaseCoordinator<ProfileCoordinatorResult> {
     
     // MARK: - 설정화면
     
-    func setting(email: String) {
+    func setting() {
         guard let viewModel = DIContainer.shared.container.resolve(SettingViewModel.self) else { return }
         
         viewModel.navigation
             .subscribe(onNext: { [weak self] in
                 switch $0 {
                 case .withdraw:
-                    self?.showWithdraw(email: email)
+                    self?.showWithdraw()
                 case .logout:
                     self?.finish.onNext(.finish)
                 case .back:
@@ -97,9 +97,8 @@ final class ProfileCoordinator: BaseCoordinator<ProfileCoordinatorResult> {
         pushTabbar(viewController, animated: true)
     }
     
-    func showWithdraw(email: String) {
+    func showWithdraw() {
         guard let viewModel = DIContainer.shared.container.resolve(WithdrawViewModel.self) else { return }
-        viewModel.email = email
         
         viewModel.navigation
             .subscribe(onNext: { [weak self] in

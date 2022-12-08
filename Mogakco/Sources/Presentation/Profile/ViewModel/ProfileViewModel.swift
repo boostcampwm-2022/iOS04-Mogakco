@@ -15,7 +15,7 @@ enum ProfileNavigation {
     case editProfile
     case editHashtag(kind: KindHashtag, selectedHashtags: [Hashtag])
     case chatRoom(id: String)
-    case setting(email: String)
+    case setting
     case back
 }
 
@@ -171,9 +171,7 @@ final class ProfileViewModel: ViewModel {
             .disposed(by: disposeBag)
         
         input.settingButtonTapped
-            .withLatestFrom(user)
-            .compactMap { $0 }
-            .map { .setting(email: $0.email) }
+            .map { .setting }
             .bind(to: navigation)
             .disposed(by: disposeBag)
 

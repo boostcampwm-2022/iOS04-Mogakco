@@ -29,7 +29,6 @@ final class WithdrawViewModel: ViewModel {
     
     var disposeBag = DisposeBag()
     var withdrawUseCase: WithdrawUseCaseProtocol?
-    var email: String?
     let navigation = PublishSubject<WithdrawNavigation>()
     
     func transform(input: Input) -> Output {
