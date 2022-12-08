@@ -70,7 +70,7 @@ final class TextView: UITextView {
     
     private func layout() {
         self.snp.makeConstraints {
-            $0.height.greaterThanOrEqualTo(Layout.smallTextViewHeight)
+            $0.height.greaterThanOrEqualTo(Layout.minimumTextViewHeight)
         }
         addSubview(label)
         label.snp.makeConstraints {
