@@ -19,9 +19,9 @@ enum PolicyNavigation {
 final class PolicyViewModel: ViewModel {
     
     struct Input {
-        let totalPolicy: ControlProperty<Bool>
-        let servicePolicy: ControlProperty<Bool>
-        let contentPolicy: ControlProperty<Bool>
+        let totalPolicy: Observable<Bool>
+        let servicePolicy: Observable<Bool>
+        let contentPolicy: Observable<Bool>
         let nextButtonTapped: Observable<Void>
         let backButtonTapped: Observable<Void>
     }
@@ -37,11 +37,7 @@ final class PolicyViewModel: ViewModel {
         let nextButtonEnabled = PublishSubject<Bool>()
         
         input.totalPolicy
-            .subscribe(onNext: {
-                nextButtonEnabled.onNext($0)
-                input.servicePolicy.onNext($0)
-                input.contentPolicy.onNext($0)
-            })
+            .bind(to: nextButtonEnabled)
             .disposed(by: disposeBag)
         
         Observable.combineLatest(input.servicePolicy, input.contentPolicy)
