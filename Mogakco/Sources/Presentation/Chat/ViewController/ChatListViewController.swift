@@ -79,10 +79,6 @@ final class ChatListViewController: UIViewController {
                 return cell
             }
             .disposed(by: disposeBag)
-        
-        output.alert
-            .emit(to: rx.presentAlert)
-            .disposed(by: disposeBag)
     }
     
     func layout() {
