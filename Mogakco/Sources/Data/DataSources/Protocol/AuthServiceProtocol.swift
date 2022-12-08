@@ -11,5 +11,4 @@ import RxSwift
 protocol AuthServiceProtocol {
     func signup(_ request: EmailAuthorizationRequestDTO) -> Observable<AuthorizationResponseDTO>
     func login(_ request: EmailAuthorizationRequestDTO) -> Observable<AuthorizationResponseDTO>
-    func withdraw(_ request: WithdrawRequestDTO) -> Observable<EmptyResponse>
 }

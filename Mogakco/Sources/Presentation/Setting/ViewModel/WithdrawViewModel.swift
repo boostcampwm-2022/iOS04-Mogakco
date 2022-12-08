@@ -8,6 +8,7 @@
 
 import UIKit
 
+import RxCocoa
 import RxSwift
 
 enum WithdrawNavigation {
@@ -23,6 +24,7 @@ final class WithdrawViewModel: ViewModel {
     }
     
     struct Output {
+        let presentAlert: Signal<Alert>
     }
     
     var disposeBag = DisposeBag()
@@ -31,8 +33,9 @@ final class WithdrawViewModel: ViewModel {
     let navigation = PublishSubject<WithdrawNavigation>()
     
     func transform(input: Input) -> Output {
-        let deleteInfo = PublishSubject<Void>()
-        let deleteAuth = PublishSubject<Void>()
+        let deleteCompleted = PublishSubject<Void>()
+        let withdrawCompleted = PublishSubject<Void>()
+        let presentAlert = PublishSubject<Alert>()
         
         input.backButtonDidTap
             .map { WithdrawNavigation.back }
@@ -40,27 +43,26 @@ final class WithdrawViewModel: ViewModel {
             .disposed(by: disposeBag)
         
         input.withdrawButtonDidTap
-            .subscribe(onNext: { [weak self] in
-                guard let self else { return }
-                self.withdrawUseCase?.delete()
-                    .subscribe(deleteInfo)
-                    .disposed(by: self.disposeBag)
+            .withUnretained(self)
+            .flatMap { $0.0.withdrawUseCase?.excute().asResult() ?? .empty() }
+            .subscribe(onNext: { result in
+                switch result {
+                case .success:
+                    withdrawCompleted.onNext(())
+                case .failure:
+                    let alert = Alert(title: "유저 정보 제거 오류", message: "유저 정보 제거 중 오류가 발생했어요", observer: nil)
+                    presentAlert.onNext(alert)
+                }
             })
             .disposed(by: disposeBag)
-        
-        deleteInfo
-            .compactMap { self.email }
-            .flatMap { self.withdrawUseCase?.withdraw(email: $0) ?? .empty() }
-            .subscribe(onNext: { _ in
-                deleteAuth.onNext(())
-            })
-            .disposed(by: disposeBag)
-        
-        deleteAuth
+
+        withdrawCompleted
             .map { WithdrawNavigation.success }
             .bind(to: navigation)
             .disposed(by: disposeBag)
         
-        return Output()
+        return Output(
+            presentAlert: presentAlert.asSignal(onErrorSignalWith: .empty())
+        )
     }
 }
