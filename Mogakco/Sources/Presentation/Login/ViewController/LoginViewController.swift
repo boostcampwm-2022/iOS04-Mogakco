@@ -35,7 +35,7 @@ final class LoginViewController: ViewController {
         $0.layer.borderColor = UIColor.clear.cgColor
         $0.clipsToBounds = true
         $0.snp.makeConstraints { make in
-            make.height.equalTo(Layout.smallButtonHeight)
+            make.height.equalTo(Layout.minimumButtonHeight)
         }
     }
     
