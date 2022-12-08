@@ -44,8 +44,8 @@ final class LoadingCellSkeletonView: UIView {
         firstBar.snp.makeConstraints {
             $0.top.equalTo(rectView.snp.top)
             $0.leading.equalTo(rectView.snp.trailing).offset(spacing)
-            $0.height.equalTo(Int(frame.width/6)/2 - spacing/2)
-            $0.width.equalTo(frame.width/1.5)
+            $0.height.equalTo(Int(frame.width / 6) / 2 - spacing / 2)
+            $0.width.equalTo(frame.width / 1.5)
         }
         
         let secondBar = LoadingView().then {
@@ -57,8 +57,8 @@ final class LoadingCellSkeletonView: UIView {
         secondBar.snp.makeConstraints {
             $0.top.equalTo(firstBar.snp.bottom).offset(10)
             $0.leading.equalTo(rectView.snp.trailing).offset(spacing)
-            $0.height.equalTo(Int(frame.width/6)/2 - spacing/2)
-            $0.width.equalTo(frame.width/2)
+            $0.height.equalTo(Int(frame.width / 6) / 2 - spacing / 2)
+            $0.width.equalTo(frame.width / 2)
         }
     }
 }
