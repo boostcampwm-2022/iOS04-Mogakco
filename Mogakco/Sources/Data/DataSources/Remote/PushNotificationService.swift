@@ -25,23 +25,27 @@ struct PushNotificationService: PushNotificationServiceProtocol {
         return provider.request(PushNotificationTarget.send(request))
     }
     
-    func subscribeTopic(topic: String) {
-        Messaging.messaging().subscribe(toTopic: topic) { error in
-            if let error = error {
-                print("Message Subscribe Error \(error)")
-            } else {
-                print("Message Subscribe succeeded")
+    func subscribeTopic(topic: String) -> Observable<Void> {
+        return Observable.create { emitter in
+            Messaging.messaging().subscribe(toTopic: topic) { error in
+                if let error = error {
+                    emitter.onError(error)
+                }
+                emitter.onNext(())
             }
+            return Disposables.create()
         }
     }
     
-    func unsubscribeTopic(topic: String) {
-        Messaging.messaging().unsubscribe(fromTopic: topic) { error in
-            if let error = error {
-                print("Message Subscribe Error \(error)")
-            } else {
-                print("Message Subscribe succeeded")
+    func unsubscribeTopic(topic: String) -> Observable<Void> {
+        return Observable.create { emitter in
+            Messaging.messaging().unsubscribe(fromTopic: topic) { error in
+                if let error = error {
+                    emitter.onError(error)
+                }
+                emitter.onNext(())
             }
+            return Disposables.create()
         }
     }
 }
