@@ -71,6 +71,7 @@ final class StudyListViewModel: ViewModel {
             .disposed(by: disposeBag)
         
         refresh
+            .delay(.seconds(3), scheduler: MainScheduler.instance)
             .debounce(.microseconds(100), scheduler: MainScheduler.instance)
             .withLatestFrom(Observable.combineLatest(sort, filters))
             .withUnretained(self)

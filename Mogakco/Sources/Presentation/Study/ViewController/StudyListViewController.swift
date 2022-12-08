@@ -19,7 +19,7 @@ final class StudyListViewController: ViewController {
     
     private lazy var refreshControl = UIRefreshControl()
     
-    private lazy var collectionContentView = UIView()
+    private lazy var collectionContentView = RectLoadingListContentsView()
     
     private lazy var collectionView = UICollectionView(
         frame: .zero,

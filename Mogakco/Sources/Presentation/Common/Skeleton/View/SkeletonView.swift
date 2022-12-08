@@ -17,6 +17,7 @@ final class SkeletonView: UIView {
     
     enum ViewType {
         case image
+        case rectList
         case none
     }
     
@@ -40,6 +41,7 @@ final class SkeletonView: UIView {
         
         switch type {
         case .image: subView = ImageSkeletonView()
+        case .rectList: subView = RectListSkeletonView(frame: frame)
         case .none: subView = ListSkeletonView(frame: frame)
         }
         

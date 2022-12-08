@@ -16,6 +16,8 @@ extension UIView {
     func addSkeleton() {
         if self is UIImageView || self is ChatRoomUsersImageView {
             fillView(loadingView: SkeletonView(frame: frame, type: .image))
+        } else if self is RectLoadingListContentsView {
+            fillView(loadingView: SkeletonView(frame: frame, type: .rectList))
         } else {
             fillView(loadingView: SkeletonView(frame: frame, type: .none))
         }
