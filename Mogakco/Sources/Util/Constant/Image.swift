@@ -9,5 +9,5 @@
 import UIKit
 
 enum Image {
-    static let profileDefault = UIImage(systemName: "person") ?? UIImage()
+    static let profileDefault = UIImage(named: "profile") ?? UIImage()
 }

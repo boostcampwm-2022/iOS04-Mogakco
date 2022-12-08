@@ -14,7 +14,7 @@ class StudyRatingListView: UIView {
     enum Constant {
         static let studyRatingListTitle = "스터디 참여 Top3"
         static let emptyText = "아직 참여한 스터디가 없어요"
-        static let studyRatingViewHeight = 40.0
+        static let studyRatingViewHeight = 50.0
     }
     
     private let titleLabel = UILabel().then {
@@ -76,14 +76,14 @@ class StudyRatingListView: UIView {
     }
 
     private func layout() {
-        let stackView = makeEntireStackView()
+        let stackView = createEntireStackView()
         addSubview(stackView)
         stackView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
     }
     
-    private func makeEntireStackView() -> UIStackView {
+    private func createEntireStackView() -> UIStackView {
         let arrangeViews = [
             titleLabel,
             firstStudyRatingView,

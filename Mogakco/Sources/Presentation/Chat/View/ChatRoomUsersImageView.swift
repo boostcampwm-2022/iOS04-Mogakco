@@ -71,6 +71,7 @@ final class ChatRoomUsersImageView: UIView {
     private func attribute() {
         layer.cornerRadius = 10.0
         layer.masksToBounds = true
+        backgroundColor = .mogakcoColor.primaryThird
     }
     
     private func layoutEntireVerticalStackView() {

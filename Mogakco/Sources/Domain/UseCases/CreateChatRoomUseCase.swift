@@ -12,20 +12,12 @@ import RxSwift
 
 struct CreateChatRoomUseCase: CreateChatRoomUseCaseProtocol {
     
-    private let chatRoomRepository: ChatRoomRepositoryProtocol
-    private let userRepository: UserRepositoryProtocol
+    var chatRoomRepository: ChatRoomRepositoryProtocol?
+    var userRepository: UserRepositoryProtocol?
     private let disposeBag = DisposeBag()
-    
-    init(
-        chatRoomRepository: ChatRoomRepositoryProtocol,
-        userRepository: UserRepositoryProtocol
-    ) {
-        self.chatRoomRepository = chatRoomRepository
-        self.userRepository = userRepository
-    }
-    
+
     func create(otherUser: User) -> Observable<ChatRoom> {
-        return userRepository.load()
-            .flatMap { chatRoomRepository.create(currentUserID: $0.id, otherUserID: otherUser.id) }
+        return userRepository?.load()
+            .flatMap { chatRoomRepository?.create(currentUserID: $0.id, otherUserID: otherUser.id) ?? .empty() } ?? .empty()
     }
 }

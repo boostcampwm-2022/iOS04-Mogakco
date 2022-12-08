@@ -11,11 +11,17 @@ import Foundation
 import RxCocoa
 import RxSwift
 
+enum SetEmailNavigation {
+    case next(email: String)
+    case back
+}
+
 final class SetEmailViewModel: ViewModel {
     
     struct Input {
         let email: Observable<String>
         let nextButtonTapped: Observable<Void>
+        let backButtonTapped: Observable<Void>
     }
     
     struct Output {
@@ -23,12 +29,8 @@ final class SetEmailViewModel: ViewModel {
         let nextButtonEnabled: PublishSubject<Bool>
     }
     
-    private weak var coordinator: RequiredSignupCoordinatorProtocol?
+    let navigation = PublishSubject<SetEmailNavigation>()
     var disposeBag = DisposeBag()
-    
-    init(coordinator: RequiredSignupCoordinatorProtocol?) {
-        self.coordinator = coordinator
-    }
 
     func transform(input: Input) -> Output {
         let textFieldState = PublishSubject<Bool>()
@@ -46,10 +48,13 @@ final class SetEmailViewModel: ViewModel {
         
         input.nextButtonTapped
             .withLatestFrom(input.email)
-            .subscribe { [weak self] email in
-                let emailProps = EmailProps(email: email)
-                self?.coordinator?.showPassword(emailProps: emailProps)
-            }
+            .map { SetEmailNavigation.next(email: $0) }
+            .bind(to: navigation)
+            .disposed(by: disposeBag)
+        
+        input.backButtonTapped
+            .map { SetEmailNavigation.back }
+            .bind(to: navigation)
             .disposed(by: disposeBag)
         
         return Output(

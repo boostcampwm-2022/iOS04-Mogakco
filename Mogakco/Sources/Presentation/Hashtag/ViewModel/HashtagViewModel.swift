@@ -17,14 +17,16 @@ class HashtagViewModel: ViewModel {
         let kindHashtag: Observable<KindHashtag>
         let cellSelected: Observable<Int>
         let nextButtonTapped: Observable<Void>
+        let backButtonTapped: Observable<Void>
     }
+    
     struct Output {
         let hashtagReload: Observable<Void>
     }
     
-    let hashTagUsecase: HashtagUseCaseProtocol
+    var hashTagUsecase: HashtagUseCaseProtocol?
     var disposeBag = DisposeBag()
-    var selectedHashtag: [Hashtag] = []
+    var selectedHashtags: [Hashtag] = []
     let badgeList = BehaviorSubject<[Hashtag]>(value: [])
     var kind: KindHashtag = .language
     
@@ -33,10 +35,7 @@ class HashtagViewModel: ViewModel {
         return count
     }
     
-    init(
-        hashTagUsecase: HashtagUseCaseProtocol
-    ) {
-        self.hashTagUsecase = hashTagUsecase
+    init() {
     }
     
     func transform(input: Input) -> Output {
@@ -71,13 +70,12 @@ class HashtagViewModel: ViewModel {
     
     func isSelected(index: Int) -> Bool {
         guard let hashtag = cellInfo(index: index) else { return false }
-        if selectedHashtag.contains(where: { $0.id == hashtag.id }) { return true }
-        
+        if selectedHashtags.contains(where: { $0.id == hashtag.id }) { return true }
         return false
     }
     
     private func loadTagList(kind: KindHashtag) {
-        hashTagUsecase.loadTagList(kind: kind)
+        hashTagUsecase?.loadTagList(kind: kind)
             .subscribe { [weak self] in
                 self?.badgeList.onNext($0)
             }
@@ -87,10 +85,10 @@ class HashtagViewModel: ViewModel {
     private func selectHashtag(index: Int) {
         guard let hashTag = cellInfo(index: index) else { return }
         
-        if let removeIndex = selectedHashtag.firstIndex(where: { $0.id == hashTag.id }) {
-            selectedHashtag.remove(at: removeIndex)
+        if let removeIndex = selectedHashtags.firstIndex(where: { $0.id == hashTag.id }) {
+            selectedHashtags.remove(at: removeIndex)
         } else {
-            selectedHashtag.append(hashTag)
+            selectedHashtags.append(hashTag)
         }
     }
 }

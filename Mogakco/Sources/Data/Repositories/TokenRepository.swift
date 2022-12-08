@@ -12,11 +12,7 @@ import RxSwift
 
 struct TokenRepository: TokenRepositoryProtocol {
     
-    private let keychainManager: KeychainManagerProtocol
-    
-    init(keychainManager: KeychainManagerProtocol) {
-        self.keychainManager = keychainManager
-    }
+    var keychainManager: KeychainManagerProtocol?
     
     func save(_ auth: Authorization) -> Observable<Authorization?> {
         return Observable.create { emitter in
@@ -26,45 +22,36 @@ struct TokenRepository: TokenRepositoryProtocol {
                 return Disposables.create()
             }
             
-            guard keychainManager.save(key: auth.email, data: data) ||
-                keychainManager.update(key: auth.email, data: data) else {
+            guard keychainManager?.save(key: .authorization, data: data) ?? false ||
+                    keychainManager?.update(key: .authorization, data: data) ?? false else {
                 emitter.onNext(nil)
                 return Disposables.create()
             }
-            
+            print("DEBUG : TokenRepository save Auth is \(auth)")
             emitter.onNext(auth)
             return Disposables.create()
         }
     }
     
-    func load(email: String) -> Observable<Authorization?> {
+    func load() -> Observable<Authorization?> {
         return Observable.create { emitter in
             
-            guard let data = keychainManager.load(key: email),
+            guard let data = keychainManager?.load(key: .authorization),
                   let auth = try? JSONDecoder().decode(Authorization.self, from: data) else {
+                print("DEBUG : TokenRepository load fail. Auth is nil")
                 emitter.onNext(nil)
                 return Disposables.create()
             }
-            
+            print("DEBUG : TokenRepository load success. Auth is \(auth)")
             emitter.onNext(auth)
             return Disposables.create()
         }
     }
     
-    func delete(_ auth: Authorization) -> Observable<Authorization?> {
+    func delete() -> Observable<Bool> {
         return Observable.create { emitter in
-            
-            guard let data = try? JSONEncoder().encode(auth) else {
-                emitter.onNext(nil)
-                return Disposables.create()
-            }
-            
-            guard keychainManager.delete(key: auth.email, data: data) else {
-                emitter.onNext(nil)
-                return Disposables.create()
-            }
-            
-            emitter.onNext(auth)
+            let result = keychainManager?.delete(key: .authorization) ?? false
+            emitter.onNext(result)
             return Disposables.create()
         }
     }

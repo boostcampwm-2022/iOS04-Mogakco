@@ -11,6 +11,7 @@ import UIKit
 import RxCocoa
 import RxSwift
 import RxKeyboard
+import SnapKit
 
 final class EditProfileViewController: ViewController {
     
@@ -33,6 +34,7 @@ final class EditProfileViewController: ViewController {
         $0.title = "이름"
         $0.maxCount = 10
         $0.placeholder = "이름을 입력해주세요."
+        $0.setHeight(Layout.textFieldHeight)
     }
     
     private let introuceCountTextView = CountTextView().then {
@@ -47,11 +49,11 @@ final class EditProfileViewController: ViewController {
         $0.setTitle("완료", for: .normal)
     }
     
-    private var viewModel: EditProfiileViewModel
-    private let imagePicker = UIImagePickerController()
+    private var viewModel: EditProfileViewModel
+    private var imagePicker: UIImagePickerController?
     private let selectedProfileImage = PublishRelay<UIImage>()
     
-    init(viewModel: EditProfiileViewModel) {
+    init(viewModel: EditProfileViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
@@ -62,8 +64,6 @@ final class EditProfileViewController: ViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        configureUI()
-        configureImagePicker()
         hideKeyboardWhenTappedAround()
     }
     
@@ -72,59 +72,59 @@ final class EditProfileViewController: ViewController {
         navigationController?.isNavigationBarHidden = false
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        configureImagePicker()
+    }
+    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         navigationController?.isNavigationBarHidden = true
     }
     
     override func bind() {
-        let input = EditProfiileViewModel.Input(
+        let input = EditProfileViewModel.Input(
             name: nameCountTextField.rx.text.orEmpty.asObservable(),
             introduce: introuceCountTextView.rx.text.orEmpty.asObservable(),
             selectedProfileImage: selectedProfileImage.asObservable(),
-            completeButtonTapped: completeButton.rx.tap.asObservable()
+            completeButtonTapped: completeButton.rx.tap.asObservable(),
+            backButtonTapped: backButton.rx.tap.asObservable()
         )
         
         let output = viewModel.transform(input: input)
         
         addImageButton.rx.tap
-            .subscribe(onNext: {
-                self.presentImagePicker()
+            .withUnretained(self)
+            .subscribe(onNext: { viewController, _ in
+                viewController.presentImagePicker()
             })
             .disposed(by: disposeBag)
         
         output.originName
-            .asDriver(onErrorJustReturn: "")
             .drive(nameCountTextField.rx.text)
             .disposed(by: disposeBag)
         
         output.originIntroduce
-            .asDriver(onErrorJustReturn: "")
             .drive(introuceCountTextView.rx.text)
             .disposed(by: disposeBag)
         
         output.originProfileImage
-            .asDriver(onErrorJustReturn: .init())
             .drive(roundProfileImageView.rx.image)
             .disposed(by: disposeBag)
         
         output.inputValidation
-            .asDriver(onErrorJustReturn: false)
             .drive(completeButton.rx.isEnabled)
             .disposed(by: disposeBag)
         
         RxKeyboard.instance.visibleHeight
-            .drive(onNext: { keyboardVisibleHeight in
-                self.scrollView.contentInset.bottom = keyboardVisibleHeight
+            .drive(onNext: { [weak self] keyboardVisibleHeight in
+                self?.scrollView.contentInset.bottom = keyboardVisibleHeight
             })
             .disposed(by: disposeBag)
     }
-    
-    func configureUI() {
-        configureNavigationBar()
-    }
 
     override func layout() {
+        configureNavigationBar()
         layoutScrollView()
         layoutRoundProfileImageView()
         layoutAddImageButton()
@@ -135,7 +135,10 @@ final class EditProfileViewController: ViewController {
     }
     
     private func configureNavigationBar() {
-        navigationController?.navigationBar.topItem?.title = "프로필 생성"
+        navigationItem.title = "프로필 생성"
+        navigationController?
+            .navigationBar
+            .titleTextAttributes = [.foregroundColor: UIColor.mogakcoColor.typographyPrimary ?? .white]
     }
     
     private func layoutScrollView() {
@@ -205,11 +208,13 @@ final class EditProfileViewController: ViewController {
 
 private extension EditProfileViewController {
     func configureImagePicker() {
-        imagePicker.allowsEditing = true
-        imagePicker.delegate = self
+        imagePicker = UIImagePickerController()
+        imagePicker?.allowsEditing = true
+        imagePicker?.delegate = self
     }
     
     func presentImagePicker() {
+        guard let imagePicker = imagePicker else { return }
         present(imagePicker, animated: true)
     }
 }

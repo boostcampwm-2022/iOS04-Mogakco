@@ -24,7 +24,10 @@ final class CountTextField: UIView {
     
     var placeholder: String? {
         didSet {
-            textField.placeholder = placeholder
+            textField.attributedPlaceholder = NSAttributedString(
+                string: placeholder ?? "",
+                attributes: [NSAttributedString.Key.foregroundColor: UIColor.mogakcoColor.typographySecondary ?? .white]
+            )
         }
     }
 
@@ -74,6 +77,12 @@ final class CountTextField: UIView {
     }
     
     // MARK: Methods
+    
+    func setHeight(_ value: CGFloat) {
+        textField.snp.makeConstraints {
+            $0.height.equalTo(value)
+        }
+    }
     
     private func bind() {
         disposable = textField.rx.text

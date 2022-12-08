@@ -25,7 +25,10 @@ final class MessageTextField: UIView {
     
     var placeholder: String? {
         didSet {
-            textField.placeholder = placeholder
+            textField.attributedPlaceholder = NSAttributedString(
+                string: placeholder ?? "",
+                attributes: [NSAttributedString.Key.foregroundColor: UIColor.mogakcoColor.typographySecondary ?? .white]
+            )
         }
     }
 
@@ -56,6 +59,12 @@ final class MessageTextField: UIView {
     }
     
     // MARK: Methods
+    
+    func setHeight(_ value: CGFloat) {
+        textField.snp.makeConstraints {
+            $0.height.equalTo(value)
+        }
+    }
     
     private func layout() {
         layoutTextField()
@@ -88,6 +97,12 @@ extension Reactive where Base: MessageTextField {
     var validation: Binder<TextField.Validation> {
         return Binder(self.base) { view, validation in
             view.validation = validation
+        }
+    }
+    
+    var message: Binder<String> {
+        return Binder(self.base) { view, text in
+            view.message = text
         }
     }
 }

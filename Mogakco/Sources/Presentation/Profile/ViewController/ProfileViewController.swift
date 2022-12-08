@@ -9,8 +9,9 @@
 import UIKit
 
 import RxSwift
+import SnapKit
 
-final class ProfileViewController: ViewController {
+final class ProfileViewController: UIViewController {
 
     enum Constant {
         static let headerViewTitle = "프로필"
@@ -19,8 +20,8 @@ final class ProfileViewController: ViewController {
         static let categoryHashtagListViewTitle = "카테고리"
         static let headerViewHeight = 68.0
         static let profileViewHeight = 200.0
-        static let hashtagViewHeight = 100.0
-        static let studyRatingListView = 200.0
+        static let hashtagViewHeight = 80.0
+        static let studyRatingListView = 230.0
         static let bottomMarginViewHeight = 60.0
     }
     
@@ -31,14 +32,16 @@ final class ProfileViewController: ViewController {
     
     private lazy var contentStackView = UIStackView(arrangedSubviews: [
         self.profileView,
+        self.boundaryView,
         self.languageListView,
         self.careerListView,
         self.categoryListView,
         self.studyRatingListView,
         self.bottomMarginView
     ]).then {
-        $0.spacing = 4.0
+        $0.spacing = 8.0
         $0.axis = .vertical
+        $0.setCustomSpacing(12.0, after: self.boundaryView)
     }
     
     private let headerView = TitleHeaderView().then {
@@ -48,6 +51,13 @@ final class ProfileViewController: ViewController {
     private let profileView = ProfileView().then {
         $0.snp.makeConstraints {
             $0.height.equalTo(Constant.profileViewHeight)
+        }
+    }
+    
+    private let boundaryView = UIView().then {
+        $0.backgroundColor = .mogakcoColor.primaryDefault
+        $0.snp.makeConstraints {
+            $0.height.equalTo(4.0) 
         }
     }
     
@@ -84,11 +94,21 @@ final class ProfileViewController: ViewController {
         }
     }
     
+    private let settingButton = UIButton().then {
+        $0.setImage(UIImage(systemName: "line.horizontal.3"), for: .normal)
+        $0.tintColor = .mogakcoColor.primaryDefault
+    }
+
+    private let report = PublishSubject<Void>()
+    private let disposeBag = DisposeBag()
     private var viewModel: ProfileViewModel
     
     init(viewModel: ProfileViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
+        view.backgroundColor = .mogakcoColor.backgroundDefault
+        bind()
+        layout()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -105,7 +125,7 @@ final class ProfileViewController: ViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func bind() {
+    func bind() {
         let input = ProfileViewModel.Input(
             viewWillAppear: rx.viewWillAppear.map { _ in }.asObservable(),
             editProfileButtonTapped: profileView.editProfileButton.rx.tap.asObservable(),
@@ -114,18 +134,25 @@ final class ProfileViewController: ViewController {
                 languageListView.editButton.rx.tap.map { _ in KindHashtag.language },
                 careerListView.editButton.rx.tap.map { _ in KindHashtag.career },
                 categoryListView.editButton.rx.tap.map { _ in KindHashtag.category }
-            )
+            ),
+            settingButtonTapped: settingButton.rx.tap.asObservable(),
+            reportButtonTapped: report.asObservable()
         )
         let output = viewModel.transform(input: input)
         
         bindIsMyProfile(output: output)
         bindProfile(output: output)
         bindHashtags(output: output)
+        bindReportButton()
     }
     
-    private func bindIsMyProfile(output: ProfileViewModel.Output) {
+    func bindIsMyProfile(output: ProfileViewModel.Output) {
         output.isMyProfile
             .drive(profileView.chatButton.rx.isHidden)
+            .disposed(by: disposeBag)
+        
+        output.isMyProfile
+            .drive(profileView.reportButton.rx.isHidden)
             .disposed(by: disposeBag)
         
         output.isMyProfile
@@ -146,6 +173,11 @@ final class ProfileViewController: ViewController {
         output.isMyProfile
             .map { !$0 }
             .drive(categoryListView.editButton.rx.isHidden)
+            .disposed(by: disposeBag)
+        
+        output.isMyProfile
+            .map { !$0 }
+            .drive(settingButton.rx.isHidden)
             .disposed(by: disposeBag)
     }
     
@@ -179,9 +211,28 @@ final class ProfileViewController: ViewController {
             .disposed(by: disposeBag)
     }
     
-    override func layout() {
+    private func bindReportButton() {
+        profileView.reportButton.rx.tap
+            .subscribe(onNext: { [weak self] in
+                self?.alert(
+                    title: "차단하기",
+                    message: "이 사용자가 작성한 채팅들이 보이지 않게 됩니다.",
+                    actions: [
+                        UIAlertAction.cancel(),
+                        UIAlertAction.destructive(
+                            title: "차단",
+                            handler: { [weak self] _ in self?.report.onNext(()) }
+                        )
+                    ]
+                )
+            })
+            .disposed(by: disposeBag)
+    }
+    
+    func layout() {
         layoutHeaderView()
         layoutScrollView()
+        layoutSettingButton()
     }
     
     private func layoutHeaderView() {
@@ -189,6 +240,13 @@ final class ProfileViewController: ViewController {
         headerView.snp.makeConstraints {
             $0.leading.top.trailing.equalTo(view.safeAreaLayoutGuide)
             $0.height.equalTo(Constant.headerViewHeight)
+        }
+    }
+    
+    private func layoutSettingButton() {
+        view.addSubview(settingButton)
+        settingButton.snp.makeConstraints {
+            $0.top.right.equalTo(headerView).inset(16)
         }
     }
     

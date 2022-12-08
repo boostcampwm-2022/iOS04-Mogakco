@@ -20,7 +20,7 @@ class TextField: UITextField {
         var color: UIColor {
             switch self {
             case .none:
-                return UIColor.mogakcoColor.semanticDisabled ?? UIColor.systemGray
+                return UIColor.mogakcoColor.borderDefault ?? UIColor.systemGray
             case .valid:
                 return UIColor.mogakcoColor.semanticSuccess ?? UIColor.systemGreen
             case .invalid:
@@ -55,8 +55,7 @@ class TextField: UITextField {
         font = UIFont.mogakcoFont.mediumRegular
         layer.borderWidth = 1
         layer.cornerRadius = 8
-        layer.borderColor = validation.color.cgColor
-        backgroundColor = .mogakcoColor.backgroundDefault
+        layer.borderColor = UIColor.mogakcoColor.primarySecondary?.cgColor
         leftViewMode = .always
         rightViewMode = .always
         leftView = UIView(frame: .init(origin: .zero, size: .init(width: 16, height: 0)))
@@ -65,7 +64,7 @@ class TextField: UITextField {
     
     private func layout() {
         snp.makeConstraints { make in
-            make.height.greaterThanOrEqualTo(Layout.textFieldHeight)
+            make.height.greaterThanOrEqualTo(Layout.minimumTextFieldHeight)
         }
     }
 }

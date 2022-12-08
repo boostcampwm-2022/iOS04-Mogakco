@@ -18,8 +18,7 @@ struct UserDefaultsUserDataSource: LocalUserDataSourceProtocol {
     
     private let userKey = "user"
     private let userIDKey = "userID"
-    private let userUIDKey = "userUID"
-    
+
     func save(user: User) -> Observable<Void> {
         return Observable.create { emitter in
             do {
@@ -53,9 +52,9 @@ struct UserDefaultsUserDataSource: LocalUserDataSourceProtocol {
         }
     }
     
-    func saveUID(userUID: String) -> Observable<Void> {
+    func saveID(userID: String) -> Observable<Void> {
         return Observable.create { emitter in
-            UserDefaults.standard.set(userUID, forKey: userUIDKey)
+            UserDefaults.standard.set(userID, forKey: userIDKey)
             emitter.onNext(())
             return Disposables.create()
         }

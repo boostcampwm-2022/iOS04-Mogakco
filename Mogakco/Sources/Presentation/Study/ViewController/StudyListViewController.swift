@@ -30,7 +30,6 @@ final class StudyListViewController: ViewController {
         $0.register(StudyCell.self, forCellWithReuseIdentifier: StudyCell.identifier)
     }
     
-    
     private let viewModel: StudyListViewModel
     
     // MARK: - Inits
@@ -74,7 +73,7 @@ final class StudyListViewController: ViewController {
         )
         
         let output = viewModel.transform(input: input)
-        
+
         output.studyList
             .drive(self.collectionView.rx.items(
                 cellIdentifier: StudyCell.identifier,

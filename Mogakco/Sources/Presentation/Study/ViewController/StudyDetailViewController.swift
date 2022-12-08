@@ -12,13 +12,13 @@ import Then
 import RxSwift
 import RxCocoa
 
-final class StudyDetailViewController: ViewController {
+final class StudyDetailViewController: UIViewController {
     
     private lazy var scrollView = UIScrollView()
     private lazy var contentsView = UIView()
     private lazy var studyTitleLabel = UILabel().then {
         $0.textColor = .mogakcoColor.typographyPrimary
-        $0.font = UIFont.mogakcoFont.mediumBold
+        $0.font = UIFont.mogakcoFont.title2Bold
         $0.text = "스터디"
     }
     private let dateView = StudyInfoView(frame: .zero).then {
@@ -27,7 +27,7 @@ final class StudyDetailViewController: ViewController {
     }
     private let participantsView = StudyInfoView(frame: .zero).then {
         $0.textLabel.text = "2/3 참여"
-        $0.imageView.image = Image.profileDefault
+        $0.imageView.image = UIImage(systemName: "person.fill")
     }
     
     private let locationView = StudyInfoView(frame: .zero).then {
@@ -43,27 +43,18 @@ final class StudyDetailViewController: ViewController {
         $0.axis = .vertical
     }
     
-    private lazy var studyIntroduceLabel = UILabel().then {
-        $0.textColor = .mogakcoColor.typographyPrimary
-        $0.font = UIFont.mogakcoFont.mediumBold
-        $0.text = "스터디 소개"
-    }
     private lazy var studyInfoDescription = UILabel().then {
         $0.numberOfLines = 0
         $0.textColor = .mogakcoColor.typographyPrimary
         $0.font = .mogakcoFont.mediumRegular
         $0.text = """
         모바일에 관심 있으신 분들 함께해요~!
-        모바일에 관심 있으신 분들 함께해요~!
-        모바일에 관심 있으신 분들 함께해요~!
-        모바일에 관심 있으신 분들 함께해요~!
-        모바일에 관심 있으신 분들 함께해요~!
         """
     }
     
     private lazy var laguageLabel = UILabel().then {
         $0.textColor = .mogakcoColor.typographyPrimary
-        $0.font = UIFont.mogakcoFont.mediumBold
+        $0.font = UIFont.mogakcoFont.title2Bold
         $0.text = "언어"
     }
     
@@ -74,6 +65,7 @@ final class StudyDetailViewController: ViewController {
         let layout = UICollectionViewFlowLayout()
         layout.minimumLineSpacing = 8
         layout.scrollDirection = .horizontal
+        layout.estimatedItemSize = CGSize(width: HashtagBadgeCell.addWidth, height: HashtagBadgeCell.height)
         layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         $0.collectionViewLayout = layout
         $0.register(HashtagBadgeCell.self, forCellWithReuseIdentifier: HashtagBadgeCell.identifier)
@@ -82,7 +74,7 @@ final class StudyDetailViewController: ViewController {
     
     private let participantsInfoLabel = UILabel().then {
         $0.textColor = .mogakcoColor.typographyPrimary
-        $0.font = UIFont.mogakcoFont.mediumBold
+        $0.font = UIFont.mogakcoFont.title2Bold
         $0.text = "참여중인 사람 2/3"
     }
     
@@ -93,6 +85,10 @@ final class StudyDetailViewController: ViewController {
         let layout = UICollectionViewFlowLayout()
         layout.minimumLineSpacing = 8
         layout.scrollDirection = .horizontal
+        layout.estimatedItemSize = CGSize(
+            width: ParticipantCell.size.width,
+            height: ParticipantCell.size.height
+        )
         layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         $0.collectionViewLayout = layout
         $0.register(ParticipantCell.self, forCellWithReuseIdentifier: ParticipantCell.identifier)
@@ -104,8 +100,10 @@ final class StudyDetailViewController: ViewController {
     }
     
     // MARK: - Property
+    
+    private let report = PublishSubject<Void>()
     var viewModel: StudyDetailViewModel
-    var disposebag = DisposeBag()
+    var disposeBag = DisposeBag()
     
     init(viewModel: StudyDetailViewModel) {
         self.viewModel = viewModel
@@ -116,37 +114,41 @@ final class StudyDetailViewController: ViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        configDelegate()
-    }
-    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.isNavigationBarHidden = false
+        reportButton()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         navigationController?.isNavigationBarHidden = true
     }
-    
-    private func configDelegate() {
-        languageCollectionView.delegate = self
-        languageCollectionView.dataSource = self
-        
-        participantsCollectionView.delegate = self
-        participantsCollectionView.dataSource = self
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = .mogakcoColor.backgroundDefault
+        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: backButton)
+        layout()
+        bind()
     }
     
-    override func layout() {
+    let backButton = UIButton().then {
+        $0.setTitle("이전", for: .normal)
+        $0.setTitleColor(.mogakcoColor.primaryDefault, for: .normal)
+    }
+    
+    func layout() {
         navigationLayout()
         layoutSubViews()
     }
     
-    override func bind() {
+    func bind() {
         let input = StudyDetailViewModel.Input(
-            studyJoinButtonTapped: studyJoinButton.rx.tap.asObservable()
+            studyJoinButtonTapped: studyJoinButton.rx.tap.asObservable(),
+            selectParticipantCell: participantsCollectionView.rx.modelSelected(User.self).asObservable(),
+            backButtonTapped: backButton.rx.tap.asObservable(),
+            reportButtonTapped: report.asObservable()
         )
         
         let output = viewModel.transform(input: input)
@@ -162,23 +164,32 @@ final class StudyDetailViewController: ViewController {
             })
             .disposed(by: disposeBag)
         
-        output.languageReload
-            .subscribe(onNext: { [weak self] in
-                self?.languageCollectionView.reloadData()
-            })
-            .disposed(by: disposebag)
+        output.languages
+            .drive(languageCollectionView.rx.items(
+                cellIdentifier: HashtagBadgeCell.identifier,
+                cellType: HashtagBadgeCell.self
+            )) { _, hashtag, cell in
+                cell.setHashtag(hashtag: hashtag)
+            }
+            .disposed(by: disposeBag)
         
-        output.userReload
-            .subscribe(onNext: { [weak self] in
-                self?.participantsCollectionView.reloadData()
-            })
-            .disposed(by: disposebag)
+        output.participants
+            .drive(participantsCollectionView.rx.items(
+                cellIdentifier: ParticipantCell.identifier,
+                cellType: ParticipantCell.self
+            )) { _, user, cell in
+                cell.setInfo(user: user)
+            }
+            .disposed(by: disposeBag)
     }
     
     private func navigationLayout() {
-        navigationItem.title = "스터디 제목"
+        navigationItem.title = "스터디"
         navigationItem.backButtonTitle = "이전"
-        navigationItem.backBarButtonItem?.tintColor = .mogakcoColor.primaryDefault
+        navigationItem.titleView?.tintColor = .mogakcoColor.primaryDefault
+        navigationController?
+            .navigationBar
+            .titleTextAttributes = [.foregroundColor: UIColor.mogakcoColor.typographyPrimary ?? .white]
     }
     
     private func layoutSubViews() {
@@ -187,7 +198,6 @@ final class StudyDetailViewController: ViewController {
         contentsView.addSubViews([
             studyTitleLabel,
             studyInfoStackView,
-            studyIntroduceLabel,
             studyInfoDescription,
             laguageLabel,
             languageCollectionView,
@@ -227,13 +237,8 @@ final class StudyDetailViewController: ViewController {
     }
     
     private func layoutStudyIntroduce() {
-        studyIntroduceLabel.snp.makeConstraints {
-            $0.top.equalTo(studyInfoStackView.snp.bottom) .offset(15)
-            $0.leading.trailing.equalToSuperview().inset(16)
-        }
-        
         studyInfoDescription.snp.makeConstraints {
-            $0.top.equalTo(studyIntroduceLabel.snp.bottom).offset(10)
+            $0.top.equalTo(studyInfoStackView.snp.bottom).offset(10)
             $0.leading.trailing.equalToSuperview().inset(16)
         }
     }
@@ -261,6 +266,7 @@ final class StudyDetailViewController: ViewController {
             $0.top.equalTo(participantsInfoLabel.snp.bottom).offset(10)
             $0.leading.trailing.equalToSuperview().inset(16)
             $0.height.equalTo(150)
+            $0.bottom.equalToSuperview()
         }
     }
     
@@ -272,85 +278,25 @@ final class StudyDetailViewController: ViewController {
             $0.height.equalTo(Layout.buttonHeight)
         }
     }
-}
-
-// MARK: - CollectionView
-
-extension StudyDetailViewController: UICollectionViewDataSource {
     
-    func collectionView(
-        _ collectionView: UICollectionView,
-        numberOfItemsInSection section: Int
-    ) -> Int {
-        switch collectionView {
-        case languageCollectionView: return viewModel.languageCount
-        case participantsCollectionView: return viewModel.participantsCount
-        default: return 0
-        }
-    }
-    
-    func collectionView(
-        _ collectionView: UICollectionView,
-        cellForItemAt indexPath: IndexPath
-    ) -> UICollectionViewCell {
-        switch collectionView {
-        case languageCollectionView:
-            guard let cell = languageCollectionView.dequeueReusableCell(
-                withReuseIdentifier: HashtagBadgeCell.identifier,
-                for: indexPath) as? HashtagBadgeCell
-            else { return UICollectionViewCell() }
-            
-            cell.prepareForReuse()
-            let cellHashtag = viewModel.languaegCellInfo(index: indexPath.row)
-            cell.setHashtag(hashtag: cellHashtag)
-            
-            return cell
-        case participantsCollectionView:
-            guard let cell = participantsCollectionView.dequeueReusableCell(
-                withReuseIdentifier: ParticipantCell.identifier,
-                for: indexPath) as? ParticipantCell
-            else { return UICollectionViewCell() }
-            
-            cell.prepareForReuse()
-            
-            let cellUserInfo = viewModel.participantCellInfo(index: indexPath.row)
-            cell.setInfo(user: cellUserInfo)
-            
-            return cell
-        default:
-            return UICollectionViewCell()
-        }
-    }
-    
-    func collectionView(
-        _ collectionView: UICollectionView,
-        didSelectItemAt indexPath: IndexPath
-    ) {
-        viewModel.userSelect(index: indexPath.row)
-    }
-}
-
-extension StudyDetailViewController: UICollectionViewDelegateFlowLayout {
-    func collectionView(
-        _ collectionView: UICollectionView,
-        layout collectionViewLayout: UICollectionViewLayout,
-        sizeForItemAt indexPath: IndexPath
-    ) -> CGSize {
-        switch collectionView {
-        case languageCollectionView:
-            guard let cellHashtag = viewModel.languaegCellInfo(index: indexPath.row) else {
-                return CGSize(width: 0, height: 0)
+    private func reportButton() {
+        let reportButton = UIBarButtonItem(
+            image: UIImage(systemName: "exclamationmark.circle"),
+            primaryAction: UIAction { [weak self] _ in
+                self?.alert(
+                    title: "신고하기",
+                    message: "신고하면 확인 후 제재되며, 더 이상 해당 스터디에 참여할 수 없습니다.",
+                    actions: [
+                        UIAlertAction.cancel(),
+                        UIAlertAction.destructive(
+                            title: "신고",
+                            handler: { [weak self] _ in self?.report.onNext(()) }
+                        )
+                    ]
+                )
             }
-            return CGSize(
-                width: cellHashtag.title.size(
-                    withAttributes: [NSAttributedString.Key.font: UIFont.mogakcoFont.mediumRegular]
-                ).width + HashtagBadgeCell.addWidth,
-                height: HashtagBadgeCell.height
-            )
-        case participantsCollectionView:
-            return CGSize(width: ParticipantCell.size.width, height: ParticipantCell.size.height)
-        default:
-            return CGSize(width: 0, height: 0)
-        }
+        )
+        reportButton.tintColor = .mogakcoColor.primaryDefault
+        navigationItem.rightBarButtonItem = reportButton
     }
 }

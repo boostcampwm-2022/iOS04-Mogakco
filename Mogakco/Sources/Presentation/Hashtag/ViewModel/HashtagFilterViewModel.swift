@@ -12,33 +12,24 @@ import RxSwift
 import RxCocoa
 
 class HashtagFilterViewModel: HashtagViewModel {
-    
-    weak var coordinator: StudyTabCoordinatorProtocol?
-    weak var delegate: HashtagSelectProtocol?
-    
-     init(
-        coordinator: StudyTabCoordinatorProtocol,
-        hashTagUsecase: HashtagUseCaseProtocol,
-        selectedHashtag: [Hashtag]
-     ) {
-         self.coordinator = coordinator
-         super.init(hashTagUsecase: hashTagUsecase)
-         self.selectedHashtag = selectedHashtag
-    }
+ 
+    let finish = PublishSubject<[Hashtag]>()
     
     override func transform(input: Input) -> Output {
-        
+
         input.nextButtonTapped
-            .subscribe(onNext: { [weak self]  in
-                self?.tapButton()
+            .subscribe(onNext: { [weak self] in
+                let selectedHashtag = self?.selectedHashtags ?? []
+                self?.finish.onNext(selectedHashtag)
+            })
+            .disposed(by: disposeBag)
+        
+        input.backButtonTapped
+            .subscribe(onNext: { [weak self] in
+                self?.finish.onNext([])
             })
             .disposed(by: disposeBag)
       
         return super.transform(input: input)
-    }
-    
-    private func tapButton() {
-        delegate?.selectedHashtag(kind: kind, hashTags: selectedHashtag)
-        coordinator?.goToPrevScreen()
     }
 }

@@ -73,7 +73,7 @@ extension ChatRoomTarget: TargetType {
         case .list:
             return ""
         case let .chats(id):
-            return "/\(id)/chats"
+            return "/\(id)/chat"
         case let .detail(id):
             return "/\(id)"
         case let .create(request):

@@ -15,7 +15,7 @@ struct MogakcoFont {
     
     // Regular
     let largeRegular = MogakcoFontFamily.SFProDisplay.regular.font(size: 30)
-    let mediumRegular = MogakcoFontFamily.SFProDisplay.regular.font(size: 18)
+    let mediumRegular = MogakcoFontFamily.SFProDisplay.regular.font(size: 17)
     let smallRegular = MogakcoFontFamily.SFProDisplay.regular.font(size: 14)
 
     // Bold

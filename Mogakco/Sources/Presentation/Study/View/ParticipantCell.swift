@@ -16,20 +16,26 @@ final class ParticipantCell: UICollectionViewCell, Identifiable {
     
     static let size = CGSize(width: 110, height: 130)
     
-    override func prepareForReuse() {
-        super.prepareForReuse()
+    override init(frame: CGRect) {
+        super.init(frame: frame)
         layout()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     private let imageView = RoundProfileImageView(50)
     
     private let userNameLabel = UILabel().then {
+        $0.textAlignment = .center
         $0.font = .mogakcoFont.mediumBold
         $0.textColor = .mogakcoColor.typographyPrimary
         $0.text = "default User name"
     }
     
     private let userDescriptionLabel = UILabel().then {
+        $0.textAlignment = .center
         $0.font = MogakcoFontFamily.SFProDisplay.semibold.font(size: 14)
         $0.textColor = .mogakcoColor.typographySecondary
         $0.text = "default user desctiption"
@@ -43,16 +49,9 @@ final class ParticipantCell: UICollectionViewCell, Identifiable {
     }
     
     private func layoutView() {
-        backgroundColor = .mogakcoColor.backgroundDefault
         layer.cornerRadius = 10
         layer.borderWidth = 0.2
-        layer.borderColor = UIColor.mogakcoColor.borderDefault?.cgColor
-        
         clipsToBounds = false
-        
-        addShadow(
-            offset: CGSize(width: 1, height: 1)
-        )
     }
     
     private func layoutImageView() {
@@ -60,7 +59,6 @@ final class ParticipantCell: UICollectionViewCell, Identifiable {
         imageView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
             $0.top.equalToSuperview().offset(15)
-//            $0.width.height.equalTo(50)
         }
     }
     
@@ -68,6 +66,8 @@ final class ParticipantCell: UICollectionViewCell, Identifiable {
         addSubview(userNameLabel)
         userNameLabel.snp.makeConstraints {
             $0.centerX.equalToSuperview()
+            $0.leading.trailing.equalToSuperview().inset(5)
+            $0.width.equalTo(90)
             $0.top.equalTo(imageView.snp.bottom).offset(15)
         }
     }
@@ -76,7 +76,10 @@ final class ParticipantCell: UICollectionViewCell, Identifiable {
         addSubview(userDescriptionLabel)
         userDescriptionLabel.snp.makeConstraints {
             $0.centerX.equalToSuperview()
+            $0.leading.trailing.equalToSuperview().inset(5)
+            $0.width.equalTo(90)
             $0.top.equalTo(userNameLabel.snp.bottom).offset(5)
+            $0.bottom.equalToSuperview().inset(15)
         }
     }
     
@@ -88,6 +91,6 @@ final class ParticipantCell: UICollectionViewCell, Identifiable {
             imageView.setPhoto(Image.profileDefault)
         }
         userNameLabel.text = user?.name ?? "None"
-        userDescriptionLabel.text = user?.introduce ?? "None"
+        userDescriptionLabel.text = user?.languages.first ?? "None"
     }
 }

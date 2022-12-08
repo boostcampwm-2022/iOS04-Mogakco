@@ -17,43 +17,52 @@ final class ProfileView: UIView {
     }
     
     let roundLanguageImageView = RoundProfileImageView(45.0).then {
+        $0.layer.borderWidth = 0
         $0.snp.makeConstraints {
             $0.size.equalTo(45.0)
         }
-        $0.setPhoto(MogakcoAsset.swift.image)
     }
     
     let nameLabel = UILabel().then {
-        $0.font = UIFont.mogakcoFont.smallBold
+        $0.font = UIFont.mogakcoFont.mediumBold
         $0.textColor = .mogakcoColor.typographyPrimary
         $0.textAlignment = .left
     }
     
     let introduceLabel = UILabel().then {
-        $0.font = UIFont.mogakcoFont.caption
+        $0.font = UIFont.mogakcoFont.smallBold
         $0.textColor = .mogakcoColor.typographySecondary
         $0.numberOfLines = 0
         $0.textAlignment = .left
     }
     
     let chatButton = UIButton().then {
-        $0.addShadow(offset: .init(width: 5.0, height: 5.0))
-        $0.layer.cornerRadius = 12.0
+        $0.clipsToBounds = true
+        $0.layer.cornerRadius = 10.0
         $0.setTitle("채팅", for: .normal)
         $0.setTitleColor(UIColor.mogakcoColor.typographyPrimary, for: .normal)
         $0.titleLabel?.font = UIFont.mogakcoFont.smallBold
-        $0.setBackgroundColor(.white, for: .normal)
+        $0.setBackgroundColor(UIColor.mogakcoColor.primarySecondary ?? UIColor.white, for: .normal)
     }
     
     let editProfileButton = UIButton().then {
-        $0.addShadow(offset: .init(width: 3.0, height: 3.0))
-        $0.layer.cornerRadius = 14.0
+        $0.clipsToBounds = true
+        $0.layer.cornerRadius = 10.0
         $0.setTitle("프로필 편집", for: .normal)
         $0.setTitleColor(UIColor.mogakcoColor.typographyPrimary, for: .normal)
         $0.titleLabel?.font = UIFont.mogakcoFont.smallBold
-        $0.setBackgroundColor(.white, for: .normal)
+        $0.setBackgroundColor(UIColor.mogakcoColor.primarySecondary ?? UIColor.white, for: .normal)
     }
     
+    let reportButton = UIButton().then {
+        $0.clipsToBounds = true
+        $0.layer.cornerRadius = 10.0
+        $0.setTitle("차단", for: .normal)
+        $0.setTitleColor(UIColor.mogakcoColor.typographyPrimary, for: .normal)
+        $0.titleLabel?.font = UIFont.mogakcoFont.smallBold
+        $0.setBackgroundColor(UIColor.mogakcoColor.primarySecondary ?? UIColor.white, for: .normal)
+    }
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         layout()
@@ -113,7 +122,12 @@ final class ProfileView: UIView {
     }
     
     private func createButtonStackView() -> UIStackView {
-        let arrangeSubviews = [chatButton, editProfileButton]
+        let arrangeSubviews = [reportButton, chatButton, editProfileButton]
+        arrangeSubviews.forEach {
+            $0.snp.makeConstraints {
+                $0.height.equalTo(48.0)
+            }
+        }
         return UIStackView(arrangedSubviews: arrangeSubviews).then {
             $0.axis = .horizontal
             $0.spacing = 16.0

@@ -24,7 +24,9 @@ class BaseProjectFactory: ProjectFactory {
         .external(name: "FirebaseAuth"),
         .external(name: "FirebaseDatabase"),
         .external(name: "FirebaseFirestore"),
-        .external(name: "FirebaseStorage")
+        .external(name: "FirebaseStorage"),
+        .external(name: "FirebaseMessaging"),
+        .external(name: "Swinject")
     ]
     
     let infoPlist: [String: InfoPlist.Value] = [
@@ -80,7 +82,7 @@ class BaseProjectFactory: ProjectFactory {
                 infoPlist: .extendingDefault(with: infoPlist),
                 sources: ["\(projectName)/Sources/**"],
                 resources: "\(projectName)/Resources/**",
-//                entitlements: "\(projectName).entitlements",
+                entitlements: "\(projectName).entitlements",
                 scripts: [.pre(path: "Scripts/SwiftLintRunScript.sh", arguments: [], name: "SwiftLint")],
                 dependencies: dependencies
             ),
