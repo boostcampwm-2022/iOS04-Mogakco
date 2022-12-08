@@ -140,13 +140,19 @@ final class ChatViewController: ViewController {
         
         viewModel.messages
             .asDriver(onErrorJustReturn: [])
-            .drive(collectionView.rx.items) { collectionView, index, chat in
-                guard let cell = collectionView.dequeueReusableCell(
+            .drive(collectionView.rx.items) { [weak self] collectionView, index, chat in
+                guard let self = self,
+                      let cell = collectionView.dequeueReusableCell(
                     withReuseIdentifier: ChatCell.identifier,
                     for: IndexPath(row: index, section: 0)) as? ChatCell else {
                     return UICollectionViewCell()
                 }
                 cell.layoutChat(chat: chat)
+                
+                cell.profileImageButton.rx.tap
+                    .compactMap { chat.user }
+                    .bind(to: selectedUser)
+                    .disposed(by: self.disposeBag)
                 return cell
             }
             .disposed(by: disposeBag)
