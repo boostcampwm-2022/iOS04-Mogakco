@@ -11,6 +11,10 @@ import UIKit
 import RxCocoa
 import RxSwift
 
+enum ChatListNavigation {
+    case chatRoom(id: String)
+}
+
 final class ChatListViewModel: ViewModel {
     
     struct Input {
@@ -21,20 +25,15 @@ final class ChatListViewModel: ViewModel {
     
     struct Output {
         let chatRooms: Driver<[ChatRoom]>
+        let alert: Signal<String>
     }
     
     var disposeBag = DisposeBag()
-    private weak var coordinator: ChatTabCoordinatorProtocol?
-    private let chatRoomListUseCase: ChatRoomListUseCaseProtocol
+    var chatRoomListUseCase: ChatRoomListUseCaseProtocol?
     private let chatRooms = BehaviorSubject<[ChatRoom]>(value: [])
     private let reload = PublishSubject<Void>()
-    init(
-        coordinator: ChatTabCoordinatorProtocol,
-        chatRoomListUseCase: ChatRoomListUseCaseProtocol
-    ) {
-        self.coordinator = coordinator
-        self.chatRoomListUseCase = chatRoomListUseCase
-    }
+    private let alert = PublishSubject<String>()
+    let navigation = PublishSubject<ChatListNavigation>()
     
     func transform(input: Input) -> Output {
         
@@ -46,39 +45,43 @@ final class ChatListViewModel: ViewModel {
             .disposed(by: disposeBag)
         
         input.selectedChatRoom
-            .withUnretained(self)
-            .subscribe(onNext: { viewModel, chatRoom in
-                viewModel.coordinator?.showChatDetail(chatRoomID: chatRoom.id)
-            })
+            .map { ChatListNavigation.chatRoom(id: $0.id) }
+            .bind(to: navigation)
             .disposed(by: disposeBag)
         
         reload
             .withUnretained(self)
-            .flatMap { viewModel, _ in viewModel.chatRoomListUseCase.chatRooms() }
+            .flatMap { viewModel, _ in viewModel.chatRoomListUseCase?.chatRooms().asResult() ?? .empty() }
             .withUnretained(self)
-            .subscribe(onNext: { viewModel, chatRooms in
-                viewModel.chatRooms.onNext(chatRooms)
-            }, onError: {
-                print("@@@@@@ ERORR \($0.localizedDescription)")
+            .subscribe(onNext: { viewModel, result in
+                switch result {
+                case let .success(chatRooms):
+                    viewModel.chatRooms.onNext(chatRooms)
+                case .failure:
+                    viewModel.chatRooms.onNext([])
+                }
             })
             .disposed(by: disposeBag)
         
         input.deletedChatRoom
             .withUnretained(self)
             .flatMap { viewModel, chatRoom in
-                viewModel.chatRoomListUseCase.leave(chatRoom: chatRoom)
+                viewModel.chatRoomListUseCase?.leave(chatRoom: chatRoom).asResult() ?? .empty()
             }
             .withUnretained(self)
-            .subscribe(onNext: { viewModel, _ in
-                print("@@  LEAVE SUCCESS")
-                viewModel.reload.onNext(())
-            }, onError: { _ in
-                print("@@  LEAVE ERROR")
+            .subscribe(onNext: { viewModel, result in
+                switch result {
+                case .success:
+                    viewModel.reload.onNext(())
+                case .failure:
+                    viewModel.alert.onNext("채팅방 삭제 오류가 발생했어요! 다시 시도해주세요.")
+                }
             })
             .disposed(by: disposeBag)
         
         return Output(
-            chatRooms: chatRooms.asDriver(onErrorJustReturn: [])
+            chatRooms: chatRooms.asDriver(onErrorJustReturn: []),
+            alert: alert.asSignal(onErrorSignalWith: .empty())
         )
     }
 }

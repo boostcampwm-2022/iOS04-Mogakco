@@ -1,0 +1,60 @@
+//
+//  SettingViewModel.swift
+//  Mogakco
+//
+//  Created by 오국원 on 2022/12/05.
+//  Copyright © 2022 Mogakco. All rights reserved.
+//
+
+import UIKit
+
+import RxSwift
+
+enum SettingNavigation {
+    case withdraw
+    case logout
+    case back
+}
+
+final class SettingViewModel: ViewModel {
+    
+    struct Input {
+        let logoutDidTap: Observable<Void>
+        let withdrawDidTap: Observable<Void>
+        let backButtonDidTap: Observable<Void>
+    }
+    
+    struct Output {}
+    
+    var disposeBag = DisposeBag()
+    var logoutUseCase: LogoutUseCaseProtocol?
+    var email: String?
+    let navigation = PublishSubject<SettingNavigation>()
+    
+    func transform(input: Input) -> Output {
+        
+        input.logoutDidTap
+            .subscribe(onNext: { [weak self] in
+                guard let self else { return }
+                print("DEBUG : SettingVM Logout")
+                self.logoutUseCase?
+                    .logout()
+                    .map { SettingNavigation.logout }
+                    .bind(to: self.navigation)
+                    .disposed(by: self.disposeBag)
+            })
+            .disposed(by: disposeBag)
+        
+        input.withdrawDidTap
+            .map { SettingNavigation.withdraw }
+            .bind(to: navigation)
+            .disposed(by: disposeBag)
+        
+        input.backButtonDidTap
+            .map { SettingNavigation.back }
+            .bind(to: navigation)
+            .disposed(by: disposeBag)
+        
+        return Output()
+    }
+}

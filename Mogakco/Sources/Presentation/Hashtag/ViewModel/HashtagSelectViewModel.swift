@@ -11,58 +11,49 @@ import UIKit
 import RxSwift
 import RxCocoa
 
+enum HashtagSelectedeNavigation {
+    case next([Hashtag])
+    case finish(Bool)
+    case back
+}
+
 class HashtagSelectedViewModel: HashtagViewModel {
     
-    weak var coordinator: AdditionalSignupCoordinatorProtocol?
-    private let signUseCase: SignupUseCaseProtocol?
-    private let profileProps: ProfileProps?
-    private let languageProps: LanguageProps?
-    
-    init(
-        coordinator: AdditionalSignupCoordinatorProtocol,
-        hashTagUsecase: HashtagUseCaseProtocol,
-        signUpUseCase: SignupUseCaseProtocol? = nil,
-        profileProps: ProfileProps? = nil,
-        languageProps: LanguageProps? = nil
-    ) {
-        self.signUseCase = signUpUseCase
-        self.coordinator = coordinator
-        self.profileProps = profileProps
-        self.languageProps = languageProps
-        super.init(hashTagUsecase: hashTagUsecase)
-    }
-    
+    var signUseCase: SignupUseCaseProtocol?
+    var languageProps: LanguageProps?
+    let navigation = PublishSubject<HashtagSelectedeNavigation>()
+
     override func transform(input: Input) -> Output {
-        
+
         input.nextButtonTapped
-            .subscribe(onNext: { [weak self]  in
-                self?.tapButton()
-            })
+            .withUnretained(self)
+            .filter { $0.0.kind == .language }
+            .map { HashtagSelectedeNavigation.next($0.0.selectedHashtags) }
+            .bind(to: navigation)
             .disposed(by: disposeBag)
-        
+
+        input.nextButtonTapped
+            .withUnretained(self)
+            .filter { $0.0.kind == .career }
+            .subscribe(onNext: { $0.0.signup() })
+            .disposed(by: disposeBag)
+
+        input.backButtonTapped
+            .map { HashtagSelectedeNavigation.back }
+            .bind(to: navigation)
+            .disposed(by: disposeBag)
+
         return super.transform(input: input)
     }
-    
-    private func tapButton() {
-        switch kind {
-        case .language:
-            guard let profileProps = profileProps else { return }
-            let languageProps = profileProps.toLanguageProps(
-                languages: selectedHashtag.map { $0.id }
-            )
-            coordinator?.showCareer(languageProps: languageProps)
-            
-        case .career:
-            guard let languageProps = languageProps else { return }
-            let signupProps = languageProps.toSignupProps(careers: selectedHashtag.map { $0.id })
-            signUseCase?.signup(signupProps: signupProps)
+
+    private func signup() {
+        guard let languageProps = languageProps else { return }
+        let careers = selectedHashtags.map { $0.id }
+        let signupProps = languageProps.toSignupProps(careers: careers)
+        signUseCase?.signup(signupProps: signupProps)
             .subscribe { [weak self] _ in
-                self?.coordinator?.finish(success: true)
+                self?.navigation.onNext(.finish(true))
             }
             .disposed(by: disposeBag)
-            
-        case .category:
-            break
-        }
     }
 }

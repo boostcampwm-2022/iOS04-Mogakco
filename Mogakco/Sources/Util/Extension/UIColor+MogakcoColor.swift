@@ -15,6 +15,7 @@ struct MogakcoColor {
     // Primary
     let primaryDefault = UIColor(named: "PrimaryDefault")
     let primarySecondary = UIColor(named: "PrimarySecondary")
+    let primaryThird = UIColor(named: "PrimaryThird")
     
     // Typography
     let typographyPrimary = UIColor(named: "TypographyPrimary")
@@ -31,5 +32,8 @@ struct MogakcoColor {
     
     // Background
     let backgroundDefault = UIColor(named: "BackgroundDefault")
-    let backgroundSecondary = UIColor(named: "BackgroundSecondary")
+    
+    // Gradient
+    let gradientStart = UIColor(named: "gradientStart")
+    let gradientEnd = UIColor(named: "gradientEnd")
 }

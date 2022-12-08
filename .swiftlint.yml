@@ -5,6 +5,7 @@ excluded:
   - Tuist
   - ./Mogakco/Sources/App/AppDelegate.swift
   - ./Mogakco/Sources/App/SceneDelegate.swift
+  - ./Mogakco/Sources/App/DIContainer.swift
   - Project.swift
 
 disabled_rules:
@@ -79,6 +80,7 @@ identifier_name:
     - x
     - y
     - z
+    - to
 
 line_length:
   ignores_urls: true

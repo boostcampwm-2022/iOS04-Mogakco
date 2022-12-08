@@ -21,9 +21,9 @@ enum KindHashtag {
 
 class HashtagSelectViewController: ViewController {
     
-    private let hashtagListCollectionView = UICollectionView(
+    lazy var hashtagListCollectionView = UICollectionView(
         frame: .zero,
-        collectionViewLayout: HashtagFlowLayout()
+        collectionViewLayout: HashtagFlowLayout(viewFrame: view.frame)
     ).then {
         $0.showsHorizontalScrollIndicator = false
         $0.clipsToBounds = false
@@ -90,7 +90,8 @@ class HashtagSelectViewController: ViewController {
         let input = HashtagViewModel.Input(
             kindHashtag: Observable.just(kind),
             cellSelected: cellSelect.asObservable(),
-            nextButtonTapped: nextButton.rx.tap.asObservable()
+            nextButtonTapped: nextButton.rx.tap.asObservable(),
+            backButtonTapped: backButton.rx.tap.asObservable()
         )
         
         let output = viewModel.transform(input: input)
@@ -117,6 +118,9 @@ class HashtagSelectViewController: ViewController {
         }
         navigationItem.backButtonTitle = "이전"
         navigationItem.backBarButtonItem?.tintColor = .mogakcoColor.primaryDefault
+        navigationController?
+            .navigationBar
+            .titleTextAttributes = [.foregroundColor: UIColor.mogakcoColor.typographyPrimary ?? .white]
     }
     
     private func layoutHashtagListCollectionView() {
@@ -217,7 +221,6 @@ extension HashtagSelectViewController: UICollectionViewDelegateFlowLayout {
         viewForSupplementaryElementOfKind kind: String,
         at indexPath: IndexPath
     ) -> UICollectionReusableView {
-        
         guard kind == UICollectionView.elementKindSectionHeader,
               let header = hashtagListCollectionView.dequeueReusableSupplementaryView(
                   ofKind: kind,
@@ -227,13 +230,5 @@ extension HashtagSelectViewController: UICollectionViewDelegateFlowLayout {
         else { return UICollectionReusableView() }
         header.setTitle(kind: self.kind)
         return header
-    }
-    
-    func collectionView(
-        _ collectionView: UICollectionView,
-        layout collectionViewLayout: UICollectionViewLayout,
-        referenceSizeForHeaderInSection section: Int
-    ) -> CGSize {
-        return CGSize(width: view.frame.width, height: HashtagHeader.height)
     }
 }

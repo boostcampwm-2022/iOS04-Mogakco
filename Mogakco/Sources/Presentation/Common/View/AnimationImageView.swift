@@ -11,11 +11,11 @@ import UIKit
 import SnapKit
 
 final class AnimationImageView: UIView {
-    let imageView = UIImageView()
+    let iconImage = UIImageView()
     
-    override init(frame: CGRect) {
+    init(frame: CGRect, image: UIImage?) {
         super.init(frame: frame)
-        configRandomImage()
+        configImage(image: image)
         addRotation()
     }
     
@@ -23,27 +23,27 @@ final class AnimationImageView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private func configRandomImage() {
-        imageView.image = UIImage(named: Languages.randomImageID() )
-        addSubview(imageView)
-        imageView.snp.makeConstraints {
+    private func configImage(image: UIImage?) {
+        iconImage.image = image
+        addSubview(iconImage)
+        iconImage.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
     }
     
     func addRotation() {
         let randomRotaionDirection = Double(
-            [AnimationView.Animation.nagativeVelocity, AnimationView.Animation.positiveVelocity]
-                .randomElement() ?? AnimationView.Animation.positiveVelocity
+            [-1, 1].randomElement() ?? 1
         )
         let rotation = CABasicAnimation(keyPath: "transform.rotation.z")
-        rotation.toValue = Double.pi * randomRotaionDirection
+        rotation.fromValue = 0
+        rotation.toValue = Double.pi / 180 * 360 * randomRotaionDirection
         rotation.duration = CFTimeInterval(AnimationView.Animation.rotateDuration)
         rotation.repeatCount = Float.infinity
-        imageView.layer.add(rotation, forKey: "rotationAnimation")
+        iconImage.layer.add(rotation, forKey: "rotationAnimation")
     }
     
     func removeRotation() {
-        imageView.layer.removeAnimation(forKey: "rotationAnimation")
+        iconImage.layer.removeAnimation(forKey: "rotationAnimation")
     }
 }

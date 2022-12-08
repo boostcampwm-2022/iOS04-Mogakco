@@ -48,6 +48,7 @@ final class SetEmailViewController: ViewController {
     
     private let textField = MessageTextField().then {
         $0.placeholder = Constant.placeholder
+        $0.setHeight(Layout.textFieldHeight)
     }
     
     private let button = ValidationButton().then {
@@ -71,10 +72,6 @@ final class SetEmailViewController: ViewController {
     
     // MARK: - Methods
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-    }
-    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         title = Constant.navigationTitle
@@ -89,7 +86,8 @@ final class SetEmailViewController: ViewController {
         
         let input = SetEmailViewModel.Input(
             email: textField.rx.text.orEmpty.asObservable(),
-            nextButtonTapped: button.rx.tap.asObservable()
+            nextButtonTapped: button.rx.tap.asObservable(),
+            backButtonTapped: backButton.rx.tap.asObservable()
         )
         
         let output = viewModel.transform(input: input)
@@ -125,9 +123,16 @@ final class SetEmailViewController: ViewController {
     // MARK: - Layout
     
     override func layout() {
+        layoutNavigation()
         layoutStackView()
         layoutTextField()
         layoutButton()
+    }
+    
+    private func layoutNavigation() {
+        navigationController?
+            .navigationBar
+            .titleTextAttributes = [.foregroundColor: UIColor.mogakcoColor.typographyPrimary ?? .white]
     }
     
     private func layoutStackView() {
@@ -153,7 +158,7 @@ final class SetEmailViewController: ViewController {
         view.addSubview(button)
         button.snp.makeConstraints {
             $0.left.right.equalToSuperview().inset(16)
-            $0.bottom.equalTo(view.safeAreaLayoutGuide)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(16)
             $0.height.equalTo(Layout.buttonHeight)
         }
     }

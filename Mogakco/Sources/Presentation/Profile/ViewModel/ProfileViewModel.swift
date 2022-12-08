@@ -11,27 +11,37 @@ import UIKit
 import RxCocoa
 import RxSwift
 
-final class ProfileViewModel: ViewModel {
+enum ProfileNavigation {
+    case editProfile
+    case editHashtag(kind: KindHashtag, selectedHashtags: [Hashtag])
+    case chatRoom(id: String)
+    case setting
+    case back
+}
+
+enum ProfileType: Equatable {
+    case current
+    case other(User)
     
-    enum ProfileType: Equatable {
-        case current
-        case other(User)
-        
-        static func == (lhs: Self, rhs: Self) -> Bool {
-            switch (lhs, rhs) {
-            case (.current, .current), (.other, .other):
-                return true
-            default:
-                return false
-            }
+    static func == (lhs: Self, rhs: Self) -> Bool {
+        switch (lhs, rhs) {
+        case (.current, .current), (.other, .other):
+            return true
+        default:
+            return false
         }
     }
+}
+
+final class ProfileViewModel: ViewModel {
     
     struct Input {
         let viewWillAppear: Observable<Void>
         let editProfileButtonTapped: Observable<Void>
         let chatButtonTapped: Observable<Void>
         let hashtagEditButtonTapped: Observable<KindHashtag>
+        let settingButtonTapped: Observable<Void>
+        let reportButtonTapped: Observable<Void>
     }
     
     struct Output {
@@ -46,32 +56,21 @@ final class ProfileViewModel: ViewModel {
         let studyRatingList: Driver<[(String, Int)]>
     }
 
+    var userUseCase: UserUseCaseProtocol?
+    var createChatRoomUseCase: CreateChatRoomUseCaseProtocol?
+    var reportUseCase: ReportUseCaseProtocol?
+    let navigation = PublishSubject<ProfileNavigation>()
     var disposeBag = DisposeBag()
-    private let type: ProfileType
-    private weak var coordinator: ProfileTabCoordinatorProtocol?
-    private let userUseCase: UserUseCase
-    private let createChatRoomUseCase: CreateChatRoomUseCase?
+    let type = BehaviorSubject<ProfileType>(value: .current)
     private let user = BehaviorSubject<User?>(value: nil)
     private let studyRatingList = BehaviorSubject<[(String, Int)]>(value: [])
- 
-    init(
-        type: ProfileType,
-        coordinator: ProfileTabCoordinatorProtocol,
-        userUseCase: UserUseCase,
-        createChatRoomUseCase: CreateChatRoomUseCase?
-    ) {
-        self.type = type
-        self.coordinator = coordinator
-        self.userUseCase = userUseCase
-        self.createChatRoomUseCase = createChatRoomUseCase
-    }
-    
+
     func transform(input: Input) -> Output {
         bindUser(input: input)
         bindScene(input: input)
 
         return Output(
-            isMyProfile: Driver.just(type).map { $0 == .current },
+            isMyProfile: type.map { $0 == .current }.asDriver(onErrorJustReturn: false),
             profileImageURL: user
                 .compactMap { $0?.profileImageURLString }
                 .compactMap { URL(string: $0) }
@@ -84,14 +83,14 @@ final class ProfileViewModel: ViewModel {
             introduce: user.compactMap { $0?.introduce }.asDriver(onErrorJustReturn: ""),
             languages: user
                 .compactMap { $0?.languages }
-                .map { $0.compactMap { Languages.idToHashtag(id: $0) } }
+                .map { $0.compactMap { Language.idToHashtag(id: $0) } }
                 .asDriver(onErrorJustReturn: []),
             careers: user
-                .compactMap { $0?.languages }
+                .compactMap { $0?.careers }
                 .map { $0.compactMap { Career.idToHashtag(id: $0) } }
                 .asDriver(onErrorJustReturn: []),
             categorys: user
-                .compactMap { $0?.languages }
+                .compactMap { $0?.categorys }
                 .map { $0.compactMap { Category.idToHashtag(id: $0) } }
                 .asDriver(onErrorJustReturn: []),
             studyRatingList: studyRatingList.asDriver(onErrorJustReturn: [])
@@ -100,9 +99,10 @@ final class ProfileViewModel: ViewModel {
     
     private func bindUser(input: Input) {
         input.viewWillAppear
-            .filter { self.type == ProfileType.current }
+            .withLatestFrom(type)
+            .filter { $0 == ProfileType.current }
             .withUnretained(self)
-            .flatMap { $0.0.userUseCase.myProfile() }
+            .flatMap { $0.0.userUseCase?.myProfile() ?? .empty() }
             .withUnretained(self)
             .subscribe(onNext: { viewModel, user in
                 viewModel.user.onNext(user)
@@ -110,8 +110,9 @@ final class ProfileViewModel: ViewModel {
             .disposed(by: disposeBag)
         
         input.viewWillAppear
-            .compactMap {
-                switch self.type {
+            .withLatestFrom(type)
+            .compactMap { type in
+                switch type {
                 case .current:
                     return nil
                 case let .other(user):
@@ -127,7 +128,7 @@ final class ProfileViewModel: ViewModel {
         user
             .compactMap { $0?.studyIDs }
             .withUnretained(self)
-            .flatMap { $0.0.userUseCase.studyRatingList(studyIDs: $0.1) }
+            .flatMap { $0.0.userUseCase?.studyRatingList(studyIDs: $0.1) ?? .empty() }
             .withUnretained(self)
             .subscribe(onNext: { viewModel, studyRatingList in
                 viewModel.studyRatingList.onNext(studyRatingList)
@@ -137,26 +138,50 @@ final class ProfileViewModel: ViewModel {
     
     private func bindScene(input: Input) {
         input.editProfileButtonTapped
-            .withUnretained(self)
-            .subscribe(onNext: { viewModel, _ in
-                viewModel.coordinator?.showEditProfile()
-            })
+            .map { .editProfile }
+            .bind(to: navigation)
+            .disposed(by: disposeBag)
+        
+        input.editProfileButtonTapped
+            .map { .editProfile }
+            .bind(to: navigation)
             .disposed(by: disposeBag)
         
         input.chatButtonTapped
             .withLatestFrom(user.compactMap { $0 })
-            .compactMap { [weak self] in self?.createChatRoomUseCase?.create(otherUser: $0) }
-            .flatMap { $0 }
-            .subscribe(onNext: { [weak self] chatRoom in
-                self?.coordinator?.showChatDetail(chatRoomID: chatRoom.id)
-            })
+            .flatMap { [weak self] in self?.createChatRoomUseCase?.create(otherUser: $0) ?? .empty() }
+            .map { .chatRoom(id: $0.id) }
+            .bind(to: navigation)
             .disposed(by: disposeBag)
         
         input.hashtagEditButtonTapped
+            .withLatestFrom(user.compactMap { $0 }) { ($0, $1) }
+            .map { type, user -> (KindHashtag, [Hashtag]) in
+                switch type {
+                case .language:
+                    return (type, user.languages.compactMap { Language(rawValue: $0) })
+                case .career:
+                    return (type, user.careers.compactMap { Career(rawValue: $0) })
+                case .category:
+                    return (type, user.categorys.compactMap { Category(rawValue: $0) })
+                }
+            }
+            .map { .editHashtag(kind: $0.0, selectedHashtags: $0.1) }
+            .bind(to: navigation)
+            .disposed(by: disposeBag)
+        
+        input.settingButtonTapped
+            .map { .setting }
+            .bind(to: navigation)
+            .disposed(by: disposeBag)
+
+        input.reportButtonTapped
+            .withLatestFrom(user)
+            .compactMap { $0 }
             .withUnretained(self)
-            .subscribe(onNext: { viewModel, kindHashtag in
-                viewModel.coordinator?.showSelectHashtag(kindHashtag: kindHashtag)
-            })
+            .flatMap { $0.0.reportUseCase?.reportUser(id: $0.1.id) ?? .empty() }
+            .map { _ in .back }
+            .bind(to: navigation)
             .disposed(by: disposeBag)
     }
 }

@@ -11,167 +11,202 @@ import UIKit
 import RxCocoa
 import RxSwift
 
+enum ChatRoomNavigation {
+    case profile(type: ProfileType)
+    case study(id: String)
+    case back
+}
+
 final class ChatViewModel: ViewModel {
     
     struct Input {
+        let viewWillAppear: Observable<Void>
+        let viewWillDisappear: Observable<Void>
+        let willEnterForeground: Observable<Void>
+        let didEnterBackground: Observable<Void>
         let backButtonDidTap: Observable<Void>
         let studyInfoButtonDidTap: Observable<Void>
         let selectedSidebar: Observable<IndexPath>
         let sendButtonDidTap: Observable<Void>
         let inputViewText: Observable<String>
         let pagination: Observable<Void>?
+        let selectedUser: Observable<User>
     }
     
     struct Output {
-        let showChatSidebarView: Observable<Void>
-        let selectedSidebar: Observable<ChatSidebarMenu>
-        let inputViewText: Observable<String>
-        let sendMessage: Observable<Void>
-        let refreshFinished: Observable<Void>
+        let messages: Driver<[Chat]>
+        let chatSidebarMenus: Driver<[ChatSidebarMenu]>
+        let showChatSidebarView: Signal<Void>
+        let selectedSidebar: Signal<ChatSidebarMenu>
+        let inputViewText: Driver<String>
+        let sendMessageCompleted: Driver<Void>
+        let refreshFinished: Signal<Void>
     }
     
     private var isFirst = true
-    private let chatUseCase: ChatUseCaseProtocol
-    private let leaveStudyUseCase: LeaveStudyUseCaseProtocol
-    weak var coordinator: Coordinator?
+    var chatRoomID: String = ""
+    var chatUseCase: ChatUseCaseProtocol?
+    var leaveStudyUseCase: LeaveStudyUseCaseProtocol?
+    var subscribePushNotificationUseCase: SubscribePushNotificationUseCaseProtocol?
+    var unsubscribePushNotificationUseCase: UnsubscribePushNotificationUseCaseProtocol?
     private var chatArray: [Chat] = []
-    var messages = BehaviorRelay<[Chat]>(value: [])
+    let messages = BehaviorRelay<[Chat]>(value: [])
+    let navigation = PublishSubject<ChatRoomNavigation>()
     var disposeBag = DisposeBag()
-    let chatRoomID: String
     
-    init(
-        coordinator: Coordinator,
-        chatUseCase: ChatUseCaseProtocol,
-        leaveStudyUseCase: LeaveStudyUseCaseProtocol,
-        chatRoomID: String
-    ) {
-        self.coordinator = coordinator
-        self.chatUseCase = chatUseCase
-        self.leaveStudyUseCase = leaveStudyUseCase
-        self.chatRoomID = chatRoomID
-    }
-    
-    func transform(input: Input) -> Output {
-        let showChatSidebarView = PublishSubject<Void>()
-        let selectedSidebar = PublishSubject<ChatSidebarMenu>()
-        let inputViewText = PublishSubject<String>()
-        let sendMessage = PublishSubject<Void>()
-        let studyInfoTap = PublishSubject<Void>()
-        let exitStudyTap = PublishSubject<Void>()
-        let showMemberTap = PublishSubject<Void>()
-        let refreshFinished = PublishSubject<Void>()
-        
-        bindFirebase()
-        backButtonDidTap(input: input)
-        
-        input.pagination?
-            .subscribe({ [weak self] _ in
-                guard let self = self else { return }
-                self.chatUseCase
-                    .reload(chatRoomID: self.chatRoomID)
-                    .withLatestFrom(self.messages) { ($0, $1) }
-                    .subscribe(onNext: { newChat, originalChats in
-                        self.messages.accept(newChat + originalChats)
-                    })
-                    .disposed(by: self.disposeBag)
-                
-                refreshFinished.onNext(())
-            })
-            .disposed(by: disposeBag)
-        
-        input.studyInfoButtonDidTap
-            .subscribe(onNext: {
-                showChatSidebarView.onNext(())
-            })
-            .disposed(by: disposeBag)
-        
-        input.selectedSidebar
-            .map { ChatSidebarMenu(row: $0.row) }
-            .subscribe { row in
-                switch row {
-                case .studyInfo: studyInfoTap.onNext(())
-                case .exitStudy: exitStudyTap.onNext(())
-                case .showMember: showMemberTap.onNext(())
-                }
-            }
-            .disposed(by: disposeBag)
-        
-        exitStudyTap
-            .withUnretained(self)
-            .flatMap { $0.0.leaveStudyUseCase.leaveStudy(id: $0.0.chatRoomID) }
-            .subscribe {
-                selectedSidebar.onNext(.exitStudy)
-            } onError: { error in
-                print(self.chatRoomID)
-                print(error)
-            }
-            .disposed(by: disposeBag)
-        // TODO: 위와 같은 방식으로 studyInfo, showMember추가
-        input.sendButtonDidTap
-            .withLatestFrom(Observable.combineLatest(
-                chatUseCase.myProfile(),
-                input.inputViewText
-            )) { ( $1.0, $1.1 ) }
-            .subscribe { [weak self] user, message in
-                guard let self = self else { return }
+    private let selectedSidebar = PublishSubject<ChatSidebarMenu>()
+    private let inputViewText = PublishSubject<String>()
+    private let sendMessageCompleted = PublishSubject<Void>()
+    private let studyInfoTap = PublishSubject<Void>()
+    private let exitStudyTap = PublishSubject<Void>()
+    private let showMemberTap = PublishSubject<Void>()
+    private let refreshFinished = PublishSubject<Void>()
 
-                self.chatUseCase
-                    .send(
-                        chat: Chat(
-                            id: UUID().uuidString,
-                            userID: user.id,
-                            message: message,
-                            chatRoomID: self.chatRoomID,
-                            date: Date().toInt(dateFormat: Format.chatDateFormat),
-                            readUserIDs: [user.id]
-                        ),
-                        to: self.chatRoomID
-                    )
-                    .subscribe {
-                        sendMessage.onNext(())
-                    }
-                    .disposed(by: self.disposeBag)
-                
-                sendMessage.onNext(())
-            }
-            .disposed(by: disposeBag)
-        
+    func transform(input: Input) -> Output {
+        bindChats(input: input)
+        bindSideBar(input: input)
+		bindPushNotification(input: input)
+        bindScene(input: input)
+
         return Output(
-            showChatSidebarView: showChatSidebarView,
-            selectedSidebar: selectedSidebar,
-            inputViewText: inputViewText,
-            sendMessage: sendMessage,
-            refreshFinished: refreshFinished
+            messages: messages.asDriver(onErrorJustReturn: []),
+            chatSidebarMenus: Driver<[ChatSidebarMenu]>.just(ChatSidebarMenu.allCases),
+            showChatSidebarView: input.studyInfoButtonDidTap.asObservable().asSignal(onErrorSignalWith: .empty()),
+            selectedSidebar: selectedSidebar.asSignal(onErrorSignalWith: .empty()),
+            inputViewText: inputViewText.asDriver(onErrorJustReturn: ""),
+            sendMessageCompleted: sendMessageCompleted.asDriver(onErrorJustReturn: ()),
+            refreshFinished: refreshFinished.asSignal(onErrorSignalWith: .empty())
         )
     }
     
-    private func bindFirebase() {
-        chatUseCase.observe(chatRoomID: chatRoomID)
+    private func bindChats(input: Input) {
+        // 채팅 로드
+        
+        Observable.merge(
+            Observable.just(()),
+            input.pagination ?? .empty()
+        )
+            .withUnretained(self)
+            .flatMap { $0.0.chatUseCase?.fetch(chatRoomID: $0.0.chatRoomID) ?? .empty() }
+            .withLatestFrom(messages) { ($0, $1) }
+            .subscribe(onNext: { [weak self] newChat, originalChat in
+                self?.messages.accept(newChat + originalChat)
+                self?.sendMessageCompleted.onNext(())
+            })
+            .disposed(by: disposeBag)
+        
+        // 채팅 observe
+        
+        chatUseCase?.observe(chatRoomID: chatRoomID)
             .withLatestFrom(messages) { ($0, $1) }
             .subscribe(onNext: { [weak self] newChat, originalChats in
                 if self?.isFirst == false {
-                    print("self?.isFirst : ", newChat, originalChats)
-                    self?.messages.accept( originalChats + [newChat])
+                    self?.messages.accept(originalChats + [newChat])
                 } else {
                     self?.isFirst = false
                 }
             })
             .disposed(by: disposeBag)
         
-        chatUseCase.fetchAll(chatRoomID: chatRoomID)
-            .withLatestFrom(messages) { ($0, $1) }
-            .subscribe(onNext: { [weak self] newChat, originalChat in
-                
-                self?.messages.accept(newChat + originalChat)
+        // 채팅 전송
+        
+        input.sendButtonDidTap
+            .withLatestFrom(Observable.combineLatest(
+                chatUseCase?.myProfile() ?? .empty(),
+                input.inputViewText
+            )) { ( $1.0, $1.1 ) }
+            .map { user, message -> Chat in
+                return Chat(
+                    id: UUID().uuidString,
+                    userID: user.id,
+                    message: message,
+                    chatRoomID: self.chatRoomID,
+                    date: Date().toInt(dateFormat: Format.chatDateFormat),
+                    readUserIDs: [user.id]
+                )
+            }
+            .withUnretained(self)
+            .flatMap { viewModel, chat in
+                viewModel.chatUseCase?.send(chat: chat, to: viewModel.chatRoomID) ?? .empty()
+            }
+            .subscribe(onNext: { [weak self] in
+                self?.sendMessageCompleted.onNext(())
+            }, onError: {
+                print("메세지 전송 실패 \($0)")
             })
             .disposed(by: disposeBag)
     }
     
-    private func backButtonDidTap(input: Input) {
-        input.backButtonDidTap
-            .subscribe(onNext: { [weak self] in
-                self?.coordinator?.popTabbar(animated: true)
+    private func bindSideBar(input: Input) {
+        input.selectedSidebar
+            .map { ChatSidebarMenu(row: $0.row) }
+            .withUnretained(self)
+            .subscribe(onNext: { viewModel, row in
+                switch row {
+                case .studyInfo: viewModel.studyInfoTap.onNext(())
+                case .exitStudy: viewModel.exitStudyTap.onNext(())
+                case .showMember: viewModel.showMemberTap.onNext(())
+                }
             })
+            .disposed(by: disposeBag)
+        
+        studyInfoTap
+            .subscribe(onNext: { [weak self] in
+                self?.selectedSidebar.onNext(.studyInfo)
+            })
+            .disposed(by: disposeBag)
+        
+        exitStudyTap
+            .withUnretained(self)
+            .flatMap { $0.0.leaveStudyUseCase?.leaveStudy(id: $0.0.chatRoomID) ?? .empty() }
+            .subscribe(onNext: { [weak self] in
+                self?.selectedSidebar.onNext(.exitStudy)
+            }, onError: { error in
+                print(error)
+            })
+            .disposed(by: disposeBag)
+        
+        showMemberTap
+            .subscribe(onNext: { [weak self] in
+                self?.selectedSidebar.onNext(.showMember)
+            })
+            .disposed(by: disposeBag)
+    }
+
+ 	private func bindPushNotification(input: Input) {
+        // 채팅방 들어올 시 -> 푸쉬 알림 구독 해제
+        Observable.merge(
+            input.viewWillAppear,
+            input.willEnterForeground
+        )
+        .withUnretained(self)
+        .flatMap { $0.0.unsubscribePushNotificationUseCase?.excute(topic: $0.0.chatRoomID) ?? .empty() }
+        .subscribe(onNext: { _ in
+        })
+        .disposed(by: disposeBag)
+        
+        // 채팅방 나갈 시 -> 푸쉬 알림 구독
+        Observable.merge(
+            input.viewWillDisappear,
+            input.didEnterBackground
+        )
+        .withUnretained(self)
+        .flatMap { $0.0.subscribePushNotificationUseCase?.excute(topic: $0.0.chatRoomID) ?? .empty() }
+        .subscribe(onNext: { _ in
+        })
+        .disposed(by: disposeBag)
+    }
+
+    
+    private func bindScene(input: Input) {
+        input.backButtonDidTap
+            .map { ChatRoomNavigation.back }
+            .bind(to: navigation)
+            .disposed(by: disposeBag)
+        
+        input.selectedUser
+            .map { .profile(type: .other($0)) }
+            .bind(to: navigation)
             .disposed(by: disposeBag)
     }
 }

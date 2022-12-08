@@ -45,6 +45,7 @@ final class StudyCell: UICollectionViewCell, Identifiable {
     private let stateLabel = UILabel().then {
         $0.font = UIFont(name: SFPro.bold.rawValue, size: 16)
         $0.textColor = .mogakcoColor.primaryDefault
+        $0.setContentCompressionResistancePriority(.required, for: .horizontal)
     }
     
     private let titleLabel = UILabel().then {
@@ -60,6 +61,7 @@ final class StudyCell: UICollectionViewCell, Identifiable {
         }
         stack.spacing = 5
         stack.alignment = .fill
+        stack.distribution = .fillProportionally
         stack.axis = .horizontal
     }
     
@@ -70,7 +72,7 @@ final class StudyCell: UICollectionViewCell, Identifiable {
     
     private let participantsView = StudyInfoView(frame: .zero).then {
         $0.textLabel.text = "2/3 참여"
-        $0.imageView.image = Image.profileDefault
+        $0.imageView.image = UIImage(systemName: "person.fill")
     }
     
     private lazy var midStackView = UIStackView().then { stack in
@@ -134,7 +136,7 @@ final class StudyCell: UICollectionViewCell, Identifiable {
         tags.forEach {
             let label = UILabel()
             label.font = UIFont(name: SFPro.regular.rawValue, size: 12)
-            label.text = Languages(rawValue: $0)?.title
+            label.text = Language(rawValue: $0)?.title
             hashtagStackView.addArrangedSubview(label)
         }
     }
@@ -150,12 +152,9 @@ final class StudyCell: UICollectionViewCell, Identifiable {
     }
     
     private func configure() {
-        backgroundColor = .mogakcoColor.backgroundDefault
         layer.cornerRadius = 10
         layer.borderWidth = 0.2
-        layer.borderColor = UIColor.mogakcoColor.borderDefault?.cgColor
         clipsToBounds = false
-        addShadow(offset: CGSize(width: 1, height: 1), opacity: 0.3, radius: 5)
     }
     
     override func prepareForReuse() {

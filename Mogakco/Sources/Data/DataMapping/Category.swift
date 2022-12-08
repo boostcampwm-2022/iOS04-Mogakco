@@ -18,7 +18,7 @@ enum Category: String, CaseIterable, Hashtag {
     case computerScience = "cs"
     case frontend
     case hackathon
-    case iOS = "ios"
+    case iOS
     case interview
     case machineLearning
     

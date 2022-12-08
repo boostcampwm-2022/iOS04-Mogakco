@@ -24,12 +24,11 @@ final class HashtagListView: UIView {
     }
     
     let editButton = UIButton().then {
-        $0.addShadow(offset: .init(width: 5.0, height: 5.0))
+        $0.clipsToBounds = true
         $0.layer.cornerRadius = 8.0
         $0.setTitle("편집", for: .normal)
         $0.setTitleColor(UIColor.mogakcoColor.typographyPrimary, for: .normal)
         $0.titleLabel?.font = UIFont.mogakcoFont.caption
-        $0.setBackgroundColor(.white, for: .normal)
         $0.titleLabel?.textAlignment = .center
         $0.snp.makeConstraints {
             $0.size.equalTo(Constant.editButtonSize)
@@ -40,7 +39,8 @@ final class HashtagListView: UIView {
         frame: .zero,
         collectionViewLayout: UICollectionViewFlowLayout()).then {
         let layout = UICollectionViewFlowLayout()
-        layout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
+        layout.estimatedItemSize = CGSize(width: HashtagBadgeCell.addWidth, height: HashtagBadgeCell.height)
+        layout.itemSize = UICollectionViewFlowLayout.automaticSize
         layout.sectionInset = UIEdgeInsets(top: 0.0, left: 8.0, bottom: 0.0, right: 8.0)
 
         $0.collectionViewLayout = layout
@@ -49,8 +49,6 @@ final class HashtagListView: UIView {
         $0.bounces = false
         layout.scrollDirection = .horizontal
         $0.isPagingEnabled = false
-            $0.dataSource = nil
-            $0.delegate = nil
     }
     
     private let emptyLabel = UILabel().then {
@@ -83,7 +81,7 @@ final class HashtagListView: UIView {
                 return cell
             }
             .disposed(by: disposeBag)
-        
+
         hashtags
             .map { !$0.isEmpty }
             .drive(emptyLabel.rx.isHidden)

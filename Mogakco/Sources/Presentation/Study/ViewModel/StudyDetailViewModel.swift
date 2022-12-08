@@ -11,122 +11,127 @@ import Foundation
 import RxSwift
 import RxCocoa
 
+enum StudyDetailNavigation {
+    case chatRoom(id: String)
+    case profile(type: ProfileType)
+    case back
+}
+
 final class StudyDetailViewModel: ViewModel {
     
     struct Input {
         let studyJoinButtonTapped: Observable<Void>
+        let selectParticipantCell: Observable<User>
+        let backButtonTapped: Observable<Void>
+        let reportButtonTapped: Observable<Void>
     }
     
     struct Output {
         let studyDetail: Observable<Study>
-        let languageReload: Observable<Void>
-        let userReload: Observable<Void>
+        let languages: Driver<[Hashtag]>
+        let participants: Driver<[User]>
     }
     
     var disposeBag = DisposeBag()
-    private let studyID: String
-    private let coordinator: StudyTabCoordinatorProtocol
-    private let studyUseCase: StudyDetailUseCaseProtocol
-    private let hashtagUseCase: HashtagUseCaseProtocol
-    private let userUseCase: UserUseCaseProtocol
-    private let joinStudyUseCase: JoinStudyUseCaseProtocol
-    
+    var studyID: String = ""
+    var studyDetailUseCase: StudyDetailUseCaseProtocol?
+    var hashtagUseCase: HashtagUseCaseProtocol?
+    var userUseCase: UserUseCaseProtocol?
+    var joinStudyUseCase: JoinStudyUseCaseProtocol?
+    var reportUseCase: ReportUseCaseProtocol?
+    let navigation = PublishSubject<StudyDetailNavigation>()
     var languages = BehaviorSubject<[Hashtag]>(value: [])
     var participants = BehaviorSubject<[User]>(value: [])
-    
-    var languageCount: Int {
-        return (try? languages.value().count) ?? 0
-    }
-    
-    var participantsCount: Int {
-        return (try? participants.value().count) ?? 0
-    }
-    
-    init(
-        studyID: String,
-        coordinator: StudyTabCoordinatorProtocol,
-        studyUsecase: StudyDetailUseCaseProtocol,
-        hashtagUseCase: HashtagUseCaseProtocol,
-        userUseCase: UserUseCaseProtocol,
-        joinStudyUseCase: JoinStudyUseCase
-    ) {
-        self.studyID = studyID
-        self.coordinator = coordinator
-        self.studyUseCase = studyUsecase
-        self.hashtagUseCase = hashtagUseCase
-        self.userUseCase = userUseCase
-        self.joinStudyUseCase = joinStudyUseCase
-    }
-    
+    var languageCount: Int { (try? languages.value().count) ?? 0 }
+    var participantsCount: Int { (try? participants.value().count) ?? 0 }
+
     func transform(input: Input) -> Output {
-        // TODO: 유저 UseCase에서 불러오기, 언어 불러오기 바인딩
-        let languageReload = PublishSubject<Void>()
-        let userReload = PublishSubject<Void>()
         let studyDetailLoad = PublishSubject<Study>()
+        let languages = BehaviorSubject<[Hashtag]>(value: [])
+        let participants = BehaviorSubject<[User]>(value: [])
         
-        studyUseCase.study(id: studyID)
-            .subscribe(onNext: {
-                studyDetailLoad.onNext($0)
-            })
+        studyDetailUseCase?.study(id: studyID)
+            .bind(to: studyDetailLoad)
             .disposed(by: disposeBag)
         
         studyDetailLoad
             .withUnretained(self)
             .flatMap {
-                return $0.0.hashtagUseCase.loadHashtagByString(kind: .language, tagTitle: $0.1.languages)
+                $0.0.hashtagUseCase?.loadHashtagByString(
+                    kind: .language,
+                    tagTitle: $0.1.languages
+                ) ?? .empty()
             }
-            .subscribe(onNext: { [weak self] in
-                self?.languages.onNext($0)
-            })
+            .bind(to: languages)
             .disposed(by: disposeBag)
         
         studyDetailLoad
             .withUnretained(self)
-            .flatMap {
-                return $0.0.userUseCase.users(ids: $0.1.userIDs)
-            }
-            .subscribe(
-                onNext: { [weak self] in
-                    self?.participants.onNext($0)
-                }
-            )
-            .disposed(by: disposeBag)
-        
-        languages
-            .subscribe(onNext: { _ in
-                languageReload.onNext(())
-            })
-            .disposed(by: disposeBag)
-        
-        participants
-            .subscribe(onNext: { _ in
-                userReload.onNext(())
-            })
+            .flatMap { $0.0.userUseCase?.users(ids: $0.1.userIDs) ?? .empty() }
+            .bind(to: participants)
             .disposed(by: disposeBag)
         
         input.studyJoinButtonTapped
             .withUnretained(self)
-            .flatMap {
-                $0.0.joinStudyUseCase.join(id: $0.0.studyID)
-            }
+            .flatMap { $0.0.joinStudyUseCase?.join(id: $0.0.studyID) ?? .empty() }
             .withUnretained(self)
             .subscribe(onNext: {
-                $0.0.coordinator.showChatDetail(chatRoomID: $0.0.studyID)
+                $0.0.navigation.onNext(.chatRoom(id: $0.0.studyID))
             }, onError: { error in
-                // TODO: 채팅방 인원이 다 찼을 때 예외처리
-                print("👀:", error)
+                print("👀:", error) // TODO: 채팅방 인원이 다 찼을 때 예외처리
             })
+            .disposed(by: disposeBag)
+        
+        Observable.combineLatest(input.selectParticipantCell, userUseCase?.myProfile() ?? .empty())
+            .subscribe(onNext: { [weak self] selectUser, myProfile in
+                guard let self else { return }
+                if selectUser.id == myProfile.id {
+                    self.navigation.onNext(.profile(type: .current))
+                } else {
+                    self.navigation.onNext(.profile(type: .other(selectUser)))
+                }
+            })
+            .disposed(by: disposeBag)
+        
+//        if let userUseCase {
+//            Observable.combineLatest(input.selectParticipantCell, userUseCase.myProfile())
+//                .map { ($0.0.row, $0.1) }
+//                .map { (try? participants.value()[$0.0], $0.1) }
+//                .withUnretained(self)
+//                .subscribe {
+//                    let user = $0.1.0
+//                    if $0.1.0?.id == $0.1.1.id {
+//                        $0.0.navigation.onNext(.profile(type: .current))
+//                    } else {
+//                        guard let other = $0.1.0 else { return }
+//                        $0.0.navigation.onNext(.profile(type: .other(other)))
+//                    }
+//                }
+//                .disposed(by: disposeBag)
+//        }
+        
+        input.backButtonTapped
+            .map { StudyDetailNavigation.back }
+            .bind(to: navigation)
+            .disposed(by: disposeBag)
+        
+        input.reportButtonTapped
+            .withUnretained(self)
+            .flatMap { $0.0.reportUseCase?.reportStudy(id: $0.0.studyID) ?? .empty() }
+            .map { _ in StudyDetailNavigation.back }
+            .bind(to: navigation)
             .disposed(by: disposeBag)
         
         return Output(
             studyDetail: studyDetailLoad,
-            languageReload: languageReload.asObservable(),
-            userReload: userReload.asObservable()
+            languages: languages.asDriver(onErrorJustReturn: []),
+            participants: participants.asDriver(onErrorJustReturn: [])
         )
     }
     
     func userSelect(index: Int) {
-        // 
+        // 사용자 선택되었을 때 내 프로필 보여주기: navigation.onNext(.current)
+        // 사용자 선택되었을 때 다른 프로필 보여주기: navigation.onNext(.other(user))
     }
     
     func languaegCellInfo(index: Int) -> Hashtag? {

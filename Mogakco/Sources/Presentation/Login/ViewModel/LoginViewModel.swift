@@ -11,9 +11,15 @@ import Foundation
 import RxSwift
 import RxCocoa
 
+enum LoginNavigation {
+    case signup
+    case finish
+}
+
 final class LoginViewModel: ViewModel {
     
     struct Input {
+        let viewWillAppear: Observable<Void>
         let email: Observable<String>
         let password: Observable<String>
         let signupButtonTap: Observable<Void>
@@ -21,54 +27,59 @@ final class LoginViewModel: ViewModel {
     }
     
     struct Output {
-        let presentError: Signal<String>
+        let presentLogin: Signal<Void>
+        let presentAlert: Signal<Alert>
     }
     
+    var autoLoginUseCase: AutoLoginUseCaseProtocol?
+    var loginUseCase: LoginUseCaseProtocol?
+    let navigation = PublishSubject<LoginNavigation>()
     var disposeBag = DisposeBag()
-    private let loginUseCase: LoginUseCaseProtocol
-    private let coordinator: AuthCoordinatorProtocol
-    
-    
-    init(coordinator: AuthCoordinatorProtocol, loginUseCase: LoginUseCaseProtocol) {
-        self.coordinator = coordinator
-        self.loginUseCase = loginUseCase
-    }
     
     func transform(input: Input) -> Output {
-        enum LoginError: Error, LocalizedError {
-            case loginFail
-        }
-        let presentAlert = PublishSubject<Error>()
-        var userData = EmailLogin(email: "", password: "")
+
+        let presentLogin = PublishSubject<Void>()
+        let presentAlert = PublishSubject<Alert>()
         
-        Observable
-            .combineLatest(input.email, input.password)
-            .subscribe { email, password in
-                userData = EmailLogin(email: email, password: password)
-            }
-            .disposed(by: disposeBag)
-        
-        input.signupButtonTap
-            .subscribe(onNext: { [weak self] in
-                self?.coordinator.showRequiredSignup()
+        input.viewWillAppear
+            .withUnretained(self)
+            .flatMap { $0.0.autoLoginUseCase?.load() ?? .empty() }
+            .delay(.seconds(2), scheduler: MainScheduler.instance)
+            .withUnretained(self)
+            .subscribe(onNext: { viewModel, result in
+                if result {
+                    viewModel.navigation.onNext(.finish)
+                } else {
+                    presentLogin.onNext(())
+                }
             })
             .disposed(by: disposeBag)
         
+        input.signupButtonTap
+            .map { LoginNavigation.signup }
+            .bind(to: navigation)
+            .disposed(by: disposeBag)
+        
         input.loginButtonTap
+            .withLatestFrom(Observable.combineLatest(input.email, input.password))
+            .map { EmailLogin(email: $0, password: $1) }
             .withUnretained(self)
-            .flatMap { $0.0.loginUseCase.login(emailLogin: userData).asResult() }
-            .subscribe(onNext: { [weak self] in
-                switch $0 {
+            .flatMap { $0.0.loginUseCase?.login(emailLogin: $0.1).asResult() ?? .empty() }
+            .withUnretained(self)
+            .subscribe(onNext: { viewModel, result in
+                switch result {
                 case .success:
-                    self?.coordinator.finish()
-                case .failure(let error):
-                    presentAlert.onNext(error)
+                    viewModel.navigation.onNext(.finish)
+                case .failure:
+                    let alert = Alert(title: "로그인 실패", message: "로그인 정보를 다시 확인해주세요.", observer: nil)
+                    presentAlert.onNext(alert)
                 }
             })
             .disposed(by: disposeBag)
             
         return Output(
-            presentError: presentAlert.map { $0.localizedDescription }.asSignal(onErrorSignalWith: .empty())
+            presentLogin: presentLogin.asSignal(onErrorSignalWith: .empty()),
+            presentAlert: presentAlert.asSignal(onErrorSignalWith: .empty())
         )
     }
 }

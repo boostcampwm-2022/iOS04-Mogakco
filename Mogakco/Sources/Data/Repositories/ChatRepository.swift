@@ -6,32 +6,39 @@
 //  Copyright © 2022 Mogakco. All rights reserved.
 //
 
+import Foundation
+
 import RxSwift
 
 struct ChatRepository: ChatRepositoryProtocol {
-    private let chatDataSource: ChatDataSourceProtocol
+    
+    var chatDataSource: ChatDataSourceProtocol?
+    var reportDataSource: ReportDataSourceProtocol?
+    var pushNotificationService: PushNotificationServiceProtocol?
     private let disposeBag = DisposeBag()
 
-    init(
-        chatDataSource: ChatDataSourceProtocol
-    ) {
-        self.chatDataSource = chatDataSource
-    }
-
-    func fetchAll(chatRoomID: String) -> Observable<[Chat]> {
-        return chatDataSource.fetchAll(chatRoomID: chatRoomID).map { $0.map { $0.toDomain() } }
-    }
-    
-    func reload(chatRoomID: String) -> Observable<[Chat]> {
-        return chatDataSource.reload(chatRoomID: chatRoomID).map { $0.map { $0.toDomain() } }
+    func fetch(chatRoomID: String) -> Observable<[Chat]> {
+        return chatDataSource?.fetch(chatRoomID: chatRoomID).map { $0.map { $0.toDomain() } } ?? .empty()
     }
     
     func observe(chatRoomID: String) -> Observable<Chat> {
-        return chatDataSource.observe(chatRoomID: chatRoomID).map { $0.toDomain() }
+        let chat = chatDataSource?.observe(chatRoomID: chatRoomID)
+            .map { $0.toDomain() } ?? .empty()
+        
+        return Observable.combineLatest(chat, reportDataSource?.loadUser() ?? .empty())
+            .filter { chat, reportIds in
+                !reportIds.contains(chat.userID)
+            }
+            .map { $0.0 }
     }
 
     func send(chat: Chat, to chatRoomID: String) -> Observable<Void> {
-        return chatDataSource.send(chat: chat, to: chatRoomID)
-            // TODO: ChatService 객체 만들어야 할 듯
+        let request = PushNotificationRequestDTO(
+            topic: chatRoomID,
+            title: chat.user?.name ?? "",
+            body: chat.message)
+        return chatDataSource?.send(chat: chat, to: chatRoomID)
+            .flatMap { pushNotificationService?.sendTopic(request: request) ?? .empty() }
+            .map { _ in () } ?? .empty()
     }
 }

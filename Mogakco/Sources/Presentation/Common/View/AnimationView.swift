@@ -14,7 +14,7 @@ final class AnimationView: UIView {
     
     enum Animation {
         static let iconCount: Int = 5
-        static let iconSize: Int = 100
+        static let iconSize: Int = 80
         static let moveInterval = 0.017
         static let rotateDuration = 10
         
@@ -57,8 +57,14 @@ final class AnimationView: UIView {
     }
     
     private func addImages() {
-        (0..<Animation.iconCount).forEach { _ in
-            let imageView = AnimationImageView(frame: randomPosition())
+        [
+            Language.swift.id,
+            Language.cpp.id,
+            Language.javaScript.id,
+            Language.python.id,
+            Language.ruby.id
+        ].forEach {
+            let imageView = AnimationImageView(frame: randomPosition(), image: UIImage(named: $0))
             addSubview(imageView)
             animationImages.append(imageView)
             moveView(targetView: imageView)

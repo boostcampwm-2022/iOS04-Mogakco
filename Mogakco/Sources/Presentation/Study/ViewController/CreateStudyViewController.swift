@@ -16,8 +16,7 @@ import Then
 final class CreateStudyViewController: ViewController {
     
     enum Constant {
-        static let navigationTitle = "스터디 생성하기"
-        static let textFieldHeight = Layout.textFieldHeight + 38
+        static let navigationTitle = "새로운 스터디"
         static let textViewHeight = 120
         static let selectViewHeight = 40
         static let collectionViewHeight = 100
@@ -31,9 +30,7 @@ final class CreateStudyViewController: ViewController {
     private let titleTextField = CountTextField().then {
         $0.title = "제목"
         $0.placeholder = "제목을 입력해주세요"
-        $0.snp.makeConstraints {
-            $0.height.equalTo(Constant.textFieldHeight)
-        }
+        $0.setHeight(Layout.textFieldHeight)
     }
     
     private let contentTextView = CountTextView().then {
@@ -47,9 +44,7 @@ final class CreateStudyViewController: ViewController {
     private let placeTextField = CountTextField().then {
         $0.title = "지역"
         $0.placeholder = "지역을 입력해주세요"
-        $0.snp.makeConstraints {
-            $0.height.equalTo(Constant.textFieldHeight)
-        }
+        $0.setHeight(Layout.textFieldHeight)
     }
     
     private let countStepper = StudyStepperView().then {
@@ -92,7 +87,7 @@ final class CreateStudyViewController: ViewController {
     }
     
     private let createButton = ValidationButton().then {
-        $0.setTitle(Constant.navigationTitle, for: .normal)
+        $0.setTitle("스터디 생성하기", for: .normal)
         $0.isEnabled = false
         $0.snp.makeConstraints {
             $0.height.equalTo(Layout.buttonHeight)
@@ -121,7 +116,7 @@ final class CreateStudyViewController: ViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
-        title = "새로운 스터디"
+        title = Constant.navigationTitle
         navigationController?.isNavigationBarHidden = false
     }
     
@@ -131,6 +126,7 @@ final class CreateStudyViewController: ViewController {
     }
     
     override func layout() {
+        layoutNavigation()
         layoutCreateButton()
         layoutScrollView()
     }
@@ -152,7 +148,8 @@ final class CreateStudyViewController: ViewController {
             date: date.asObserver(),
             categoryButtonTapped: categorySelect.button.rx.tap.asObservable(),
             languageButtonTapped: languageSelect.button.rx.tap.asObservable(),
-            createButtonTapped: createButton.rx.tap.asObservable()
+            createButtonTapped: createButton.rx.tap.asObservable(),
+            backButtonTapped: backButton.rx.tap.asObservable()
         )
         
         let output = viewModel.transform(input: input)
@@ -179,6 +176,11 @@ final class CreateStudyViewController: ViewController {
     }
     
     // MARK: - Methods
+    private func layoutNavigation() {
+        navigationController?
+            .navigationBar
+            .titleTextAttributes = [.foregroundColor: UIColor.mogakcoColor.typographyPrimary ?? .white]
+    }
     
     private func layoutScrollView() {
         view.addSubview(scrollView)
@@ -232,21 +234,20 @@ final class CreateStudyViewController: ViewController {
             let item = NSCollectionLayoutItem(
                 layoutSize: .init(
                     widthDimension: .estimated(50),
-                    heightDimension: .absolute(30)
+                    heightDimension: .absolute(35)
                 )
             )
-            let group = NSCollectionLayoutGroup.vertical(
+            let group = NSCollectionLayoutGroup.horizontal(
                 layoutSize: .init(
-                    widthDimension: .estimated(50),
-                    heightDimension: .fractionalHeight(1)
+                    widthDimension: .fractionalWidth(1),
+                    heightDimension: .absolute(35)
                 ),
                 subitems: [item]
             )
-            group.interItemSpacing = .fixed(16)
+            group.interItemSpacing = .fixed(12)
             let section = NSCollectionLayoutSection(group: group)
-            section.interGroupSpacing = 16
-            section.orthogonalScrollingBehavior = .continuous
-            section.contentInsets = .init(top: 4, leading: 4, bottom: 4, trailing: 4)
+            section.interGroupSpacing = 12
+            section.contentInsets = .init(top: 4, leading: 4, bottom: 20, trailing: 4)
             return section
         }
     }

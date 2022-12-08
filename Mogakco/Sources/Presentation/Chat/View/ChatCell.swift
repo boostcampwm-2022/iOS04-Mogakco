@@ -15,6 +15,8 @@ final class ChatCell: UICollectionViewCell, Identifiable {
     
     private let profileImageView = RoundProfileImageView(35)
     
+    let profileImageButton = UIButton()
+    
     let textView = UITextView().then {
         $0.backgroundColor = .clear
         $0.font = UIFont.mogakcoFont.smallBold
@@ -22,9 +24,8 @@ final class ChatCell: UICollectionViewCell, Identifiable {
         $0.isScrollEnabled = false
         $0.isEditable = false
     }
-    
     let bubbleContainer = UIView().then {
-        $0.backgroundColor = .mogakcoColor.backgroundSecondary
+        $0.backgroundColor = .mogakcoColor.primarySecondary
         $0.layer.cornerRadius = 8
     }
     
@@ -47,9 +48,15 @@ final class ChatCell: UICollectionViewCell, Identifiable {
     }
     
     private func layout() {
+        layoutCell()
         layoutProfileImageView()
+        layoutProfileImageButton()
         layoutBubbleContainerView()
         layoutTextView()
+    }
+    
+    private func layoutCell() {
+        backgroundColor = .mogakcoColor.backgroundDefault
     }
     
     private func layoutProfileImageView() {
@@ -58,6 +65,14 @@ final class ChatCell: UICollectionViewCell, Identifiable {
         profileImageView.snp.makeConstraints {
             $0.left.equalToSuperview().offset(12)
             $0.top.equalToSuperview().offset(4)
+        }
+    }
+    
+    private func layoutProfileImageButton() {
+        addSubview(profileImageButton)
+        
+        profileImageButton.snp.makeConstraints {
+            $0.edges.equalTo(profileImageView)
         }
     }
     
@@ -82,7 +97,9 @@ final class ChatCell: UICollectionViewCell, Identifiable {
     func layoutChat(chat: Chat) {
         guard
             let isFromCurrentUser = chat.isFromCurrentUser,
-            let user = chat.user else { return }
+            let user = chat.user else {
+            textView.text = chat.message
+            return layoutOthersBubble(image: UIImage(systemName: "person.fill")) }
 
         if isFromCurrentUser {
             layoutMyBubble()
@@ -93,13 +110,19 @@ final class ChatCell: UICollectionViewCell, Identifiable {
         textView.text = chat.message
     }
     
-    private func layoutOthersBubble(user: User) {
+    private func layoutOthersBubble(user: User? = nil, image: UIImage? = nil) {
         bubbleContainer.snp.remakeConstraints {
             $0.left.equalTo(profileImageView.snp.right).offset(12)
+            $0.width.lessThanOrEqualTo(200)
         }
-        bubbleContainer.backgroundColor = .mogakcoColor.backgroundSecondary
+        bubbleContainer.backgroundColor = .mogakcoColor.primarySecondary
         
-        if let urlStr = user.profileImageURLString,
+        if let image = image {
+            profileImageView.image = image
+        }
+        
+        if let user = user,
+           let urlStr = user.profileImageURLString,
            let url = URL(string: urlStr) {
             profileImageView.load(url: url)
         }
@@ -108,6 +131,7 @@ final class ChatCell: UICollectionViewCell, Identifiable {
     private func layoutMyBubble() {
         bubbleContainer.snp.remakeConstraints {
             $0.right.equalToSuperview().inset(12)
+            $0.width.lessThanOrEqualTo(200)
         }
         bubbleContainer.backgroundColor = .mogakcoColor.primaryDefault
         profileImageView.isHidden = true

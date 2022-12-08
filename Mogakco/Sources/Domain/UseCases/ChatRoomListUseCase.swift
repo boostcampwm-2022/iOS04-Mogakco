@@ -16,27 +16,18 @@ struct ChatRoomListUseCase: ChatRoomListUseCaseProtocol {
         case nonUserID
     }
 
-    private let chatRoomRepository: ChatRoomRepositoryProtocol
-    private let userRepository: UserRepositoryProtocol
+    var chatRoomRepository: ChatRoomRepositoryProtocol?
+    var userRepository: UserRepositoryProtocol?
     private let disposeBag = DisposeBag()
     
-    init(
-        chatRoomRepository: ChatRoomRepositoryProtocol,
-        userRepository: UserRepositoryProtocol
-    ) {
-        self.chatRoomRepository = chatRoomRepository
-        self.userRepository = userRepository
-    }
-    
     func chatRooms() -> Observable<[ChatRoom]> {
-        return userRepository
-            .load()
-            .flatMap { chatRoomRepository.list(id: $0.id, ids: $0.chatRoomIDs) }
+        return userRepository?.load()
+            .flatMap { chatRoomRepository?.list(id: $0.id, ids: $0.chatRoomIDs) ?? .empty() } ?? .empty()
     }
     
     func leave(chatRoom: ChatRoom) -> Observable<Void> {
-        return userRepository.load()
-            .flatMap { chatRoomRepository.leave(user: $0, chatRoom: chatRoom) }
-            .flatMap { userRepository.save(user: $0) }
+        return userRepository?.load()
+            .flatMap { chatRoomRepository?.leave(user: $0, chatRoom: chatRoom) ?? .empty() }
+            .flatMap { userRepository?.save(user: $0) ?? .empty() } ?? .empty()
     }
 }

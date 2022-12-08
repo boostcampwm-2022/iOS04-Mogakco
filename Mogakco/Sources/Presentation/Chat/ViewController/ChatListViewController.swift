@@ -30,9 +30,9 @@ final class ChatListViewController: UIViewController {
         $0.showsVerticalScrollIndicator = false
         $0.separatorStyle = .none
     }
-    
-    private let disposeBag = DisposeBag()
+
     private let viewModel: ChatListViewModel
+    private let disposeBag = DisposeBag()
     
     init(viewModel: ChatListViewModel) {
         self.viewModel = viewModel
@@ -45,7 +45,6 @@ final class ChatListViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor.mogakcoColor.backgroundDefault
         bind()
         layout()
     }
@@ -67,7 +66,7 @@ final class ChatListViewController: UIViewController {
             deletedChatRoom: chatRoomTableView.rx.modelDeleted(ChatRoom.self).asObservable()
         )
         let output = viewModel.transform(input: input)
-        
+
         output.chatRooms
             .drive(chatRoomTableView.rx.items) { tableView, index, chatRoom in
                 guard let cell = tableView.dequeueReusableCell(
@@ -75,13 +74,14 @@ final class ChatListViewController: UIViewController {
                     for: IndexPath(row: index, section: 0)) as? ChatRoomTableViewCell else {
                     return UITableViewCell()
                 }
+                cell.selectionStyle = .none
                 cell.configure(chatRoom: chatRoom)
                 return cell
             }
             .disposed(by: disposeBag)
     }
     
-    private func layout() {
+    func layout() {
         layoutHeaderView()
         layoutChatRoomTableView()
     }
