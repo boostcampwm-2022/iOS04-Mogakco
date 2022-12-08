@@ -14,7 +14,7 @@ import RxSwift
 import SnapKit
 import Then
 
-final class ChatViewController: ViewController {
+final class ChatViewController: UIViewController {
     
     // MARK: - Properties
     
@@ -24,26 +24,20 @@ final class ChatViewController: ViewController {
         static let collectionViewHeight = 60
     }
     
-    private lazy var messageInputView = MessageInputView().then {
-        $0.frame = CGRect(
-            x: 0,
-            y: 0,
-            width: view.frame.width,
-            height: 0
-        )
+    private let backButton = UIButton().then {
+        $0.setTitle("이전", for: .normal)
+        $0.setTitleColor(.mogakcoColor.primaryDefault, for: .normal)
     }
     
-    private lazy var collectionView = UICollectionView(
-        frame: .zero,
-        collectionViewLayout: UICollectionViewFlowLayout()
+    private lazy var messageInputView = MessageInputView().then {
+        $0.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 0)
+    }
+    
+    private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout()
     ).then {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
-        layout.sectionInset = UIEdgeInsets(
-            top: 16,
-            left: 0,
-            bottom: 0,
-            right: 0)
+        layout.sectionInset = UIEdgeInsets(top: 16, left: 0, bottom: 0, right: 0)
         layout.itemSize = CGSize(width: view.frame.width, height: 60)
         layout.minimumLineSpacing = 12.0
         $0.refreshControl = UIRefreshControl()
@@ -52,20 +46,18 @@ final class ChatViewController: ViewController {
         $0.alwaysBounceVertical = true
     }
     
-    let studyInfoButton = UIButton().then {
+    private let studyInfoButton = UIButton().then {
         $0.setImage(UIImage(systemName: "line.horizontal.3"), for: .normal)
         $0.tintColor = .mogakcoColor.primaryDefault
     }
     
-    lazy var sidebarView = ChatSidebarView().then {
-        $0.frame = CGRect(
-            x: view.frame.width,
-            y: 0,
-            width: view.frame.width,
-            height: view.frame.height)
+    private lazy var sidebarView = ChatSidebarView().then {
+        $0.frame = CGRect(x: view.frame.width, y: 0, width: view.frame.width, height: view.frame.height)
     }
     
-    lazy var blackScreen = UIView(frame: self.view.bounds)
+    private lazy var blackScreen = UIView(frame: self.view.bounds)
+    
+    private let disposeBag = DisposeBag()
     private let viewModel: ChatViewModel
     
     init(viewModel: ChatViewModel) {
@@ -81,6 +73,9 @@ final class ChatViewController: ViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        bind()
+        layout()
+        configure()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -92,24 +87,11 @@ final class ChatViewController: ViewController {
         return true
     }
     
-    override func layout() {
-        configure()
-        layoutNavigationBar()
-        layoutCollectionView()
-        layoutSideBar()
-        layoutBlackScreen()
-        layoutMessageInputView()
-    }
-    
-    private func configure() {
-        configureSideBar()
-        configureBlackScreen()
-        configureNavigationBar()
-    }
-    
     // MARK: - ViewController Methods
     
-    override func bind() {
+    private func bind() {
+        let selectedUser = PublishSubject<User>()
+        
         let input = ChatViewModel.Input(
             viewWillAppear: rx.viewWillAppear.map { _ in () }.asObservable(),
             viewWillDisappear: rx.viewWillDisappear.map { _ in () }.asObservable(),
@@ -122,11 +104,12 @@ final class ChatViewController: ViewController {
             selectedSidebar: sidebarView.tableView.rx.itemSelected.asObservable(),
             sendButtonDidTap: messageInputView.sendButton.rx.tap.asObservable(),
             inputViewText: messageInputView.messageInputTextView.rx.text.orEmpty.asObservable(),
-            pagination: collectionView.refreshControl?.rx.controlEvent(.valueChanged).asObservable()
+            pagination: collectionView.refreshControl?.rx.controlEvent(.valueChanged).asObservable(),
+            selectedUser: selectedUser.asObservable()
         )
         let output = viewModel.transform(input: input)
         
-        Driver<[ChatSidebarMenu]>.just(ChatSidebarMenu.allCases)
+        output.chatSidebarMenus
             .drive(sidebarView.tableView.rx.items) { tableView, index, menu in
                 guard let cell = tableView.dequeueReusableCell(
                     withIdentifier: ChatSidebarTableViewCell.identifier,
@@ -138,8 +121,7 @@ final class ChatViewController: ViewController {
             }
             .disposed(by: disposeBag)
         
-        viewModel.messages
-            .asDriver(onErrorJustReturn: [])
+        output.messages
             .drive(collectionView.rx.items) { [weak self] collectionView, index, chat in
                 guard let self = self,
                       let cell = collectionView.dequeueReusableCell(
@@ -158,29 +140,26 @@ final class ChatViewController: ViewController {
             .disposed(by: disposeBag)
         
         output.showChatSidebarView
-            .observe(on: MainScheduler.instance)
-            .subscribe { [weak self] _ in
-                guard let self = self else { return }
-                self.showSidebarView()
-            }
+            .emit(onNext: { [weak self] _ in
+                self?.showSidebarView()  
+            })
             .disposed(by: disposeBag)
         
         output.selectedSidebar
-            .subscribe { [weak self] _ in
-                guard let self = self else { return }
-                self.hideSidebarView()
-            }
+            .emit(onNext: { [weak self] _ in
+                self?.hideSidebarView()
+            })
             .disposed(by: disposeBag)
         
         output.refreshFinished
-            .subscribe(onNext: { [weak self] _ in
+            .emit(onNext: { [weak self] _ in
                 self?.collectionView.refreshControl?.endRefreshing()
             })
             .disposed(by: disposeBag)
         
-        output.sendMessage
-            .withUnretained(self)
-            .subscribe { _ in
+        output.sendMessageCompleted
+            .drive(onNext: { [weak self] _ in
+                guard let self = self else { return }
                 self.messageInputView.messageInputTextView.text = nil
                 self.collectionView.scrollToItem(
                     at: IndexPath(
@@ -189,7 +168,7 @@ final class ChatViewController: ViewController {
                     at: .bottom,
                     animated: true
                 )
-            }
+            })
             .disposed(by: disposeBag)
 
         RxKeyboard.instance.visibleHeight
@@ -200,6 +179,20 @@ final class ChatViewController: ViewController {
                 self.updateCollectionViewLayout(height: keyboardVisibleHeight)
             })
             .disposed(by: disposeBag)
+    }
+
+    private func layout() {
+        configure()
+        layoutCollectionView()
+        layoutSideBar()
+        layoutBlackScreen()
+        layoutMessageInputView()
+    }
+    
+    private func configure() {
+        configureSideBar()
+        configureBlackScreen()
+        configureNavigationBar()
     }
     
     // MARK: - Configures
