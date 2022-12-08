@@ -74,12 +74,19 @@ final class StudyListViewModel: ViewModel {
             .debounce(.microseconds(100), scheduler: MainScheduler.instance)
             .withLatestFrom(Observable.combineLatest(sort, filters))
             .withUnretained(self)
-            .flatMap { viewModel, arguments in
+            .flatMap { viewModel, arguments -> Observable<Result<[Study], Error>> in
                 let (sort, filters) = arguments
-                return viewModel.studyListUseCase?.list(sort: sort, filters: filters) ?? .empty()
+                return viewModel.studyListUseCase?.list(sort: sort, filters: filters).asResult() ?? .empty()
             }
             .do { _ in self.refreshFinished.onNext(()) }
-            .bind(to: studyList)
+            .subscribe(onNext: { [weak self] result in
+                switch result {
+                case .success(let studyList):
+                    self?.studyList.onNext(studyList)
+                case .failure:
+                    self?.studyList.onNext([])
+                }
+            })
             .disposed(by: disposeBag)
     }
     
