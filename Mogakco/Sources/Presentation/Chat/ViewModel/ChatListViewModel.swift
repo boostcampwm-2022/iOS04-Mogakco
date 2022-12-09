@@ -25,14 +25,14 @@ final class ChatListViewModel: ViewModel {
     
     struct Output {
         let chatRooms: Driver<[ChatRoom]>
-        let alert: Signal<String>
+        let alert: Signal<Alert>
     }
     
     var disposeBag = DisposeBag()
     var chatRoomListUseCase: ChatRoomListUseCaseProtocol?
     private let chatRooms = BehaviorSubject<[ChatRoom]>(value: [])
     private let reload = PublishSubject<Void>()
-    private let alert = PublishSubject<String>()
+    private let alert = PublishSubject<Alert>()
     let navigation = PublishSubject<ChatListNavigation>()
     
     func transform(input: Input) -> Output {
@@ -74,7 +74,8 @@ final class ChatListViewModel: ViewModel {
                 case .success:
                     viewModel.reload.onNext(())
                 case .failure:
-                    viewModel.alert.onNext("채팅방 삭제 오류가 발생했어요! 다시 시도해주세요.")
+                    let alert = Alert(title: "채팅방 나가기 오류", message: "채팅방 삭제 오류가 발생했어요! 다시 시도해주세요.", observer: nil)
+                    viewModel.alert.onNext(alert)
                 }
             })
             .disposed(by: disposeBag)

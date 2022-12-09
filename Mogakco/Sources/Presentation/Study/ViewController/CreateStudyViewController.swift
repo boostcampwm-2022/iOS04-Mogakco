@@ -177,6 +177,10 @@ final class CreateStudyViewController: ViewController {
                 viewController.categorySelect.content = hashtag.title
             }
             .disposed(by: disposeBag)
+        
+        output.alert
+            .emit(to: rx.presentAlert)
+            .disposed(by: disposeBag)
     }
     
     // MARK: - Methods

@@ -54,6 +54,7 @@ final class ProfileViewModel: ViewModel {
         let careers: Driver<[Hashtag]>
         let categorys: Driver<[Hashtag]>
         let studyRatingList: Driver<[(String, Int)]>
+        let alert: Signal<Alert>
     }
 
     var userUseCase: UserUseCaseProtocol?
@@ -64,6 +65,7 @@ final class ProfileViewModel: ViewModel {
     let type = BehaviorSubject<ProfileType>(value: .current)
     private let user = BehaviorSubject<User?>(value: nil)
     private let studyRatingList = BehaviorSubject<[(String, Int)]>(value: [])
+    private let alert = PublishSubject<Alert>()
 
     func transform(input: Input) -> Output {
         bindUser(input: input)
@@ -93,7 +95,8 @@ final class ProfileViewModel: ViewModel {
                 .compactMap { $0?.categorys }
                 .map { $0.compactMap { Category.idToHashtag(id: $0) } }
                 .asDriver(onErrorJustReturn: []),
-            studyRatingList: studyRatingList.asDriver(onErrorJustReturn: [])
+            studyRatingList: studyRatingList.asDriver(onErrorJustReturn: []),
+            alert: alert.asSignal(onErrorSignalWith: .empty())
         )
     }
     
@@ -102,10 +105,16 @@ final class ProfileViewModel: ViewModel {
             .withLatestFrom(type)
             .filter { $0 == ProfileType.current }
             .withUnretained(self)
-            .flatMap { $0.0.userUseCase?.myProfile() ?? .empty() }
+            .flatMap { $0.0.userUseCase?.myProfile().asResult() ?? .empty() }
             .withUnretained(self)
-            .subscribe(onNext: { viewModel, user in
-                viewModel.user.onNext(user)
+            .subscribe(onNext: { viewModel, result in
+                switch result {
+                case .success(let user):
+                    viewModel.user.onNext(user)
+                case .failure:
+                    let alert = Alert(title: "프로필 로드 오류", message: "프로필 로드 오류가 발생했어요! 다시 시도해주세요", observer: nil)
+                    viewModel.alert.onNext(alert)
+                }
             })
             .disposed(by: disposeBag)
         
@@ -128,10 +137,16 @@ final class ProfileViewModel: ViewModel {
         user
             .compactMap { $0?.studyIDs }
             .withUnretained(self)
-            .flatMap { $0.0.userUseCase?.studyRatingList(studyIDs: $0.1) ?? .empty() }
+            .flatMap { $0.0.userUseCase?.studyRatingList(studyIDs: $0.1).asResult() ?? .empty() }
             .withUnretained(self)
-            .subscribe(onNext: { viewModel, studyRatingList in
-                viewModel.studyRatingList.onNext(studyRatingList)
+            .subscribe(onNext: { viewModel, result in
+                switch result {
+                case .success(let studyRatingList):
+                    viewModel.studyRatingList.onNext(studyRatingList)
+                case .failure:
+                    let alert = Alert(title: "스터디 로드 오류", message: "스터디 Top3 로드 오류가 발생했어요! 다시 시도해주세요", observer: nil)
+                    viewModel.alert.onNext(alert)
+                }
             })
             .disposed(by: disposeBag)
     }

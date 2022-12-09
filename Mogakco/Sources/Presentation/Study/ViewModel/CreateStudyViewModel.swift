@@ -35,12 +35,14 @@ final class CreateStudyViewModel: ViewModel {
         let category: Observable<Hashtag>
         let languages: Observable<[Hashtag]>
         let createButtonEnabled: Observable<Bool>
+        let alert: Signal<Alert>
     }
     
     var createStudyUseCase: CreateStudyUseCaseProtocol?
     let category = BehaviorSubject<[Hashtag]>(value: [])
     let languages = BehaviorSubject<[Hashtag]>(value: [])
     let navigation = PublishSubject<CreateStudyNavigation>()
+    private let alert = PublishSubject<Alert>()
     var disposeBag = DisposeBag()
 
     func transform(input: Input) -> Output {
@@ -89,10 +91,18 @@ final class CreateStudyViewModel: ViewModel {
             .withLatestFrom(study)
             .withUnretained(self)
             .flatMap { viewModel, study in
-                viewModel.createStudyUseCase?.create(study: study) ?? .empty()
+                viewModel.createStudyUseCase?.create(study: study).asResult() ?? .empty()
             }
-            .map { _ in CreateStudyNavigation.back }
-            .bind(to: navigation)
+            .withUnretained(self)
+            .subscribe(onNext: { viewModel, result in
+                switch result {
+                case .success:
+                    viewModel.navigation.onNext(.back)
+                case .failure:
+                    let alert = Alert(title: "스터디 생성 오류", message: "스터디 생성 오류가 발생했어요! 다시 시도해주세요", observer: nil)
+                    viewModel.alert.onNext(alert)
+                }
+            })
             .disposed(by: disposeBag)
         
         input.backButtonTapped
@@ -103,7 +113,8 @@ final class CreateStudyViewModel: ViewModel {
         return Output(
             category: category.compactMap { $0.first },
             languages: languages,
-            createButtonEnabled: study.map { _ in return true }
+            createButtonEnabled: study.map { _ in return true },
+            alert: alert.asSignal(onErrorSignalWith: .empty())
         )
     }
 }

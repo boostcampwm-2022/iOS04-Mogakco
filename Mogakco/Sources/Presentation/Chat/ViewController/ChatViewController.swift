@@ -176,6 +176,10 @@ final class ChatViewController: UIViewController {
                 )
             })
             .disposed(by: disposeBag)
+        
+        output.alert
+            .emit(to: rx.presentAlert)
+            .disposed(by: disposeBag)
 
         RxKeyboard.instance.visibleHeight
             .skip(1)
