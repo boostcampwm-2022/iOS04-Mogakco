@@ -42,9 +42,9 @@ final class SkeletonView: UIView {
         
         switch type {
         case .image: subView = ImageSkeletonView()
-        case .rectList: subView = RectListSkeletonView(frame: frame)
-        case .chatList: subView = ListSkeletonView(frame: frame)
-        case .none : subView = ImageSkeletonView()
+        case .rectList: subView = StudyListSkeletonView(frame: frame)
+        case .chatList: subView = ChatRoomListSkeletonView(frame: frame)
+        case .none: subView = ImageSkeletonView()
         }
         
         addSubview(subView)

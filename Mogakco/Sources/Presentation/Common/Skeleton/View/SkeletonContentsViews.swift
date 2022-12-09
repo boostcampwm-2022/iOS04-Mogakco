@@ -19,5 +19,5 @@ class SkeletonContentsBase: UIView {
     }
 }
 
-final class RectLoadingListContentsView: SkeletonContentsBase {}
-final class ChatRoomListContentsView: SkeletonContentsBase {}
+final class StudyListSkeletonContentsView: SkeletonContentsBase {}
+final class ChatRoomListSkeletonContentsView: SkeletonContentsBase {}

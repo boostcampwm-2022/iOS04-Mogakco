@@ -13,7 +13,7 @@ import RxCocoa
 import SnapKit
 import Then
 
-final class LoadingCellSkeletonView: UIView {
+final class ChatRoomLoadingCellSkeletonView: UIView {
     
     override func layoutSubviews() {
         layout()

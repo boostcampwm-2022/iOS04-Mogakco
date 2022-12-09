@@ -13,7 +13,7 @@ import RxCocoa
 import SnapKit
 import Then
 
-final class RectListSkeletonView: UIView {
+final class StudyListSkeletonView: UIView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -33,7 +33,7 @@ final class RectListSkeletonView: UIView {
         addSubview(stackView)
         
         (0..<cellCount).forEach { _ in
-            stackView.addArrangedSubview(RectLoadingCellSkeletonView())
+            stackView.addArrangedSubview(StudyListCellSkeletonView())
         }
         
         stackView.snp.makeConstraints {

@@ -13,7 +13,7 @@ import RxCocoa
 import SnapKit
 import Then
 
-final class RectLoadingCellSkeletonView: UIView {
+final class StudyListCellSkeletonView: UIView {
     
     override func layoutSubviews() {
         layout()
