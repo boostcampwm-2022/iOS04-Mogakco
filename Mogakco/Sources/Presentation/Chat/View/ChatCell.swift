@@ -54,6 +54,7 @@ final class ChatCell: UICollectionViewCell, Identifiable {
     
     private func layout() {
         layoutCell()
+        layoutNameLabel()
         layoutProfileImageView()
         layoutProfileImageButton()
         layoutBubbleContainerView()
@@ -62,6 +63,15 @@ final class ChatCell: UICollectionViewCell, Identifiable {
     
     private func layoutCell() {
         backgroundColor = .mogakcoColor.backgroundDefault
+    }
+    
+    private func layoutNameLabel() {
+        addSubview(nameLabel)
+        
+        nameLabel.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(4)
+            $0.left.equalToSuperview().inset(12)
+        }
     }
     
     private func layoutProfileImageView() {
@@ -129,6 +139,7 @@ final class ChatCell: UICollectionViewCell, Identifiable {
         if let user = user,
            let urlStr = user.profileImageURLString,
            let url = URL(string: urlStr) {
+            nameLabel.text = user.name
             profileImageView.load(url: url)
         }
     }
