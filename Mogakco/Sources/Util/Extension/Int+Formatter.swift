@@ -73,9 +73,9 @@ extension Int {
             if unit == "시" {
                 let hour = num <= 12 ? num : num - 12
                 let ampm = num < 12 ? "오전" : "오후"
-                return "\(result) \(ampm) \(hour)\(unit)"
+                return "\(result) \(ampm) \(hour):"
             } else {
-                return "\(result) \(num)\(unit)"
+                return "\(result)\(num)"
             }
         }
         
