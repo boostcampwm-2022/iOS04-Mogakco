@@ -30,6 +30,7 @@ final class StudyDetailViewModel: ViewModel {
         let studyDetail: Observable<Study>
         let languages: Driver<[Hashtag]>
         let participants: Driver<[User]>
+        let alert: Signal<Alert>
     }
     
     var disposeBag = DisposeBag()
@@ -44,6 +45,7 @@ final class StudyDetailViewModel: ViewModel {
     var participants = BehaviorSubject<[User]>(value: [])
     var languageCount: Int { (try? languages.value().count) ?? 0 }
     var participantsCount: Int { (try? participants.value().count) ?? 0 }
+    private let alert = PublishSubject<Alert>()
 
     func transform(input: Input) -> Output {
         let studyDetailLoad = PublishSubject<Study>()
@@ -67,25 +69,53 @@ final class StudyDetailViewModel: ViewModel {
         
         studyDetailLoad
             .withUnretained(self)
-            .flatMap { $0.0.userUseCase?.users(ids: $0.1.userIDs) ?? .empty() }
-            .bind(to: participants)
+            .flatMap { $0.0.userUseCase?.users(ids: $0.1.userIDs).asResult() ?? .empty() }
+            .withUnretained(self)
+            .subscribe(onNext: { viewModel, result in
+                switch result {
+                case .success(let users):
+                    participants.onNext(users)
+                case .failure:
+                    let alert = Alert(title: "유저 목록 로드 오류", message: "유저 목록 로드 오류가 발생했어요! 다시 시도해주세요", observer: nil)
+                    viewModel.alert.onNext(alert)
+                }
+            })
             .disposed(by: disposeBag)
-        
+
         input.studyJoinButtonTapped
             .withUnretained(self)
-            .flatMap { $0.0.joinStudyUseCase?.join(id: $0.0.studyID) ?? .empty() }
+            .flatMap { $0.0.joinStudyUseCase?.join(id: $0.0.studyID).asResult() ?? .empty() }
             .withUnretained(self)
-            .subscribe(onNext: {
-                $0.0.navigation.onNext(.chatRoom(id: $0.0.studyID))
-            }, onError: { error in
-                print("👀:", error) // TODO: 채팅방 인원이 다 찼을 때 예외처리
+            .subscribe(onNext: { viewModel, result in
+                switch result {
+                case .success:
+                    viewModel.navigation.onNext(.chatRoom(id: viewModel.studyID)) // 응답 chatRoomID 값으로 바꾸는게 더 정확할듯
+                case .failure:
+                    let alert = Alert(title: "스터디 참여 오류", message: "스터디 참여 오류가 발생했어요! 다시 시도해주세요", observer: nil)
+                    viewModel.alert.onNext(alert)
+                }
             })
             .disposed(by: disposeBag)
         
-        Observable.combineLatest(input.selectParticipantCell, userUseCase?.myProfile() ?? .empty())
-            .subscribe(onNext: { [weak self] selectUser, myProfile in
+        let profile = BehaviorSubject<User?>(value: nil)
+        
+        (userUseCase?.myProfile().asResult() ?? .empty())
+            .withUnretained(self)
+            .subscribe(onNext: { viewModel, result in
+                switch result {
+                case .success(let user):
+                    profile.onNext(user)
+                case .failure:
+                    let alert = Alert(title: "유저 정보 로드 오류", message: "유저 정보 로드 오류가 발생했어요! 다시 시도해주세요", observer: nil)
+                    viewModel.alert.onNext(alert)
+                }
+            })
+            .disposed(by: disposeBag)
+
+        Observable.combineLatest(input.selectParticipantCell, profile.compactMap { $0 })
+            .subscribe(onNext: { [weak self] selectUser, profile in
                 guard let self else { return }
-                if selectUser.id == myProfile.id {
+                if selectUser.id == profile.id {
                     self.navigation.onNext(.profile(type: .current))
                 } else {
                     self.navigation.onNext(.profile(type: .other(selectUser)))
@@ -125,7 +155,8 @@ final class StudyDetailViewModel: ViewModel {
         return Output(
             studyDetail: studyDetailLoad,
             languages: languages.asDriver(onErrorJustReturn: []),
-            participants: participants.asDriver(onErrorJustReturn: [])
+            participants: participants.asDriver(onErrorJustReturn: []),
+            alert: alert.asSignal(onErrorSignalWith: .empty())
         )
     }
     

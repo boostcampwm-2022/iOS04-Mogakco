@@ -123,6 +123,10 @@ final class EditProfileViewController: ViewController {
                 self?.scrollView.contentInset.bottom = keyboardVisibleHeight
             })
             .disposed(by: disposeBag)
+        
+        output.alert
+            .emit(to: rx.presentAlert)
+            .disposed(by: disposeBag)
     }
 
     override func layout() {

@@ -34,14 +34,11 @@ final class SettingViewModel: ViewModel {
     func transform(input: Input) -> Output {
         
         input.logoutDidTap
+            .withUnretained(self)
+            .flatMap { $0.0.logoutUseCase?.logout() ?? .empty() }
             .subscribe(onNext: { [weak self] in
                 guard let self else { return }
-                print("DEBUG : SettingVM Logout")
-                self.logoutUseCase?
-                    .logout()
-                    .map { SettingNavigation.logout }
-                    .bind(to: self.navigation)
-                    .disposed(by: self.disposeBag)
+                self.navigation.onNext(.logout)
             })
             .disposed(by: disposeBag)
         

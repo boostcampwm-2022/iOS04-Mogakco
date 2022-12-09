@@ -105,6 +105,10 @@ class HashtagSelectViewController: ViewController {
                 self?.hashtagListCollectionView.reloadData()
             }
             .disposed(by: disposeBag)
+        
+        output.alert
+            .emit(to: rx.presentAlert)
+            .disposed(by: disposeBag)
     }
     
     override func layout() {
