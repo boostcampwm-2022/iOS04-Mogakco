@@ -58,7 +58,7 @@ final class ChatRoomUsersImageView: UIView {
     func configure(imageURLs: [URL]) -> Observable<Bool> {
         var observables: [Observable<Bool>] = []
         
-        zip(imageURLs.shuffled(), roundImageViews).forEach { imageURL, roundImageView in
+        zip(imageURLs, roundImageViews).forEach { imageURL, roundImageView in
             observables.append(roundImageView.loadAndEvent(url: imageURL))
 //            roundImageView.load(url: imageURL)
         }
