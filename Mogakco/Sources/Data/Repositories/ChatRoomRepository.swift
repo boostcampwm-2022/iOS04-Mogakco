@@ -106,11 +106,8 @@ struct ChatRoomRepository: ChatRoomRepositoryProtocol {
     }
     
     func create(currentUserID: String, otherUserID: String) -> Observable<ChatRoom> {
-        let chatRoomSb = PublishSubject<ChatRoom>()
-        let createChatRoom = PublishSubject<Void>()
-        
         // 기존 채팅방 있는지 체크
-        chatRoomDataSource?.list()
+        let originalChatRoom = (chatRoomDataSource?.list() ?? .empty())
             .map { $0.documents.map { $0.toDomain() } }
             .map { chatRooms in
                 return chatRooms.filter { $0.studyID == nil
@@ -119,22 +116,15 @@ struct ChatRoomRepository: ChatRoomRepositoryProtocol {
                 }
             }
             .map { $0.first }
-            .subscribe(onNext: { chatRoom in
-                if let chatRoom = chatRoom {
-                    chatRoomSb.onNext(chatRoom)
-                } else {
-                    createChatRoom.onNext(())
-                }
-            })
-            .disposed(by: disposeBag)
         
         // 새로운 채팅방 생성
-        createChatRoom
-            .flatMap {
+        let createdChatRoom = originalChatRoom
+            .filter { $0 == nil }
+            .flatMap { _ in
                 return create(studyID: nil, userIDs: [currentUserID, otherUserID])
                     .flatMap { chatRoom in
                         return Observable.zip(
-                            remoteUserDataSource?.user(id: otherUserID)
+                            remoteUserDataSource?.user(id: otherUserID)        // 상대 유저 DB에 업데이트
                                 .map { $0.toDomain() }
                                 .flatMap { otherUser in
                                     remoteUserDataSource?.updateIDs(
@@ -145,7 +135,7 @@ struct ChatRoomRepository: ChatRoomRepositoryProtocol {
                                         )
                                     ) ?? .empty()
                                 } ?? .empty(),
-                            remoteUserDataSource?.user(id: currentUserID)
+                            remoteUserDataSource?.user(id: currentUserID)        // 현재 유저 DB에 업데이트
                                 .map { $0.toDomain() }
                                 .flatMap { currentUser in
                                     remoteUserDataSource?.updateIDs(
@@ -160,12 +150,11 @@ struct ChatRoomRepository: ChatRoomRepositoryProtocol {
                         .map { _ in chatRoom }
                     }
             }
-            .subscribe(onNext: {
-                chatRoomSb.onNext($0)
-            })
-            .disposed(by: disposeBag)
         
-        return chatRoomSb
+        return Observable.merge(
+            originalChatRoom.compactMap { $0 },
+            createdChatRoom
+        )
     }
     
     private func unreadChatCount(id: String, chats: [Chat]) -> Int {
