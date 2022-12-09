@@ -23,7 +23,7 @@ final class ChatListViewController: UIViewController {
         $0.setTitle(Constant.headerViewTitle)
     }
     
-    private lazy var tableContentsView = ChatRoomListContentsView()
+    private lazy var tableContentsView = ChatRoomListSkeletonContentsView()
     
     private let chatRoomTableView = UITableView().then {
         $0.register(ChatRoomTableViewCell.self, forCellReuseIdentifier: ChatRoomTableViewCell.identifier)
