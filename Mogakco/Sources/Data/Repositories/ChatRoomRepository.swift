@@ -29,50 +29,33 @@ struct ChatRoomRepository: ChatRoomRepositoryProtocol {
     }
 
     func list(id: String, ids: [String]) -> Observable<[ChatRoom]> {
-        guard !ids.isEmpty else {
-            return Observable.just([])
-        }
-        // 채팅방 모델 호출
-        let chatRoomsSb = chatRoomDataSource?.list()
-            .map { $0.documents.map { $0.toDomain() } }
-            .map { $0.filter { ids.contains($0.id) } } ?? .empty()
-        
-        // 최근 메세지 호출
-        let latestChatChatRoomsSb = BehaviorSubject<[ChatRoom]>(value: [])
-        chatRoomsSb
-            .subscribe(onNext: { chatRooms in
-                chatRooms.forEach { chatRoom in
-                    chatRoomDataSource?.chats(id: chatRoom.id)
-                        .map { $0.documents.map { $0.toDomain() } }
-                        .map { $0.sorted { $0.date < $1.date } } // TODO: 메세지 정렬 API 쿼리로 이동
-                        .map { ($0.first, unreadChatCount(id: id, chats: $0)) }
-                        .map { ChatRoom(chatRoom: chatRoom, latestChat: $0.0, unreadChatCount: $0.1) }
-                        .withLatestFrom(latestChatChatRoomsSb) { $1 + [$0] }
-                        .map { $0.sorted { $0.latestChat?.date ?? 0 < $1.latestChat?.date ?? 0 } }
-                        .subscribe(onNext: {
-                            latestChatChatRoomsSb.onNext($0)
-                        })
-                        .disposed(by: disposeBag)
-                }
-            })
-            .disposed(by: disposeBag)
-        
-        // 유저 정보 호출
-       let usersSb = remoteUserDataSource?.allUsers()
-            .map { $0.documents.map { $0.toDomain() } } ?? .empty()
+        guard !ids.isEmpty else { return Observable.just([]) }
 
-       return Observable.combineLatest(
-        latestChatChatRoomsSb
-            .withLatestFrom(chatRoomsSb) { ($0, $1) }
-            .filter { $0.0.count == $0.1.count }
-            .map { $0.0 },
-        usersSb
-       )
-           .map { chatRooms, users in
-               chatRooms.map { chatRoom in
-                   ChatRoom(chatRoom: chatRoom, users: users.filter { chatRoom.userIDs.contains($0.id) })
-               }
-           }
+       let users = remoteUserDataSource?.allUsers()              // 유저 정보 호출
+            .map { $0.documents.map { $0.toDomain() } } ?? .empty()
+       
+        return (chatRoomDataSource?.list() ?? .empty())         // 채팅방 목록 호출
+            .map { $0.documents.map { $0.toDomain() } }
+            .map { $0.filter { ids.contains($0.id) } }
+            .flatMap { chatRooms in                             // 채팅방 내 최근 문자 추가
+                return Observable.combineLatest(
+                    chatRooms.map { chatRoom in
+                        return (chatRoomDataSource?.chats(id: chatRoom.id) ?? .empty())
+                            .map { $0.documents.map { $0.toDomain() } }
+                            .map { $0.sorted { $0.date < $1.date } }
+                            .map { ($0.first, unreadChatCount(id: id, chats: $0)) }
+                            .map { ChatRoom(chatRoom: chatRoom, latestChat: $0.0, unreadChatCount: $0.1) }
+                    }
+                )
+            }
+            .withLatestFrom(users) { chatRooms, users in        // 채팅방 내 유저 정보 추가
+                chatRooms.map { chatRoom in
+                    ChatRoom(chatRoom: chatRoom, users: users.filter { chatRoom.userIDs.contains($0.id) })
+                }
+                .sorted {                                       // 최신 메세지 순 정렬
+                    $0.latestChat?.date ?? 0 > $1.latestChat?.date ?? 0
+                }
+            }
     }
     
     func detail(id: String) -> Observable<ChatRoom> {
