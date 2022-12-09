@@ -114,13 +114,23 @@ final class ChatViewModel: ViewModel {
         
         // 채팅 observe
         
+        let newChat = PublishSubject<Chat>()
+        
+        newChat
+            .withLatestFrom(messages) { $1 + [$0] }
+            .subscribe(onNext: { [weak self] in
+                self?.messages.accept($0)
+                self?.sendMessageCompleted.onNext(())
+            })
+            .disposed(by: disposeBag)
+        
         (chatUseCase?.observe(chatRoomID: chatRoomID).asResult() ?? .empty())
             .withUnretained(self)
             .subscribe(onNext: { viewModel, result in
                 switch result {
                 case .success(let chat):
                     if viewModel.isFirst == false {
-                        newChats.onNext([chat])
+                        newChat.onNext(chat)
                     } else {
                         viewModel.isFirst = false
                     }
