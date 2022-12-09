@@ -29,6 +29,11 @@ final class ChatCell: UICollectionViewCell, Identifiable {
         $0.layer.cornerRadius = 8
     }
     
+    let nameLabel = UILabel().then {
+        $0.textColor = .mogakcoColor.typographySecondary
+        $0.font = UIFont.mogakcoFont.smallBold
+    }
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         layout()
