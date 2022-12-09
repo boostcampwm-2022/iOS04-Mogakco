@@ -13,7 +13,7 @@ import RxCocoa
 import SnapKit
 import Then
 
-final class ListSkeletonView: UIView {
+final class ChatRoomListSkeletonView: UIView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -33,7 +33,7 @@ final class ListSkeletonView: UIView {
         addSubview(stackView)
         
         (0..<cellCount).forEach { _ in
-            stackView.addArrangedSubview(LoadingCellSkeletonView())
+            stackView.addArrangedSubview(ChatRoomLoadingCellSkeletonView())
         }
         
         stackView.snp.makeConstraints {
