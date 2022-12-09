@@ -90,8 +90,10 @@ final class LoginViewController: ViewController {
             viewWillAppear: rx.viewWillAppear.map { _ in }.asObservable(),
             email: emailTextField.rx.text.orEmpty.asObservable(),
             password: secureTextField.rx.text.orEmpty.asObservable(),
-            signupButtonTap: signupButton.rx.tap.asObservable(),
-            loginButtonTap: loginButton.rx.tap.asObservable()
+            signupButtonTap: signupButton.rx.tap
+                .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance),
+            loginButtonTap: loginButton.rx.tap
+                .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance)
         )
 
         let output = viewModel.transform(input: input)

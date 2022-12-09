@@ -128,15 +128,20 @@ final class ProfileViewController: UIViewController {
     func bind() {
         let input = ProfileViewModel.Input(
             viewWillAppear: rx.viewWillAppear.map { _ in }.asObservable(),
-            editProfileButtonTapped: profileView.editProfileButton.rx.tap.asObservable(),
-            chatButtonTapped: profileView.chatButton.rx.tap.asObservable(),
+            editProfileButtonTapped: profileView.editProfileButton.rx.tap
+                .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance),
+            chatButtonTapped: profileView.chatButton.rx.tap
+                .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance),
             hashtagEditButtonTapped: Observable.merge(
                 languageListView.editButton.rx.tap.map { _ in KindHashtag.language },
                 careerListView.editButton.rx.tap.map { _ in KindHashtag.career },
                 categoryListView.editButton.rx.tap.map { _ in KindHashtag.category }
-            ),
-            settingButtonTapped: settingButton.rx.tap.asObservable(),
-            reportButtonTapped: report.asObservable()
+            )
+            .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance),
+            settingButtonTapped: settingButton.rx.tap
+                .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance),
+            reportButtonTapped: report
+                .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance)
         )
         let output = viewModel.transform(input: input)
         

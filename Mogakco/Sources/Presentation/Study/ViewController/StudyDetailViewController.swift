@@ -145,10 +145,13 @@ final class StudyDetailViewController: UIViewController {
     
     func bind() {
         let input = StudyDetailViewModel.Input(
-            studyJoinButtonTapped: studyJoinButton.rx.tap.asObservable(),
-            selectParticipantCell: participantsCollectionView.rx.modelSelected(User.self).asObservable(),
-            backButtonTapped: backButton.rx.tap.asObservable(),
-            reportButtonTapped: report.asObservable()
+            studyJoinButtonTapped: studyJoinButton.rx.tap
+                .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance),
+            selectParticipantCell: participantsCollectionView.rx.modelSelected(User.self)
+                .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance),
+            backButtonTapped: backButton.rx.tap
+                .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance),
+            reportButtonTapped: report.throttle(.seconds(1), scheduler: MainScheduler.asyncInstance)
         )
         
         let output = viewModel.transform(input: input)

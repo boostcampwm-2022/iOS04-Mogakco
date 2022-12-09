@@ -84,8 +84,10 @@ final class PolicyViewController: ViewController {
             totalPolicy: totalPolicy.checkButton.rx.isSelected.asObservable(),
             servicePolicy: servicePolicy.checkButton.rx.isSelected.asObservable(),
             contentPolicy: contentPolicy.checkButton.rx.isSelected.asObservable(),
-            nextButtonTapped: button.rx.tap.asObservable(),
-            backButtonTapped: backButton.rx.tap.asObservable()
+            nextButtonTapped: button.rx.tap
+                .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance),
+            backButtonTapped: backButton.rx.tap
+                .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance)
         )
         
         let output = viewModel.transform(input: input)

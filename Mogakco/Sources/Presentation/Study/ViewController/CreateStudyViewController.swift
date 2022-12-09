@@ -146,10 +146,14 @@ final class CreateStudyViewController: ViewController {
             place: placeTextField.rx.text.orEmpty.asObservable(),
             maxUserCount: countStepper.stepper.rx.value.asObservable(),
             date: date.asObserver(),
-            categoryButtonTapped: categorySelect.button.rx.tap.asObservable(),
-            languageButtonTapped: languageSelect.button.rx.tap.asObservable(),
-            createButtonTapped: createButton.rx.tap.asObservable(),
-            backButtonTapped: backButton.rx.tap.asObservable()
+            categoryButtonTapped: categorySelect.button.rx.tap
+                .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance),
+            languageButtonTapped: languageSelect.button.rx.tap
+                .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance),
+            createButtonTapped: createButton.rx.tap
+                .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance),
+            backButtonTapped: backButton.rx.tap
+                .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance)
         )
         
         let output = viewModel.transform(input: input)

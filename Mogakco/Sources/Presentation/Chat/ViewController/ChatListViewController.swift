@@ -62,8 +62,10 @@ final class ChatListViewController: UIViewController {
     func bind() {
         let input = ChatListViewModel.Input(
             viewWillAppear: rx.viewWillAppear.map { _ in }.asObservable(),
-            selectedChatRoom: chatRoomTableView.rx.modelSelected(ChatRoom.self).asObservable(),
-            deletedChatRoom: chatRoomTableView.rx.modelDeleted(ChatRoom.self).asObservable()
+            selectedChatRoom: chatRoomTableView.rx.modelSelected(ChatRoom.self)
+                .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance),
+            deletedChatRoom: chatRoomTableView.rx.modelDeleted(ChatRoom.self)
+                .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance)
         )
         let output = viewModel.transform(input: input)
 
