@@ -36,70 +36,19 @@ final class StudyListCellSkeletonView: UIView {
             $0.edges.equalToSuperview().inset(10)
         }
         
-        let firstBar = LoadingView().then {
-            $0.clipsToBounds = true
-            $0.layer.cornerRadius = 5
-        }
-        stackView.addArrangedSubview(firstBar)
-        
-        firstBar.snp.makeConstraints {
-            $0.height.equalTo(15)
-            $0.width.equalTo(frame.width * 0.5)
-        }
-        
-        let secondBar = LoadingView().then {
-            $0.clipsToBounds = true
-            $0.layer.cornerRadius = 5
-        }
-        stackView.addArrangedSubview(secondBar)
-        
-        secondBar.snp.makeConstraints {
-            $0.height.equalTo(15)
-            $0.width.equalTo(frame.width * 0.9)
-        }
-        
-        let thirdBar = LoadingView().then {
-            $0.clipsToBounds = true
-            $0.layer.cornerRadius = 5
-        }
-        stackView.addArrangedSubview(thirdBar)
-        
-        thirdBar.snp.makeConstraints {
-            $0.height.equalTo(15)
-            $0.width.equalTo(frame.width * 0.8)
-        }
-        
-        let fourthBar = LoadingView().then {
-            $0.clipsToBounds = true
-            $0.layer.cornerRadius = 5
-        }
-        stackView.addArrangedSubview(fourthBar)
-        
-        fourthBar.snp.makeConstraints {
-            $0.height.equalTo(15)
-            $0.width.equalTo(frame.width * 0.3)
-        }
-        
-        let fifthBar = LoadingView().then {
-            $0.clipsToBounds = true
-            $0.layer.cornerRadius = 5
-        }
-        stackView.addArrangedSubview(fifthBar)
-        
-        fifthBar.snp.makeConstraints {
-            $0.height.equalTo(15)
-            $0.width.equalTo(frame.width)
-        }
-        
-        let sixthBar = LoadingView().then {
-            $0.clipsToBounds = true
-            $0.layer.cornerRadius = 5
-        }
-        stackView.addArrangedSubview(sixthBar)
-        
-        sixthBar.snp.makeConstraints {
-            $0.height.equalTo(15)
-            $0.width.equalTo(frame.width)
+        [0.5, 0.9, 0.8, 0.3, 1.0, 1.0].forEach {
+            let bar = LoadingView().then {
+                $0.clipsToBounds = true
+                $0.layer.cornerRadius = 5
+            }
+            stackView.addArrangedSubview(bar)
+            
+            let widthRatio = frame.width * $0
+            
+            bar.snp.makeConstraints {
+                $0.height.equalTo(15)
+                $0.width.equalTo(widthRatio)
+            }
         }
     }
 }
