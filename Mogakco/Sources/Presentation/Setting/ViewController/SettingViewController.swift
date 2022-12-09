@@ -69,9 +69,12 @@ final class SettingViewController: ViewController {
     override func bind() {
         
         let input = SettingViewModel.Input(
-            logoutDidTap: logoutDidTap.asObservable(),
-            withdrawDidTap: withdrawDidTap.asObservable(),
-            backButtonDidTap: backButton.rx.tap.asObservable()
+            logoutDidTap: logoutDidTap
+                .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance),
+            withdrawDidTap: withdrawDidTap
+                .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance),
+            backButtonDidTap: backButton.rx.tap
+                .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance)
         )
         
         _ = viewModel?.transform(input: input)
@@ -88,6 +91,7 @@ final class SettingViewController: ViewController {
             .disposed(by: disposeBag)
         
         tableView.rx.itemSelected
+            .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance)
             .map { SettingMenu(row: $0.row) }
             .subscribe(onNext: { [weak self] row in
                 switch row {

@@ -99,13 +99,19 @@ final class ChatViewController: UIViewController {
                 .rx.notification(UIApplication.willEnterForegroundNotification).map { _ in () },
             didEnterBackground: NotificationCenter.default
                 .rx.notification(UIApplication.didEnterBackgroundNotification).map { _ in () },
-            backButtonDidTap: backButton.rx.tap.asObservable(),
-            studyInfoButtonDidTap: studyInfoButton.rx.tap.asObservable(),
-            selectedSidebar: sidebarView.tableView.rx.itemSelected.asObservable(),
-            sendButtonDidTap: messageInputView.sendButton.rx.tap.asObservable(),
+            backButtonDidTap: backButton.rx.tap
+                .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance),
+            studyInfoButtonDidTap: studyInfoButton.rx.tap
+                .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance),
+            selectedSidebar: sidebarView.tableView.rx.itemSelected
+                .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance),
+            sendButtonDidTap: messageInputView.sendButton.rx.tap
+                .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance),
             inputViewText: messageInputView.messageInputTextView.rx.text.orEmpty.asObservable(),
-            pagination: collectionView.refreshControl?.rx.controlEvent(.valueChanged).asObservable(),
-            selectedUser: selectedUser.asObservable()
+            pagination: collectionView.refreshControl?.rx.controlEvent(.valueChanged)
+                .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance),
+            selectedUser: selectedUser
+                .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance)
         )
         let output = viewModel.transform(input: input)
         
