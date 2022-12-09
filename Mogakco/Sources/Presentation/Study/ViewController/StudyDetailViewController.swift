@@ -184,6 +184,10 @@ final class StudyDetailViewController: UIViewController {
                 cell.setInfo(user: user)
             }
             .disposed(by: disposeBag)
+        
+        output.alert
+            .emit(to: rx.presentAlert)
+            .disposed(by: disposeBag)
     }
     
     private func navigationLayout() {

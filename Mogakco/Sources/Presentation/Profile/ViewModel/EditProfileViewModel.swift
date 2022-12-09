@@ -37,6 +37,7 @@ final class EditProfileViewModel: ViewModel {
         let originIntroduce: Driver<String>
         let originProfileImage: Driver<UIImage>
         let inputValidation: Driver<Bool>
+        let alert: Signal<Alert>
     }
     
     var disposeBag = DisposeBag()
@@ -49,6 +50,7 @@ final class EditProfileViewModel: ViewModel {
     private let introduce = BehaviorSubject<String>(value: "")
     private let image = BehaviorSubject<UIImage>(value: Image.profileDefault)
     private let inputValidation = BehaviorSubject<Bool>(value: false)
+    private let alert = PublishSubject<Alert>()
     
     func transform(input: Input) -> Output {
         bindUser(input: input)
@@ -58,7 +60,8 @@ final class EditProfileViewModel: ViewModel {
             originName: user.compactMap { $0?.name }.asDriver(onErrorJustReturn: ""),
             originIntroduce: user.compactMap { $0?.introduce }.asDriver(onErrorJustReturn: ""),
             originProfileImage: image.asObservable().asDriver(onErrorDriveWith: .empty()),
-            inputValidation: inputValidation.asObservable().asDriver(onErrorJustReturn: false)
+            inputValidation: inputValidation.asObservable().asDriver(onErrorJustReturn: false),
+            alert: alert.asSignal(onErrorSignalWith: .empty())
         )
     }
     
@@ -66,10 +69,16 @@ final class EditProfileViewModel: ViewModel {
         type
             .filter { $0 == .edit }
             .withUnretained(self)
-            .flatMap { $0.0.profileUseCase?.profile() ?? .empty() }
+            .flatMap { $0.0.profileUseCase?.profile().asResult() ?? .empty() }
             .withUnretained(self)
-            .subscribe(onNext: { viewModel, user in
-                viewModel.user.onNext(user)
+            .subscribe(onNext: { viewModel, result in
+                switch result {
+                case .success(let user):
+                    viewModel.user.onNext(user)
+                case .failure:
+                    let alert = Alert(title: "프로필 편집 오류", message: "프로필 편집가 발생했어요! 다시 시도해주세요", observer: nil)
+                    viewModel.alert.onNext(alert)
+                }
             })
             .disposed(by: disposeBag)
         

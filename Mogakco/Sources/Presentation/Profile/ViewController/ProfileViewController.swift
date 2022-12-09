@@ -202,6 +202,10 @@ final class ProfileViewController: UIViewController {
         output.introduce
             .drive(profileView.introduceLabel.rx.text)
             .disposed(by: disposeBag)
+        
+        output.alert
+            .emit(to: rx.presentAlert)
+            .disposed(by: disposeBag)
     }
     
     private func bindHashtags(output: ProfileViewModel.Output) {

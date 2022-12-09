@@ -50,10 +50,18 @@ class HashtagSelectedViewModel: HashtagViewModel {
         guard let languageProps = languageProps else { return }
         let careers = selectedHashtags.map { $0.id }
         let signupProps = languageProps.toSignupProps(careers: careers)
-        signUseCase?.signup(signupProps: signupProps)
-            .subscribe { [weak self] _ in
-                self?.navigation.onNext(.finish(true))
-            }
+
+        (signUseCase?.signup(signupProps: signupProps).asResult() ?? .empty())
+            .withUnretained(self)
+            .subscribe(onNext: { viewModel, result in
+                switch result {
+                case .success:
+                    viewModel.navigation.onNext(.finish(true))
+                case .failure:
+                    let alert = Alert(title: "회원가입 오류", message: "회원가입 오류가 발생했어요! 다시 시도해주세요", observer: nil)
+                    viewModel.alert.onNext(alert)
+                }
+            })
             .disposed(by: disposeBag)
     }
 }

@@ -22,6 +22,7 @@ class HashtagViewModel: ViewModel {
     
     struct Output {
         let hashtagReload: Observable<Void>
+        let alert: Signal<Alert>
     }
     
     var hashTagUsecase: HashtagUseCaseProtocol?
@@ -29,6 +30,7 @@ class HashtagViewModel: ViewModel {
     var selectedHashtags: [Hashtag] = []
     let badgeList = BehaviorSubject<[Hashtag]>(value: [])
     var kind: KindHashtag = .language
+    let alert = PublishSubject<Alert>()
     
     var collectionViewCount: Int {
         guard let count = try? badgeList.value().count else { return 0 }
@@ -61,7 +63,10 @@ class HashtagViewModel: ViewModel {
             }
             .disposed(by: disposeBag)
         
-        return Output(hashtagReload: collectionReloadObservable.asObservable())
+        return Output(
+            hashtagReload: collectionReloadObservable.asObservable(),
+            alert: alert.asSignal(onErrorSignalWith: .empty())
+        )
     }
     
     func cellInfo(index: Int) -> Hashtag? {
@@ -75,10 +80,17 @@ class HashtagViewModel: ViewModel {
     }
     
     private func loadTagList(kind: KindHashtag) {
-        hashTagUsecase?.loadTagList(kind: kind)
-            .subscribe { [weak self] in
-                self?.badgeList.onNext($0)
-            }
+        (hashTagUsecase?.loadTagList(kind: kind).asResult() ?? .empty())
+            .withUnretained(self)
+            .subscribe(onNext: { viewModel, result in
+                switch result {
+                case .success(let badges):
+                    viewModel.badgeList.onNext(badges)
+                case .failure:
+                    let alert = Alert(title: "해시태그 로드 오류", message: "해시태그 로드 오류가 발생했어요! 다시 시도해주세요", observer: nil)
+                    viewModel.alert.onNext(alert)
+                }
+            })
             .disposed(by: disposeBag)
     }
     

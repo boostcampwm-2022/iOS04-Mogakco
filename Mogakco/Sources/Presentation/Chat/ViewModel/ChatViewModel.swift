@@ -41,6 +41,7 @@ final class ChatViewModel: ViewModel {
         let inputViewText: Driver<String>
         let sendMessageCompleted: Driver<Void>
         let refreshFinished: Signal<Void>
+        let alert: Signal<Alert>
     }
     
     private var isFirst = true
@@ -61,6 +62,7 @@ final class ChatViewModel: ViewModel {
     private let exitStudyTap = PublishSubject<Void>()
     private let showMemberTap = PublishSubject<Void>()
     private let refreshFinished = PublishSubject<Void>()
+    private let alert = PublishSubject<Alert>()
 
     func transform(input: Input) -> Output {
         bindChats(input: input)
@@ -75,46 +77,78 @@ final class ChatViewModel: ViewModel {
             selectedSidebar: selectedSidebar.asSignal(onErrorSignalWith: .empty()),
             inputViewText: inputViewText.asDriver(onErrorJustReturn: ""),
             sendMessageCompleted: sendMessageCompleted.asDriver(onErrorJustReturn: ()),
-            refreshFinished: refreshFinished.asSignal(onErrorSignalWith: .empty())
+            refreshFinished: refreshFinished.asSignal(onErrorSignalWith: .empty()),
+            alert: alert.asSignal(onErrorSignalWith: .empty())
         )
     }
     
     private func bindChats(input: Input) {
         // 채팅 로드
+        let newChats = BehaviorSubject<[Chat]>(value: [])
         
         Observable.merge(
             Observable.just(()),
             input.pagination ?? .empty()
         )
             .withUnretained(self)
-            .flatMap { $0.0.chatUseCase?.fetch(chatRoomID: $0.0.chatRoomID) ?? .empty() }
-            .withLatestFrom(messages) { ($0, $1) }
-            .subscribe(onNext: { [weak self] newChat, originalChat in
-                self?.messages.accept(newChat + originalChat)
+            .flatMap { $0.0.chatUseCase?.fetch(chatRoomID: $0.0.chatRoomID).asResult() ?? .empty() }
+            .withUnretained(self)
+            .subscribe(onNext: { viewModel, result in
+                switch result {
+                case .success(let chats):
+                    newChats.onNext(chats)
+                case .failure:
+                    let alert = Alert(title: "메세지 목록 로드 실패", message: "메세지 목록 로드에 실패했어요! 다시 시도해주세요", observer: nil)
+                    viewModel.alert.onNext(alert)
+                }
+            })
+            .disposed(by: disposeBag)
+        
+        newChats
+            .withLatestFrom(messages) { $0 + $1 }
+            .subscribe(onNext: { [weak self] in
+                self?.messages.accept($0)
                 self?.sendMessageCompleted.onNext(())
             })
             .disposed(by: disposeBag)
         
         // 채팅 observe
         
-        chatUseCase?.observe(chatRoomID: chatRoomID)
-            .withLatestFrom(messages) { ($0, $1) }
-            .subscribe(onNext: { [weak self] newChat, originalChats in
-                if self?.isFirst == false {
-                    self?.messages.accept(originalChats + [newChat])
-                } else {
-                    self?.isFirst = false
+        (chatUseCase?.observe(chatRoomID: chatRoomID).asResult() ?? .empty())
+            .withUnretained(self)
+            .subscribe(onNext: { viewModel, result in
+                switch result {
+                case .success(let chat):
+                    if viewModel.isFirst == false {
+                        newChats.onNext([chat])
+                    } else {
+                        viewModel.isFirst = false
+                    }
+                case .failure:
+                    let alert = Alert(title: "메세지 로드 실패", message: "메세지 로드에 실패했어요! 다시 시도해주세요", observer: nil)
+                    viewModel.alert.onNext(alert)
                 }
             })
             .disposed(by: disposeBag)
         
         // 채팅 전송
+        let profile = BehaviorSubject<User?>(value: nil)
+        
+        (chatUseCase?.myProfile().asResult() ?? .empty())
+            .withUnretained(self)
+            .subscribe(onNext: { viewModel, result in
+                switch result {
+                case .success(let user):
+                    profile.onNext(user)
+                case .failure:
+                    let alert = Alert(title: "유저 로드 실패", message: "유저 로드에 실패했어요! 다시 시도해주세요", observer: nil)
+                    viewModel.alert.onNext(alert)
+                }
+            })
+            .disposed(by: disposeBag)
         
         input.sendButtonDidTap
-            .withLatestFrom(Observable.combineLatest(
-                chatUseCase?.myProfile() ?? .empty(),
-                input.inputViewText
-            )) { ( $1.0, $1.1 ) }
+            .withLatestFrom(Observable.combineLatest(profile.compactMap { $0 }, input.inputViewText)) { ( $1.0, $1.1 ) }
             .map { user, message -> Chat in
                 return Chat(
                     id: UUID().uuidString,
@@ -127,12 +161,17 @@ final class ChatViewModel: ViewModel {
             }
             .withUnretained(self)
             .flatMap { viewModel, chat in
-                viewModel.chatUseCase?.send(chat: chat, to: viewModel.chatRoomID) ?? .empty()
+                viewModel.chatUseCase?.send(chat: chat, to: viewModel.chatRoomID).asResult() ?? .empty()
             }
-            .subscribe(onNext: { [weak self] in
-                self?.sendMessageCompleted.onNext(())
-            }, onError: {
-                print("메세지 전송 실패 \($0)")
+            .withUnretained(self)
+            .subscribe(onNext: { viewModel, result in
+                switch result {
+                case .success:
+                    viewModel.sendMessageCompleted.onNext(())
+                case .failure:
+                    let alert = Alert(title: "메세지 전송 실패", message: "메세지 전송dp 실패했어요! 다시 시도해주세요", observer: nil)
+                    viewModel.alert.onNext(alert)
+                }
             })
             .disposed(by: disposeBag)
     }
