@@ -98,8 +98,7 @@ final class ChatViewModel: ViewModel {
                 case .success(let chats):
                     newChats.onNext(chats)
                 case .failure:
-                    let alert = Alert(title: "메세지 목록 로드 실패", message: "메세지 목록 로드에 실패했어요! 다시 시도해주세요", observer: nil)
-                    viewModel.alert.onNext(alert)
+                    newChats.onNext([])
                 }
             })
             .disposed(by: disposeBag)
