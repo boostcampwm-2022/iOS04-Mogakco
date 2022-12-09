@@ -64,6 +64,7 @@ final class ChatCell: UICollectionViewCell, Identifiable {
         layoutProfileImageButton()
         layoutBubbleContainerView()
         layoutTextView()
+        layoutTimeLabel()
     }
     
     private func layoutCell() {
@@ -114,6 +115,10 @@ final class ChatCell: UICollectionViewCell, Identifiable {
         }
     }
     
+    private func layoutTimeLabel() {
+        addSubview(timeLabel)
+    }
+    
     func layoutChat(chat: Chat) {
         guard
             let isFromCurrentUser = chat.isFromCurrentUser,
@@ -137,6 +142,11 @@ final class ChatCell: UICollectionViewCell, Identifiable {
         }
         bubbleContainer.backgroundColor = .mogakcoColor.primarySecondary
         
+        timeLabel.snp.remakeConstraints {
+            $0.left.equalTo(bubbleContainer.snp.right).offset(4)
+            $0.bottom.equalTo(bubbleContainer)
+        }
+        
         if let image = image {
             profileImageView.image = image
             nameLabel.text = "탈퇴한 유저"
@@ -155,6 +165,13 @@ final class ChatCell: UICollectionViewCell, Identifiable {
             $0.right.equalToSuperview().inset(12)
             $0.width.lessThanOrEqualTo(200)
         }
+        
+        timeLabel.snp.remakeConstraints {
+            $0.right.equalTo(bubbleContainer.snp.left) // TODO: inset, offset 둘다 이상하게 먹음
+            $0.bottom.equalTo(bubbleContainer)
+        }
+
+        nameLabel.isHidden = true
         bubbleContainer.backgroundColor = .mogakcoColor.primaryDefault
         profileImageView.isHidden = true
     }
