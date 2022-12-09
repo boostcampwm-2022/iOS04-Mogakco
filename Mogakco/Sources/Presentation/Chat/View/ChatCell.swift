@@ -54,6 +54,9 @@ final class ChatCell: UICollectionViewCell, Identifiable {
         profileImageView.isHidden = false
         profileImageView.image = UIImage(systemName: "person")
         textView.text = nil
+        nameLabel.isHidden = false
+        nameLabel.text = nil
+        timeLabel.snp.removeConstraints()
         bubbleContainer.snp.removeConstraints()
     }
     
