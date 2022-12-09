@@ -131,6 +131,7 @@ final class ChatCell: UICollectionViewCell, Identifiable {
         }
         
         textView.text = chat.message
+        timeLabel.text = chat.date.toChatCompactDateString()
     }
     
     private func layoutOthersBubble(user: User? = nil, image: UIImage? = nil) {
