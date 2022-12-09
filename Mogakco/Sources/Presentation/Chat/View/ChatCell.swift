@@ -34,6 +34,11 @@ final class ChatCell: UICollectionViewCell, Identifiable {
         $0.font = UIFont.mogakcoFont.smallBold
     }
     
+    private let timeLabel = UILabel().then {
+        $0.textColor = .mogakcoColor.typographySecondary
+        $0.font = UIFont.mogakcoFont.smallRegular
+    }
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         layout()
