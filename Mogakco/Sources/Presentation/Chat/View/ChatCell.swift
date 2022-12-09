@@ -84,8 +84,8 @@ final class ChatCell: UICollectionViewCell, Identifiable {
         addSubview(profileImageView)
         
         profileImageView.snp.makeConstraints {
+            $0.top.equalTo(nameLabel.snp.bottom).offset(4)
             $0.left.equalToSuperview().offset(12)
-            $0.top.equalToSuperview().offset(4)
         }
     }
     
@@ -99,11 +99,6 @@ final class ChatCell: UICollectionViewCell, Identifiable {
     
     private func layoutBubbleContainerView() {
         addSubview(bubbleContainer)
-        
-        bubbleContainer.snp.makeConstraints {
-            $0.top.bottom.equalToSuperview()
-            $0.width.lessThanOrEqualTo(200)
-        }
     }
     
     private func layoutTextView() {
@@ -137,7 +132,8 @@ final class ChatCell: UICollectionViewCell, Identifiable {
     
     private func layoutOthersBubble(user: User? = nil, image: UIImage? = nil) {
         bubbleContainer.snp.remakeConstraints {
-            $0.left.equalTo(profileImageView.snp.right).offset(12)
+            $0.bottom.equalToSuperview()
+            $0.left.equalTo(profileImageView.snp.right).offset(8)
             $0.width.lessThanOrEqualTo(200)
         }
         bubbleContainer.backgroundColor = .mogakcoColor.primarySecondary
@@ -162,7 +158,8 @@ final class ChatCell: UICollectionViewCell, Identifiable {
     
     private func layoutMyBubble() {
         bubbleContainer.snp.remakeConstraints {
-            $0.right.equalToSuperview().inset(12)
+            $0.bottom.equalToSuperview()
+            $0.right.equalToSuperview().inset(8)
             $0.width.lessThanOrEqualTo(200)
         }
         
