@@ -60,6 +60,7 @@ final class AlertModalViewController: UIViewController {
             confirmButton.rx.tap.map { _ in true },
             cancelButton.rx.tap.map { _ in false }
         ])
+        .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance)
         .subscribe(onNext: { [weak self] in
             observer?.onNext($0)
             self?.dismiss(animated: true)

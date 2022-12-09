@@ -63,13 +63,20 @@ final class StudyListViewController: ViewController {
         
         let input = StudyListViewModel.Input(
             viewWillAppear: self.rx.viewWillAppear.map { _ in () }.asObservable(),
-            plusButtonTapped: header.plusButton.rx.tap.asObservable(),
-            cellSelected: collectionView.rx.itemSelected.asObservable(),
-            refresh: refreshControl.rx.controlEvent(.valueChanged).asObservable(),
-            sortButtonTapped: header.sortButton.rx.tap.asObservable(),
-            languageButtonTapped: header.languageButton.rx.tap.asObservable(),
-            categoryButtonTapped: header.categoryButton.rx.tap.asObservable(),
-            resetButtonTapped: header.resetButton.rx.tap.asObservable()
+            plusButtonTapped: header.plusButton.rx.tap
+                .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance),
+            cellSelected: collectionView.rx.itemSelected
+                .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance),
+            refresh: refreshControl.rx.controlEvent(.valueChanged)
+                .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance),
+            sortButtonTapped: header.sortButton.rx.tap
+                .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance),
+            languageButtonTapped: header.languageButton.rx.tap
+                .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance),
+            categoryButtonTapped: header.categoryButton.rx.tap
+                .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance),
+            resetButtonTapped: header.resetButton.rx.tap
+                .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance)
         )
         
         let output = viewModel.transform(input: input)

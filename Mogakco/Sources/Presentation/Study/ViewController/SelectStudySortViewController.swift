@@ -54,7 +54,8 @@ final class SelectStudySortViewController: ViewController {
     
     override func bind() {
         let input = SelectStudySortViewModel.Input(
-            selectedStudySort: sortCollectionView.rx.modelSelected(StudySort.self).asObservable()
+            selectedStudySort: sortCollectionView.rx.modelSelected(StudySort.self)
+                .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance)
         )
         
         let output = viewModel.transform(input: input)

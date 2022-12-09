@@ -89,9 +89,12 @@ class HashtagSelectViewController: ViewController {
     override func bind() {
         let input = HashtagViewModel.Input(
             kindHashtag: Observable.just(kind),
-            cellSelected: cellSelect.asObservable(),
-            nextButtonTapped: nextButton.rx.tap.asObservable(),
-            backButtonTapped: backButton.rx.tap.asObservable()
+            cellSelected: cellSelect
+                .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance),
+            nextButtonTapped: nextButton.rx.tap
+                .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance),
+            backButtonTapped: backButton.rx.tap
+                .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance)
         )
         
         let output = viewModel.transform(input: input)

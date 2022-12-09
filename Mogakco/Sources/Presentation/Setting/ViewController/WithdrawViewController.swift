@@ -92,8 +92,10 @@ final class WithdrawViewController: ViewController {
     
     override func bind() {
         let input = WithdrawViewModel.Input(
-            backButtonDidTap: backButton.rx.tap.asObservable(),
-            withdrawButtonDidTap: withdrawButton.rx.tap.asObservable()
+            backButtonDidTap: backButton.rx.tap
+                .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance),
+            withdrawButtonDidTap: withdrawButton.rx.tap
+                .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance)
         )
         
         let output = viewModel?.transform(input: input)
