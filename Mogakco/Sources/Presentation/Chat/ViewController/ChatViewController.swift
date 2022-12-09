@@ -20,6 +20,7 @@ final class ChatViewController: UIViewController {
     
     enum Constant {
         static let messageInputViewHeight = 100.0
+        static let collectionViewSpacing = 12.0
         static let sidebarZPosition = 100.0
         static let collectionViewHeight = 60
     }
@@ -39,7 +40,7 @@ final class ChatViewController: UIViewController {
         layout.scrollDirection = .vertical
         layout.sectionInset = UIEdgeInsets(top: 16, left: 0, bottom: 0, right: 0)
         layout.itemSize = CGSize(width: view.frame.width, height: 60)
-        layout.minimumLineSpacing = 12.0
+        layout.minimumLineSpacing = Constant.collectionViewSpacing
         $0.refreshControl = UIRefreshControl()
         $0.collectionViewLayout = layout
         $0.register(ChatCell.self, forCellWithReuseIdentifier: ChatCell.identifier)
@@ -366,7 +367,7 @@ extension ChatViewController: UICollectionViewDelegateFlowLayout {
         estimatedCell.layoutChat(chat: viewModel.messages.value[indexPath.item])
         estimatedCell.layoutIfNeeded()
         
-        let height = estimatedCell.bubbleContainer.frame.height
+        let height = estimatedCell.bubbleContainer.frame.height + estimatedCell.nameLabel.frame.height + 4.0
         
         return .init(width: view.frame.width, height: height)
     }
