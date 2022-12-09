@@ -134,6 +134,7 @@ final class ChatCell: UICollectionViewCell, Identifiable {
         
         if let image = image {
             profileImageView.image = image
+            nameLabel.text = "탈퇴한 유저"
         }
         
         if let user = user,
