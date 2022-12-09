@@ -38,7 +38,7 @@ final class RectLoadingCellSkeletonView: UIView {
         
         let firstBar = LoadingView().then {
             $0.clipsToBounds = true
-//            $0.layer.cornerRadius = 10
+            $0.layer.cornerRadius = 5
         }
         stackView.addArrangedSubview(firstBar)
         
@@ -49,7 +49,7 @@ final class RectLoadingCellSkeletonView: UIView {
         
         let secondBar = LoadingView().then {
             $0.clipsToBounds = true
-//            $0.layer.cornerRadius = 10
+            $0.layer.cornerRadius = 5
         }
         stackView.addArrangedSubview(secondBar)
         
@@ -60,7 +60,7 @@ final class RectLoadingCellSkeletonView: UIView {
         
         let thirdBar = LoadingView().then {
             $0.clipsToBounds = true
-//            $0.layer.cornerRadius = 10
+            $0.layer.cornerRadius = 5
         }
         stackView.addArrangedSubview(thirdBar)
         
@@ -71,7 +71,7 @@ final class RectLoadingCellSkeletonView: UIView {
         
         let fourthBar = LoadingView().then {
             $0.clipsToBounds = true
-//            $0.layer.cornerRadius = 10
+            $0.layer.cornerRadius = 5
         }
         stackView.addArrangedSubview(fourthBar)
         
@@ -82,7 +82,7 @@ final class RectLoadingCellSkeletonView: UIView {
         
         let fifthBar = LoadingView().then {
             $0.clipsToBounds = true
-//            $0.layer.cornerRadius = 10
+            $0.layer.cornerRadius = 5
         }
         stackView.addArrangedSubview(fifthBar)
         
@@ -93,7 +93,7 @@ final class RectLoadingCellSkeletonView: UIView {
         
         let sixthBar = LoadingView().then {
             $0.clipsToBounds = true
-//            $0.layer.cornerRadius = 10
+            $0.layer.cornerRadius = 5
         }
         stackView.addArrangedSubview(sixthBar)
         

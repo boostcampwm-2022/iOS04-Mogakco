@@ -8,4 +8,16 @@
 
 import UIKit
 
-final class RectLoadingListContentsView: UIView {}
+class SkeletonContentsBase: UIView {
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        clipsToBounds = true
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
+final class RectLoadingListContentsView: SkeletonContentsBase {}
+final class ChatRoomListContentsView: SkeletonContentsBase {}
