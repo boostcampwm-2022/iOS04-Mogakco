@@ -21,3 +21,5 @@ class SkeletonContentsBase: UIView {
 
 final class StudyListSkeletonContentsView: SkeletonContentsBase {}
 final class ChatRoomListSkeletonContentsView: SkeletonContentsBase {}
+final class StudyDetailSkeletonContentsView: SkeletonContentsBase {}
+final class UserProfileSkeletonContentsView: SkeletonContentsBase {}
