@@ -188,6 +188,7 @@ final class ChatViewController: UIViewController {
         layoutSideBar()
         layoutBlackScreen()
         layoutMessageInputView()
+        layoutNavigationBar()
     }
     
     private func configure() {
