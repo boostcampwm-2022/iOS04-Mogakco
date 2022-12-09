@@ -33,32 +33,32 @@ final class ChatRoomLoadingCellSkeletonView: UIView {
             $0.bottom.equalToSuperview()
         }
         
-        let firstBar = LoadingView().then {
-            $0.clipsToBounds = true
-            $0.layer.cornerRadius = 10
+        let spacing = 8
+        let stackView = UIStackView().then {
+            $0.spacing = CGFloat(spacing)
+            $0.axis = .vertical
+            $0.alignment = .leading
         }
-        addSubview(firstBar)
         
-        let spacing = 16
+        [1.5, 2.0].forEach {
+            let firstBar = LoadingView().then {
+                $0.clipsToBounds = true
+                $0.layer.cornerRadius = 10
+            }
+            stackView.addArrangedSubview(firstBar)
+            
+            let widthRatio = frame.width / $0
+            
+            firstBar.snp.makeConstraints {
+                $0.height.equalTo(((Int(frame.width) / 6) - spacing * 2) / 2)
+                $0.width.equalTo(widthRatio)
+            }
+        }
         
-        firstBar.snp.makeConstraints {
+        addSubview(stackView)
+        stackView.snp.makeConstraints {
             $0.top.equalTo(rectView.snp.top)
             $0.leading.equalTo(rectView.snp.trailing).offset(spacing)
-            $0.height.equalTo(Int(frame.width / 6) / 2 - spacing / 2)
-            $0.width.equalTo(frame.width / 1.5)
-        }
-        
-        let secondBar = LoadingView().then {
-            $0.clipsToBounds = true
-            $0.layer.cornerRadius = 10
-        }
-        addSubview(secondBar)
-        
-        secondBar.snp.makeConstraints {
-            $0.top.equalTo(firstBar.snp.bottom).offset(10)
-            $0.leading.equalTo(rectView.snp.trailing).offset(spacing)
-            $0.height.equalTo(Int(frame.width / 6) / 2 - spacing / 2)
-            $0.width.equalTo(frame.width / 2)
         }
     }
 }
