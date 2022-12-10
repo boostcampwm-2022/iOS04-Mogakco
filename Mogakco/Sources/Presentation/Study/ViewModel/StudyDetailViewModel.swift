@@ -30,6 +30,7 @@ final class StudyDetailViewModel: ViewModel {
         let studyDetail: Observable<Study>
         let languages: Driver<[Hashtag]>
         let participants: Driver<[User]>
+        let endLoading: Observable<Bool>
         let alert: Signal<Alert>
     }
     
@@ -123,23 +124,6 @@ final class StudyDetailViewModel: ViewModel {
             })
             .disposed(by: disposeBag)
         
-//        if let userUseCase {
-//            Observable.combineLatest(input.selectParticipantCell, userUseCase.myProfile())
-//                .map { ($0.0.row, $0.1) }
-//                .map { (try? participants.value()[$0.0], $0.1) }
-//                .withUnretained(self)
-//                .subscribe {
-//                    let user = $0.1.0
-//                    if $0.1.0?.id == $0.1.1.id {
-//                        $0.0.navigation.onNext(.profile(type: .current))
-//                    } else {
-//                        guard let other = $0.1.0 else { return }
-//                        $0.0.navigation.onNext(.profile(type: .other(other)))
-//                    }
-//                }
-//                .disposed(by: disposeBag)
-//        }
-        
         input.backButtonTapped
             .map { StudyDetailNavigation.back }
             .bind(to: navigation)
@@ -152,24 +136,15 @@ final class StudyDetailViewModel: ViewModel {
             .bind(to: navigation)
             .disposed(by: disposeBag)
         
+        let endLoading = Observable.combineLatest(studyDetailLoad, languages.skip(1), participants.skip(1))
+            .map { _ in false }
+        
         return Output(
             studyDetail: studyDetailLoad,
             languages: languages.asDriver(onErrorJustReturn: []),
             participants: participants.asDriver(onErrorJustReturn: []),
+            endLoading: endLoading,
             alert: alert.asSignal(onErrorSignalWith: .empty())
         )
-    }
-    
-    func userSelect(index: Int) {
-        // 사용자 선택되었을 때 내 프로필 보여주기: navigation.onNext(.current)
-        // 사용자 선택되었을 때 다른 프로필 보여주기: navigation.onNext(.other(user))
-    }
-    
-    func languaegCellInfo(index: Int) -> Hashtag? {
-        return try? languages.value()[index]
-    }
-    
-    func  participantCellInfo(index: Int) -> User? {
-        return try? participants.value()[index]
     }
 }
