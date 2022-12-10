@@ -58,27 +58,19 @@ extension Int {
     
     /// ex) 202212011700 ==> 오후 5시
     func toChatCompactDateString() -> String {
-        var number = self / 100
-        let date: [Int] = [100, 100].map {
-            let remain = number % $0
-            number /= $0
-            return remain
+        let number = self / 100
+        let time = number % 10000
+        let hour = Int(Double(time) / 100.0)
+        let minutes = time % 100
+        var dateString = ""
+        
+        if hour - 12 > 1 {
+            dateString = "오후 \(String(format: "%02d", hour - 12)):\(String(format: "%02d", minutes))"
+        } else if hour - 12 == 0 {
+            dateString = "정오 12:\(String(format: "%02d", minutes))"
+        } else {
+            dateString = "오전 \(String(format: "%02d", hour)):\(String(format: "%02d", minutes))"
         }
-        
-        let all = zip(date.reversed(), ["시", "분"])
-        
-        let dateString = all.reduce("") { result, info in
-            let (num, unit) = info
-            if unit == "분" && num == 0 { return result }
-            if unit == "시" {
-                let hour = num <= 12 ? num : num - 12
-                let ampm = num < 12 ? "오전" : "오후"
-                return "\(result) \(ampm) \(hour):"
-            } else {
-                return "\(result)\(num)"
-            }
-        }
-        
-        return dateString.trimmingCharacters(in: [" "])
+        return dateString
     }
 }
