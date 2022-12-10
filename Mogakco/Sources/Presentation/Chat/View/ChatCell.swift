@@ -42,7 +42,6 @@ final class ChatCell: UICollectionViewCell, Identifiable {
     override init(frame: CGRect) {
         super.init(frame: frame)
         layout()
-        prepareForReuse()
     }
     
     required init?(coder: NSCoder) {
@@ -51,11 +50,12 @@ final class ChatCell: UICollectionViewCell, Identifiable {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        profileImageView.isHidden = false
         profileImageView.image = UIImage(systemName: "person")
         textView.text = nil
-        nameLabel.isHidden = false
         nameLabel.text = nil
+        timeLabel.text = nil
+        nameLabel.isHidden = false
+        profileImageView.isHidden = false
         timeLabel.snp.removeConstraints()
         bubbleContainer.snp.removeConstraints()
     }
@@ -122,7 +122,8 @@ final class ChatCell: UICollectionViewCell, Identifiable {
             let isFromCurrentUser = chat.isFromCurrentUser,
             let user = chat.user else {
             textView.text = chat.message
-            return layoutOthersBubble(image: UIImage(systemName: "person.fill")) }
+            timeLabel.text = chat.date.toChatCompactDateString()
+            return layoutOthersBubble() }
 
         if isFromCurrentUser {
             layoutMyBubble()
@@ -134,7 +135,7 @@ final class ChatCell: UICollectionViewCell, Identifiable {
         timeLabel.text = chat.date.toChatCompactDateString()
     }
     
-    private func layoutOthersBubble(user: User? = nil, image: UIImage? = nil) {
+    private func layoutOthersBubble(user: User? = nil) {
         bubbleContainer.snp.remakeConstraints {
             $0.bottom.equalToSuperview()
             $0.left.equalTo(profileImageView.snp.right).offset(8)
@@ -147,16 +148,16 @@ final class ChatCell: UICollectionViewCell, Identifiable {
             $0.bottom.equalTo(bubbleContainer)
         }
         
-        if let image = image {
-            profileImageView.image = image
+        if let user = user {
+            nameLabel.text = user.name
+        } else {
             nameLabel.text = "탈퇴한 유저"
         }
         
-        if let user = user,
-           let urlStr = user.profileImageURLString,
-           let url = URL(string: urlStr) {
-            nameLabel.text = user.name
+        if let url = URL(string: user?.profileImageURLString ?? "") {
             profileImageView.load(url: url)
+        } else {
+            profileImageView.image = UIImage(systemName: "person.fill")
         }
     }
     
