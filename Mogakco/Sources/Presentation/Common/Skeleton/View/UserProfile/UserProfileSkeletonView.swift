@@ -15,27 +15,23 @@ import Then
 
 final class UserProfileSkeletonView: UIView {
     
-    let titleView = LoadingView()
-    let infoStack = UIStackView().then {
-        $0.spacing = 8
-        $0.axis = .vertical
+    let profileImage = LoadingView()
+    let profileInfo = UIStackView().then {
         $0.alignment = .leading
-    }
-    let studyInfo = LoadingView()
-    let languageTitle = LoadingView()
-    let languageStack = UIStackView().then {
+        $0.axis = .vertical
         $0.spacing = 8
-        $0.axis = .horizontal
     }
-    let participantTitle = LoadingView()
-    let participantStack = UIStackView().then {
+    let profileEditButton = LoadingView()
+    
+    let tagStackView = UIStackView().then {
+        $0.alignment = .leading
+        $0.axis = .vertical
         $0.spacing = 8
-        $0.axis = .horizontal
     }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        backgroundColor = UIColor.baseColor
+        backgroundColor = UIColor.mogakcoColor.backgroundDefault
         layout()
     }
     
@@ -44,86 +40,63 @@ final class UserProfileSkeletonView: UIView {
     }
     
     private func layout() {
-        layoutStackView()
-        layoutConstraints()
+        layoutProafile()
+        layoutTag()
     }
     
-    private func layoutStackView() {
-        [0.7, 0.3, 0.2].forEach {
-            let info = LoadingView()
+    private func layoutProafile() {
+        profileImage.layer.cornerRadius = 60
+        addSubview(profileImage)
+        profileImage.snp.makeConstraints {
+            $0.top.equalToSuperview()
+            $0.leading.equalToSuperview().inset(16)
+            $0.width.height.equalTo(120)
+        }
+        
+        [0.5, 0.4].forEach {
+            let loadingView = LoadingView()
+            loadingView.layer.cornerRadius = 8
             let widthRatio = frame.width * $0
-            infoStack.addArrangedSubview(info)
-            info.snp.makeConstraints {
+            loadingView.snp.makeConstraints {
                 $0.width.equalTo(widthRatio)
+                $0.height.equalTo(20)
             }
+            profileInfo.addArrangedSubview(loadingView)
         }
-        (0..<3).forEach { _ in
-            let hashtag = LoadingView()
-            let widthRatio = frame.width * 0.25
-            languageStack.addArrangedSubview(hashtag)
-            hashtag.snp.makeConstraints {
-                $0.width.equalTo(widthRatio)
-                $0.height.equalTo(35)
-            }
+        
+        addSubview(profileInfo)
+        profileInfo.snp.makeConstraints {
+            $0.leading.equalTo(profileImage.snp.trailing).offset(16)
+            $0.centerY.equalTo(profileImage.snp.centerY)
         }
-        (0..<3).forEach { _ in
-            let participant = LoadingView()
-            participantStack.addArrangedSubview(participant)
-            participant.snp.makeConstraints {
-                $0.width.equalTo(110)
-                $0.height.equalTo(130)
-            }
+        
+        profileEditButton.layer.cornerRadius = 8
+        addSubview(profileEditButton)
+        profileEditButton.snp.makeConstraints {
+            $0.top.equalTo(profileImage.snp.bottom).offset(16)
+            $0.leading.trailing.equalToSuperview().inset(16)
+            $0.height.equalTo(35)
         }
     }
     
-    private func layoutConstraints() {
-        addSubview(titleView)
-        titleView.snp.makeConstraints {
-            $0.top.leading.trailing.equalToSuperview()
-            $0.height.equalTo(40)
+    private func layoutTag() {
+        [0.2, 0.8, 0.2, 0.8, 0.2, 0.8, 0.4, 1.0].enumerated().forEach { index, ratio in
+            let loadingView = LoadingView()
+            loadingView.layer.cornerRadius = 8
+            let width = frame.width * ratio
+            let height = ((index % 2) == 0) ? 25 : 35
+            tagStackView.addArrangedSubview(loadingView)
+            
+            loadingView.snp.makeConstraints {
+                $0.width.equalTo(width)
+                $0.height.equalTo(height)
+            }
         }
         
-        addSubview(infoStack)
-        infoStack.snp.makeConstraints {
-            $0.top.equalTo(titleView.snp.bottom).offset(10)
-            $0.leading.trailing.equalToSuperview()
-        }
-        
-        addSubview(studyInfo)
-        studyInfo.snp.makeConstraints {
-            $0.top.equalTo(infoStack.snp.bottom).offset(10)
-            $0.leading.trailing.equalToSuperview()
-            $0.width.equalTo(frame.width * 0.8)
-            $0.height.equalTo(20)
-        }
-        
-        addSubview(languageTitle)
-        languageTitle.snp.makeConstraints {
-            $0.top.equalTo(studyInfo.snp.bottom).offset(10)
-            $0.leading.equalToSuperview()
-            $0.width.equalTo(60)
-            $0.height.equalTo(40)
-        }
-        
-        addSubview(languageStack)
-        languageStack.snp.makeConstraints {
-            $0.top.equalTo(languageTitle.snp.bottom).offset(10)
-            $0.leading.equalToSuperview()
-        }
-        
-        addSubview(participantTitle)
-        participantTitle.snp.makeConstraints {
-            $0.top.equalTo(languageStack.snp.bottom).offset(10)
-            $0.leading.equalToSuperview()
-            $0.width.equalTo(100)
-            $0.height.equalTo(40)
-        }
-        
-        addSubview(participantStack)
-        participantStack.snp.makeConstraints {
-            $0.top.equalTo(participantTitle.snp.bottom).offset(10)
-            $0.leading.equalToSuperview()
+        addSubview(tagStackView)
+        tagStackView.snp.makeConstraints {
+            $0.top.equalTo(profileEditButton.snp.bottom).offset(30)
+            $0.leading.trailing.equalToSuperview().inset(16)
         }
     }
 }
-

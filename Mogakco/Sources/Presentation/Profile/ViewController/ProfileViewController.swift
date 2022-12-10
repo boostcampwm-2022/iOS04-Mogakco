@@ -9,6 +9,7 @@
 import UIKit
 
 import RxSwift
+import RxCocoa
 import SnapKit
 
 final class ProfileViewController: UIViewController {
@@ -24,6 +25,8 @@ final class ProfileViewController: UIViewController {
         static let studyRatingListView = 230.0
         static let bottomMarginViewHeight = 60.0
     }
+    
+    private let skeletonContentsView = UserProfileSkeletonContentsView()
     
     private let scrollView = UIScrollView().then {
         $0.showsVerticalScrollIndicator = false
@@ -107,8 +110,8 @@ final class ProfileViewController: UIViewController {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
         view.backgroundColor = .mogakcoColor.backgroundDefault
-        bind()
         layout()
+        bind()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -152,6 +155,10 @@ final class ProfileViewController: UIViewController {
     }
     
     func bindIsMyProfile(output: ProfileViewModel.Output) {
+        Observable.just(true)
+            .bind(to: skeletonContentsView.rx.skeleton)
+            .disposed(by: disposeBag)
+        
         output.isMyProfile
             .drive(profileView.chatButton.rx.isHidden)
             .disposed(by: disposeBag)
@@ -240,8 +247,17 @@ final class ProfileViewController: UIViewController {
     
     func layout() {
         layoutHeaderView()
+        layoutContentsView()
         layoutScrollView()
         layoutSettingButton()
+    }
+    
+    private func layoutContentsView() {
+        view.addSubview(skeletonContentsView)
+        skeletonContentsView.snp.makeConstraints {
+            $0.top.equalTo(headerView.snp.bottom)
+            $0.leading.trailing.bottom.equalTo(view.safeAreaLayoutGuide)
+        }
     }
     
     private func layoutHeaderView() {
@@ -253,17 +269,17 @@ final class ProfileViewController: UIViewController {
     }
     
     private func layoutSettingButton() {
-        view.addSubview(settingButton)
+        skeletonContentsView.addSubview(settingButton)
         settingButton.snp.makeConstraints {
             $0.top.right.equalTo(headerView).inset(16)
         }
     }
     
     private func layoutScrollView() {
-        view.addSubview(scrollView)
+        skeletonContentsView.addSubview(scrollView)
         scrollView.snp.makeConstraints {
             $0.top.equalTo(headerView.snp.bottom)
-            $0.leading.trailing.bottom.equalTo(view.safeAreaLayoutGuide)
+            $0.leading.trailing.bottom.equalToSuperview()
         }
         
         scrollView.addSubview(contentStackView)
