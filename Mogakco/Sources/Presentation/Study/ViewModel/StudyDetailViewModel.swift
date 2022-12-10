@@ -42,17 +42,31 @@ final class StudyDetailViewModel: ViewModel {
     var joinStudyUseCase: JoinStudyUseCaseProtocol?
     var reportUseCase: ReportUseCaseProtocol?
     let navigation = PublishSubject<StudyDetailNavigation>()
-    var languages = BehaviorSubject<[Hashtag]>(value: [])
-    var participants = BehaviorSubject<[User]>(value: [])
-    var languageCount: Int { (try? languages.value().count) ?? 0 }
-    var participantsCount: Int { (try? participants.value().count) ?? 0 }
+    private let studyDetailLoad = PublishSubject<Study>()
+    private let languages = BehaviorSubject<[Hashtag]>(value: [])
+    private let participants = BehaviorSubject<[User]>(value: [])
     private let alert = PublishSubject<Alert>()
 
     func transform(input: Input) -> Output {
-        let studyDetailLoad = PublishSubject<Study>()
-        let languages = BehaviorSubject<[Hashtag]>(value: [])
-        let participants = BehaviorSubject<[User]>(value: [])
+        bindStudyDetail()
+        bindStudyJoin(input.studyJoinButtonTapped)
+        bindParticipantCellTapped(input.selectParticipantCell)
+        bindBackButton(input.backButtonTapped)
+        bindReportButton(input.reportButtonTapped)
         
+        let endLoading = Observable.combineLatest(studyDetailLoad, languages.skip(1), participants.skip(1))
+            .map { _ in false }
+        
+        return Output(
+            studyDetail: studyDetailLoad,
+            languages: languages.asDriver(onErrorJustReturn: []),
+            participants: participants.asDriver(onErrorJustReturn: []),
+            endLoading: endLoading,
+            alert: alert.asSignal(onErrorSignalWith: .empty())
+        )
+    }
+    
+    private func bindStudyDetail() {
         studyDetailUseCase?.study(id: studyID)
             .bind(to: studyDetailLoad)
             .disposed(by: disposeBag)
@@ -75,15 +89,17 @@ final class StudyDetailViewModel: ViewModel {
             .subscribe(onNext: { viewModel, result in
                 switch result {
                 case .success(let users):
-                    participants.onNext(users)
+                    viewModel.participants.onNext(users)
                 case .failure:
                     let alert = Alert(title: "유저 목록 로드 오류", message: "유저 목록 로드 오류가 발생했어요! 다시 시도해주세요", observer: nil)
                     viewModel.alert.onNext(alert)
                 }
             })
             .disposed(by: disposeBag)
-
-        input.studyJoinButtonTapped
+    }
+    
+    private func bindStudyJoin(_ studyJoinButtonTapped: Observable<Void>) {
+        studyJoinButtonTapped
             .withUnretained(self)
             .flatMap { $0.0.joinStudyUseCase?.join(id: $0.0.studyID).asResult() ?? .empty() }
             .withUnretained(self)
@@ -97,7 +113,9 @@ final class StudyDetailViewModel: ViewModel {
                 }
             })
             .disposed(by: disposeBag)
-        
+    }
+    
+    private func bindParticipantCellTapped(_ userCellTapped: Observable<User>) {
         let profile = BehaviorSubject<User?>(value: nil)
         
         (userUseCase?.myProfile().asResult() ?? .empty())
@@ -112,8 +130,8 @@ final class StudyDetailViewModel: ViewModel {
                 }
             })
             .disposed(by: disposeBag)
-
-        Observable.combineLatest(input.selectParticipantCell, profile.compactMap { $0 })
+        
+        Observable.combineLatest(userCellTapped, profile.compactMap { $0 })
             .subscribe(onNext: { [weak self] selectUser, profile in
                 guard let self else { return }
                 if selectUser.id == profile.id {
@@ -123,28 +141,21 @@ final class StudyDetailViewModel: ViewModel {
                 }
             })
             .disposed(by: disposeBag)
-        
-        input.backButtonTapped
+    }
+    
+    private func bindBackButton(_ buttonTapped: Observable<Void>) {
+        buttonTapped
             .map { StudyDetailNavigation.back }
             .bind(to: navigation)
             .disposed(by: disposeBag)
-        
-        input.reportButtonTapped
+    }
+    
+    private func bindReportButton(_ buttonTapped: Observable<Void>) {
+        buttonTapped
             .withUnretained(self)
             .flatMap { $0.0.reportUseCase?.reportStudy(id: $0.0.studyID) ?? .empty() }
             .map { _ in StudyDetailNavigation.back }
             .bind(to: navigation)
             .disposed(by: disposeBag)
-        
-        let endLoading = Observable.combineLatest(studyDetailLoad, languages.skip(1), participants.skip(1))
-            .map { _ in false }
-        
-        return Output(
-            studyDetail: studyDetailLoad,
-            languages: languages.asDriver(onErrorJustReturn: []),
-            participants: participants.asDriver(onErrorJustReturn: []),
-            endLoading: endLoading,
-            alert: alert.asSignal(onErrorSignalWith: .empty())
-        )
     }
 }
