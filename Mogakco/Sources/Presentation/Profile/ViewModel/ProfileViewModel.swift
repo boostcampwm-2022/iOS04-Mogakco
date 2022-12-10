@@ -46,14 +46,15 @@ final class ProfileViewModel: ViewModel {
     
     struct Output {
         let isMyProfile: Driver<Bool>
-        let profileImageURL: Driver<URL>
-        let representativeLanguageImage: Driver<UIImage>
+        let profileImageURL: Observable<URL>
+        let representativeLanguageImage: Observable<UIImage>
         let name: Driver<String>
         let introduce: Driver<String>
         let languages: Driver<[Hashtag]>
         let careers: Driver<[Hashtag]>
         let categorys: Driver<[Hashtag]>
         let studyRatingList: Driver<[(String, Int)]>
+        let endLoading: Observable<Bool>
         let alert: Signal<Alert>
     }
 
@@ -75,12 +76,10 @@ final class ProfileViewModel: ViewModel {
             isMyProfile: type.map { $0 == .current }.asDriver(onErrorJustReturn: false),
             profileImageURL: user
                 .compactMap { $0?.profileImageURLString }
-                .compactMap { URL(string: $0) }
-                .asDriver(onErrorDriveWith: .empty()),
+                .compactMap { URL(string: $0) },
             representativeLanguageImage: user
                 .compactMap { $0?.languages.randomElement() }
-                .compactMap { UIImage(named: $0) }
-                .asDriver(onErrorDriveWith: .empty()),
+                .compactMap { UIImage(named: $0) },
             name: user.compactMap { $0?.name }.asDriver(onErrorJustReturn: ""),
             introduce: user.compactMap { $0?.introduce }.asDriver(onErrorJustReturn: ""),
             languages: user
@@ -96,8 +95,15 @@ final class ProfileViewModel: ViewModel {
                 .map { $0.compactMap { Category.idToHashtag(id: $0) } }
                 .asDriver(onErrorJustReturn: []),
             studyRatingList: studyRatingList.asDriver(onErrorJustReturn: []),
+            endLoading: bindEndLoading(),
             alert: alert.asSignal(onErrorSignalWith: .empty())
         )
+    }
+    
+    private func bindEndLoading() -> Observable<Bool> {
+        return Observable
+            .combineLatest(user.skip(1), studyRatingList.skip(1))
+            .map { _ in false }
     }
     
     private func bindUser(input: Input) {
