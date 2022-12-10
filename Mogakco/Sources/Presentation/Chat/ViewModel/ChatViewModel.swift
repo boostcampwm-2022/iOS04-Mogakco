@@ -93,7 +93,7 @@ final class ChatViewModel: ViewModel {
             .withUnretained(self)
             .flatMap { $0.0.chatUseCase?.fetch(chatRoomID: $0.0.chatRoomID).asResult() ?? .empty() }
             .withUnretained(self)
-            .subscribe(onNext: { viewModel, result in
+            .subscribe(onNext: { _, result in
                 switch result {
                 case .success(let chats):
                     newChats.onNext(chats)
@@ -101,6 +101,10 @@ final class ChatViewModel: ViewModel {
                     newChats.onNext([])
                 }
             })
+            .disposed(by: disposeBag)
+        
+        input.pagination?
+            .subscribe(refreshFinished)
             .disposed(by: disposeBag)
         
         newChats
