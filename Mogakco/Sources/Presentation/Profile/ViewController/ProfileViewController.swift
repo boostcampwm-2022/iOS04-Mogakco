@@ -13,7 +13,7 @@ import RxCocoa
 import SnapKit
 
 final class ProfileViewController: UIViewController {
-
+    
     enum Constant {
         static let headerViewTitle = "프로필"
         static let languageHashtagListViewTitle = "언어"
@@ -60,7 +60,7 @@ final class ProfileViewController: UIViewController {
     private let boundaryView = UIView().then {
         $0.backgroundColor = .mogakcoColor.primaryDefault
         $0.snp.makeConstraints {
-            $0.height.equalTo(4.0) 
+            $0.height.equalTo(4.0)
         }
     }
     
@@ -101,7 +101,7 @@ final class ProfileViewController: UIViewController {
         $0.setImage(UIImage(systemName: "line.horizontal.3"), for: .normal)
         $0.tintColor = .mogakcoColor.primaryDefault
     }
-
+    
     private let report = PublishSubject<Void>()
     private let disposeBag = DisposeBag()
     private var viewModel: ProfileViewModel
@@ -148,16 +148,32 @@ final class ProfileViewController: UIViewController {
         )
         let output = viewModel.transform(input: input)
         
+        bindLoadingView(output: output)
         bindIsMyProfile(output: output)
         bindProfile(output: output)
         bindHashtags(output: output)
         bindReportButton()
     }
     
-    func bindIsMyProfile(output: ProfileViewModel.Output) {
+    private func bindLoadingView(output: ProfileViewModel.Output) {
         Observable.just(true)
             .bind(to: skeletonContentsView.rx.skeleton)
             .disposed(by: disposeBag)
+        
+        Observable.just(true)
+            .bind(to: profileView.roundProfileImageView.rx.skeleton)
+            .disposed(by: disposeBag)
+        
+        Observable.just(true)
+            .bind(to: profileView.roundLanguageImageView.rx.skeleton)
+            .disposed(by: disposeBag)
+        
+        output.endLoading
+            .bind(to: skeletonContentsView.rx.skeleton)
+            .disposed(by: disposeBag)
+    }
+    
+    private func bindIsMyProfile(output: ProfileViewModel.Output) {
         
         output.isMyProfile
             .drive(profileView.chatButton.rx.isHidden)
@@ -195,11 +211,18 @@ final class ProfileViewController: UIViewController {
     
     private func bindProfile(output: ProfileViewModel.Output) {
         output.profileImageURL
-            .drive(profileView.roundProfileImageView.rx.loadImage)
+            .withUnretained(self)
+            .flatMap { $0.0.profileView.roundProfileImageView.loadAndEvent(url: $0.1) }
+            .bind(to: profileView.roundProfileImageView.rx.skeleton)
             .disposed(by: disposeBag)
         
         output.representativeLanguageImage
-            .drive(profileView.roundLanguageImageView.rx.image)
+            .bind(to: profileView.roundLanguageImageView.rx.image)
+            .disposed(by: disposeBag)
+        
+        output.representativeLanguageImage
+            .map { _ in false }
+            .bind(to: profileView.roundLanguageImageView.rx.skeleton)
             .disposed(by: disposeBag)
         
         output.name
