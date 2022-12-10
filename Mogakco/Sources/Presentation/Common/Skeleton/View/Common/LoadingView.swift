@@ -17,6 +17,7 @@ final class LoadingView: UIView {
     
     init() {
         super.init(frame: .zero)
+        clipsToBounds = true
         backgroundColor = .backColor
     }
     
