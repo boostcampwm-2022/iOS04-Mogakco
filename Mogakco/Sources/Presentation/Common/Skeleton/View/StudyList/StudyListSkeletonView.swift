@@ -38,7 +38,7 @@ final class StudyListSkeletonView: UIView {
         
         stackView.snp.makeConstraints {
             $0.top.equalToSuperview().inset(10)
-            $0.leading.trailing.equalToSuperview()
+            $0.leading.trailing.equalToSuperview().inset(16)
         }
     }
 }

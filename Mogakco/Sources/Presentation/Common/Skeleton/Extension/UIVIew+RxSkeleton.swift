@@ -17,9 +17,13 @@ extension UIView {
         if self is UIImageView || self is ChatRoomUsersImageView {
             fillView(loadingView: SkeletonView(frame: frame, type: .image))
         } else if self is StudyListSkeletonContentsView {
-            fillView(loadingView: SkeletonView(frame: frame, type: .rectList))
+            fillView(loadingView: SkeletonView(frame: frame, type: .studyList))
         } else if self is ChatRoomListSkeletonContentsView {
             fillView(loadingView: SkeletonView(frame: frame, type: .chatList))
+        } else if self is StudyDetailSkeletonContentsView {
+            fillView(loadingView: SkeletonView(frame: frame, type: .studyDetail))
+        } else if self is UserProfileSkeletonContentsView {
+            fillView(loadingView: SkeletonView(frame: frame, type: .userProfile))
         } else {
             fillView(loadingView: SkeletonView(frame: frame, type: .none))
         }
