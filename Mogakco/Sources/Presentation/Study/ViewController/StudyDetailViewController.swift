@@ -189,6 +189,10 @@ final class StudyDetailViewController: UIViewController {
             }
             .disposed(by: disposeBag)
         
+        output.endLoading
+            .bind(to: skeletonLoadingView.rx.skeleton)
+            .disposed(by: disposeBag)
+        
         output.alert
             .emit(to: rx.presentAlert)
             .disposed(by: disposeBag)
