@@ -13,13 +13,13 @@ import RxSwift
 import RxCocoa
 
 final class StudyDetailViewController: UIViewController {
-    
-    private lazy var scrollView = UIScrollView()
-    private lazy var contentsView = UIView()
+     
+    private lazy var skeletonLoadingView = StudyDetailSkeletonContentsView()
     private lazy var studyTitleLabel = UILabel().then {
         $0.textColor = .mogakcoColor.typographyPrimary
         $0.font = UIFont.mogakcoFont.title2Bold
         $0.text = "스터디"
+        $0.sizeToFit()
     }
     private let dateView = StudyInfoView(frame: .zero).then {
         $0.textLabel.text = "1월 20일 12시 30분"
@@ -144,6 +144,10 @@ final class StudyDetailViewController: UIViewController {
     }
     
     func bind() {
+        Observable.just(true)
+            .bind(to: skeletonLoadingView.rx.skeleton)
+            .disposed(by: disposeBag)
+        
         let input = StudyDetailViewModel.Input(
             studyJoinButtonTapped: studyJoinButton.rx.tap
                 .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance),
@@ -200,9 +204,8 @@ final class StudyDetailViewController: UIViewController {
     }
     
     private func layoutSubViews() {
-        view.addSubview(scrollView)
-        scrollView.addSubview(contentsView)
-        contentsView.addSubViews([
+        view.addSubview(skeletonLoadingView)
+        skeletonLoadingView.addSubViews([
             studyTitleLabel,
             studyInfoStackView,
             studyInfoDescription,
@@ -212,7 +215,7 @@ final class StudyDetailViewController: UIViewController {
             participantsCollectionView
         ])
         
-        layoutContentScroll()
+        layoutContent()
         layoutStudyInfo()
         layoutStudyIntroduce()
         layoutLanguage()
@@ -220,14 +223,9 @@ final class StudyDetailViewController: UIViewController {
         layoutStudyJoinButton()
     }
     
-    private func layoutContentScroll() {
-        scrollView.snp.makeConstraints {
+    private func layoutContent() {
+        skeletonLoadingView.snp.makeConstraints {
             $0.edges.equalTo(view.safeAreaLayoutGuide)
-        }
-        
-        contentsView.snp.makeConstraints {
-            $0.top.bottom.equalToSuperview()
-            $0.leading.trailing.equalTo(view)
         }
     }
     
@@ -273,7 +271,6 @@ final class StudyDetailViewController: UIViewController {
             $0.top.equalTo(participantsInfoLabel.snp.bottom).offset(10)
             $0.leading.trailing.equalToSuperview().inset(16)
             $0.height.equalTo(150)
-            $0.bottom.equalToSuperview()
         }
     }
     
