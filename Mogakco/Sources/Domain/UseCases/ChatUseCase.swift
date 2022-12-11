@@ -52,6 +52,10 @@ struct ChatUseCase: ChatUseCaseProtocol {
         return chatRepository?.send(chat: chat, to: chatRoomID) ?? .empty()
     }
     
+    func read(chat: Chat, userID: String) -> Observable<Void> {
+        return chatRepository?.read(chat: chat, userID: userID) ?? .empty()
+    }
+    
     func myProfile() -> Observable<User> {
         return userRepository?.load() ?? .empty()
     }
