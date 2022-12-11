@@ -159,6 +159,14 @@ final class ChatViewModel: ViewModel {
             })
             .disposed(by: disposeBag)
         
+        newChat
+            .withLatestFrom(chatUseCase?.myProfile() ?? .empty()) { ($0, $1) }
+            .flatMap { [weak self] chat, user in
+                self?.chatUseCase?.read(chat: chat, userID: user.id) ?? .empty()
+            }
+            .subscribe(onNext: { _ in })
+            .disposed(by: disposeBag)
+        
         // 채팅 전송
         let profile = BehaviorSubject<User?>(value: nil)
         
