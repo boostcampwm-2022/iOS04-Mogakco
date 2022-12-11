@@ -64,7 +64,9 @@ final class ChatDataSource: ChatDataSourceProtocol {
             let query = Constant.chatRoom.document(chatRoomID).collection("chat").order(by: "date").limit(toLast: 1)
             self.listener = query.addSnapshotListener({ snapshot, _ in
                 if let snapshot = snapshot,
-                   let dictionary = snapshot.documents.last?.data() {
+                   let change = snapshot.documentChanges.last,
+                   change.type == .added {
+                    let dictionary = change.document.data()
                     guard let data = try? JSONSerialization.data(withJSONObject: dictionary),
                           let chat = try? JSONDecoder().decode(Chat.self, from: data)
                     else { return }
@@ -80,9 +82,31 @@ final class ChatDataSource: ChatDataSourceProtocol {
             Constant.chatRoom
                 .document(chatRoomID)
                 .collection("chat")
-                .addDocument(data: chat.toDictionary()) { _ in
+                .document(chat.id)
+                .setData(chat.toDictionary()) { _ in
                     emitter.onNext(())
                 }
+            return Disposables.create()
+        }
+    }
+    
+    func read(chat: Chat, userID: String) -> Observable<Void> {
+        return Observable.create { emitter in
+            print("DEBUG : READ userID \(userID)")
+            print("DEBUG : READ userID \(chat.readUserIDs)")
+            print("DEBUG : READ readUserIDs.contains \(!chat.readUserIDs.contains(userID))")
+            if !chat.readUserIDs.contains(userID) {
+                var chat2 = chat
+                
+                chat2.readUserIDs += [userID]
+                Constant.chatRoom
+                    .document(chat.chatRoomID)
+                    .collection("chat")
+                    .document(chat.id)
+                    .updateData(["readUserIDs": chat2.readUserIDs]) { _ in
+                        emitter.onNext(())
+                    }
+            }
             return Disposables.create()
         }
     }
