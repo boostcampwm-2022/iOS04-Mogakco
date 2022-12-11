@@ -41,4 +41,8 @@ struct ChatRepository: ChatRepositoryProtocol {
             .flatMap { pushNotificationService?.sendTopic(request: request) ?? .empty() }
             .map { _ in () } ?? .empty()
     }
+    
+    func read(chat: Chat, userID: String) -> Observable<Void> {
+        return chatDataSource?.read(chat: chat, userID: userID) ?? .empty()
+    }
 }
