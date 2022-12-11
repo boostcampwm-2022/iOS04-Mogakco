@@ -103,6 +103,21 @@ final class ChatViewModel: ViewModel {
             })
             .disposed(by: disposeBag)
         
+        Observable.combineLatest(
+            newChats,
+            chatUseCase?.myProfile() ?? .empty()
+        )
+        .flatMap { [weak self] chats, user in
+            let observe: [Observable<Void>] = chats.map {
+                self?.chatUseCase?.read(chat: $0, userID: user.id) ?? .empty()
+            }
+            return Observable
+                .combineLatest(observe)
+                .map { _ in }
+        }
+        .subscribe(onNext: { _ in })
+        .disposed(by: disposeBag)
+        
         input.pagination?
             .subscribe(refreshFinished)
             .disposed(by: disposeBag)
