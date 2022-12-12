@@ -42,6 +42,7 @@ final class ProfileViewModel: ViewModel {
         let hashtagEditButtonTapped: Observable<KindHashtag>
         let settingButtonTapped: Observable<Void>
         let reportButtonTapped: Observable<Void>
+        let backButtonTapped: Observable<Void>
     }
     
     struct Output {
@@ -56,6 +57,7 @@ final class ProfileViewModel: ViewModel {
         let studyRatingList: Driver<[(String, Int)]>
         let isLoading: Driver<Bool>
         let alert: Signal<Alert>
+        let navigationBarHidden: Signal<Bool>
     }
     
     var userUseCase: UserUseCaseProtocol?
@@ -64,6 +66,7 @@ final class ProfileViewModel: ViewModel {
     let navigation = PublishSubject<ProfileNavigation>()
     var disposeBag = DisposeBag()
     let type = BehaviorSubject<ProfileType>(value: .current)
+    let navigationBarHidden = BehaviorSubject<Bool>(value: false)
     private let user = BehaviorSubject<User?>(value: nil)
     private let studyRatingList = BehaviorSubject<[(String, Int)]>(value: [])
     private let isLoading = BehaviorSubject(value: true)
@@ -98,7 +101,8 @@ final class ProfileViewModel: ViewModel {
                 .asDriver(onErrorJustReturn: []),
             studyRatingList: studyRatingList.asDriver(onErrorJustReturn: []),
             isLoading: isLoading.asDriver(onErrorJustReturn: false),
-            alert: alert.asSignal(onErrorSignalWith: .empty())
+            alert: alert.asSignal(onErrorSignalWith: .empty()),
+            navigationBarHidden: navigationBarHidden.asSignal(onErrorJustReturn: false)
         )
     }
     
@@ -206,6 +210,11 @@ final class ProfileViewModel: ViewModel {
             .withUnretained(self)
             .flatMap { $0.0.reportUseCase?.reportUser(id: $0.1.id) ?? .empty() }
             .map { _ in .back }
+            .bind(to: navigation)
+            .disposed(by: disposeBag)
+        
+        input.backButtonTapped
+            .map { .back }
             .bind(to: navigation)
             .disposed(by: disposeBag)
     }
