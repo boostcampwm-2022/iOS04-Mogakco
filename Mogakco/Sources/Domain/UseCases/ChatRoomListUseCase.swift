@@ -21,8 +21,14 @@ struct ChatRoomListUseCase: ChatRoomListUseCaseProtocol {
     private let disposeBag = DisposeBag()
     
     func chatRooms() -> Observable<[ChatRoom]> {
-        return userRepository?.load()
-            .flatMap { chatRoomRepository?.list(id: $0.id, ids: $0.chatRoomIDs) ?? .empty() } ?? .empty()
+        let user = userRepository?.load() ?? .empty()
+        return user
+            .flatMap { chatRoomRepository?.list(id: $0.id, ids: $0.chatRoomIDs) ?? .empty() }
+            .withLatestFrom(user) { chatRooms, user in
+                return chatRooms.map { chatRoom in
+                    ChatRoom(chatRoom: chatRoom, users: chatRoom.users?.filter { $0.id != user.id } ?? [])
+                }
+            }
     }
     
     func leave(chatRoom: ChatRoom) -> Observable<Void> {
