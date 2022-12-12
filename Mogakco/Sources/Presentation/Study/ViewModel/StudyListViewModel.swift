@@ -34,7 +34,7 @@ final class StudyListViewModel: ViewModel {
     
     struct Output {
         let studyList: Driver<[Study]>
-        let refreshFinished: Signal<Void>
+        let isLoading: Observable<Bool>
         let sortSelected: Driver<Bool>
         let languageSelected: Driver<Bool>
         let categorySelected: Driver<Bool>
@@ -42,7 +42,7 @@ final class StudyListViewModel: ViewModel {
     
     var studyListUseCase: StudyListUseCaseProtocol?
     private let studyList = PublishSubject<[Study]>()
-    private let refreshFinished = PublishSubject<Void>()
+    private let isLoading = BehaviorSubject(value: true)
     private let filters = BehaviorSubject<[StudyFilter]>(value: [])
     private let refresh = PublishSubject<Void>()
     let sort = BehaviorSubject<StudySort>(value: .latest)
@@ -57,7 +57,7 @@ final class StudyListViewModel: ViewModel {
         bindScene(input: input)
         return Output(
             studyList: studyList.asDriver(onErrorJustReturn: []),
-            refreshFinished: refreshFinished.asSignal(onErrorJustReturn: ()),
+            isLoading: isLoading.asObservable(),
             sortSelected: sort.map { $0 != .latest }.asDriver(onErrorJustReturn: false),
             languageSelected: languageFilter.map { !$0.isEmpty }.asDriver(onErrorJustReturn: false),
             categorySelected: categoryFilter.map { !$0.isEmpty }.asDriver(onErrorJustReturn: false)
@@ -79,7 +79,7 @@ final class StudyListViewModel: ViewModel {
                 let (sort, filters) = arguments
                 return viewModel.studyListUseCase?.list(sort: sort, filters: filters).asResult() ?? .empty()
             }
-            .do { _ in self.refreshFinished.onNext(()) }
+            .do { _ in self.isLoading.onNext(false) }
             .subscribe(onNext: { [weak self] result in
                 switch result {
                 case .success(let studyList):
