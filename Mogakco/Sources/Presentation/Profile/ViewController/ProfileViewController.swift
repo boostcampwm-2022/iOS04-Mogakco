@@ -282,7 +282,7 @@ final class ProfileViewController: UIViewController {
             settingButton.removeFromSuperview()
             navigationItem.leftBarButtonItem = UIBarButtonItem(customView: backButton)
             navigationItem.rightBarButtonItem = UIBarButtonItem(customView: settingButton)
-            scrollView.snp.remakeConstraints {
+            skeletonContentsView.snp.remakeConstraints {
                 $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
                 $0.leading.trailing.bottom.equalTo(view.safeAreaLayoutGuide)
             }
@@ -322,8 +322,7 @@ final class ProfileViewController: UIViewController {
     private func layoutScrollView() {
         skeletonContentsView.addSubview(scrollView)
         scrollView.snp.makeConstraints {
-            $0.top.equalTo(headerView.snp.bottom)
-            $0.leading.trailing.bottom.equalToSuperview()
+            $0.top.leading.trailing.bottom.equalToSuperview()
         }
         
         scrollView.addSubview(contentStackView)
