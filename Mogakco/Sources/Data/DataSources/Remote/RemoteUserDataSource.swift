@@ -14,7 +14,7 @@ struct RemoteUserDataSource: RemoteUserDataSourceProtocol {
     private let provider: Provider
     
     init() {
-        self.provider = Provider(session: .default)
+        self.provider = Provider.default
     }
     
     func user(id: String) -> Observable<UserResponseDTO> {
