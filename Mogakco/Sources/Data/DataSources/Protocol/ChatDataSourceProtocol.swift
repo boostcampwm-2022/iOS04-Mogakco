@@ -11,7 +11,7 @@ import RxSwift
 protocol ChatDataSourceProtocol {
     func fetch(chatRoomID: String) -> Observable<[ChatResponseDTO]>
     func observe(chatRoomID: String) -> Observable<ChatResponseDTO>
-    func send(chat: Chat, to chatRoomID: String) -> Observable<Void>
+    func send(request: ChatRequestDTO) -> Observable<Void>
     func read(chat: Chat) -> Observable<Void>
     func stopObserving()
 }

@@ -15,7 +15,6 @@ struct StudyRepository: StudyRepositoryProtocol {
     }
     
     var studyDataSource: StudyDataSourceProtocol?
-    var localUserDataSource: LocalUserDataSourceProtocol?
     var remoteUserDataSource: RemoteUserDataSourceProtocol?
     var chatRoomDataSource: ChatRoomDataSourceProtocol?
     var reportDataSource: ReportDataSourceProtocol?
@@ -68,45 +67,25 @@ struct StudyRepository: StudyRepositoryProtocol {
             .map { $0.toDomain() } ?? .empty()
     }
     
-    func create(study: Study) -> Observable<Study> {
-        
+    func create(user: User, study: Study) -> Observable<Study> {
         return Observable<Study>.create { emitter in
-            
-            let user = localUserDataSource?.load() ?? .empty()
-            
-            let createStudy = user
-                .map { Study(study: study, userIDs: [$0.id]) }
-                .map { StudyRequestDTO(study: $0) }
-                .flatMap { studyDataSource?.create(study: $0) ?? .empty() }
-            
-            let createChatRoom = user
-                .map {
-                    CreateChatRoomRequestDTO(
-                        id: study.id,
-                        studyID: study.id,
-                        userIDs: [$0.id]
-                    )
-                }
-                .flatMap {
-                    chatRoomDataSource?.create(request: $0) ?? .empty()
-                }
+
+            let createStudyRequest = StudyRequestDTO(study: Study(study: study, userIDs: [user.id]))
+            let createStudy = (studyDataSource?.create(study: createStudyRequest) ?? .empty())
+
+            let createChatRoomRequest = CreateChatRoomRequestDTO(id: study.id, studyID: study.id, userIDs: [user.id])
+            let createChatRoom = (chatRoomDataSource?.create(request: createChatRoomRequest) ?? .empty())
                 .flatMap {
                     pushNotificationService?.subscribeTopic(topic: $0.toDomain().id) ?? .empty()
                 }
             
-            let updateUser = user
-                .flatMap { user in
-                    remoteUserDataSource?.updateIDs(
-                        id: user.id,
-                        request: UpdateStudyIDsRequestDTO(
-                            chatRoomIDs: user.chatRoomIDs + [study.id],
-                            studyIDs: user.chatRoomIDs + [study.id]
-                        )
-                    ) ?? .empty()
-                }
-                .flatMap {
-                    localUserDataSource?.save(user: $0.toDomain()) ?? .empty()
-                }
+            let updateUser = (remoteUserDataSource?.updateIDs(
+                id: user.id,
+                request: UpdateStudyIDsRequestDTO(
+                    chatRoomIDs: user.chatRoomIDs + [study.id],
+                    studyIDs: user.chatRoomIDs + [study.id]
+                )
+            ) ?? .empty())
             
             Observable
                 .zip(createStudy, createChatRoom, updateUser)
@@ -123,49 +102,32 @@ struct StudyRepository: StudyRepositoryProtocol {
             .map { $0.toDomain() } ?? .empty()
     }
     
-    func join(id: String) -> Observable<Void> {
+    func join(user: User, id: String) -> Observable<Void> {
         
         return Observable<Void>.create { emitter in
-            
-            let canJoinStudy = Observable
-                .zip(
-                    localUserDataSource?.load() ?? .empty(),
-                    studyDataSource?.detail(id: id).map { $0.toDomain() } ?? .empty()
-                )
-                .do(onNext: { user, study in
+            let canJoinStudy = (studyDataSource?.detail(id: id).map { $0.toDomain() } ?? .empty())
+                .do(onNext: { study in
                     if study.userIDs.count >= study.maxUserCount &&
                       !study.userIDs.contains(user.id) {
                         emitter.onError(StudyRepositoryError.max)
                     }
                 })
-                .filter { user, study in
+                .filter { study in
                     return study.userIDs.count < study.maxUserCount ||
                         study.userIDs.contains(user.id)
                 }
+                .map { _ in () }
             
-            let user = canJoinStudy
-                .flatMap { _ in localUserDataSource?.load() ?? .empty() }
-            
-            let updateUser = user
-                .flatMap { user in
-                    remoteUserDataSource?.updateIDs(
-                        id: user.id,
-                        request: UpdateStudyIDsRequestDTO(
-                            chatRoomIDs: Array(Set(user.chatRoomIDs + [id])),
-                            studyIDs: Array(Set(user.studyIDs + [id]))
-                        )
-                    ) ?? .empty()
-                }
-                .flatMap {
-                    localUserDataSource?.save(user: $0.toDomain()) ?? .empty()
-                }
-
-            let updateStudy = Observable
-                .zip(
-                    user,
-                    studyDataSource?.detail(id: id).map { $0.toDomain() } ?? .empty()
+            let updateUser = (remoteUserDataSource?.updateIDs(
+                id: user.id,
+                request: UpdateStudyIDsRequestDTO(
+                    chatRoomIDs: Array(Set(user.chatRoomIDs + [id])),
+                    studyIDs: Array(Set(user.studyIDs + [id]))
                 )
-                .flatMap { user, study in
+            ) ?? .empty())
+
+            let updateStudy = (studyDataSource?.detail(id: id).map { $0.toDomain() } ?? .empty())
+                .flatMap { study in
                     studyDataSource?.updateIDs(
                         id: study.id,
                         request: UpdateUserIDsRequestDTO(
@@ -174,12 +136,8 @@ struct StudyRepository: StudyRepositoryProtocol {
                     ) ?? .empty()
                 }
 
-            let updateChatRoom = Observable
-                .zip(
-                    user,
-                    chatRoomDataSource?.detail(id: id).map { $0.toDomain() } ?? .empty()
-                )
-                .flatMap { user, chatRoom in
+            let updateChatRoom = (chatRoomDataSource?.detail(id: id).map { $0.toDomain() } ?? .empty())
+                .flatMap { chatRoom in
                     chatRoomDataSource?.updateIDs(
                         id: chatRoom.id,
                         request: UpdateUserIDsRequestDTO(
@@ -187,6 +145,7 @@ struct StudyRepository: StudyRepositoryProtocol {
                         )
                     ) ?? .empty()
                 }
+                .map { _ in () }
 
             Observable
                 .zip(
@@ -203,38 +162,22 @@ struct StudyRepository: StudyRepositoryProtocol {
         }
     }
     
-    func leaveStudy(id: String) -> Observable<Void> {
+    func leaveStudy(user: User, id: String) -> Observable<Void> {
         return Observable.create { emitter in
             
-            // 0. User 정보 업데이트 받기
-            let userInfo = localUserDataSource?.load()
-                .flatMap { remoteUserDataSource?.user(id: $0.id) ?? .empty() }
-                .map { $0.toDomain() } ?? .empty()
-            
             // 1. User에서 정보 삭제
-            let updateUser = userInfo
-                .flatMap {
-                    remoteUserDataSource?.updateIDs(
-                        id: $0.id,
-                        request: UpdateStudyIDsRequestDTO(
-                            chatRoomIDs: $0.chatRoomIDs.filter { $0 != id },
-                            studyIDs: $0.studyIDs.filter { $0 != id }
-                        )
-                    ) ?? .empty()
-                }
-                .map { $0.toDomain() }
-                .flatMap {
-                    localUserDataSource?.save(user: $0) ?? .empty()
-                }
+            let updateUser = (remoteUserDataSource?.updateIDs(
+                id: user.id,
+                request: UpdateStudyIDsRequestDTO(
+                    chatRoomIDs: user.chatRoomIDs.filter { $0 != id },
+                    studyIDs: user.studyIDs.filter { $0 != id }
+                )
+            ) ?? .empty())
             
             // 2. Study에서 정보 삭제
-            let updateStudy = Observable
-                .zip(
-                    userInfo,
-                    studyDataSource?.detail(id: id) ?? .empty()
-                )
-                .map { ($0, $1.toDomain()) }
-                .flatMap { user, study in
+            let updateStudy = (studyDataSource?.detail(id: id) ?? .empty())
+                .map { $0.toDomain() }
+                .flatMap { study in
                     studyDataSource?.updateIDs(
                         id: study.id,
                         request: UpdateUserIDsRequestDTO(
@@ -244,13 +187,9 @@ struct StudyRepository: StudyRepositoryProtocol {
                 }
             
             // 3. ChatRoom에서 정보 삭제
-            let updateChatRoom = Observable
-                .zip(
-                    userInfo,
-                    chatRoomDataSource?.detail(id: id) ?? .empty()
-                )
-                .map { ($0, $1.toDomain()) }
-                .flatMap { user, chatRoom in
+            let updateChatRoom = (chatRoomDataSource?.detail(id: id) ?? .empty())
+                .map { $0.toDomain() }
+                .flatMap { chatRoom in
                     chatRoomDataSource?.updateIDs(
                         id: chatRoom.id,
                         request: UpdateUserIDsRequestDTO(

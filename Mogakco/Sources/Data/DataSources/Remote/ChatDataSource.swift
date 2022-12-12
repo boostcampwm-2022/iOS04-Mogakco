@@ -81,13 +81,13 @@ final class ChatDataSource: ChatDataSourceProtocol {
         }
     }
     
-    func send(chat: Chat, to chatRoomID: String) -> Observable<Void> {
+    func send(request: ChatRequestDTO) -> Observable<Void> {
         return Observable.create { emitter in
             Constant.chatRoom
-                .document(chatRoomID)
+                .document(request.chatRoomID)
                 .collection("chat")
-                .document(chat.id)
-                .setData(chat.toDictionary()) { _ in
+                .document(request.id)
+                .setData(request.toDictionary()) { _ in
                     emitter.onNext(())
                 }
             return Disposables.create()
