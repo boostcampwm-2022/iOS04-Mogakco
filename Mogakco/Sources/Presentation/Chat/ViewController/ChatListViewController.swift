@@ -86,6 +86,7 @@ final class ChatListViewController: UIViewController {
                     return UITableViewCell()
                 }
                 cell.selectionStyle = .none
+                cell.prepareForReuse()
                 cell.configure(chatRoom: chatRoom)
                 return cell
             }

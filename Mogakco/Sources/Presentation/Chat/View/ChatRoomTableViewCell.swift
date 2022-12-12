@@ -62,7 +62,6 @@ final class ChatRoomTableViewCell: UITableViewCell, Identifiable {
     override func prepareForReuse() {
         super.prepareForReuse()
         disposeBag = DisposeBag()
-        print("확인")
     }
     
     func configure(chatRoom: ChatRoom) {
