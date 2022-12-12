@@ -90,6 +90,12 @@ final class ChatListViewController: UIViewController {
             }
             .disposed(by: disposeBag)
         
+        output.refreshFinished
+            .emit(onNext: { [weak self] in
+                self?.refreshControl.endRefreshing()
+            })
+            .disposed(by: disposeBag)
+        
         output.isLoading
             .drive(skeletonContentsView.rx.skeleton)
             .disposed(by: disposeBag)

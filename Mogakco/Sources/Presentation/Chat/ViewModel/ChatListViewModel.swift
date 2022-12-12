@@ -25,6 +25,7 @@ final class ChatListViewModel: ViewModel {
     
     struct Output {
         let chatRooms: Driver<[ChatRoom]>
+        let refreshFinished: Signal<Void>
         let isLoading: Driver<Bool>
         let alert: Signal<Alert>
     }
@@ -32,7 +33,8 @@ final class ChatListViewModel: ViewModel {
     var disposeBag = DisposeBag()
     var chatRoomListUseCase: ChatRoomListUseCaseProtocol?
     private let chatRooms = BehaviorSubject<[ChatRoom]>(value: [])
-    private let reload = PublishSubject<Void>()
+    static let reload = PublishSubject<Void>()
+    private let refreshFinished = PublishSubject<Void>()
     private let isLoading = BehaviorSubject(value: true)
     private let alert = PublishSubject<Alert>()
     let navigation = PublishSubject<ChatListNavigation>()
@@ -42,12 +44,13 @@ final class ChatListViewModel: ViewModel {
         Observable.merge(
             Observable.just(()),
             input.refresh,
-            reload
+            ChatListViewModel.reload
         )
             .withUnretained(self)
             .flatMap { viewModel, _ in viewModel.chatRoomListUseCase?.chatRooms().asResult() ?? .empty() }
             .withUnretained(self)
             .subscribe(onNext: { viewModel, result in
+                viewModel.refreshFinished.onNext(())
                 switch result {
                 case let .success(chatRooms):
                     viewModel.chatRooms.onNext(chatRooms)
@@ -72,7 +75,7 @@ final class ChatListViewModel: ViewModel {
             .subscribe(onNext: { viewModel, result in
                 switch result {
                 case .success:
-                    viewModel.reload.onNext(())
+                    ChatListViewModel.reload.onNext(())
                 case .failure:
                     let alert = Alert(title: "채팅방 나가기 오류", message: "채팅방 삭제 오류가 발생했어요! 다시 시도해주세요.", observer: nil)
                     viewModel.alert.onNext(alert)
@@ -88,6 +91,7 @@ final class ChatListViewModel: ViewModel {
         
         return Output(
             chatRooms: chatRooms.asDriver(onErrorJustReturn: []),
+            refreshFinished: refreshFinished.asSignal(onErrorJustReturn: ()),
             isLoading: isLoading.asDriver(onErrorJustReturn: false),
             alert: alert.asSignal(onErrorSignalWith: .empty())
         )
