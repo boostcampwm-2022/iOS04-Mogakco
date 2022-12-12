@@ -17,13 +17,14 @@ enum ChatSidebarMenu: String, CaseIterable {
     
     case studyInfo = "스터디 정보"
     case exitStudy = "나가기"
-    case showMember = "멤버 보기"
+    // case showMember = "멤버 보기"
 
     init(row: Int) {
         switch row {
         case 0: self = .studyInfo
         case 1: self = .exitStudy
-        default: self = .showMember
+        // default: self = .showMember
+        default: self = .studyInfo
         }
     }
 }
@@ -66,7 +67,7 @@ final class ChatSidebarView: UIView {
         
         tableView.snp.makeConstraints {
             $0.top.equalToSuperview().offset(80)
-            $0.left.bottom.right.equalToSuperview()
+            $0.left.bottom.right.equalToSuperview().inset(8.0)
         }
     }
 }
