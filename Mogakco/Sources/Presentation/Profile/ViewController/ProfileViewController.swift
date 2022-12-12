@@ -125,7 +125,6 @@ final class ProfileViewController: UIViewController {
         view.backgroundColor = .mogakcoColor.backgroundDefault
         layout()
         bind()
-        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: backButton)
     }
     
     func bind() {
@@ -252,10 +251,8 @@ final class ProfileViewController: UIViewController {
     private func bindNavigation(output: ProfileViewModel.Output) {
         rx.viewWillAppear
             .withLatestFrom(output.navigationBarHidden)
-            .debug()
-            .subscribe(onNext: { [weak self] in
-                self?.navigationController?.setNavigationBarHidden($0, animated: true)
-            })
+            .withUnretained(self)
+            .subscribe(onNext: { $0.0.setupNavigationBar(hidden: $0.1) })
             .disposed(by: disposeBag)
     }
     
@@ -275,6 +272,21 @@ final class ProfileViewController: UIViewController {
                 )
             })
             .disposed(by: disposeBag)
+    }
+    
+    func setupNavigationBar(hidden: Bool) {
+        navigationController?.setNavigationBarHidden(hidden, animated: true)
+        if !hidden {
+            title = "프로필"
+            headerView.isHidden = true
+            settingButton.removeFromSuperview()
+            navigationItem.leftBarButtonItem = UIBarButtonItem(customView: backButton)
+            navigationItem.rightBarButtonItem = UIBarButtonItem(customView: settingButton)
+            scrollView.snp.remakeConstraints {
+                $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+                $0.leading.trailing.bottom.equalTo(view.safeAreaLayoutGuide)
+            }
+        }
     }
     
     func layout() {
