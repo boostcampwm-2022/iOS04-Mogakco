@@ -43,6 +43,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
 	private func appearance() {
+        navigationBarAppearance()
+        tapBarAppearance()
+        labelAppearance()
+        textFieldAppearance()
+        textViewAppearance()
+        collectionViewAppearance()
+        tableViewAppearance()
+    }
+    
+    private func navigationBarAppearance() {
         let navigationBarAppearance = UINavigationBarAppearance()
         navigationBarAppearance.titleTextAttributes = [.foregroundColor: UIColor.mogakcoColor.typographyPrimary ?? UIColor.white]
         navigationBarAppearance.backgroundColor = .mogakcoColor.backgroundDefault
@@ -50,27 +60,39 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UINavigationBar.appearance().standardAppearance = navigationBarAppearance
         UINavigationBar.appearance().compactAppearance = navigationBarAppearance
         UINavigationBar.appearance().scrollEdgeAppearance = navigationBarAppearance
-        
+    }
+    
+    private func tapBarAppearance() {
         UITabBar.appearance().tintColor = .mogakcoColor.primaryDefault
         UITabBar.appearance().barTintColor = .mogakcoColor.primaryThird
-        
+    }
+    
+    private func labelAppearance() {
         UILabel.appearance().textColor = .mogakcoColor.typographyPrimary
-        
+    }
+    
+    private func textFieldAppearance() {
         UITextField.appearance().tintColor = .mogakcoColor.primaryDefault
         UITextField.appearance().textColor = .mogakcoColor.typographyPrimary
         UITextField.appearance().backgroundColor = .mogakcoColor.primarySecondary
         UITextField.appearance().layer.borderColor = UIColor.mogakcoColor.semanticSuccess?.cgColor
-        
+    }
+    
+    private func textViewAppearance() {
         UITextView.appearance().textColor = .mogakcoColor.typographyPrimary
         UITextView.appearance().backgroundColor = .mogakcoColor.primarySecondary
         UITextView.appearance().layer.borderColor = UIColor.mogakcoColor.primarySecondary?.cgColor
         UITextView.appearance().layer.borderColor = UIColor.mogakcoColor.primarySecondary?.cgColor
         UITextView.appearance().tintColor = .mogakcoColor.primaryDefault
-        
+    }
+    
+    private func collectionViewAppearance() {
         UICollectionView.appearance().backgroundColor = .mogakcoColor.backgroundDefault
         UICollectionViewCell.appearance().backgroundColor = .mogakcoColor.primarySecondary
         UICollectionViewCell.appearance().layer.borderColor = UIColor.mogakcoColor.primaryDefault?.cgColor
-        
+    }
+    
+    private func tableViewAppearance() {
         UITableView.appearance().backgroundColor = .mogakcoColor.backgroundDefault
         UITableViewCell.appearance().backgroundColor = .mogakcoColor.primarySecondary
     }
