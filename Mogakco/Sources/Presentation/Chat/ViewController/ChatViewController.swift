@@ -60,6 +60,8 @@ final class ChatViewController: UIViewController {
     
     private let disposeBag = DisposeBag()
     private let viewModel: ChatViewModel
+    private let selectedUser = PublishSubject<User>()
+    private let chatMenuSelected = PublishSubject<ChatMenu>()
     
     init(viewModel: ChatViewModel) {
         self.viewModel = viewModel
@@ -91,8 +93,6 @@ final class ChatViewController: UIViewController {
     // MARK: - ViewController Methods
     
     private func bind() {
-        let selectedUser = PublishSubject<User>()
-        
         let input = ChatViewModel.Input(
             viewWillAppear: rx.viewWillAppear.map { _ in () }.asObservable(),
             viewWillDisappear: rx.viewWillDisappear.map { _ in () }.asObservable(),
@@ -112,22 +112,33 @@ final class ChatViewController: UIViewController {
             pagination: collectionView.refreshControl?.rx.controlEvent(.valueChanged)
                 .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance),
             selectedUser: selectedUser
-                .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance)
+                .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance),
+            chatMenuSelected: chatMenuSelected.asObservable()
         )
         let output = viewModel.transform(input: input)
-        
-        output.chatSidebarMenus
-            .drive(sidebarView.tableView.rx.items) { tableView, index, menu in
-                guard let cell = tableView.dequeueReusableCell(
-                    withIdentifier: ChatSidebarTableViewCell.identifier,
-                    for: IndexPath(row: index, section: 0)) as? ChatSidebarTableViewCell else {
-                    return UITableViewCell()
-                }
-                cell.menuLabel.text = menu.rawValue
-                return cell
-            }
-            .disposed(by: disposeBag)
-        
+        bindChatCollection(output: output)
+        bindSideBar(output: output)
+        bindKeyboard()
+    }
+
+    private func layout() {
+        configure()
+        layoutCollectionView()
+        layoutSideBar()
+        layoutBlackScreen()
+        layoutMessageInputView()
+        layoutNavigationBar()
+    }
+    
+    private func configure() {
+        configureSideBar()
+        configureBlackScreen()
+        configureNavigationBar()
+    }
+    
+    // MARK: - Binds
+    
+    func bindChatCollection(output: ChatViewModel.Output) {
         output.messages
             .drive(collectionView.rx.items) { [weak self] collectionView, index, chat in
                 guard let self = self,
@@ -136,32 +147,20 @@ final class ChatViewController: UIViewController {
                     for: IndexPath(row: index, section: 0)) as? ChatCell else {
                     return UICollectionViewCell()
                 }
+                
                 cell.layoutChat(chat: chat)
                 
                 cell.profileImageButton.rx.tap
                     .compactMap { chat.user }
-                    .bind(to: selectedUser)
+                    .bind(to: self.selectedUser)
                     .disposed(by: self.disposeBag)
+                
+                cell.menuSelected
+                    .bind(to: self.chatMenuSelected)
+                    .disposed(by: self.disposeBag)
+                
                 return cell
             }
-            .disposed(by: disposeBag)
-        
-        output.showChatSidebarView
-            .emit(onNext: { [weak self] _ in
-                self?.showSidebarView()  
-            })
-            .disposed(by: disposeBag)
-        
-        output.selectedSidebar
-            .emit(onNext: { [weak self] _ in
-                self?.hideSidebarView()
-            })
-            .disposed(by: disposeBag)
-        
-        output.refreshFinished
-            .emit(onNext: { [weak self] _ in
-                self?.collectionView.refreshControl?.endRefreshing()
-            })
             .disposed(by: disposeBag)
         
         output.sendMessageCompleted
@@ -178,10 +177,44 @@ final class ChatViewController: UIViewController {
             })
             .disposed(by: disposeBag)
         
+        output.refreshFinished
+            .emit(onNext: { [weak self] _ in
+                self?.collectionView.refreshControl?.endRefreshing()
+            })
+            .disposed(by: disposeBag)
+        
         output.alert
             .emit(to: rx.presentAlert)
             .disposed(by: disposeBag)
-
+    }
+    
+    func bindSideBar(output: ChatViewModel.Output) {
+        output.chatSidebarMenus
+            .drive(sidebarView.tableView.rx.items) { tableView, index, menu in
+                guard let cell = tableView.dequeueReusableCell(
+                    withIdentifier: ChatSidebarTableViewCell.identifier,
+                    for: IndexPath(row: index, section: 0)) as? ChatSidebarTableViewCell else {
+                    return UITableViewCell()
+                }
+                cell.menuLabel.text = menu.rawValue
+                return cell
+            }
+            .disposed(by: disposeBag)
+        
+        output.showChatSidebarView
+            .emit(onNext: { [weak self] _ in
+                self?.showSidebarView()
+            })
+            .disposed(by: disposeBag)
+        
+        output.selectedSidebar
+            .emit(onNext: { [weak self] _ in
+                self?.hideSidebarView()
+            })
+            .disposed(by: disposeBag)
+    }
+    
+    func bindKeyboard() {
         RxKeyboard.instance.visibleHeight
             .skip(1)
             .drive(onNext: { [weak self] keyboardVisibleHeight in
@@ -190,21 +223,6 @@ final class ChatViewController: UIViewController {
                 self.updateCollectionViewLayout(height: keyboardVisibleHeight)
             })
             .disposed(by: disposeBag)
-    }
-
-    private func layout() {
-        configure()
-        layoutCollectionView()
-        layoutSideBar()
-        layoutBlackScreen()
-        layoutMessageInputView()
-        layoutNavigationBar()
-    }
-    
-    private func configure() {
-        configureSideBar()
-        configureBlackScreen()
-        configureNavigationBar()
     }
     
     // MARK: - Configures
