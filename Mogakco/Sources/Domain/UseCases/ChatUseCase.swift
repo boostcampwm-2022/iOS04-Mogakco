@@ -53,7 +53,16 @@ struct ChatUseCase: ChatUseCaseProtocol {
     }
     
     func read(chat: Chat, userID: String) -> Observable<Void> {
-        return chatRepository?.read(chat: chat, userID: userID) ?? .empty()
+        if chat.readUserIDs.contains(userID) { return Observable.just(()) }
+        let newChat = Chat(
+            id: chat.id,
+            userID: chat.userID,
+            message: chat.message,
+            chatRoomID: chat.chatRoomID,
+            date: chat.date,
+            readUserIDs: chat.readUserIDs + [userID]
+        )
+        return chatRepository?.read(chat: newChat) ?? .empty()
     }
     
     func stopObserving() {

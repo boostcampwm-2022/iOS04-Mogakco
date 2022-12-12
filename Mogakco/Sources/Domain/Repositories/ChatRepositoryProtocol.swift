@@ -12,6 +12,6 @@ protocol ChatRepositoryProtocol {
     func fetch(chatRoomID: String) -> Observable<[Chat]>
     func observe(chatRoomID: String) -> Observable<Chat>
     func send(chat: Chat, to chatRoomID: String) -> Observable<Void>
-    func read(chat: Chat, userID: String) -> Observable<Void>
+    func read(chat: Chat) -> Observable<Void>
     func stopObserving()
 }
