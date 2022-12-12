@@ -60,7 +60,7 @@ final class ProfileCoordinator: BaseCoordinator<ProfileCoordinatorResult> {
                 case let .chatRoom(id):
                     self?.showChatRoom(id: id)
                 case .setting:
-                    self?.setting()
+                    self?.showSetting()
                 case .back:
                     self?.finish.onNext(.back)
                 }
@@ -78,44 +78,20 @@ final class ProfileCoordinator: BaseCoordinator<ProfileCoordinatorResult> {
     
     // MARK: - 설정화면
     
-    func setting() {
-        guard let viewModel = DIContainer.shared.container.resolve(SettingViewModel.self) else { return }
-        
-        viewModel.navigation
+    func showSetting() {
+        let setting = SettingCoordinator(navigationController)
+        coordinate(to: setting)
             .subscribe(onNext: { [weak self] in
                 switch $0 {
-                case .withdraw:
-                    self?.showWithdraw()
-                case .logout:
+                case .finish:
                     self?.finish.onNext(.finish)
                 case .back:
-                    self?.popTabbar(animated: true)
+                    break
                 }
             })
             .disposed(by: disposeBag)
-        
-        let viewController = SettingViewController(viewModel: viewModel)
-        pushTabbar(viewController, animated: true)
     }
-    
-    func showWithdraw() {
-        guard let viewModel = DIContainer.shared.container.resolve(WithdrawViewModel.self) else { return }
-        
-        viewModel.navigation
-            .subscribe(onNext: { [weak self] in
-                switch $0 {
-                case .success:
-                    self?.finish.onNext(.finish)
-                case .back:
-                    self?.popTabbar(animated: true)
-                }
-            })
-            .disposed(by: disposeBag)
-        
-        let viewController = WithdrawViewController(viewModel: viewModel)
-        pushTabbar(viewController, animated: true)
-    }
-    
+
     // MARK: - 프로필 수정
     
     func showEditProfile() {
