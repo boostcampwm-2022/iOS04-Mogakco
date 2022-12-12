@@ -184,6 +184,7 @@ final class DIContainer {
             useCase.userRepository = resolver.resolve(UserRepositoryProtocol.self)
             useCase.tokenRepository = resolver.resolve(TokenRepositoryProtocol.self)
             useCase.studyRepository = resolver.resolve(StudyRepositoryProtocol.self)
+            useCase.pushNotificationService = resolver.resolve(PushNotificationServiceProtocol.self)
             return useCase
         }
         container.register(ReportUseCaseProtocol.self) { resolver in
@@ -194,7 +195,7 @@ final class DIContainer {
         container.register(LogoutUseCaseProtocol.self) { resolver in
             var useCase = LogoutUseCase()
             useCase.tokenRepository = resolver.resolve(TokenRepositoryProtocol.self)
-            useCase.pushNotificationService = resolver.resolve(PushNotificationService.self)
+            useCase.pushNotificationService = resolver.resolve(PushNotificationServiceProtocol.self)
             return useCase
         }
         container.register(SubscribePushNotificationUseCaseProtocol.self) { resolver in

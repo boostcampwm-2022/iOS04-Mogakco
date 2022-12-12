@@ -13,7 +13,7 @@ import RxSwift
 struct LogoutUseCase: LogoutUseCaseProtocol {
     
     var tokenRepository: TokenRepositoryProtocol?
-    var pushNotificationService: PushNotificationService?
+    var pushNotificationService: PushNotificationServiceProtocol?
     private let disposeBag = DisposeBag()
     
     func logout() -> Observable<Void> {
