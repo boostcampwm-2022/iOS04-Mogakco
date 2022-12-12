@@ -14,7 +14,7 @@ struct ChatRoomDataSource: ChatRoomDataSourceProtocol {
     private let provider: Provider
     
     init() {
-        self.provider = Provider(session: .default)
+        self.provider = Provider.default
     }
     
     func list() -> Observable<Documents<[ChatRoomResponseDTO]>> {

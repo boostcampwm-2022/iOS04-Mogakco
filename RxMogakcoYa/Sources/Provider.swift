@@ -21,7 +21,7 @@ public class Provider: ProviderProtocol {
         self.session = session
     }
     
-    static let `default`: Provider = {
+    public static let `default`: Provider = {
         let configuration = URLSessionConfiguration.af.default
         configuration.timeoutIntervalForRequest = 10
         configuration.timeoutIntervalForResource = 10

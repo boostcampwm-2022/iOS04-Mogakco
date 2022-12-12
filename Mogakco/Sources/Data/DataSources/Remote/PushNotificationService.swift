@@ -14,7 +14,7 @@ struct PushNotificationService: PushNotificationServiceProtocol {
     private let provider: Provider
     
     init() {
-        self.provider = Provider(session: .default)
+        self.provider = Provider.default
     }
 
     func send(request: PushNotificationRequestDTO) -> Observable<Void> {
