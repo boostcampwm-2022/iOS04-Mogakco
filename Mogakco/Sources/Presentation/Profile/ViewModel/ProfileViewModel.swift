@@ -71,10 +71,12 @@ final class ProfileViewModel: ViewModel {
     private let studyRatingList = BehaviorSubject<[(String, Int)]>(value: [])
     private let isLoading = BehaviorSubject(value: true)
     private let alert = PublishSubject<Alert>()
+    private let report = PublishSubject<Bool>()
     
     func transform(input: Input) -> Output {
         bindUser(input: input)
         bindScene(input: input)
+        bindReportButton(input: input)
         bindEndLoading()
         
         return Output(
@@ -202,17 +204,31 @@ final class ProfileViewModel: ViewModel {
             .bind(to: navigation)
             .disposed(by: disposeBag)
         
+        input.backButtonTapped
+            .map { .back }
+            .bind(to: navigation)
+            .disposed(by: disposeBag)
+    }
+    
+    private func bindReportButton(input: Input) {
         input.reportButtonTapped
-            .withLatestFrom(user)
-            .compactMap { $0 }
+            .withUnretained(self)
+            .subscribe(onNext: { viewModel, _ in
+                let alert = Alert(
+                    title: "차단하기",
+                    message: "이 사용자가 작성한 채팅들이 보이지 않게 됩니다.",
+                    observer: viewModel.report.asObserver()
+                )
+                viewModel.alert.onNext(alert)
+            })
+            .disposed(by: disposeBag)
+
+        report
+            .filter { $0 }
+            .withLatestFrom(user.compactMap { $0 })
             .withUnretained(self)
             .flatMap { $0.0.reportUseCase?.reportUser(id: $0.1.id) ?? .empty() }
             .map { _ in .back }
-            .bind(to: navigation)
-            .disposed(by: disposeBag)
-        
-        input.backButtonTapped
-            .map { .back }
             .bind(to: navigation)
             .disposed(by: disposeBag)
     }
