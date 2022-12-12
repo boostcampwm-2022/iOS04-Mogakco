@@ -14,6 +14,8 @@ protocol ProjectFactory {
 class BaseProjectFactory: ProjectFactory {
     let projectName: String = "Mogakco"
     
+    let deploymentTarget: ProjectDescription.DeploymentTarget = .iOS(targetVersion: "16.0", devices: [.iphone])
+    
     let dependencies: [TargetDependency] = [
         .external(name: "RxSwift"),
         .external(name: "RxCocoa"),
@@ -78,7 +80,7 @@ class BaseProjectFactory: ProjectFactory {
                 platform: .iOS,
                 product: .app,
                 bundleId: "com.codershigh.boostcamp.\(projectName)",
-                deploymentTarget: .iOS(targetVersion: "16.1", devices: [.iphone]),
+                deploymentTarget: deploymentTarget,
                 infoPlist: .extendingDefault(with: infoPlist),
                 sources: ["\(projectName)/Sources/**"],
                 resources: "\(projectName)/Resources/**",
@@ -91,6 +93,7 @@ class BaseProjectFactory: ProjectFactory {
                 platform: .iOS,
                 product: .framework,
                 bundleId: "com.codershigh.boostcamp.\(projectName).RxMogakcoYa",
+                deploymentTarget: deploymentTarget,
                 infoPlist: .default,
                 sources: ["RxMogakcoYa/Sources/**"],
                 dependencies: [
