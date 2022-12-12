@@ -61,18 +61,21 @@ final class ChatDataSource: ChatDataSourceProtocol {
     
     func observe(chatRoomID: String) -> Observable<ChatResponseDTO> {
         return Observable.create { emitter in
-            let query = Constant.chatRoom.document(chatRoomID).collection("chat").order(by: "date").limit(toLast: 1)
-            self.listener = query.addSnapshotListener({ snapshot, _ in
-                if let snapshot = snapshot,
-                   let change = snapshot.documentChanges.last,
-                   change.type == .added {
-                    // type 지정 안하면 1. 채팅 등록 2.상대가 읽은거 인해서 총 2번 오니까 add 항목만 오게 확인 해야함
-                    let dictionary = change.document.data()
-                    guard let data = try? JSONSerialization.data(withJSONObject: dictionary),
-                          let chat = try? JSONDecoder().decode(Chat.self, from: data)
-                    else { return }
-                    emitter.onNext(ChatResponseDTO(chat: chat))
-                }
+            let query = Constant.chatRoom.document(chatRoomID).collection("chat")
+            query.document("chat").getDocument(completion: { snapshot, _ in
+                if snapshot?.exists == nil { query.addDocument(data: [:]) }
+                self.listener = query.order(by: "date").limit(toLast: 1).addSnapshotListener({ snapshot, _ in
+                    if let snapshot = snapshot,
+                       let change = snapshot.documentChanges.last,
+                       change.type == .added {
+                        // type 지정 안하면 1. 채팅 등록 2.상대가 읽은거 인해서 총 2번 오니까 add 항목만 오게 확인 해야함
+                        let dictionary = change.document.data()
+                        guard let data = try? JSONSerialization.data(withJSONObject: dictionary),
+                              let chat = try? JSONDecoder().decode(Chat.self, from: data)
+                        else { return }
+                        emitter.onNext(ChatResponseDTO(chat: chat))
+                    }
+                })
             })
             return Disposables.create()
         }
