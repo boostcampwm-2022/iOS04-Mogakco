@@ -26,7 +26,7 @@ final class ChatViewModel: ViewModel {
         let didEnterBackground: Observable<Void>
         let backButtonDidTap: Observable<Void>
         let studyInfoButtonDidTap: Observable<Void>
-        let selectedSidebar: Observable<IndexPath>
+        let selectedSidebar: Observable<ChatSidebarMenu>
         let sendButtonDidTap: Observable<Void>
         let inputViewText: Observable<String>
         let pagination: Observable<Void>?
@@ -38,7 +38,6 @@ final class ChatViewModel: ViewModel {
         let messages: Driver<[Chat]>
         let chatSidebarMenus: Driver<[ChatSidebarMenu]>
         let showChatSidebarView: Signal<Void>
-        let selectedSidebar: Signal<ChatSidebarMenu>
         let inputViewText: Driver<String>
         let sendMessageCompleted: Driver<Void>
         let refreshFinished: Signal<Void>
@@ -56,12 +55,8 @@ final class ChatViewModel: ViewModel {
     let navigation = PublishSubject<ChatRoomNavigation>()
     var disposeBag = DisposeBag()
     
-    private let selectedSidebar = PublishSubject<ChatSidebarMenu>()
     private let inputViewText = PublishSubject<String>()
     private let sendMessageCompleted = PublishSubject<Void>()
-    private let studyInfoTap = PublishSubject<Void>()
-    private let exitStudyTap = PublishSubject<Void>()
-    private let showMemberTap = PublishSubject<Void>()
     private let refreshFinished = PublishSubject<Void>()
     private let alert = PublishSubject<Alert>()
 
@@ -75,7 +70,6 @@ final class ChatViewModel: ViewModel {
             messages: messages.asDriver(onErrorJustReturn: []),
             chatSidebarMenus: Driver<[ChatSidebarMenu]>.just(ChatSidebarMenu.allCases),
             showChatSidebarView: input.studyInfoButtonDidTap.asObservable().asSignal(onErrorSignalWith: .empty()),
-            selectedSidebar: selectedSidebar.asSignal(onErrorSignalWith: .empty()),
             inputViewText: inputViewText.asDriver(onErrorJustReturn: ""),
             sendMessageCompleted: sendMessageCompleted.asDriver(onErrorJustReturn: ()),
             refreshFinished: refreshFinished.asSignal(onErrorSignalWith: .empty()),
@@ -215,39 +209,51 @@ final class ChatViewModel: ViewModel {
     }
     
     private func bindSideBar(input: Input) {
+
         input.selectedSidebar
-            .map { ChatSidebarMenu(row: $0.row) }
+            .filter { $0 == .studyInfo }
             .withUnretained(self)
-            .subscribe(onNext: { viewModel, row in
-                switch row {
-                case .studyInfo: viewModel.studyInfoTap.onNext(())
-                case .exitStudy: viewModel.exitStudyTap.onNext(())
-                case .showMember: viewModel.showMemberTap.onNext(())
+            .subscribe(onNext: { viewModel, _ in
+                viewModel.navigation.onNext(.study(id: viewModel.chatRoomID))
+            })
+            .disposed(by: disposeBag)
+        
+        let leaveStudyAlertObserver = PublishSubject<Bool>()
+        
+        input.selectedSidebar
+            .filter { $0 == .exitStudy }
+            .map { _ in
+                Alert(title: "채팅방 나가기", message: "채팅방을 나가시겠습니까?", observer: leaveStudyAlertObserver.asObserver())
+            }
+            .withUnretained(self)
+            .subscribe(onNext: { viewModel, alert in
+                viewModel.alert.onNext(alert)
+            })
+            .disposed(by: disposeBag)
+        
+        leaveStudyAlertObserver
+            .filter { $0 }
+            .withUnretained(self)
+            .flatMap { $0.0.leaveStudyUseCase?.leaveStudy(id: $0.0.chatRoomID).asResult() ?? .empty() }
+            .withUnretained(self)
+            .subscribe(onNext: { viewModel, result in
+                switch result {
+                case .success:
+                    viewModel.navigation.onNext(.back)
+                case .failure(let error):
+                    
+                    let alert = Alert(title: "채팅방 나가기 오류", message: "채팅방 나가기 오류가 발생했어요.", observer: nil)
+                    viewModel.alert.onNext(alert)
                 }
             })
             .disposed(by: disposeBag)
         
-        studyInfoTap
-            .subscribe(onNext: { [weak self] in
-                self?.selectedSidebar.onNext(.studyInfo)
-            })
-            .disposed(by: disposeBag)
-        
-        exitStudyTap
-            .withUnretained(self)
-            .flatMap { $0.0.leaveStudyUseCase?.leaveStudy(id: $0.0.chatRoomID) ?? .empty() }
-            .subscribe(onNext: { [weak self] in
-                self?.selectedSidebar.onNext(.exitStudy)
-            }, onError: { error in
-                print(error)
-            })
-            .disposed(by: disposeBag)
-        
-        showMemberTap
-            .subscribe(onNext: { [weak self] in
-                self?.selectedSidebar.onNext(.showMember)
-            })
-            .disposed(by: disposeBag)
+        // input.selectedSidebar
+        //     .filter { $0 == .showMember }
+        //     .subscribe(onNext: { _ in
+        //         // TODO: 유저 정보 화면 이동
+        //     })
+        //     .disposed(by: disposeBag)
     }
 
  	private func bindPushNotification(input: Input) {
