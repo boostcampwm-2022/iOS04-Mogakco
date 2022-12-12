@@ -25,7 +25,7 @@ final class ChatListViewModel: ViewModel {
     
     struct Output {
         let chatRooms: Driver<[ChatRoom]>
-        let loadingFinished: Observable<Bool>
+        let isLoading: Driver<Bool>
         let alert: Signal<Alert>
     }
     
@@ -33,6 +33,7 @@ final class ChatListViewModel: ViewModel {
     var chatRoomListUseCase: ChatRoomListUseCaseProtocol?
     private let chatRooms = BehaviorSubject<[ChatRoom]>(value: [])
     private let reload = PublishSubject<Void>()
+    private let isLoading = BehaviorSubject(value: true)
     private let alert = PublishSubject<Alert>()
     let navigation = PublishSubject<ChatListNavigation>()
     
@@ -81,9 +82,15 @@ final class ChatListViewModel: ViewModel {
             })
             .disposed(by: disposeBag)
         
+        chatRooms
+            .skip(1)
+            .map { _ in false }
+            .bind(to: isLoading)
+            .disposed(by: disposeBag)
+        
         return Output(
             chatRooms: chatRooms.asDriver(onErrorJustReturn: []),
-            loadingFinished: chatRooms.skip(1).map { _ in false }.asObservable(),
+            isLoading: isLoading.asDriver(onErrorJustReturn: false),
             alert: alert.asSignal(onErrorSignalWith: .empty())
         )
     }
