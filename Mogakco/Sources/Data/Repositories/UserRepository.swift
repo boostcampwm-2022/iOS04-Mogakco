@@ -13,22 +13,13 @@ import RxSwift
 struct UserRepository: UserRepositoryProtocol {
   
     enum UserRepositoryError: Error {
-        case noFcmToken
+        case noFcmToken, noUserInfo
     }
     
-    var localUserDataSource: LocalUserDataSourceProtocol?
     var remoteUserDataSource: RemoteUserDataSourceProtocol?
     var keyChainManager: KeychainManagerProtocol?
     private let disposeBag = DisposeBag()
 
-    func save(user: User) -> Observable<Void> {
-        return localUserDataSource?.save(user: user) ?? .empty()
-    }
-    
-    func save(userID: String) -> Observable<Void> {
-        return localUserDataSource?.saveID(userID: userID) ?? .empty()
-    }
-    
     func user(id: String) -> Observable<User> {
         return remoteUserDataSource?.user(id: id)
             .map { $0.toDomain() } ?? .empty()
@@ -40,7 +31,11 @@ struct UserRepository: UserRepositoryProtocol {
     }
     
     func load() -> Observable<User> {
-        return localUserDataSource?.load() ?? .empty()
+        guard let data = keyChainManager?.load(key: .authorization),
+              let authorization = try? JSONDecoder().decode(Authorization.self, from: data) else {
+            return Observable.error(UserRepositoryError.noUserInfo)
+        }
+        return user(id: authorization.localId)
     }
     
     func create(user: User, imageData: Data) -> Observable<User> {

@@ -32,8 +32,8 @@ struct ChatRoomListUseCase: ChatRoomListUseCaseProtocol {
     }
     
     func leave(chatRoom: ChatRoom) -> Observable<Void> {
-        return userRepository?.load()
+        return (userRepository?.load() ?? .empty())
             .flatMap { chatRoomRepository?.leave(user: $0, chatRoom: chatRoom) ?? .empty() }
-            .flatMap { userRepository?.save(user: $0) ?? .empty() } ?? .empty()
+            .map { _ in () }
     }
 }

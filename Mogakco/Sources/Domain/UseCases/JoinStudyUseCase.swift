@@ -17,18 +17,11 @@ struct JoinStudyUseCase: JoinStudyUseCaseProtocol {
     }
     
     var studyRepository: StudyRepositoryProtocol?
+    var userRepository: UserRepositoryProtocol?
     private let disposeBag = DisposeBag()
 
     func join(id: String) -> Observable<Void> {
-        return Observable<Void>.create { emitter in
-            studyRepository?.join(id: id)
-                .subscribe(onNext: {
-                    emitter.onNext($0)
-                }, onError: { _ in
-                    emitter.onError(JoinStudyUseCaseError.max)
-                })
-                .disposed(by: disposeBag)
-            return Disposables.create()
-        }
+        return (userRepository?.load() ?? .empty())
+            .flatMap { studyRepository?.join(user: $0, id: id) ?? .empty() }
     }
 }
