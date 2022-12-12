@@ -169,6 +169,7 @@ final class StudyDetailViewModel: ViewModel {
         
         report
             .filter { $0 }
+            .delay(.milliseconds(500), scheduler: MainScheduler.instance)
             .withUnretained(self)
             .flatMap { $0.0.reportUseCase?.reportStudy(id: $0.0.studyID) ?? .empty() }
             .map { _ in StudyDetailNavigation.back }

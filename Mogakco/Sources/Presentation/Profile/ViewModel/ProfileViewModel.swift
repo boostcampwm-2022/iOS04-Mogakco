@@ -225,6 +225,7 @@ final class ProfileViewModel: ViewModel {
 
         report
             .filter { $0 }
+            .delay(.milliseconds(500), scheduler: MainScheduler.instance)
             .withLatestFrom(user.compactMap { $0 })
             .withUnretained(self)
             .flatMap { $0.0.reportUseCase?.reportUser(id: $0.1.id) ?? .empty() }
