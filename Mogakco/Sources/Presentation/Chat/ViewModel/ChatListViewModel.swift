@@ -18,6 +18,7 @@ enum ChatListNavigation {
 final class ChatListViewModel: ViewModel {
     
     struct Input {
+        let viewWillAppear: Observable<Void>
         let refresh: Observable<Void>
         let selectedChatRoom: Observable<ChatRoom>
         let deletedChatRoom: Observable<ChatRoom>
@@ -43,6 +44,7 @@ final class ChatListViewModel: ViewModel {
 
         Observable.merge(
             Observable.just(()),
+            input.viewWillAppear.skip(1),
             input.refresh,
             ChatListViewModel.reload
         )
