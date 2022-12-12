@@ -17,6 +17,7 @@ enum PolicyType: String {
     case total = ""
     case required = "필수"
     case option = "선택"
+    case withdraw = "탈퇴"
 }
 
 final class PolicyCheckBox: UIView {
@@ -63,9 +64,16 @@ final class PolicyCheckBox: UIView {
     
     func setup(body: String, type: PolicyType, link: String? = nil) {
         self.bodyLabel.text = body
-        self.captionLabel.text = type.rawValue
         self.link = link
         self.detailButton.isHidden = type == .total
+        
+        switch type {
+        case .total, .required, .option:
+            self.captionLabel.text = type.rawValue
+        default:
+            captionLabel.isHidden = true
+            detailButton.isHidden = true
+        }
     }
     
     private func layout() {
