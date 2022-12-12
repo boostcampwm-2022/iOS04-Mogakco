@@ -8,6 +8,7 @@
 
 import UIKit
 
+import RxCocoa
 import RxSwift
 
 enum SettingNavigation {
@@ -24,7 +25,9 @@ final class SettingViewModel: ViewModel {
         let backButtonDidTap: Observable<Void>
     }
     
-    struct Output {}
+    struct Output {
+        let alert: Signal<Alert>
+    }
     
     var disposeBag = DisposeBag()
     var logoutUseCase: LogoutUseCaseProtocol?
@@ -33,12 +36,17 @@ final class SettingViewModel: ViewModel {
     
     func transform(input: Input) -> Output {
         
-        input.logoutDidTap
+        let logoutAlertHandler = PublishSubject<Bool>()
+        let alert = input.logoutDidTap
+            .map { Alert(title: "로그아웃", message: "로그아웃 하시겠어요?", observer: logoutAlertHandler.asObserver()) }
+        
+        logoutAlertHandler
+            .filter { $0 }
             .withUnretained(self)
             .flatMap { $0.0.logoutUseCase?.logout() ?? .empty() }
-            .subscribe(onNext: { [weak self] in
-                guard let self else { return }
-                self.navigation.onNext(.logout)
+            .withUnretained(self)
+            .subscribe(onNext: { viewModel, _ in
+                viewModel.navigation.onNext(.logout)
             })
             .disposed(by: disposeBag)
         
@@ -52,6 +60,8 @@ final class SettingViewModel: ViewModel {
             .bind(to: navigation)
             .disposed(by: disposeBag)
         
-        return Output()
+        return Output(
+            alert: alert.asSignal(onErrorSignalWith: .empty())
+        )
     }
 }
