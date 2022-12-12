@@ -6,15 +6,15 @@
 //  Copyright © 2022 Mogakco. All rights reserved.
 //
 
-import Alamofire
+import RxMogakcoYa
 import RxSwift
 
 struct FBAuthService: AuthServiceProtocol {
     
     private let provider: Provider
     
-    init(provider: Provider) {
-        self.provider = provider
+    init() {
+        self.provider = Provider(session: .default)
     }
 
     func signup(_ request: EmailAuthorizationRequestDTO) -> Observable<AuthorizationResponseDTO> {

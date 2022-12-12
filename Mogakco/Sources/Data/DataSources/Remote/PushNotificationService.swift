@@ -6,22 +6,22 @@
 //  Copyright © 2022 Mogakco. All rights reserved.
 //
 
-import Alamofire
 import FirebaseMessaging
+import RxMogakcoYa
 import RxSwift
 
 struct PushNotificationService: PushNotificationServiceProtocol {
-    private let provider: ProviderProtocol
+    private let provider: Provider
     
-    init(provider: ProviderProtocol) {
-        self.provider = provider
+    init() {
+        self.provider = Provider(session: .default)
     }
 
-    func send(request: PushNotificationRequestDTO) -> Observable<EmptyResponse> {
+    func send(request: PushNotificationRequestDTO) -> Observable<Void> {
         return provider.request(PushNotificationTarget.send(request))
     }
     
-    func sendTopic(request: PushNotificationRequestDTO) -> Observable<EmptyResponse> {
+    func sendTopic(request: PushNotificationRequestDTO) -> Observable<Void> {
         return provider.request(PushNotificationTarget.send(request))
     }
     
