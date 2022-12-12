@@ -23,7 +23,7 @@ final class ChatListViewController: UIViewController {
         $0.setTitle(Constant.headerViewTitle)
     }
     
-    private lazy var tableContentsView = ChatRoomListSkeletonContentsView()
+    private lazy var skeletonContentsView = ChatRoomListSkeletonContentsView()
     
     private let chatRoomTableView = UITableView().then {
         $0.register(ChatRoomTableViewCell.self, forCellReuseIdentifier: ChatRoomTableViewCell.identifier)
@@ -63,12 +63,6 @@ final class ChatListViewController: UIViewController {
     }
     
     func bind() {
-        let isChatLoading = BehaviorSubject(value: true)
-        
-        isChatLoading
-            .bind(to: tableContentsView.rx.skeleton)
-            .disposed(by: disposeBag)
-        
         let input = ChatListViewModel.Input(
             viewWillAppear: rx.viewWillAppear.map { _ in }.asObservable(),
             selectedChatRoom: chatRoomTableView.rx.modelSelected(ChatRoom.self)
@@ -92,8 +86,8 @@ final class ChatListViewController: UIViewController {
             }
             .disposed(by: disposeBag)
         
-        output.loadingFinished
-            .bind(to: isChatLoading)
+        output.isLoading
+            .drive(skeletonContentsView.rx.skeleton)
             .disposed(by: disposeBag)
 
         output.alert
@@ -116,14 +110,14 @@ final class ChatListViewController: UIViewController {
     }
     
     private func layoutChatRoomTableView() {
-        view.addSubview(tableContentsView)
+        view.addSubview(skeletonContentsView)
         
-        tableContentsView.snp.makeConstraints {
+        skeletonContentsView.snp.makeConstraints {
             $0.top.equalTo(headerView.snp.bottom)
             $0.leading.trailing.bottom.equalTo(view.safeAreaLayoutGuide)
         }
         
-        tableContentsView.addSubview(chatRoomTableView)
+        skeletonContentsView.addSubview(chatRoomTableView)
         
         chatRoomTableView.snp.makeConstraints {
             $0.edges.equalToSuperview()
