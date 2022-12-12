@@ -42,7 +42,7 @@ struct ChatRoomRepository: ChatRoomRepositoryProtocol {
                     chatRooms.map { chatRoom in
                         return (chatRoomDataSource?.chats(id: chatRoom.id) ?? .empty())
                             .map { $0.documents.map { $0.toDomain() } }
-                            .map { $0.sorted { $0.date < $1.date } }
+                            .map { $0.sorted { $0.date > $1.date } }
                             .map { ($0.first, unreadChatCount(id: id, chats: $0)) }
                             .map { ChatRoom(chatRoom: chatRoom, latestChat: $0.0, unreadChatCount: $0.1) }
                     }
