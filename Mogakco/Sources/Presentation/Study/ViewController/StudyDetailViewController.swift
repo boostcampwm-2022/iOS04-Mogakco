@@ -99,9 +99,13 @@ final class StudyDetailViewController: UIViewController {
         $0.setTitle("스터디 참여", for: .normal)
     }
     
+    private let reportButton = UIButton().then {
+        $0.setImage(UIImage(systemName: "exclamationmark.circle"), for: .normal)
+        $0.tintColor = .mogakcoColor.primaryDefault
+    }
+    
     // MARK: - Property
     
-    private let report = PublishSubject<Void>()
     var viewModel: StudyDetailViewModel
     var disposeBag = DisposeBag()
     
@@ -117,7 +121,6 @@ final class StudyDetailViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.isNavigationBarHidden = false
-        reportButton()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -151,7 +154,8 @@ final class StudyDetailViewController: UIViewController {
                 .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance),
             backButtonTapped: backButton.rx.tap
                 .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance),
-            reportButtonTapped: report.throttle(.seconds(1), scheduler: MainScheduler.asyncInstance)
+            reportButtonTapped: reportButton.rx.tap
+                .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance)
         )
         
         let output = viewModel.transform(input: input)
@@ -198,6 +202,7 @@ final class StudyDetailViewController: UIViewController {
         navigationItem.title = "스터디"
         navigationItem.backButtonTitle = "이전"
         navigationItem.titleView?.tintColor = .mogakcoColor.primaryDefault
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: reportButton)
         navigationController?
             .navigationBar
             .titleTextAttributes = [.foregroundColor: UIColor.mogakcoColor.typographyPrimary ?? .white]
@@ -281,26 +286,5 @@ final class StudyDetailViewController: UIViewController {
             $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(Layout.buttonBottomInset)
             $0.height.equalTo(Layout.buttonHeight)
         }
-    }
-    
-    private func reportButton() {
-        let reportButton = UIBarButtonItem(
-            image: UIImage(systemName: "exclamationmark.circle"),
-            primaryAction: UIAction { [weak self] _ in
-                self?.alert(
-                    title: "신고하기",
-                    message: "신고하면 확인 후 제재되며, 더 이상 해당 스터디에 참여할 수 없습니다.",
-                    actions: [
-                        UIAlertAction.cancel(),
-                        UIAlertAction.destructive(
-                            title: "신고",
-                            handler: { [weak self] _ in self?.report.onNext(()) }
-                        )
-                    ]
-                )
-            }
-        )
-        reportButton.tintColor = .mogakcoColor.primaryDefault
-        navigationItem.rightBarButtonItem = reportButton
     }
 }

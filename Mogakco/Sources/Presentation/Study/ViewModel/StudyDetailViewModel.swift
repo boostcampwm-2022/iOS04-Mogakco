@@ -47,6 +47,7 @@ final class StudyDetailViewModel: ViewModel {
     private let participants = BehaviorSubject<[User]>(value: [])
     private let isLoading = BehaviorSubject(value: true)
     private let alert = PublishSubject<Alert>()
+    private let report = PublishSubject<Bool>()
 
     func transform(input: Input) -> Output {
         bindStudyDetail()
@@ -155,6 +156,19 @@ final class StudyDetailViewModel: ViewModel {
     
     private func bindReportButton(_ buttonTapped: Observable<Void>) {
         buttonTapped
+            .withUnretained(self)
+            .subscribe(onNext: { viewModel, _ in
+                let alert = Alert(
+                    title: "신고하기",
+                    message: "확인 후 제재되며, 더 이상 해당 스터디에 참여할 수 없습니다.",
+                    observer: viewModel.report.asObserver()
+                )
+                viewModel.alert.onNext(alert)
+            })
+            .disposed(by: disposeBag)
+        
+        report
+            .filter { $0 }
             .withUnretained(self)
             .flatMap { $0.0.reportUseCase?.reportStudy(id: $0.0.studyID) ?? .empty() }
             .map { _ in StudyDetailNavigation.back }
