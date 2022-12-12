@@ -131,7 +131,6 @@ final class StudyDetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .mogakcoColor.backgroundDefault
-        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: backButton)
         layout()
         bind()
     }
@@ -201,11 +200,8 @@ final class StudyDetailViewController: UIViewController {
     private func navigationLayout() {
         navigationItem.title = "스터디"
         navigationItem.backButtonTitle = "이전"
-        navigationItem.titleView?.tintColor = .mogakcoColor.primaryDefault
+        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: backButton)
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: reportButton)
-        navigationController?
-            .navigationBar
-            .titleTextAttributes = [.foregroundColor: UIColor.mogakcoColor.typographyPrimary ?? .white]
     }
     
     private func layoutSubViews() {

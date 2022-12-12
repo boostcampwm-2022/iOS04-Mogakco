@@ -136,16 +136,9 @@ final class SetPasswordViewController: ViewController {
     // MARK: - Layout
     
     override func layout() {
-        layoutNavigation()
         layoutTitleLabel()
         layoutStackView()
         layoutButton()
-    }
-    
-    private func layoutNavigation() {
-        navigationController?
-            .navigationBar
-            .titleTextAttributes = [.foregroundColor: UIColor.mogakcoColor.typographyPrimary ?? .white]
     }
     
     private func layoutTitleLabel() {
