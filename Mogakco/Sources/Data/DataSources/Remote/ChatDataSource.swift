@@ -66,6 +66,7 @@ final class ChatDataSource: ChatDataSourceProtocol {
                 if let snapshot = snapshot,
                    let change = snapshot.documentChanges.last,
                    change.type == .added {
+                    // type 지정 안하면 1. 채팅 등록 2.상대가 읽은거 인해서 총 2번 오니까 add 항목만 오게 확인 해야함
                     let dictionary = change.document.data()
                     guard let data = try? JSONSerialization.data(withJSONObject: dictionary),
                           let chat = try? JSONDecoder().decode(Chat.self, from: data)
@@ -92,9 +93,6 @@ final class ChatDataSource: ChatDataSourceProtocol {
     
     func read(chat: Chat, userID: String) -> Observable<Void> {
         return Observable.create { emitter in
-            print("DEBUG : READ userID \(userID)")
-            print("DEBUG : READ userID \(chat.readUserIDs)")
-            print("DEBUG : READ readUserIDs.contains \(!chat.readUserIDs.contains(userID))")
             if !chat.readUserIDs.contains(userID) {
                 var chat2 = chat
                 
@@ -109,5 +107,11 @@ final class ChatDataSource: ChatDataSourceProtocol {
             }
             return Disposables.create()
         }
+    }
+    
+    func stopObserving() {
+        listener?.remove()
+        listener = nil
+        page = nil
     }
 }
