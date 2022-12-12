@@ -101,7 +101,12 @@ final class ProfileViewController: UIViewController {
         $0.setImage(UIImage(systemName: "line.horizontal.3"), for: .normal)
         $0.tintColor = .mogakcoColor.primaryDefault
     }
-    
+
+    let backButton = UIButton().then {
+        $0.setTitle("이전", for: .normal)
+        $0.setTitleColor(.mogakcoColor.primaryDefault, for: .normal)
+    }
+
     private let report = PublishSubject<Void>()
     private let disposeBag = DisposeBag()
     private var viewModel: ProfileViewModel
@@ -109,23 +114,18 @@ final class ProfileViewController: UIViewController {
     init(viewModel: ProfileViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
-        view.backgroundColor = .mogakcoColor.backgroundDefault
-        layout()
-        bind()
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        navigationController?.isNavigationBarHidden = true
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        navigationController?.isNavigationBarHidden = false
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = .mogakcoColor.backgroundDefault
+        layout()
+        bind()
+        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: backButton)
     }
     
     func bind() {
@@ -144,6 +144,8 @@ final class ProfileViewController: UIViewController {
             settingButtonTapped: settingButton.rx.tap
                 .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance),
             reportButtonTapped: report
+                .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance),
+            backButtonTapped: backButton.rx.tap
                 .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance)
         )
         let output = viewModel.transform(input: input)
@@ -152,6 +154,7 @@ final class ProfileViewController: UIViewController {
         bindIsMyProfile(output: output)
         bindProfile(output: output)
         bindHashtags(output: output)
+        bindNavigation(output: output)
         bindReportButton()
     }
     
@@ -242,6 +245,16 @@ final class ProfileViewController: UIViewController {
         output.studyRatingList
             .drive(onNext: { [weak self] studyRatingList in
                 self?.studyRatingListView.configure(studyRatingList: studyRatingList)
+            })
+            .disposed(by: disposeBag)
+    }
+    
+    private func bindNavigation(output: ProfileViewModel.Output) {
+        rx.viewWillAppear
+            .withLatestFrom(output.navigationBarHidden)
+            .debug()
+            .subscribe(onNext: { [weak self] in
+                self?.navigationController?.setNavigationBarHidden($0, animated: true)
             })
             .disposed(by: disposeBag)
     }
