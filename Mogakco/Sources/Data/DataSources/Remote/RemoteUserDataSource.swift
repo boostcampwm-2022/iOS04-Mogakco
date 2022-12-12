@@ -6,15 +6,15 @@
 //  Copyright © 2022 Mogakco. All rights reserved.
 //
 
-import Alamofire
 import Firebase
+import RxMogakcoYa
 import RxSwift
 
 struct RemoteUserDataSource: RemoteUserDataSourceProtocol {
-    let provider: ProviderProtocol
+    private let provider: Provider
     
-    init(provider: ProviderProtocol) {
-        self.provider = provider
+    init() {
+        self.provider = Provider(session: .default)
     }
     
     func user(id: String) -> Observable<UserResponseDTO> {

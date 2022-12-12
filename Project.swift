@@ -19,14 +19,14 @@ class BaseProjectFactory: ProjectFactory {
         .external(name: "RxCocoa"),
         .external(name: "RxKeyboard"),
         .external(name: "SnapKit"),
-        .external(name: "Alamofire"),
         .external(name: "Then"),
         .external(name: "FirebaseAuth"),
         .external(name: "FirebaseDatabase"),
         .external(name: "FirebaseFirestore"),
         .external(name: "FirebaseStorage"),
         .external(name: "FirebaseMessaging"),
-        .external(name: "Swinject")
+        .external(name: "Swinject"),
+        .target(name: "RxMogakcoYa")
     ]
     
     let infoPlist: [String: InfoPlist.Value] = [
@@ -86,6 +86,18 @@ class BaseProjectFactory: ProjectFactory {
                 scripts: [.pre(path: "Scripts/SwiftLintRunScript.sh", arguments: [], name: "SwiftLint")],
                 dependencies: dependencies
             ),
+            Target(
+                name: "RxMogakcoYa",
+                platform: .iOS,
+                product: .framework,
+                bundleId: "com.codershigh.boostcamp.\(projectName).RxMogakcoYa",
+                infoPlist: .default,
+                sources: ["RxMogakcoYa/Sources/**"],
+                dependencies: [
+                    .external(name: "RxSwift"),
+                    .external(name: "Alamofire")
+                ]
+            )
         ]
     }
 }

@@ -24,12 +24,11 @@ final class DIContainer {
     }
 
     private func registerDataSources() {
-        let provider = Provider.default
-        container.register(AuthServiceProtocol.self) { _ in FBAuthService(provider: provider) }
-        container.register(RemoteUserDataSourceProtocol.self) { _ in RemoteUserDataSource(provider: provider) }
+        container.register(AuthServiceProtocol.self) { _ in FBAuthService() }
+        container.register(RemoteUserDataSourceProtocol.self) { _ in RemoteUserDataSource() }
         container.register(LocalUserDataSourceProtocol.self) { _ in UserDefaultsUserDataSource() }
-        container.register(StudyDataSourceProtocol.self) { _ in StudyDataSource(provider: provider) }
-        container.register(ChatRoomDataSourceProtocol.self) { _ in ChatRoomDataSource(provider: provider) }
+        container.register(StudyDataSourceProtocol.self) { _ in StudyDataSource() }
+        container.register(ChatRoomDataSourceProtocol.self) { _ in ChatRoomDataSource() }
         container.register(ChatDataSourceProtocol.self) { _ in ChatDataSource() }
         container.register(HashtagDataSourceProtocol.self) { _ in HashtagDataSource() }
         container.register(ReportDataSourceProtocol.self) { _ in ReportDataSource() }
@@ -39,7 +38,7 @@ final class DIContainer {
             dataSource.keychain = resolver.resolve(KeychainProtocol.self)
             return dataSource
         }
-        container.register(PushNotificationServiceProtocol.self) { _ in PushNotificationService(provider: provider) }
+        container.register(PushNotificationServiceProtocol.self) { _ in PushNotificationService() }
     }
     
     private func registerRepositories() {

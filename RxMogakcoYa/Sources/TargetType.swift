@@ -10,7 +10,12 @@ import Foundation
 
 import Alamofire
 
-protocol TargetType: URLRequestConvertible {
+public typealias HTTPMethod = Alamofire.HTTPMethod
+public typealias HTTPHeaders = Alamofire.HTTPHeaders
+public typealias ParameterEncoding = Alamofire.ParameterEncoding
+public typealias JSONEncoding = Alamofire.JSONEncoding
+
+public protocol TargetType: URLRequestConvertible {
     var baseURL: String { get }
     var method: HTTPMethod { get }
     var header: HTTPHeaders { get }
@@ -19,7 +24,7 @@ protocol TargetType: URLRequestConvertible {
     var encoding: ParameterEncoding { get }
 }
 
-extension TargetType {
+public extension TargetType {
     func asURLRequest() throws -> URLRequest {
         let url = try baseURL.asURL()
         // var urlRequest = try URLRequest(url: url.appendingPathComponent(path), method: method)
@@ -45,7 +50,7 @@ extension TargetType {
     }
 }
 
-enum RequestParams {
+public enum RequestParams {
     case query(_ parameter: Encodable?)
     case body(_ parameter: Encodable?)
 }
