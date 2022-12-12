@@ -48,6 +48,18 @@ struct PushNotificationService: PushNotificationServiceProtocol {
             return Disposables.create()
         }
     }
+    
+    func deleteToken() -> Observable<Void> {
+        return Observable.create { emitter in
+            Messaging.messaging().deleteToken() { error in
+                if let error = error {
+                    emitter.onError(error)
+                }
+                emitter.onNext(())
+            }
+            return Disposables.create()
+        }
+    }
 }
 
 enum PushNotificationTarget {
