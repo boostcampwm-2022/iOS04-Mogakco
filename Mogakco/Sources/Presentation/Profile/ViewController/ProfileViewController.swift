@@ -156,8 +156,8 @@ final class ProfileViewController: UIViewController {
     }
     
     private func bindLoadingView(output: ProfileViewModel.Output) {
-        Observable.just(true)
-            .bind(to: skeletonContentsView.rx.skeleton)
+        output.endLoading
+            .drive(skeletonContentsView.rx.skeleton)
             .disposed(by: disposeBag)
         
         Observable.just(true)
@@ -166,10 +166,6 @@ final class ProfileViewController: UIViewController {
         
         Observable.just(true)
             .bind(to: profileView.roundLanguageImageView.rx.skeleton)
-            .disposed(by: disposeBag)
-        
-        output.endLoading
-            .bind(to: skeletonContentsView.rx.skeleton)
             .disposed(by: disposeBag)
     }
     
@@ -292,9 +288,9 @@ final class ProfileViewController: UIViewController {
     }
     
     private func layoutSettingButton() {
-        skeletonContentsView.addSubview(settingButton)
+        headerView.addSubview(settingButton)
         settingButton.snp.makeConstraints {
-            $0.top.right.equalTo(headerView).inset(16)
+            $0.top.right.equalTo(headerView)
         }
     }
     
