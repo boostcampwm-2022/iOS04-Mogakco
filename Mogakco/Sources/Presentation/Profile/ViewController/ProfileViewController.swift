@@ -107,7 +107,6 @@ final class ProfileViewController: UIViewController {
         $0.setTitleColor(.mogakcoColor.primaryDefault, for: .normal)
     }
 
-    private let report = PublishSubject<Void>()
     private let disposeBag = DisposeBag()
     private var viewModel: ProfileViewModel
     
@@ -142,7 +141,7 @@ final class ProfileViewController: UIViewController {
             .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance),
             settingButtonTapped: settingButton.rx.tap
                 .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance),
-            reportButtonTapped: report
+            reportButtonTapped: profileView.reportButton.rx.tap
                 .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance),
             backButtonTapped: backButton.rx.tap
                 .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance)
@@ -154,7 +153,6 @@ final class ProfileViewController: UIViewController {
         bindProfile(output: output)
         bindHashtags(output: output)
         bindNavigation(output: output)
-        bindReportButton()
     }
     
     private func bindLoadingView(output: ProfileViewModel.Output) {
@@ -253,24 +251,6 @@ final class ProfileViewController: UIViewController {
             .withLatestFrom(output.navigationBarHidden)
             .withUnretained(self)
             .subscribe(onNext: { $0.0.setupNavigationBar(hidden: $0.1) })
-            .disposed(by: disposeBag)
-    }
-    
-    private func bindReportButton() {
-        profileView.reportButton.rx.tap
-            .subscribe(onNext: { [weak self] in
-                self?.alert(
-                    title: "차단하기",
-                    message: "이 사용자가 작성한 채팅들이 보이지 않게 됩니다.",
-                    actions: [
-                        UIAlertAction.cancel(),
-                        UIAlertAction.destructive(
-                            title: "차단",
-                            handler: { [weak self] _ in self?.report.onNext(()) }
-                        )
-                    ]
-                )
-            })
             .disposed(by: disposeBag)
     }
     
