@@ -12,8 +12,8 @@ protocol StudyRepositoryProtocol {
     func list(sort: StudySort, filters: [StudyFilter]) -> Observable<[Study]>
     func list(ids: [String]) -> Observable<[Study]>
     func detail(id: String) -> Observable<Study>
-    func create(study: Study) -> Observable<Study>
+    func create(user: User, study: Study) -> Observable<Study>
     func updateIDs(id: String, userIDs: [String]) -> Observable<Study>
-    func join(id: String) -> Observable<Void>
-    func leaveStudy(id: String) -> Observable<Void>
+    func join(user: User, id: String) -> Observable<Void>
+    func leaveStudy(user: User, id: String) -> Observable<Void>
 }

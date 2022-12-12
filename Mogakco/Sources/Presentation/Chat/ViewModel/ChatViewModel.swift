@@ -199,7 +199,7 @@ final class ChatViewModel: ViewModel {
             }
             .withUnretained(self)
             .flatMap { viewModel, chat in
-                viewModel.chatUseCase?.send(chat: chat, to: viewModel.chatRoomID).asResult() ?? .empty()
+                viewModel.chatUseCase?.send(chat: chat).asResult() ?? .empty()
             }
             .withUnretained(self)
             .subscribe(onNext: { viewModel, result in

@@ -18,11 +18,9 @@ struct LoginUseCase: LoginUseCaseProtocol {
     private let disposeBag = DisposeBag()
 
     func login(emailLogin: EmailLogin) -> Observable<Void> {
-        return authRepository?.login(emailLogin: emailLogin)
+        return (authRepository?.login(emailLogin: emailLogin) ?? .empty())
             .flatMap { tokenRepository?.save($0) ?? .empty() }
-            .compactMap { $0 }
-            .map { $0.localId }
-            .flatMap { userRepository?.user(id: $0) ?? .empty() }
-            .flatMap { userRepository?.save(user: $0) ?? .empty() } ?? .empty()
+            .compactMap { $0?.localId }
+            .map { _ in () }
     }
 }

@@ -13,9 +13,11 @@ import RxSwift
 struct CreateStudyUseCase: CreateStudyUseCaseProtocol {
     
     var studyRepository: StudyRepositoryProtocol?
+    var userRepository: UserRepositoryProtocol?
     private let disposeBag = DisposeBag()
 
     func create(study: Study) -> Observable<Study> {
-        return studyRepository?.create(study: study) ?? .empty()
+        return (userRepository?.load() ?? .empty())
+            .flatMap { studyRepository?.create(user: $0, study: study) ?? .empty() }
     }
 }

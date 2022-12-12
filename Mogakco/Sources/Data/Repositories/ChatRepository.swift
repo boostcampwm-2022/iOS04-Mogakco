@@ -32,13 +32,17 @@ struct ChatRepository: ChatRepositoryProtocol {
             .map { $0.0 }
     }
 
-    func send(chat: Chat, to chatRoomID: String) -> Observable<Void> {
-        let request = PushNotificationRequestDTO(
-            topic: chatRoomID,
-            title: chat.user?.name ?? "",
-            body: chat.message)
-        return chatDataSource?.send(chat: chat, to: chatRoomID)
-            .flatMap { pushNotificationService?.sendTopic(request: request) ?? .empty() }
+    func send(chat: Chat) -> Observable<Void> {
+        let request = ChatRequestDTO(chat: chat)
+        return chatDataSource?.send(request: request)
+            .map { _ in
+                PushNotificationRequestDTO(
+                    topic: chat.chatRoomID,
+                    title: chat.user?.name ?? "",
+                    body: chat.message
+                )
+            }
+            .flatMap { pushNotificationService?.sendTopic(request: $0) ?? .empty() }
             .map { _ in () } ?? .empty()
     }
     

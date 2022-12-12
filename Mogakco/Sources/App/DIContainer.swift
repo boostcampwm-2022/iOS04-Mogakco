@@ -26,7 +26,6 @@ final class DIContainer {
     private func registerDataSources() {
         container.register(AuthServiceProtocol.self) { _ in FBAuthService() }
         container.register(RemoteUserDataSourceProtocol.self) { _ in RemoteUserDataSource() }
-        container.register(LocalUserDataSourceProtocol.self) { _ in UserDefaultsUserDataSource() }
         container.register(StudyDataSourceProtocol.self) { _ in StudyDataSource() }
         container.register(ChatRoomDataSourceProtocol.self) { _ in ChatRoomDataSource() }
         container.register(ChatDataSourceProtocol.self) { _ in ChatDataSource() }
@@ -81,15 +80,14 @@ final class DIContainer {
             repository.studyDataSource = resolver.resolve(StudyDataSourceProtocol.self)
             repository.remoteUserDataSource = resolver.resolve(RemoteUserDataSourceProtocol.self)
             repository.chatRoomDataSource = resolver.resolve(ChatRoomDataSourceProtocol.self)
-            repository.localUserDataSource = resolver.resolve(LocalUserDataSourceProtocol.self)
             repository.reportDataSource = resolver.resolve(ReportDataSourceProtocol.self)
             repository.pushNotificationService = resolver.resolve(PushNotificationServiceProtocol.self)
             return repository
         }
         container.register(UserRepositoryProtocol.self) { resolver in
             var repository = UserRepository()
-            repository.localUserDataSource = resolver.resolve(LocalUserDataSourceProtocol.self)
             repository.remoteUserDataSource = resolver.resolve(RemoteUserDataSourceProtocol.self)
+            repository.keyChainManager = resolver.resolve(KeychainManagerProtocol.self)
             return repository
         }
         container.register(ReportRepositoryProtocol.self) { resolver in
@@ -126,6 +124,7 @@ final class DIContainer {
         container.register(CreateStudyUseCaseProtocol.self) { resolver in
             var useCase = CreateStudyUseCase()
             useCase.studyRepository = resolver.resolve(StudyRepositoryProtocol.self)
+            useCase.userRepository = resolver.resolve(UserRepositoryProtocol.self)
             return useCase
         }
         container.register(EditProfileUseCaseProtocol.self) { resolver in
@@ -141,11 +140,13 @@ final class DIContainer {
         container.register(JoinStudyUseCaseProtocol.self) { resolver in
             var useCase = JoinStudyUseCase()
             useCase.studyRepository = resolver.resolve(StudyRepositoryProtocol.self)
+            useCase.userRepository = resolver.resolve(UserRepositoryProtocol.self)
             return useCase
         }
         container.register(LeaveStudyUseCaseProtocol.self) { resolver in
             var useCase = LeaveStudyUseCase()
             useCase.studyRepository = resolver.resolve(StudyRepositoryProtocol.self)
+            useCase.userRepository = resolver.resolve(UserRepositoryProtocol.self)
             return useCase
         }
         container.register(LoginUseCaseProtocol.self) { resolver in

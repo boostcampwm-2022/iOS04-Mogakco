@@ -22,7 +22,7 @@ struct WithdrawUseCase: WithdrawUseCaseProtocol {
         return userRepository?.load()
             .flatMap { user in
                 let observe: [Observable<Void>] = user.studyIDs.map {
-                    studyRepository?.leaveStudy(id: $0) ?? .empty()
+                    studyRepository?.leaveStudy(user: user, id: $0) ?? .empty()
                 }
                 return Observable
                     .combineLatest(observe)

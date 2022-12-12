@@ -12,10 +12,12 @@ import RxSwift
 
 struct LeaveStudyUseCase: LeaveStudyUseCaseProtocol {
     var studyRepository: StudyRepositoryProtocol?
+    var userRepository: UserRepositoryProtocol?
     
     var disposeBag = DisposeBag()
 
     func leaveStudy(id: String) -> Observable<Void> {
-        return studyRepository?.leaveStudy(id: id) ?? .empty()
+        return (userRepository?.load() ?? .empty())
+            .flatMap { studyRepository?.leaveStudy(user: $0, id: id) ?? .empty() }
     }
 }

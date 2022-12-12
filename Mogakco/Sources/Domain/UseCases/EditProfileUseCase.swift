@@ -23,36 +23,32 @@ struct EditProfileUseCase: EditProfileUseCaseProtocol {
         guard let imageData = image.jpegData(compressionQuality: 0.5) else {
             return Observable<Void>.error(EditProfileUseCaseError.imageCompress)
         }
-        return userRepository?
-            .load()
-            .compactMap { $0.id }
+        return (userRepository?.load() ?? .empty())
+            .map { $0.id }
             .flatMap {
                 userRepository?.editProfile(id: $0, name: name, introduce: introduce, imageData: imageData) ?? .empty()
             }
-            .flatMap { userRepository?.save(user: $0) ?? .empty() } ?? .empty()
+            .map { _ in () }
     }
     
     func editLanguages(languages: [String]) -> Observable<Void> {
-        return userRepository?
-            .load()
-            .compactMap { $0.id }
+        return (userRepository?.load() ?? .empty())
+            .map { $0.id }
             .flatMap { userRepository?.editLanguages(id: $0, languages: languages) ?? .empty() }
-            .flatMap { userRepository?.save(user: $0) ?? .empty() } ?? .empty()
+            .map { _ in () }
     }
     
     func editCareers(careers: [String]) -> Observable<Void> {
-        return userRepository?
-            .load()
+        return (userRepository?.load() ?? .empty())
             .compactMap { $0.id }
             .flatMap { userRepository?.editCareers(id: $0, careers: careers) ?? .empty() }
-            .flatMap { userRepository?.save(user: $0) ?? .empty() } ?? .empty()
+            .map { _ in () }
     }
     
     func editCategorys(categorys: [String]) -> Observable<Void> {
-        return userRepository?
-            .load()
-            .compactMap { $0.id }
+        return (userRepository?.load() ?? .empty())
+            .map { $0.id }
             .flatMap { userRepository?.editCategorys(id: $0, categorys: categorys) ?? .empty() }
-            .flatMap { userRepository?.save(user: $0) ?? .empty() } ?? .empty()
+            .map { _ in () }
     }
 }

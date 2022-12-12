@@ -14,11 +14,8 @@ struct ProfileUseCase: ProfileUseCaseProtocol {
     private let disposeBag = DisposeBag()
     
     func profile() -> Observable<User> {
-        return userRepository?.load()
+        return (userRepository?.load() ?? .empty())
             .compactMap { $0.id }
             .flatMap { userRepository?.user(id: $0) ?? .empty() }
-            .do(onNext: {
-                _ = userRepository?.save(user: $0)
-            }) ?? .empty()
     }
 }

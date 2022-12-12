@@ -30,12 +30,9 @@ struct UserUseCase: UserUseCaseProtocol {
 	}
 
     func myProfile() -> Observable<User> {
-        return userRepository?.load()
+        return (userRepository?.load() ?? .empty())
             .map { $0.id }
             .flatMap { userRepository?.user(id: $0) ?? .empty() }
-            .do(onNext: {
-                _ = userRepository?.save(user: $0) // 저장되는지 확인 필요
-            }) ?? .empty()
     }
     
     func studyRatingList(studyIDs: [String]) -> Observable<[(String, Int)]> {

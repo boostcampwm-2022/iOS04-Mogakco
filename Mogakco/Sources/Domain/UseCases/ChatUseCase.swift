@@ -48,8 +48,8 @@ struct ChatUseCase: ChatUseCaseProtocol {
             } ?? .empty()
     }
     
-    func send(chat: Chat, to chatRoomID: String) -> Observable<Void> {
-        return chatRepository?.send(chat: chat, to: chatRoomID) ?? .empty()
+    func send(chat: Chat) -> Observable<Void> {
+        return chatRepository?.send(chat: chat) ?? .empty()
     }
     
     func read(chat: Chat, userID: String) -> Observable<Void> {

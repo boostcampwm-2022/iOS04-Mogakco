@@ -25,12 +25,12 @@ struct SignupUseCase: SignupUseCaseProtocol {
         guard let imageData = signupProps.profileImage.jpegData(compressionQuality: 0.5) else {
             return Observable<Void>.error(SignupUseCaseError.imageCompress)
         }
-        return authRepository?.signup(signupProps: signupProps)
+        return (authRepository?.signup(signupProps: signupProps) ?? .empty())
             .flatMap { tokenRepository?.save($0) ?? .empty() }
             .compactMap { $0 }
             .map { $0.localId }
             .map { User(id: $0, signupProps: signupProps) }
             .flatMap { userRepository?.create(user: $0, imageData: imageData) ?? .empty() }
-            .flatMap { userRepository?.save(user: $0) ?? .empty() } ?? .empty()
+            .map { _ in () }
     }
 }
