@@ -43,6 +43,6 @@ final class ValidationButton: UIButton {
     
     private func configureDisableColor() {
         setBackgroundColor(UIColor.mogakcoColor.semanticDisabled ?? .systemGray, for: .disabled)
-        setTitleColor(UIColor.white, for: .disabled)
+        setTitleColor(UIColor.mogakcoColor.typopraphyDisabled, for: .disabled)
     }
 }
