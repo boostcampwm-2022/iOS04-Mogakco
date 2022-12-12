@@ -94,20 +94,15 @@ final class ChatDataSource: ChatDataSourceProtocol {
         }
     }
     
-    func read(chat: Chat, userID: String) -> Observable<Void> {
+    func read(chat: Chat) -> Observable<Void> {
         return Observable.create { emitter in
-            if !chat.readUserIDs.contains(userID) {
-                var chat2 = chat
-                
-                chat2.readUserIDs += [userID]
-                Constant.chatRoom
-                    .document(chat.chatRoomID)
-                    .collection("chat")
-                    .document(chat.id)
-                    .updateData(["readUserIDs": chat2.readUserIDs]) { _ in
-                        emitter.onNext(())
-                    }
-            }
+            Constant.chatRoom
+                .document(chat.chatRoomID)
+                .collection("chat")
+                .document(chat.id)
+                .updateData(["readUserIDs": chat.readUserIDs]) { _ in
+                    emitter.onNext(())
+                }
             return Disposables.create()
         }
     }
