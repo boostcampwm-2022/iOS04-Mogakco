@@ -19,14 +19,12 @@ final class ChatListViewModel: ViewModel {
     
     struct Input {
         let viewWillAppear: Observable<Void>
-        let refresh: Observable<Void>
         let selectedChatRoom: Observable<ChatRoom>
         let deletedChatRoom: Observable<ChatRoom>
     }
     
     struct Output {
         let chatRooms: Driver<[ChatRoom]>
-        let refreshFinished: Signal<Void>
         let isLoading: Driver<Bool>
         let alert: Signal<Alert>
     }
@@ -45,14 +43,12 @@ final class ChatListViewModel: ViewModel {
         Observable.merge(
             Observable.just(()),
             input.viewWillAppear.skip(1),
-            input.refresh,
             ChatListViewModel.reload
         )
             .withUnretained(self)
             .flatMap { viewModel, _ in viewModel.chatRoomListUseCase?.chatRooms().asResult() ?? .empty() }
             .withUnretained(self)
             .subscribe(onNext: { viewModel, result in
-                viewModel.refreshFinished.onNext(())
                 switch result {
                 case let .success(chatRooms):
                     viewModel.chatRooms.onNext(chatRooms)
@@ -93,7 +89,6 @@ final class ChatListViewModel: ViewModel {
         
         return Output(
             chatRooms: chatRooms.asDriver(onErrorJustReturn: []),
-            refreshFinished: refreshFinished.asSignal(onErrorJustReturn: ()),
             isLoading: isLoading.asDriver(onErrorJustReturn: false),
             alert: alert.asSignal(onErrorSignalWith: .empty())
         )
