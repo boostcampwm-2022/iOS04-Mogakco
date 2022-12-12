@@ -19,7 +19,7 @@ final class StudyListViewController: ViewController {
     
     private lazy var refreshControl = UIRefreshControl()
     
-    private lazy var collectionContentView = StudyListSkeletonContentsView()
+    private lazy var skeletonContentsView = StudyListSkeletonContentsView()
     
     private lazy var collectionView = UICollectionView(
         frame: .zero,
@@ -62,20 +62,6 @@ final class StudyListViewController: ViewController {
     }
     
     override func bind() {
-        let isStudyLoading = BehaviorSubject(value: true)
-        let refreshEvent = refreshControl.rx.controlEvent(.valueChanged)
-        
-        isStudyLoading
-            .bind(to: collectionContentView.rx.skeleton)
-            .disposed(by: disposeBag)
-        
-        refreshEvent
-            .map { [weak self] () -> Bool in
-                self?.collectionView.isHidden = true
-                return true
-            }
-            .bind(to: collectionContentView.rx.skeleton)
-            .disposed(by: disposeBag)
         
         let input = StudyListViewModel.Input(
             viewWillAppear: self.rx.viewWillAppear.map { _ in () }.asObservable(),
@@ -84,7 +70,8 @@ final class StudyListViewController: ViewController {
             cellSelected: collectionView.rx.itemSelected
                 .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance),
             refresh: refreshControl.rx.controlEvent(.valueChanged)
-                .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance),
+                .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance)
+                .map { true },
             sortButtonTapped: header.sortButton.rx.tap
                 .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance),
             languageButtonTapped: header.languageButton.rx.tap
@@ -103,16 +90,18 @@ final class StudyListViewController: ViewController {
                 cellType: StudyCell.self
             )) { _, study, cell in
                 cell.setup(study)
-                isStudyLoading.onNext(false)
             }
             .disposed(by: disposeBag)
         
-        output.refreshFinished
-            .emit(onNext: { [weak self] in
-                isStudyLoading.onNext(false)
-                self?.collectionView.isHidden = false
+        output.isLoading
+            .subscribe(onNext: { [weak self] isHidden in
+                self?.collectionView.isHidden = isHidden
                 self?.refreshControl.endRefreshing()
             })
+            .disposed(by: disposeBag)
+        
+        output.isLoading
+            .bind(to: skeletonContentsView.rx.skeleton)
             .disposed(by: disposeBag)
 
         output.sortSelected
@@ -143,15 +132,15 @@ final class StudyListViewController: ViewController {
             $0.top.left.right.equalTo(view.safeAreaLayoutGuide).inset(16)
         }
         
-        collectionContentView.clipsToBounds = true
+        skeletonContentsView.clipsToBounds = true
         
-        view.addSubview(collectionContentView)
-        collectionContentView.snp.makeConstraints {
+        view.addSubview(skeletonContentsView)
+        skeletonContentsView.snp.makeConstraints {
             $0.left.right.bottom.equalTo(view.safeAreaLayoutGuide)
             $0.top.equalTo(header.snp.bottom).offset(16)
         }
         
-        collectionContentView.addSubview(collectionView)
+        skeletonContentsView.addSubview(collectionView)
         collectionView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
