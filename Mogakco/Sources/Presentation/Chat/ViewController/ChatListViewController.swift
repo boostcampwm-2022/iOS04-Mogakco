@@ -67,6 +67,8 @@ final class ChatListViewController: UIViewController {
     
     func bind() {
         let input = ChatListViewModel.Input(
+            viewWillAppear: rx.viewWillAppear.map { _ in () }
+                .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance),
             refresh: refreshControl.rx.controlEvent(.valueChanged)
                 .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance),
             selectedChatRoom: chatRoomTableView.rx.modelSelected(ChatRoom.self)
