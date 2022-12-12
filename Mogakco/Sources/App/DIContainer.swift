@@ -50,6 +50,10 @@ final class DIContainer {
         container.register(AuthRepositoryProtocol.self) { resolver in
             var repository = AuthRepository()
             repository.authService = resolver.resolve(AuthServiceProtocol.self)
+            
+            repository.remoteUserDataSource = resolver.resolve(RemoteUserDataSourceProtocol.self)
+            repository.chatRoomDataSource = resolver.resolve(ChatRoomDataSourceProtocol.self)
+            repository.pushNotificationService = resolver.resolve(PushNotificationServiceProtocol.self)
             return repository
         }
         container.register(ChatRepositoryProtocol.self) { resolver in
