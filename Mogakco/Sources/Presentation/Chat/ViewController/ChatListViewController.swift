@@ -23,14 +23,17 @@ final class ChatListViewController: UIViewController {
         $0.setTitle(Constant.headerViewTitle)
     }
     
-    private lazy var skeletonContentsView = ChatRoomListSkeletonContentsView()
+	private lazy var skeletonContentsView = ChatRoomListSkeletonContentsView()
+
+    private lazy var refreshControl = UIRefreshControl()
     
-    private let chatRoomTableView = UITableView().then {
+    private lazy var chatRoomTableView = UITableView().then {
         $0.register(ChatRoomTableViewCell.self, forCellReuseIdentifier: ChatRoomTableViewCell.identifier)
         $0.rowHeight = ChatRoomTableViewCell.Constant.cellHeight
         $0.backgroundColor = UIColor.mogakcoColor.backgroundDefault
         $0.showsVerticalScrollIndicator = false
         $0.separatorStyle = .none
+        $0.refreshControl = refreshControl
     }
 
     private let viewModel: ChatListViewModel
@@ -64,7 +67,8 @@ final class ChatListViewController: UIViewController {
     
     func bind() {
         let input = ChatListViewModel.Input(
-            viewWillAppear: rx.viewWillAppear.map { _ in }.asObservable(),
+            refresh: refreshControl.rx.controlEvent(.valueChanged)
+                .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance),
             selectedChatRoom: chatRoomTableView.rx.modelSelected(ChatRoom.self)
                 .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance),
             deletedChatRoom: chatRoomTableView.rx.modelDeleted(ChatRoom.self)
