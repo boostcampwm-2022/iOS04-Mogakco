@@ -44,10 +44,11 @@ final class ChatCell: UICollectionViewCell, Identifiable {
             UIAction(
                 title: menu.title,
                 image: menu.image,
+                attributes: menu.attributes,
                 handler: { _ in self?.menuSelected.onNext(menu) }
             )
         }
-        $0.menu = UIMenu(options: .destructive, children: actions)
+        $0.menu = UIMenu(options: .displayInline, children: actions)
     }
     
     let menuSelected = PublishSubject<ChatMenu>()
@@ -216,6 +217,13 @@ enum ChatMenu: CaseIterable {
         switch self {
         case .report:
             return UIImage(systemName: "exclamationmark.circle")
+        }
+    }
+    
+    var attributes: UIMenuElement.Attributes {
+        switch self {
+        case .report:
+            return .destructive
         }
     }
 }
