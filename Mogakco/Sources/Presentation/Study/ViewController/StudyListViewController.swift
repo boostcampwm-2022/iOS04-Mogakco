@@ -17,7 +17,9 @@ final class StudyListViewController: ViewController {
     
     private let header = StudyListHeader()
     
-    private lazy var refreshControl = UIRefreshControl()
+    private lazy var refreshControl = UIRefreshControl().then {
+        $0.tintColor = .white
+    }
     
     private lazy var skeletonContentsView = StudyListSkeletonContentsView()
     
@@ -70,8 +72,7 @@ final class StudyListViewController: ViewController {
             cellSelected: collectionView.rx.itemSelected
                 .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance),
             refresh: refreshControl.rx.controlEvent(.valueChanged)
-                .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance)
-                .map { true },
+                .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance),
             sortButtonTapped: header.sortButton.rx.tap
                 .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance),
             languageButtonTapped: header.languageButton.rx.tap
