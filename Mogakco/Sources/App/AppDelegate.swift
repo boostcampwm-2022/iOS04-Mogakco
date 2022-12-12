@@ -43,7 +43,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
 	private func appearance() {
-        UINavigationBar.appearance().tintColor = .mogakcoColor.typographyPrimary
+        let navigationBarAppearance = UINavigationBarAppearance()
+        navigationBarAppearance.titleTextAttributes = [.foregroundColor: UIColor.white]
+        navigationBarAppearance.backgroundColor = .mogakcoColor.backgroundDefault
+        
+        UINavigationBar.appearance().standardAppearance = navigationBarAppearance
+        UINavigationBar.appearance().compactAppearance = navigationBarAppearance
+        UINavigationBar.appearance().scrollEdgeAppearance = navigationBarAppearance
         
         UITabBar.appearance().tintColor = .mogakcoColor.primaryDefault
         UITabBar.appearance().barTintColor = .mogakcoColor.primaryThird
