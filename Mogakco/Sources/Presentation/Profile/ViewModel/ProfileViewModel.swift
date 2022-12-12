@@ -54,7 +54,7 @@ final class ProfileViewModel: ViewModel {
         let careers: Driver<[Hashtag]>
         let categorys: Driver<[Hashtag]>
         let studyRatingList: Driver<[(String, Int)]>
-        let endLoading: Observable<Bool>
+        let endLoading: Driver<Bool>
         let alert: Signal<Alert>
     }
 
@@ -66,6 +66,7 @@ final class ProfileViewModel: ViewModel {
     let type = BehaviorSubject<ProfileType>(value: .current)
     private let user = BehaviorSubject<User?>(value: nil)
     private let studyRatingList = BehaviorSubject<[(String, Int)]>(value: [])
+    private let isLoading = BehaviorSubject(value: true)
     private let alert = PublishSubject<Alert>()
 
     func transform(input: Input) -> Output {
@@ -95,15 +96,17 @@ final class ProfileViewModel: ViewModel {
                 .map { $0.compactMap { Category.idToHashtag(id: $0) } }
                 .asDriver(onErrorJustReturn: []),
             studyRatingList: studyRatingList.asDriver(onErrorJustReturn: []),
-            endLoading: bindEndLoading(),
+            endLoading: isLoading.asDriver(onErrorJustReturn: false),
             alert: alert.asSignal(onErrorSignalWith: .empty())
         )
     }
     
-    private func bindEndLoading() -> Observable<Bool> {
-        return Observable
+    private func bindEndLoading() {
+        Observable
             .combineLatest(user.skip(1), studyRatingList.skip(1))
             .map { _ in false }
+            .bind(to: isLoading)
+            .disposed(by: disposeBag)
     }
     
     private func bindUser(input: Input) {

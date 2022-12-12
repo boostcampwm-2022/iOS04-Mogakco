@@ -59,6 +59,12 @@ final class ChatRoomTableViewCell: UITableViewCell, Identifiable {
         fatalError("init(coder:) has not been implemented")
     }
 
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        disposeBag = DisposeBag()
+        print("확인")
+    }
+    
     func configure(chatRoom: ChatRoom) {
         let isImageLoading = BehaviorSubject(value: true)
         
