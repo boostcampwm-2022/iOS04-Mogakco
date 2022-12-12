@@ -67,7 +67,7 @@ extension Int {
         if hour - 12 > 1 {
             dateString = "오후 \(String(format: "%02d", hour - 12)):\(String(format: "%02d", minutes))"
         } else if hour - 12 == 0 {
-            dateString = "정오 12:\(String(format: "%02d", minutes))"
+            dateString = "오후 12:\(String(format: "%02d", minutes))"
         } else {
             dateString = "오전 \(String(format: "%02d", hour)):\(String(format: "%02d", minutes))"
         }
