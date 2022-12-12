@@ -18,4 +18,6 @@ protocol PushNotificationServiceProtocol {
     func subscribeTopic(topic: String) -> Observable<Void>
     // Topic 구독 해제
     func unsubscribeTopic(topic: String) -> Observable<Void>
+    // 토큰 제거
+    func deleteToken() -> Observable<Void>
 }
