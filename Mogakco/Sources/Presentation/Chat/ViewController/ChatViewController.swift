@@ -128,7 +128,6 @@ final class ChatViewController: UIViewController {
         layoutSideBar()
         layoutBlackScreen()
         layoutMessageInputView()
-        layoutNavigationBar()
     }
     
     private func configure() {
@@ -248,21 +247,6 @@ final class ChatViewController: UIViewController {
         
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: backButton)
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: studyInfoButton)
-        navigationController?
-            .navigationBar
-            .titleTextAttributes = [.foregroundColor: UIColor.mogakcoColor.typographyPrimary ?? .white]
-    }
-    
-    // MARK: - Layouts
-    
-    private func layoutNavigationBar() {
-        let navBarAppearance = UINavigationBarAppearance()
-        navBarAppearance.backgroundColor = .mogakcoColor.backgroundDefault
-        navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
-        navigationController?.navigationBar.clipsToBounds = true
-        navigationController?.navigationBar.isTranslucent = false
-        navigationItem.standardAppearance = navBarAppearance
-        navigationItem.scrollEdgeAppearance = navBarAppearance
     }
     
     private func layoutCollectionView() {
