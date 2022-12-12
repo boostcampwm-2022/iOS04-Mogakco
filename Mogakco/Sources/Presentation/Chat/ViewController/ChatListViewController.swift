@@ -24,8 +24,6 @@ final class ChatListViewController: UIViewController {
     }
     
 	private lazy var skeletonContentsView = ChatRoomListSkeletonContentsView()
-
-    private lazy var refreshControl = UIRefreshControl()
     
     private lazy var chatRoomTableView = UITableView().then {
         $0.register(ChatRoomTableViewCell.self, forCellReuseIdentifier: ChatRoomTableViewCell.identifier)
@@ -33,7 +31,6 @@ final class ChatListViewController: UIViewController {
         $0.backgroundColor = UIColor.mogakcoColor.backgroundDefault
         $0.showsVerticalScrollIndicator = false
         $0.separatorStyle = .none
-        $0.refreshControl = refreshControl
     }
 
     private let viewModel: ChatListViewModel
@@ -69,8 +66,6 @@ final class ChatListViewController: UIViewController {
         let input = ChatListViewModel.Input(
             viewWillAppear: rx.viewWillAppear.map { _ in () }
                 .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance),
-            refresh: refreshControl.rx.controlEvent(.valueChanged)
-                .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance),
             selectedChatRoom: chatRoomTableView.rx.modelSelected(ChatRoom.self)
                 .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance),
             deletedChatRoom: chatRoomTableView.rx.modelDeleted(ChatRoom.self)
@@ -90,12 +85,6 @@ final class ChatListViewController: UIViewController {
                 cell.configure(chatRoom: chatRoom)
                 return cell
             }
-            .disposed(by: disposeBag)
-        
-        output.refreshFinished
-            .emit(onNext: { [weak self] in
-                self?.refreshControl.endRefreshing()
-            })
             .disposed(by: disposeBag)
         
         output.isLoading
