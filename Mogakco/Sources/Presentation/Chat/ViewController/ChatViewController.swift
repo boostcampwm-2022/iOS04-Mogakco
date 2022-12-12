@@ -104,7 +104,7 @@ final class ChatViewController: UIViewController {
                 .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance),
             studyInfoButtonDidTap: studyInfoButton.rx.tap
                 .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance),
-            selectedSidebar: sidebarView.tableView.rx.itemSelected
+            selectedSidebar: sidebarView.tableView.rx.modelSelected(ChatSidebarMenu.self)
                 .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance),
             sendButtonDidTap: messageInputView.sendButton.rx.tap
                 .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance),
@@ -207,7 +207,8 @@ final class ChatViewController: UIViewController {
             })
             .disposed(by: disposeBag)
         
-        output.selectedSidebar
+        sidebarView.tableView.rx.itemSelected
+            .asSignal()
             .emit(onNext: { [weak self] _ in
                 self?.hideSidebarView()
             })
@@ -229,8 +230,8 @@ final class ChatViewController: UIViewController {
     
     private func configureSideBar() {
         sidebarView.layer.zPosition = Constant.sidebarZPosition
-        sidebarView.tableView.delegate = nil
-        sidebarView.tableView.dataSource = nil
+        // sidebarView.tableView.delegate = nil
+        // sidebarView.tableView.dataSource = nil
         self.view.isUserInteractionEnabled = true
     }
     

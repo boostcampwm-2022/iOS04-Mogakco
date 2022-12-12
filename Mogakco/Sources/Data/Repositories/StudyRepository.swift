@@ -195,9 +195,13 @@ struct StudyRepository: StudyRepositoryProtocol {
                         request: UpdateUserIDsRequestDTO(
                             userIDs: chatRoom.userIDs.filter { $0 != user.id }
                         )
-                    ) ?? .empty()
+                    )
+                    ?? .empty()
                 }
-                .flatMap { _ in pushNotificationService?.unsubscribeTopic(topic: id) ?? .empty() }
+                .map { _ in () }
+                .catchAndReturn(()) // 스터디가 없는 채팅방 있을 수 있음
+                .flatMap { pushNotificationService?.unsubscribeTopic(topic: id) ?? .empty() }
+                
             
             Observable.combineLatest(
                 updateUser,
