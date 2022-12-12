@@ -39,6 +39,19 @@ final class ChatCell: UICollectionViewCell, Identifiable {
         $0.font = UIFont.mogakcoFont.smallRegular
     }
     
+    private lazy var menuButton = UIButton().then {
+        let actions = ChatMenu.allCases.map { [weak self] menu in
+            UIAction(
+                title: menu.title,
+                image: menu.image,
+                handler: { _ in self?.menuSelected.onNext(menu) }
+            )
+        }
+        $0.menu = UIMenu(options: .destructive, children: actions)
+    }
+    
+    let menuSelected = PublishSubject<ChatMenu>()
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         layout()
@@ -68,6 +81,7 @@ final class ChatCell: UICollectionViewCell, Identifiable {
         layoutBubbleContainerView()
         layoutTextView()
         layoutTimeLabel()
+        layoutMenuButton()
     }
     
     private func layoutCell() {
@@ -175,5 +189,33 @@ final class ChatCell: UICollectionViewCell, Identifiable {
         nameLabel.isHidden = true
         bubbleContainer.backgroundColor = .mogakcoColor.primaryDefault
         profileImageView.isHidden = true
+    }
+    
+    private func layoutMenuButton() {
+        addSubview(menuButton)
+        
+        menuButton.snp.makeConstraints {
+            $0.edges.equalTo(bubbleContainer)
+        }
+    }
+}
+
+// MARK: - Chat Menu
+
+enum ChatMenu: CaseIterable {
+    case report
+    
+    var title: String {
+        switch self {
+        case .report:
+            return "신고"
+        }
+    }
+    
+    var image: UIImage? {
+        switch self {
+        case .report:
+            return UIImage(systemName: "exclamationmark.circle")
+        }
     }
 }
