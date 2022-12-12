@@ -54,10 +54,10 @@ final class ProfileViewModel: ViewModel {
         let careers: Driver<[Hashtag]>
         let categorys: Driver<[Hashtag]>
         let studyRatingList: Driver<[(String, Int)]>
-        let endLoading: Driver<Bool>
+        let isLoading: Driver<Bool>
         let alert: Signal<Alert>
     }
-
+    
     var userUseCase: UserUseCaseProtocol?
     var createChatRoomUseCase: CreateChatRoomUseCaseProtocol?
     var reportUseCase: ReportUseCaseProtocol?
@@ -68,11 +68,12 @@ final class ProfileViewModel: ViewModel {
     private let studyRatingList = BehaviorSubject<[(String, Int)]>(value: [])
     private let isLoading = BehaviorSubject(value: true)
     private let alert = PublishSubject<Alert>()
-
+    
     func transform(input: Input) -> Output {
         bindUser(input: input)
         bindScene(input: input)
-
+        bindEndLoading()
+        
         return Output(
             isMyProfile: type.map { $0 == .current }.asDriver(onErrorJustReturn: false),
             profileImageURL: user
@@ -96,7 +97,7 @@ final class ProfileViewModel: ViewModel {
                 .map { $0.compactMap { Category.idToHashtag(id: $0) } }
                 .asDriver(onErrorJustReturn: []),
             studyRatingList: studyRatingList.asDriver(onErrorJustReturn: []),
-            endLoading: isLoading.asDriver(onErrorJustReturn: false),
+            isLoading: isLoading.asDriver(onErrorJustReturn: false),
             alert: alert.asSignal(onErrorSignalWith: .empty())
         )
     }
@@ -142,7 +143,7 @@ final class ProfileViewModel: ViewModel {
                 viewModel.user.onNext(user)
             })
             .disposed(by: disposeBag)
-
+        
         user
             .compactMap { $0?.studyIDs }
             .withUnretained(self)
@@ -198,7 +199,7 @@ final class ProfileViewModel: ViewModel {
             .map { .setting }
             .bind(to: navigation)
             .disposed(by: disposeBag)
-
+        
         input.reportButtonTapped
             .withLatestFrom(user)
             .compactMap { $0 }

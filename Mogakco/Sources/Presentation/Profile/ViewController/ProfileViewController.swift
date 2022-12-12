@@ -156,7 +156,7 @@ final class ProfileViewController: UIViewController {
     }
     
     private func bindLoadingView(output: ProfileViewModel.Output) {
-        output.endLoading
+        output.isLoading
             .drive(skeletonContentsView.rx.skeleton)
             .disposed(by: disposeBag)
         
@@ -290,7 +290,7 @@ final class ProfileViewController: UIViewController {
     private func layoutSettingButton() {
         headerView.addSubview(settingButton)
         settingButton.snp.makeConstraints {
-            $0.top.right.equalTo(headerView)
+            $0.top.right.equalTo(headerView).inset(16)
         }
     }
     
