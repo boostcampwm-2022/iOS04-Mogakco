@@ -21,18 +21,26 @@ final class WithdrawViewModel: ViewModel {
     struct Input {
         let backButtonDidTap: Observable<Void>
         let withdrawButtonDidTap: Observable<Void>
+        let deleteInfoIssueDidTap: Observable<Bool>
+        let inconvenienceIssueDidTap: Observable<Bool>
+        let otherSiteIssueDidTap: Observable<Bool>
+        let duplicateAccountIssueDidTap: Observable<Bool>
+        let lowUsageIssueDidTap: Observable<Bool>
+        let dissatisfactionIssueDidTap: Observable<Bool>
     }
     
     struct Output {
+        let isCheck: Observable<Bool>
         let presentAlert: Signal<Alert>
     }
     
     var disposeBag = DisposeBag()
     var withdrawUseCase: WithdrawUseCaseProtocol?
+    var email: String?
     let navigation = PublishSubject<WithdrawNavigation>()
     
     func transform(input: Input) -> Output {
-        let deleteCompleted = PublishSubject<Void>()
+        let isCheck = PublishSubject<Bool>()
         let withdrawCompleted = PublishSubject<Void>()
         let presentAlert = PublishSubject<Alert>()
         
@@ -40,6 +48,19 @@ final class WithdrawViewModel: ViewModel {
             .map { WithdrawNavigation.back }
             .bind(to: navigation)
             .disposed(by: disposeBag)
+        
+        Observable.combineLatest(
+            input.deleteInfoIssueDidTap,
+            input.inconvenienceIssueDidTap,
+            input.otherSiteIssueDidTap,
+            input.duplicateAccountIssueDidTap,
+            input.lowUsageIssueDidTap,
+            input.dissatisfactionIssueDidTap
+        ) { $0 || $1 || $2 || $3 || $4 || $5 }
+        .subscribe(onNext: {
+            isCheck.onNext($0)
+        })
+        .disposed(by: disposeBag)
         
         input.withdrawButtonDidTap
             .withUnretained(self)
@@ -61,6 +82,7 @@ final class WithdrawViewModel: ViewModel {
             .disposed(by: disposeBag)
         
         return Output(
+            isCheck: isCheck,
             presentAlert: presentAlert.asSignal(onErrorSignalWith: .empty())
         )
     }
