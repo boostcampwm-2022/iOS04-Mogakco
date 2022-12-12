@@ -44,7 +44,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 	private func appearance() {
         let navigationBarAppearance = UINavigationBarAppearance()
-        navigationBarAppearance.titleTextAttributes = [.foregroundColor: UIColor.white]
+        navigationBarAppearance.titleTextAttributes = [.foregroundColor: UIColor.mogakcoColor.typographyPrimary ?? UIColor.white]
         navigationBarAppearance.backgroundColor = .mogakcoColor.backgroundDefault
         
         UINavigationBar.appearance().standardAppearance = navigationBarAppearance

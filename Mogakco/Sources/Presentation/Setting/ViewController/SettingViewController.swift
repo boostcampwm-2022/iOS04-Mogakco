@@ -109,7 +109,6 @@ final class SettingViewController: ViewController {
     }
     
     override func layout() {
-        layoutNavigationBar()
         layoutTableView()
     }
     
@@ -119,13 +118,7 @@ final class SettingViewController: ViewController {
     
     private func configureNavigationBar() {
         navigationItem.title = "설정"
-        
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: backButton)
-    }
-    
-    private func layoutNavigationBar() {
-        let navBarAppearance = UINavigationBarAppearance()
-        navBarAppearance.backgroundColor = .mogakcoColor.backgroundDefault
     }
     
     private func layoutTableView() {
