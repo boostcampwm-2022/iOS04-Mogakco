@@ -13,4 +13,5 @@ protocol ChatDataSourceProtocol {
     func observe(chatRoomID: String) -> Observable<ChatResponseDTO>
     func send(chat: Chat, to chatRoomID: String) -> Observable<Void>
     func read(chat: Chat, userID: String) -> Observable<Void>
+    func stopObserving()
 }
