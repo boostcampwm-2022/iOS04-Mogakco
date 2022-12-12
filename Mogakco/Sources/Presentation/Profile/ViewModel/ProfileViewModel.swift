@@ -115,7 +115,10 @@ final class ProfileViewModel: ViewModel {
     }
     
     private func bindUser(input: Input) {
-        input.viewWillAppear
+        Observable.merge(
+            Observable.just(()),
+            input.viewWillAppear.skip(1)
+        )
             .withLatestFrom(type)
             .filter { $0 == ProfileType.current }
             .withUnretained(self)
