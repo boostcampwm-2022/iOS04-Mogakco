@@ -77,7 +77,7 @@ final class SettingViewController: ViewController {
                 .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance)
         )
         
-        _ = viewModel?.transform(input: input)
+        let output = viewModel?.transform(input: input)
         
         Driver<[SettingMenu]>
             .just(SettingMenu.allCases)
@@ -96,21 +96,15 @@ final class SettingViewController: ViewController {
             .subscribe(onNext: { [weak self] row in
                 switch row {
                 case .logout:
-                    self?.alert(
-                        title: "로그아웃",
-                        message: "로그아웃 하시겠어요?",
-                        actions: [
-                            .cancel(),
-                            .destructive(
-                                title: "확인",
-                                handler: { [weak self] _ in self?.logoutDidTap.onNext(()) }
-                            )
-                        ]
-                    )
+                    self?.logoutDidTap.onNext(())
                 case .withdraw:
                     self?.withdrawDidTap.onNext(())
                 }
             })
+            .disposed(by: disposeBag)
+        
+        output?.alert
+            .emit(to: rx.presentAlert)
             .disposed(by: disposeBag)
     }
     
