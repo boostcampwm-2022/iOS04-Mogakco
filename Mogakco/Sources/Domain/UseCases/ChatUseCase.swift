@@ -56,6 +56,10 @@ struct ChatUseCase: ChatUseCaseProtocol {
         return chatRepository?.read(chat: chat, userID: userID) ?? .empty()
     }
     
+    func stopObserving() {
+        chatRepository?.stopObserving()
+    }
+    
     func myProfile() -> Observable<User> {
         return userRepository?.load() ?? .empty()
     }
