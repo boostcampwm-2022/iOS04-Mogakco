@@ -183,7 +183,9 @@ final class ChatViewModel: ViewModel {
             .disposed(by: disposeBag)
         
         input.sendButtonDidTap
-            .withLatestFrom(Observable.combineLatest(profile.compactMap { $0 }, input.inputViewText)) { ( $1.0, $1.1 ) }
+            .withLatestFrom(Observable.combineLatest(
+                profile.compactMap { $0 },
+                input.inputViewText)) { ( $1.0, $1.1 ) }
             .map { user, message -> Chat in
                 return Chat(
                     id: UUID().uuidString,
@@ -191,7 +193,8 @@ final class ChatViewModel: ViewModel {
                     message: message,
                     chatRoomID: self.chatRoomID,
                     date: Date().toInt(dateFormat: Format.chatDateFormat),
-                    readUserIDs: [user.id]
+                    readUserIDs: [user.id],
+                    user: user
                 )
             }
             .withUnretained(self)
