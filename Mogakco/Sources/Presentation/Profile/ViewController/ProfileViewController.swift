@@ -276,6 +276,9 @@ final class ProfileViewController: UIViewController {
     
     func setupNavigationBar(hidden: Bool) {
         navigationController?.setNavigationBarHidden(hidden, animated: true)
+        navigationController?.navigationBar.titleTextAttributes = [
+            .foregroundColor: UIColor.mogakcoColor.typographyPrimary ?? .white
+        ]
         if !hidden {
             title = "프로필"
             headerView.isHidden = true
