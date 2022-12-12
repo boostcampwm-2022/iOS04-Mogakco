@@ -166,13 +166,13 @@ final class ChatCell: UICollectionViewCell, Identifiable {
         if let user = user {
             nameLabel.text = user.name
         } else {
-            nameLabel.text = "탈퇴한 유저"
+            nameLabel.text = "알 수 없음"
         }
         
         if let url = URL(string: user?.profileImageURLString ?? "") {
             profileImageView.load(url: url)
         } else {
-            profileImageView.image = UIImage(systemName: "person.fill")
+            profileImageView.image = Image.profileDefault
         }
     }
     
