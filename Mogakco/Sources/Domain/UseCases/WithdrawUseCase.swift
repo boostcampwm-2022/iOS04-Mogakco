@@ -15,6 +15,7 @@ struct WithdrawUseCase: WithdrawUseCaseProtocol {
     var userRepository: UserRepositoryProtocol?
     var tokenRepository: TokenRepositoryProtocol?
     var studyRepository: StudyRepositoryProtocol?
+    var pushNotificationService: PushNotificationServiceProtocol?
     private let disposeBag = DisposeBag()
 
     func excute() -> Observable<Void> {
@@ -29,6 +30,7 @@ struct WithdrawUseCase: WithdrawUseCaseProtocol {
             }
             .flatMap { userRepository?.delete(id: $0.id) ?? .empty() }
             .flatMap { tokenRepository?.delete() ?? .empty() }
+            .flatMap { _ in pushNotificationService?.deleteToken() ?? .empty() }
             .map { _ in } ?? .empty()
     }
 }
