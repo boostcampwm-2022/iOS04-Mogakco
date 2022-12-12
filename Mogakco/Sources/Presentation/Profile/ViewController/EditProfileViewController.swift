@@ -95,8 +95,7 @@ final class EditProfileViewController: ViewController {
             name: nameCountTextField.rx.text.orEmpty.asObservable(),
             introduce: introuceCountTextView.rx.text.orEmpty.asObservable(),
             selectedProfileImage: selectedProfileImage.asObservable(),
-            refreshButtonTapped: refreshButton.rx.tap
-                .throttle(.seconds(1), scheduler: MainScheduler.instance),
+            refreshButtonTapped: refreshButton.rx.tap.asObservable(),
             completeButtonTapped: completeButton.rx.tap
                 .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance),
             backButtonTapped: backButton.rx.tap
