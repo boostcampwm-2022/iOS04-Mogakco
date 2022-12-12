@@ -85,6 +85,10 @@ final class ChatViewModel: ViewModel {
     private func bindChats(input: Input) {
         // 채팅 로드
         let newChats = BehaviorSubject<[Chat]>(value: [])
+        // 채팅 observe
+        let newChat = PublishSubject<Chat>()
+        // 유저 정보 로드
+        let profile = BehaviorSubject<User?>(value: nil)
         
         Observable.merge(
             Observable.just(()),
@@ -105,7 +109,7 @@ final class ChatViewModel: ViewModel {
         
         Observable.combineLatest(
             newChats,
-            chatUseCase?.myProfile() ?? .empty()
+            profile.compactMap { $0 }
         )
         .flatMap { [weak self] chats, user in
             let observe: [Observable<Void>] = chats.map {
@@ -126,13 +130,8 @@ final class ChatViewModel: ViewModel {
             .withLatestFrom(messages) { $0 + $1 }
             .subscribe(onNext: { [weak self] in
                 self?.messages.accept($0)
-                self?.sendMessageCompleted.onNext(())
             })
             .disposed(by: disposeBag)
-        
-        // 채팅 observe
-        
-        let newChat = PublishSubject<Chat>()
         
         newChat
             .withLatestFrom(messages) { $1 + [$0] }
@@ -147,7 +146,8 @@ final class ChatViewModel: ViewModel {
             .subscribe(onNext: { viewModel, result in
                 switch result {
                 case .success(let chat):
-                    if viewModel.isFirst == false {
+                    let chatID = try? newChats.value().last?.id
+                    if viewModel.isFirst == false && chat.id != chatID {
                         newChat.onNext(chat)
                     } else {
                         viewModel.isFirst = false
@@ -158,17 +158,6 @@ final class ChatViewModel: ViewModel {
                 }
             })
             .disposed(by: disposeBag)
-        
-        newChat
-            .withLatestFrom(chatUseCase?.myProfile() ?? .empty()) { ($0, $1) }
-            .flatMap { [weak self] chat, user in
-                self?.chatUseCase?.read(chat: chat, userID: user.id) ?? .empty()
-            }
-            .subscribe(onNext: { _ in })
-            .disposed(by: disposeBag)
-        
-        // 채팅 전송
-        let profile = BehaviorSubject<User?>(value: nil)
         
         (chatUseCase?.myProfile().asResult() ?? .empty())
             .withUnretained(self)
@@ -181,6 +170,15 @@ final class ChatViewModel: ViewModel {
                     viewModel.alert.onNext(alert)
                 }
             })
+            .disposed(by: disposeBag)
+        
+        // 새로운 채팅 읽음 처리
+        newChat
+            .withLatestFrom(profile.compactMap { $0 }) { ($0, $1) }
+            .flatMap { [weak self] chat, user in
+                self?.chatUseCase?.read(chat: chat, userID: user.id) ?? .empty()
+            }
+            .subscribe(onNext: { _ in })
             .disposed(by: disposeBag)
         
         input.sendButtonDidTap
@@ -256,7 +254,8 @@ final class ChatViewModel: ViewModel {
         )
         .withUnretained(self)
         .flatMap { $0.0.unsubscribePushNotificationUseCase?.excute(topic: $0.0.chatRoomID) ?? .empty() }
-        .subscribe(onNext: { _ in
+        .subscribe(onNext: { [weak self] _ in
+            self?.isFirst = true
         })
         .disposed(by: disposeBag)
         
@@ -267,7 +266,10 @@ final class ChatViewModel: ViewModel {
         )
         .withUnretained(self)
         .flatMap { $0.0.subscribePushNotificationUseCase?.excute(topic: $0.0.chatRoomID) ?? .empty() }
-        .subscribe(onNext: { _ in
+        .subscribe(onNext: { [weak self] _ in
+            print("DEBUG : OBSERVE OUT")
+            self?.isFirst = true
+            self?.chatUseCase?.stopObserving()
         })
         .disposed(by: disposeBag)
     }
