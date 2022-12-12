@@ -14,49 +14,62 @@ import Then
 
 final class WithdrawViewController: ViewController {
     
+    enum Constant {
+        static let title = "정말 떠나시는 건가요?\n한 번 더 생각해 보지 않으시겠어요?"
+        static let body = "계정을 삭제하시려는 이유을 말씀해주세요. 제품 개선에 중요한 자료로 활용하겠습니다."
+        static let withdrawButtonTitle = "탈퇴하기"
+    }
+    
     private let titleLabel = UILabel().then {
         $0.textAlignment = .left
-        $0.text = "정말 떠나시는 건가요?\n회원 탈퇴하시면 같은 계정으로 재가입이 불가합니다."
+        $0.text = Constant.title
         $0.font = UIFont.mogakcoFont.largeBold
         $0.textColor = UIColor.mogakcoColor.typographyPrimary
     }
     
     private let bodyLabel = UILabel().then {
         $0.textAlignment = .left
-        $0.text = "계정을 삭제하시려는 이유을 말씀해주세요. 제품 개선에 중요한 자료로 활용하겠습니다."
+        $0.text = Constant.body
         $0.numberOfLines = 0
         $0.font = UIFont.mogakcoFont.mediumRegular
         $0.textColor = UIColor.mogakcoColor.typographySecondary
     }
     
-    private let passwordTitleLabel = UILabel().then {
-        $0.textAlignment = .left
-        $0.text = "사용중인 비밀번호"
-        $0.font = UIFont.mogakcoFont.caption
-        $0.textColor = UIColor.mogakcoColor.typographyPrimary
-    }
-    
     private let stackView = UIStackView().then {
-        $0.spacing = 30
+        $0.spacing = 20
         $0.axis = .vertical
     }
     
-    private let deleteInfoIssue = WithdrawReason.deleteInformation.checkBox
-    private let inconvenienceIssue = WithdrawReason.inconvenience.checkBox
-    private let otherSiteIssue = WithdrawReason.otherApp.checkBox
-    private let duplicateAccountIssue = WithdrawReason.duplicateAccount.checkBox
-    private let lowUsageIssue = WithdrawReason.lowUsage.checkBox
-    private let dissatisfactionIssue = WithdrawReason.dissatisfaction.checkBox
-    private let etcIssue = WithdrawReason.etc.checkBox
+    private let deleteInfoIssue = PolicyCheckBox().then {
+        $0.setup(body: "개인정보 삭제 목적", type: .withdraw)
+    }
     
-    private let secureTextField = SecureTextField()
+    private let inconvenienceIssue = PolicyCheckBox().then {
+        $0.setup(body: "이용이 불편하고 장애가 많아서", type: .withdraw)
+    }
     
-    private let withdrawButton = UIButton().then {
-        $0.setTitle("탈퇴하기", for: .normal)
-        $0.setTitleColor(.white, for: .normal)
-        $0.titleLabel?.font = UIFont.mogakcoFont.smallRegular
+    private let otherSiteIssue = PolicyCheckBox().then {
+        $0.setup(body: "다른 앱이 더 좋아서", type: .withdraw)
+    }
+    
+    private let duplicateAccountIssue = PolicyCheckBox().then {
+        $0.setup(body: "중복 계정이 있어서", type: .withdraw)
+    }
+    
+    private let lowUsageIssue = PolicyCheckBox().then {
+        $0.setup(body: "사용 빈도가 낮아서", type: .withdraw)
+    }
+
+    private let dissatisfactionIssue = PolicyCheckBox().then {
+        $0.setup(body: "콘텐츠 불만이 있어서", type: .withdraw)
+    }
+    
+    private let withdrawButton = ValidationButton().then {
+        $0.titleLabel?.font = UIFont.mogakcoFont.mediumBold
+        $0.setTitle(Constant.withdrawButtonTitle, for: .normal)
         $0.layer.cornerRadius = 8
-        $0.backgroundColor = UIColor.mogakcoColor.primaryDefault
+        $0.clipsToBounds = true
+        $0.isEnabled = false
     }
     
     let viewModel: WithdrawViewModel?
@@ -84,22 +97,30 @@ final class WithdrawViewController: ViewController {
         layoutTitleLabel()
         layoutBodyLabel()
         layoutStackView()
-        layoutCheckBoxs()
-        layoutPasswordTitleLabel()
-        layoutSecureTextFiled()
         layoutWithdrawButton()
     }
     
     override func bind() {
         let input = WithdrawViewModel.Input(
-            backButtonDidTap: backButton.rx.tap
-                .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance),
+            backButtonDidTap: backButton.rx.tap.asObservable(),
             withdrawButtonDidTap: withdrawButton.rx.tap
-                .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance)
+                .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance),
+            deleteInfoIssueDidTap: deleteInfoIssue.checkButton.rx.isSelected.asObservable(),
+            inconvenienceIssueDidTap: inconvenienceIssue.checkButton.rx.isSelected.asObservable(),
+            otherSiteIssueDidTap: otherSiteIssue.checkButton.rx.isSelected.asObservable(),
+            duplicateAccountIssueDidTap: duplicateAccountIssue.checkButton.rx.isSelected.asObservable(),
+            lowUsageIssueDidTap: lowUsageIssue.checkButton.rx.isSelected.asObservable(),
+            dissatisfactionIssueDidTap: dissatisfactionIssue.checkButton.rx.isSelected.asObservable()
         )
         
         let output = viewModel?.transform(input: input)
         
+        output?.isCheck
+            .subscribe(onNext: { [weak self] in
+                self?.withdrawButton.isEnabled = $0
+            })
+            .disposed(by: disposeBag)
+            
         output?.presentAlert
             .emit(to: rx.presentAlert)
             .disposed(by: disposeBag)
@@ -122,59 +143,23 @@ final class WithdrawViewController: ViewController {
         }
     }
     
-    private func layoutCheckBoxs() {
-        [
-            deleteInfoIssue,
-            inconvenienceIssue,
-            otherSiteIssue,
-            duplicateAccountIssue,
-            lowUsageIssue,
-            dissatisfactionIssue,
-            etcIssue
-        ].forEach {
-            $0.snp.makeConstraints {
-                $0.left.right.equalToSuperview().inset(16)
-            }
-            
-            stackView.addArrangedSubview($0)
-        }
-    }
-    
     private func layoutStackView() {
-        [
-            deleteInfoIssue,
-            inconvenienceIssue,
-            otherSiteIssue,
-            duplicateAccountIssue,
-            lowUsageIssue,
-            dissatisfactionIssue,
-            etcIssue
-        ].forEach {
-            stackView.addArrangedSubview($0)
-        }
-        
         view.addSubview(stackView)
         
         stackView.snp.makeConstraints {
-            $0.top.equalTo(bodyLabel.snp.bottom).offset(32)
+            $0.top.equalTo(bodyLabel.snp.bottom).offset(80)
+            $0.left.right.equalTo(view.safeAreaLayoutGuide).inset(16)
         }
-    }
-    
-    private func layoutPasswordTitleLabel() {
-        view.addSubview(passwordTitleLabel)
         
-        passwordTitleLabel.snp.makeConstraints {
-            $0.left.equalToSuperview().offset(16)
-            $0.top.equalTo(stackView.snp.bottom).offset(50)
-        }
-    }
-    
-    private func layoutSecureTextFiled() {
-        view.addSubview(secureTextField)
-        
-        secureTextField.snp.makeConstraints {
-            $0.left.right.equalToSuperview().inset(16)
-            $0.top.equalTo(passwordTitleLabel.snp.bottom).offset(16)
+        [
+            deleteInfoIssue,
+            inconvenienceIssue,
+            otherSiteIssue,
+            duplicateAccountIssue,
+            lowUsageIssue,
+            dissatisfactionIssue
+        ].forEach {
+            stackView.addArrangedSubview($0)
         }
     }
     
@@ -182,9 +167,9 @@ final class WithdrawViewController: ViewController {
         view.addSubview(withdrawButton)
         
         withdrawButton.snp.makeConstraints {
-            $0.right.equalToSuperview().inset(16)
-            $0.top.equalTo(secureTextField.snp.bottom).offset(16)
-            $0.width.equalTo(120)
+            $0.top.equalTo(stackView.snp.bottom).offset(80)
+            $0.left.right.equalToSuperview().inset(16)
+            $0.height.equalTo(Layout.buttonHeight)
         }
     }
 }
