@@ -169,7 +169,7 @@ final class ChatCell: UICollectionViewCell, Identifiable {
         }
         
         timeLabel.snp.remakeConstraints {
-            $0.right.equalTo(bubbleContainer.snp.left) // TODO: inset, offset 둘다 이상하게 먹음
+            $0.right.equalTo(bubbleContainer.snp.left).offset(-4)
             $0.bottom.equalTo(bubbleContainer)
         }
 
