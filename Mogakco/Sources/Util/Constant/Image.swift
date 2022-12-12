@@ -9,9 +9,8 @@
 import UIKit
 
 enum Image {
-    static let profiles = [
-        UIImage(named: "profile1") ?? UIImage(),
-        UIImage(named: "profile2") ?? UIImage(),
-    ]
+    static let profiles = (1...17).compactMap {
+        UIImage(named: "profile\($0)")
+    }
     static let profileDefault = UIImage(named: "profile") ?? UIImage()
 }
