@@ -45,4 +45,8 @@ struct ChatRepository: ChatRepositoryProtocol {
     func read(chat: Chat, userID: String) -> Observable<Void> {
         return chatDataSource?.read(chat: chat, userID: userID) ?? .empty()
     }
+    
+    func stopObserving() {
+        chatDataSource?.stopObserving()
+    }
 }
