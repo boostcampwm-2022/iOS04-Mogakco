@@ -134,7 +134,7 @@ class HashtagSelectViewController: ViewController {
         view.addSubview(hashtagListCollectionView)
         
         hashtagListCollectionView.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(10)
+            $0.top.equalTo(view.safeAreaLayoutGuide).offset(16)
             $0.leading.trailing.equalToSuperview().inset(16)
             $0.bottom.equalToSuperview()
         }

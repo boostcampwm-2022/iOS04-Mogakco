@@ -152,9 +152,6 @@ final class EditProfileViewController: ViewController {
     
     private func configureNavigationBar() {
         navigationItem.title = "프로필 생성"
-        navigationController?
-            .navigationBar
-            .titleTextAttributes = [.foregroundColor: UIColor.mogakcoColor.typographyPrimary ?? .white]
     }
     
     private func layoutScrollView() {
