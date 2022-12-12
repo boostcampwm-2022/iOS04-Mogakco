@@ -14,7 +14,7 @@ import RxCocoa
 
 final class StudyDetailViewController: UIViewController {
      
-    private lazy var skeletonLoadingView = StudyDetailSkeletonContentsView()
+    private lazy var skeletonContentsView = StudyDetailSkeletonContentsView()
     private lazy var studyTitleLabel = UILabel().then {
         $0.textColor = .mogakcoColor.typographyPrimary
         $0.font = UIFont.mogakcoFont.title2Bold
@@ -144,10 +144,6 @@ final class StudyDetailViewController: UIViewController {
     }
     
     func bind() {
-        Observable.just(true)
-            .bind(to: skeletonLoadingView.rx.skeleton)
-            .disposed(by: disposeBag)
-        
         let input = StudyDetailViewModel.Input(
             studyJoinButtonTapped: studyJoinButton.rx.tap
                 .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance),
@@ -189,8 +185,8 @@ final class StudyDetailViewController: UIViewController {
             }
             .disposed(by: disposeBag)
         
-        output.endLoading
-            .bind(to: skeletonLoadingView.rx.skeleton)
+        output.isLoading
+            .drive(skeletonContentsView.rx.skeleton)
             .disposed(by: disposeBag)
         
         output.alert
@@ -208,8 +204,8 @@ final class StudyDetailViewController: UIViewController {
     }
     
     private func layoutSubViews() {
-        view.addSubview(skeletonLoadingView)
-        skeletonLoadingView.addSubViews([
+        view.addSubview(skeletonContentsView)
+        skeletonContentsView.addSubViews([
             studyTitleLabel,
             studyInfoStackView,
             studyInfoDescription,
@@ -228,7 +224,7 @@ final class StudyDetailViewController: UIViewController {
     }
     
     private func layoutContent() {
-        skeletonLoadingView.snp.makeConstraints {
+        skeletonContentsView.snp.makeConstraints {
             $0.edges.equalTo(view.safeAreaLayoutGuide)
         }
     }
@@ -279,9 +275,9 @@ final class StudyDetailViewController: UIViewController {
     }
     
     private func layoutStudyJoinButton() {
-        skeletonLoadingView.addSubview(studyJoinButton)
+        skeletonContentsView.addSubview(studyJoinButton)
         studyJoinButton.snp.makeConstraints {
-            $0.left.right.equalTo(skeletonLoadingView).inset(16)
+            $0.left.right.equalTo(skeletonContentsView).inset(16)
             $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(Layout.buttonBottomInset)
             $0.height.equalTo(Layout.buttonHeight)
         }

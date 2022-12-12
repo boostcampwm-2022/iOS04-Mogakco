@@ -30,7 +30,7 @@ final class StudyDetailViewModel: ViewModel {
         let studyDetail: Observable<Study>
         let languages: Driver<[Hashtag]>
         let participants: Driver<[User]>
-        let endLoading: Observable<Bool>
+        let isLoading: Driver<Bool>
         let alert: Signal<Alert>
     }
     
@@ -45,6 +45,7 @@ final class StudyDetailViewModel: ViewModel {
     private let studyDetailLoad = PublishSubject<Study>()
     private let languages = BehaviorSubject<[Hashtag]>(value: [])
     private let participants = BehaviorSubject<[User]>(value: [])
+    private let isLoading = BehaviorSubject(value: true)
     private let alert = PublishSubject<Alert>()
 
     func transform(input: Input) -> Output {
@@ -54,14 +55,16 @@ final class StudyDetailViewModel: ViewModel {
         bindBackButton(input.backButtonTapped)
         bindReportButton(input.reportButtonTapped)
         
-        let endLoading = Observable.combineLatest(studyDetailLoad, languages.skip(1), participants.skip(1))
+        Observable.combineLatest(studyDetailLoad, languages.skip(1), participants.skip(1))
             .map { _ in false }
+            .bind(to: isLoading)
+            .disposed(by: disposeBag)
         
         return Output(
             studyDetail: studyDetailLoad,
             languages: languages.asDriver(onErrorJustReturn: []),
             participants: participants.asDriver(onErrorJustReturn: []),
-            endLoading: endLoading,
+            isLoading: isLoading.asDriver(onErrorJustReturn: false),
             alert: alert.asSignal(onErrorSignalWith: .empty())
         )
     }
