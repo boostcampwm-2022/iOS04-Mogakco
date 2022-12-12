@@ -23,8 +23,9 @@ final class AlertModalViewController: UIViewController {
     }
     
     private let messageLabel = UILabel().then {
-        $0.font = UIFont.mogakcoFont.smallBold
+        $0.font = UIFont(name: SFPro.bold.rawValue, size: 15)
         $0.textColor = UIColor.mogakcoColor.typographySecondary
+        $0.numberOfLines = 0
     }
     
     private let cancelButton = UIButton().then {
@@ -71,6 +72,7 @@ final class AlertModalViewController: UIViewController {
     private func configure(title: String, message: String) {
         titleLabel.text = title
         messageLabel.text = message
+        messageLabel.setLineSpacing(spacing: 4)
     }
     
     private func layout() {
