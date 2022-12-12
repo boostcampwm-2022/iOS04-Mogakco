@@ -18,7 +18,7 @@ enum ChatListNavigation {
 final class ChatListViewModel: ViewModel {
     
     struct Input {
-        let viewWillAppear: Observable<Void>
+        let refresh: Observable<Void>
         let selectedChatRoom: Observable<ChatRoom>
         let deletedChatRoom: Observable<ChatRoom>
     }
@@ -38,20 +38,12 @@ final class ChatListViewModel: ViewModel {
     let navigation = PublishSubject<ChatListNavigation>()
     
     func transform(input: Input) -> Output {
-        
-        input.viewWillAppear
-            .withUnretained(self)
-            .subscribe(onNext: { viewModel, _ in
-                viewModel.reload.onNext(())
-            })
-            .disposed(by: disposeBag)
-        
-        input.selectedChatRoom
-            .map { ChatListNavigation.chatRoom(id: $0.id) }
-            .bind(to: navigation)
-            .disposed(by: disposeBag)
-        
-        reload
+
+        Observable.merge(
+            Observable.just(()),
+            input.refresh,
+            reload
+        )
             .withUnretained(self)
             .flatMap { viewModel, _ in viewModel.chatRoomListUseCase?.chatRooms().asResult() ?? .empty() }
             .withUnretained(self)
@@ -64,6 +56,12 @@ final class ChatListViewModel: ViewModel {
                 }
             })
             .disposed(by: disposeBag)
+        
+        input.selectedChatRoom
+            .map { ChatListNavigation.chatRoom(id: $0.id) }
+            .bind(to: navigation)
+            .disposed(by: disposeBag)
+        
         
         input.deletedChatRoom
             .withUnretained(self)

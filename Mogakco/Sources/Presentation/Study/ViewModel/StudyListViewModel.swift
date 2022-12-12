@@ -66,7 +66,11 @@ final class StudyListViewModel: ViewModel {
     
     func bindRefresh(input: Input) {
         
-        Observable.merge([input.viewWillAppear, input.refresh])
+        Observable.merge(
+            Observable.just(()),
+            input.viewWillAppear.skip(1),
+            input.refresh
+        )
             .bind(to: refresh)
             .disposed(by: disposeBag)
         
