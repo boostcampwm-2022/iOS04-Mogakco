@@ -42,6 +42,7 @@ final class ChatViewController: UIViewController {
         layout.itemSize = CGSize(width: view.frame.width, height: 60)
         layout.minimumLineSpacing = Constant.collectionViewSpacing
         $0.refreshControl = UIRefreshControl()
+        $0.refreshControl?.tintColor = .white
         $0.collectionViewLayout = layout
         $0.register(ChatCell.self, forCellWithReuseIdentifier: ChatCell.identifier)
         $0.alwaysBounceVertical = true
