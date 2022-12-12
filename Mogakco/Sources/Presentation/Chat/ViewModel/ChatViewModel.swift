@@ -31,6 +31,7 @@ final class ChatViewModel: ViewModel {
         let inputViewText: Observable<String>
         let pagination: Observable<Void>?
         let selectedUser: Observable<User>
+        let chatMenuSelected: Observable<ChatMenu>
     }
     
     struct Output {
@@ -203,7 +204,7 @@ final class ChatViewModel: ViewModel {
                 case .success:
                     viewModel.sendMessageCompleted.onNext(())
                 case .failure:
-                    let alert = Alert(title: "메세지 전송 실패", message: "메세지 전송dp 실패했어요! 다시 시도해주세요", observer: nil)
+                    let alert = Alert(title: "메세지 전송 실패", message: "메세지 전송에 실패했어요! 다시 시도해주세요", observer: nil)
                     viewModel.alert.onNext(alert)
                 }
             })
@@ -284,6 +285,17 @@ final class ChatViewModel: ViewModel {
         input.selectedUser
             .map { .profile(type: .other($0)) }
             .bind(to: navigation)
+            .disposed(by: disposeBag)
+        
+        input.chatMenuSelected
+            .withUnretained(self)
+            .subscribe(onNext: { viewModel, menu in
+                switch menu {
+                case .report:
+                    let alert = Alert(title: "채팅 신고", message: "채팅을 신고하시겠습니까?", observer: nil)
+                    viewModel.alert.onNext(alert)
+                }
+            })
             .disposed(by: disposeBag)
     }
 }
