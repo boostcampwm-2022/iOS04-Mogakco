@@ -37,8 +37,7 @@ class HashtagViewModel: ViewModel {
         return count
     }
     
-    init() {
-    }
+    init() { }
     
     func transform(input: Input) -> Output {
         let collectionReloadObservable = PublishSubject<Void>()
