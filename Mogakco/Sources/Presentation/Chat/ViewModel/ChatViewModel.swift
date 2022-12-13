@@ -132,7 +132,6 @@ final class ChatViewModel: ViewModel {
             .withLatestFrom(messages) { $1 + [$0] }
             .subscribe(onNext: { [weak self] in
                 self?.messages.accept($0)
-                self?.sendMessageCompleted.onNext(())
             })
             .disposed(by: disposeBag)
         
