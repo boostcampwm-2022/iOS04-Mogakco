@@ -75,10 +75,10 @@ final class LoginViewController: ViewController {
         navigationController?.setNavigationBarHidden(true, animated: true)
     }
     
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-        animationView.invalidate()
-    }
+//    override func viewDidDisappear(_ animated: Bool) {
+//        super.viewDidDisappear(animated)
+//        animationView.invalidate()
+//    }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
@@ -86,6 +86,16 @@ final class LoginViewController: ViewController {
     }
     
     override func bind() {
+        let viewDidDisappear = rx.viewDidDisappear.map { _ in () }.asObservable()
+        let didBackground = NotificationCenter.default
+            .rx.notification(UIApplication.didEnterBackgroundNotification).map { _ in () }
+        
+        Observable.merge(viewDidDisappear, didBackground)
+            .subscribe(onNext: { [weak self] in
+                self?.animationView.invalidate()
+            })
+            .disposed(by: disposeBag)
+        
         let input = LoginViewModel.Input(
             viewWillAppear: rx.viewWillAppear.map { _ in }.asObservable(),
             email: emailTextField.rx.text.orEmpty.asObservable(),
