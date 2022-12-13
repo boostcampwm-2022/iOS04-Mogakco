@@ -89,8 +89,7 @@ class HashtagSelectViewController: ViewController {
     override func bind() {
         let input = HashtagViewModel.Input(
             kindHashtag: Observable.just(kind),
-            cellSelected: cellSelect
-                .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance),
+            cellSelected: cellSelect,
             nextButtonTapped: nextButton.rx.tap
                 .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance),
             backButtonTapped: backButton.rx.tap
@@ -98,7 +97,7 @@ class HashtagSelectViewController: ViewController {
         )
         
         let output = viewModel.transform(input: input)
-
+        
         output.hashtagReload
             .observe(on: MainScheduler.instance)
             .subscribe { [weak self] _ in
@@ -171,6 +170,8 @@ extension HashtagSelectViewController: UICollectionViewDataSource {
         
         let cellHashtag = viewModel.cellInfo(index: indexPath.row)
         if viewModel.isSelected(index: indexPath.row) {
+            cell.isSelected = true
+            collectionView.selectItem(at: indexPath, animated: false, scrollPosition: .init())
             cell.select()
         }
         cell.setHashtag(hashtag: cellHashtag)
