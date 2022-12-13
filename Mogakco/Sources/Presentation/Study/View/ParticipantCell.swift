@@ -94,7 +94,7 @@ final class ParticipantCell: UICollectionViewCell, Identifiable {
         
         if let imageURLString = user?.profileImageURLString,
            let url = URL(string: imageURLString) {
-            imageView.load(url: url)
+            imageView.load(url: url, disposeBag: disposeBag)
             imageView.loadAndEvent(url: url)
                 .bind(to: imageView.rx.skeleton)
                 .disposed(by: disposeBag)
