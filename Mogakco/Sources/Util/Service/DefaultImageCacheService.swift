@@ -52,7 +52,7 @@ struct ImageCache { // 내부 (메모리) 캐시
     /// 현재 디스크 용량 계산
     private func countCurrentDiskSize() -> Int {
         // 파일을 저장 또는 불러오려면 파일의 위치를 알아야 하는데 파일의 위치는 URL로 표현 할 수 있다.
-        let cacheDirectoryPath =  FileManager.default.urls(for: .cachesDirectory, in: .allDomainsMask)
+        let cacheDirectoryPath = FileManager.default.urls(for: .cachesDirectory, in: .allDomainsMask)
         
         // url(for: 접근할 디렉토리, in: 접근 옵션으로 디렉토리에 대한 기본 위치 지정)
         
@@ -77,7 +77,7 @@ struct ImageCache { // 내부 (메모리) 캐시
         for content in contents {
             // 마지막에 파일 이름까지 붙인 최종 경로를 생성
             let fullContentPath = profileImagePath.appendingPathComponent(content)
-            //아이템 속성 가져와서
+            // 아이템 속성 가져와서
             let fileAttributes = try? FileManager.default.attributesOfItem(atPath: fullContentPath.path)
             // 사용 용량을 확인한다.
             totalSize += fileAttributes?[FileAttributeKey.size] as? Int ?? 0
@@ -97,7 +97,7 @@ final class DefaultImageCacheService { // 외부 캐시 매니저
     
     func setImage(_ imageURL: URL) -> Observable<Data> { // 이미지 저장하기 위한 메서드
         
-        guard let _ = URL(string: "\(imageURL)") else {
+        guard let imageURL = URL(string: "\(imageURL)") else {
             return Observable.error(ImageCacheError.invalidURLError)
         }
 
@@ -132,7 +132,7 @@ final class DefaultImageCacheService { // 외부 캐시 매니저
             }
             
             let disposable = URLSession.shared.rx.response(request: request).subscribe(
-                onNext: { [weak self] (response, data) in
+                onNext: { [weak self] response, data in
                     switch response.statusCode {
                     case (200...299): // 네트워크 성송시
                         print("DEBUG : ETAG 200..299")
@@ -164,7 +164,7 @@ final class DefaultImageCacheService { // 외부 캐시 매니저
     
     /// 캐시 확인
     private func checkMemory(_ imageURL: URL) -> CacheableImage? {
-        //chache에서 데이터를 가져옴
+        // chache에서 데이터를 가져옴
         guard let cached = self.cache.read(with: imageURL.path) else { return nil }
         // cache hit했으면 시간 update
         self.updateLastRead(of: imageURL, currentEtag: cached.cacheInfo.etag)
@@ -235,7 +235,7 @@ final class DefaultImageCacheService { // 외부 캐시 매니저
         
         // 1.의 이유가 아닌 2번의 이유로 만약 현재 캐시용량과 타겟 이미지 용량을 더한 값이 맥시멈을 안넘어가면
         if self.cache.currentDiskSize + targetByteCount <= self.cache.maximumDiskSize {
-            //인코딩하여
+            // 인코딩하여
             guard let encoded = encodeCacheData(cacheInfo: cacheInfo) else { return }
             // UserDefault에 저장하고
             UserDefaults.standard.set(encoded, forKey: imageURL.path)

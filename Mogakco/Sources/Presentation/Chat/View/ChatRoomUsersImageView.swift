@@ -68,7 +68,7 @@ final class ChatRoomUsersImageView: UIView {
         topHorizontalStackView.isHidden = imageURLs.isEmpty
         bottomHorizontalStackView.isHidden = imageURLs.count < 3
         
-        return Observable.combineLatest(observables).map {_ in false }
+        return Observable.combineLatest(observables).map { _ in false }
     }
     
     private func layout() {
