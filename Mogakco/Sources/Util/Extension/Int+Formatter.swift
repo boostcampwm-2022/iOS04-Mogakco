@@ -60,16 +60,16 @@ extension Int {
     func toChatCompactDateString() -> String {
         let number = self / 100
         let time = number % 10000
-        let hour = Int(Double(time) / 100.0)
+        let hour = Double(time) / 100.0
         let minutes = time % 100
         var dateString = ""
         
-        if hour - 12 > 1 {
-            dateString = "오후 \(String(format: "%02d", hour - 12)):\(String(format: "%02d", minutes))"
-        } else if hour - 12 == 0 {
+        if hour - 12.0 > 1.0 {
+            dateString = "오후 \(String(format: "%02d", Int(hour - 12))):\(String(format: "%02d", minutes))"
+        } else if Int(hour) - 12 == 0 {
             dateString = "오후 12:\(String(format: "%02d", minutes))"
         } else {
-            dateString = "오전 \(String(format: "%02d", hour)):\(String(format: "%02d", minutes))"
+            dateString = "오전 \(String(format: "%02d", Int(hour))):\(String(format: "%02d", minutes))"
         }
         return dateString
     }
