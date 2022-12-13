@@ -40,7 +40,7 @@ class HashtagViewModel: ViewModel {
     init() { }
     
     func transform(input: Input) -> Output {
-        let collectionReloadObservable = PublishSubject<Void>()
+        let reload = PublishSubject<Void>()
         
         input.kindHashtag
             .subscribe { [weak self] in
@@ -57,13 +57,13 @@ class HashtagViewModel: ViewModel {
             .disposed(by: disposeBag)
         
         badgeList
-            .subscribe { _ in
-                collectionReloadObservable.onNext(())
-            }
+            .subscribe(onNext: { _ in
+                reload.onNext(())
+            })
             .disposed(by: disposeBag)
         
         return Output(
-            hashtagReload: collectionReloadObservable.asObservable(),
+            hashtagReload: reload.asObservable(),
             alert: alert.asSignal(onErrorSignalWith: .empty())
         )
     }
