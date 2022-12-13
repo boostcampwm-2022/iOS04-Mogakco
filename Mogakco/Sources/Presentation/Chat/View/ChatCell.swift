@@ -52,6 +52,7 @@ final class ChatCell: UICollectionViewCell, Identifiable {
     }
     
     let menuSelected = PublishSubject<ChatMenu>()
+    let disposeBag = DisposeBag()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -170,7 +171,7 @@ final class ChatCell: UICollectionViewCell, Identifiable {
         }
         
         if let url = URL(string: user?.profileImageURLString ?? "") {
-            profileImageView.load(url: url)
+            profileImageView.load(url: url, disposeBag: disposeBag)
         } else {
             profileImageView.image = Image.profileDefault
         }
