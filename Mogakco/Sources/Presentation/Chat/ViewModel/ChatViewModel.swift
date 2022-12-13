@@ -240,7 +240,6 @@ final class ChatViewModel: ViewModel {
                 case .success:
                     viewModel.navigation.onNext(.back)
                 case .failure(let error):
-                    
                     let alert = Alert(title: "채팅방 나가기 오류", message: "채팅방 나가기 오류가 발생했어요.", observer: nil)
                     viewModel.alert.onNext(alert)
                 }
