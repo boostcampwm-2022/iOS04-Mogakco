@@ -33,7 +33,7 @@ enum Category: String, CaseIterable, Hashtag {
         case "cs": return Category.computerScience
         case "frontend": return Category.frontend
         case "hackathon": return Category.hackathon
-        case "ios": return Category.iOS
+        case "iOS": return Category.iOS
         case "interview": return Category.interview
         case "machineLearning": return Category.machineLearning
         default: return nil
