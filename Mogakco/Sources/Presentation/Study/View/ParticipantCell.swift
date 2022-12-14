@@ -16,17 +16,6 @@ final class ParticipantCell: UICollectionViewCell, Identifiable {
     
     static let size = CGSize(width: 110, height: 130)
     
-    var disposeBag = DisposeBag()
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        layout()
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
     private let imageView = RoundProfileImageView(50)
     
     private let userNameLabel = UILabel().then {
@@ -41,6 +30,25 @@ final class ParticipantCell: UICollectionViewCell, Identifiable {
         $0.font = MogakcoFontFamily.SFProDisplay.semibold.font(size: 14)
         $0.textColor = .mogakcoColor.typographySecondary
         $0.text = "default user desctiption"
+    }
+    
+    var disposeBag = DisposeBag()
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        layout()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        disposeBag = DisposeBag()
+        imageView.image = UIImage()
+        userNameLabel.text = ""
+        userDescriptionLabel.text = ""
     }
     
     private func layout() {
@@ -99,7 +107,7 @@ final class ParticipantCell: UICollectionViewCell, Identifiable {
                 .bind(to: imageView.rx.skeleton)
                 .disposed(by: disposeBag)
         } else {
-            imageView.setPhoto(Image.profileDefault)
+            imageView.image = Image.profileDefault
         }
         userNameLabel.text = user?.name ?? "None"
         userDescriptionLabel.text = user?.languages.first ?? "None"

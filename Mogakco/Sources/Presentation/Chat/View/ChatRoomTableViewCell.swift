@@ -22,7 +22,7 @@ final class ChatRoomTableViewCell: UITableViewCell, Identifiable {
     
     var disposeBag = DisposeBag()
     
-    private let chatRoomUsersImageView = ChatRoomUsersImageView()
+    private var chatRoomUsersImageView = ChatRoomUsersImageView()
     
     private let chatRoomTitleLabel = UILabel().then {
         $0.textAlignment = .left
@@ -62,6 +62,10 @@ final class ChatRoomTableViewCell: UITableViewCell, Identifiable {
     override func prepareForReuse() {
         super.prepareForReuse()
         disposeBag = DisposeBag()
+        chatRoomTitleLabel.text = ""
+        latestMessageLabel.text = ""
+        latestMessageDateLabel.text = ""
+        unreadMessageCountLabel.isHidden = true
     }
     
     func configure(chatRoom: ChatRoom) {

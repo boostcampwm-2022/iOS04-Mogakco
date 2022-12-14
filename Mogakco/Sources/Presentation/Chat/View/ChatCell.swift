@@ -52,7 +52,7 @@ final class ChatCell: UICollectionViewCell, Identifiable {
     }
     
     let menuSelected = PublishSubject<ChatMenu>()
-    let disposeBag = DisposeBag()
+    var disposeBag = DisposeBag()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -65,7 +65,8 @@ final class ChatCell: UICollectionViewCell, Identifiable {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        profileImageView.image = UIImage(systemName: "person")
+        disposeBag = DisposeBag()
+        profileImageView.image = UIImage()
         textView.text = nil
         nameLabel.text = nil
         timeLabel.text = nil
