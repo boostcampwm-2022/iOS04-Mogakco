@@ -32,6 +32,7 @@ final class ChatViewController: UIViewController {
     
     private lazy var messageInputView = MessageInputView().then {
         $0.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 0)
+        $0.backgroundColor = .red
     }
     
     private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout()
@@ -63,6 +64,7 @@ final class ChatViewController: UIViewController {
     private let viewModel: ChatViewModel
     private let selectedUser = PublishSubject<User>()
     private let chatMenuSelected = PublishSubject<ChatMenu>()
+    private var keyboardHeight = 0.0
     
     init(viewModel: ChatViewModel) {
         self.viewModel = viewModel
@@ -119,6 +121,7 @@ final class ChatViewController: UIViewController {
         let output = viewModel.transform(input: input)
         bindChatCollection(output: output)
         bindSideBar(output: output)
+        bindTextView()
         bindKeyboard()
     }
 
@@ -214,6 +217,35 @@ final class ChatViewController: UIViewController {
             .disposed(by: disposeBag)
     }
     
+    func bindTextView() {
+        messageInputView.messageInputTextView.rx
+            .didChange
+            .subscribe(onNext: { [weak self] in
+                guard let self else { return }
+                let size = CGSize(width: self.messageInputView.messageInputTextView.frame.width, height: .infinity)
+                let estimatedSize = self.messageInputView.messageInputTextView.sizeThatFits(size)
+                let isMaxHeight = estimatedSize.height >= Constant.messageInputViewHeight
+                if isMaxHeight == self.messageInputView.messageInputTextView.isScrollEnabled { return }
+                self.messageInputView.messageInputTextView.isScrollEnabled = isMaxHeight
+                 self.messageInputView.messageInputTextView.reloadInputViews()
+                print("DEBUG @@ : \(isMaxHeight)")
+                self.setNeedsUpdateConstraints(isScrollEnabled: isMaxHeight)
+            })
+            .disposed(by: disposeBag)
+    }
+    
+    func setNeedsUpdateConstraints(isScrollEnabled: Bool) {
+        messageInputView.snp.remakeConstraints {
+            $0.left.right.equalTo(self.view.safeAreaLayoutGuide)
+            $0.bottom.equalToSuperview().inset(keyboardHeight)
+            if isScrollEnabled {
+                $0.top.lessThanOrEqualTo(self.view.snp.centerY)
+            } else {
+                $0.height.equalTo(Constant.messageInputViewHeight)
+            }
+        }
+    }
+    
     func bindKeyboard() {
         RxKeyboard.instance.visibleHeight
             .skip(1)
@@ -302,6 +334,7 @@ final class ChatViewController: UIViewController {
         } else {
             UIView.animate(withDuration: 0.5) { [weak self] in
                 guard let self else { return }
+                self.keyboardHeight = height
                 self.collectionView.snp.remakeConstraints {
                     $0.top.left.right.equalToSuperview()
                     $0.bottom.equalTo(self.messageInputView.snp.top)
