@@ -39,6 +39,9 @@ final class ChatRoomTableViewCell: UITableViewCell, Identifiable {
         $0.textAlignment = .right
         $0.font = UIFont.mogakcoFont.smallRegular
         $0.textColor = UIColor.mogakcoColor.typographySecondary
+        $0.snp.makeConstraints {
+            $0.width.equalTo(80.0)
+        }
     }
     
     private let unreadMessageCountLabel = UILabel().then {
