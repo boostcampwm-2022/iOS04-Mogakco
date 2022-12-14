@@ -32,7 +32,6 @@ final class ChatViewController: UIViewController {
     
     private lazy var messageInputView = MessageInputView().then {
         $0.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 0)
-        $0.backgroundColor = .red
     }
     
     private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout()
