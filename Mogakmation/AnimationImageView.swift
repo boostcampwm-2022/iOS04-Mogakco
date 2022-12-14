@@ -13,7 +13,10 @@ import SnapKit
 final class AnimationImageView: UIView {
     let iconImage = UIImageView()
     
-    init(frame: CGRect, image: UIImage?) {
+    let rotateDuration: Int
+    
+    init(frame: CGRect, image: UIImage?, rotateDuration: Int) {
+        self.rotateDuration = rotateDuration
         super.init(frame: frame)
         configImage(image: image)
         addRotation()
@@ -31,14 +34,14 @@ final class AnimationImageView: UIView {
         }
     }
     
-    func addRotation() {
+    private func addRotation() {
         let randomRotaionDirection = Double(
             [-1, 1].randomElement() ?? 1
         )
         let rotation = CABasicAnimation(keyPath: "transform.rotation.z")
         rotation.fromValue = 0
         rotation.toValue = Double.pi / 180 * 360 * randomRotaionDirection
-        rotation.duration = CFTimeInterval(AnimationView.Animation.rotateDuration)
+        rotation.duration = CFTimeInterval(rotateDuration)
         rotation.repeatCount = Float.infinity
         iconImage.layer.add(rotation, forKey: "rotationAnimation")
     }

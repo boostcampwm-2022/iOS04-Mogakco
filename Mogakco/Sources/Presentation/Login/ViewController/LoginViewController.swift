@@ -21,7 +21,15 @@ final class LoginViewController: ViewController {
     
     private let logoView = LogoView()
     
-    private let animationView = AnimationView()
+    private let animationView = AnimationView(
+        images: [
+            UIImage(named: Language.swift.id),
+            UIImage(named: Language.python.id),
+            UIImage(named: Language.cpp.id),
+            UIImage(named: Language.javaScript.id),
+            UIImage(named: Language.ruby.id)
+        ]
+    )
     
     private let emailTextField = TextField()
     
@@ -75,10 +83,10 @@ final class LoginViewController: ViewController {
         navigationController?.setNavigationBarHidden(true, animated: true)
     }
     
-//    override func viewDidDisappear(_ animated: Bool) {
-//        super.viewDidDisappear(animated)
-//        animationView.invalidate()
-//    }
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        animationView.invalidate()
+    }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
