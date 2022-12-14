@@ -63,7 +63,6 @@ final class ChatDataSource: ChatDataSourceProtocol {
         return Observable.create { emitter in
             let query = Constant.chatRoom.document(chatRoomID).collection("chat")
             query.getDocuments(completion: { snapshot, _ in
-                if snapshot?.isEmpty == true { query.addDocument(data: [:]) }
                 self.listener = query.order(by: "date").limit(toLast: 1).addSnapshotListener({ snapshot, _ in
                     if let snapshot = snapshot,
                        let change = snapshot.documentChanges.last,
