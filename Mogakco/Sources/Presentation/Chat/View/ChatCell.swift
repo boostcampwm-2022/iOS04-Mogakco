@@ -186,7 +186,7 @@ final class ChatCell: UICollectionViewCell, Identifiable {
         }
         
         timeLabel.snp.remakeConstraints {
-            $0.right.equalTo(bubbleContainer.snp.left).offset(-4)
+            $0.right.equalTo(bubbleContainer.snp.left).offset(-8)
             $0.bottom.equalTo(bubbleContainer)
         }
 
