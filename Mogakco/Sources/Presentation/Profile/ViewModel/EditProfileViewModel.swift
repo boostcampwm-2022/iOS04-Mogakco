@@ -49,7 +49,7 @@ final class EditProfileViewModel: ViewModel {
     private let user = BehaviorSubject<User?>(value: nil)
     private let name = BehaviorSubject<String>(value: "")
     private let introduce = BehaviorSubject<String>(value: "")
-    private let image = BehaviorSubject<UIImage>(value: Image.profileDefault)
+    private let image = BehaviorSubject<UIImage>(value: UIImage())
     private let inputValidation = BehaviorSubject<Bool>(value: false)
     private let alert = PublishSubject<Alert>()
     

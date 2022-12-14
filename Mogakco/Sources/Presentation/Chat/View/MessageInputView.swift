@@ -16,7 +16,6 @@ import Then
 final class MessageInputView: UIView {
     
     lazy var messageInputTextView = UITextView().then {
-//        $0.layer.borderColor = UIColor.mogakcoColor.primaryDefault?.cgColor
         $0.layer.borderColor = UIColor.mogakcoColor.primarySecondary?.cgColor
         $0.font = .mogakcoFont.smallRegular
         $0.textAlignment = .left

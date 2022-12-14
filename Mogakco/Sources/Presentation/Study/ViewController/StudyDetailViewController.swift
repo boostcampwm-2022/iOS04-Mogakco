@@ -27,7 +27,6 @@ final class StudyDetailViewController: UIViewController {
     }
     private let participantsView = StudyInfoView(frame: .zero).then {
         $0.textLabel.text = "2/3 참여"
-        $0.imageView.image = UIImage(systemName: "person.fill")
     }
     
     private let locationView = StudyInfoView(frame: .zero).then {
