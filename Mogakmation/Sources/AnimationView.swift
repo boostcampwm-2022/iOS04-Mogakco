@@ -10,9 +10,9 @@ import UIKit
 
 import SnapKit
 
-final class AnimationView: UIView {
+public class AnimationView: UIView {
     
-    struct AnimationConfig {
+    public struct AnimationConfig {
         let isRandom: Bool
         let iconCount: Int
         let iconSize: CGFloat
@@ -35,7 +35,7 @@ final class AnimationView: UIView {
             ]
         }
         
-        init(
+        public init(
             isRandom: Bool = false,
             iconCount: Int = 5,
             iconSize: CGFloat = 80,
@@ -57,7 +57,7 @@ final class AnimationView: UIView {
     private var timers: [Timer] = []
     private var images: [UIImage] = []
     
-    init(images: [UIImage?], option: AnimationConfig = AnimationConfig()) {
+    public init(images: [UIImage?], option: AnimationConfig = AnimationConfig()) {
         self.images = images.compactMap { $0 }
         self.animationConfig = option
         super.init(frame: .zero)
@@ -67,11 +67,11 @@ final class AnimationView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func layoutSubviews() {
+    public override func layoutSubviews() {
         addImages()
     }
     
-    func invalidate() {
+    public func invalidate() {
         timers.forEach { $0.invalidate() }
         timers.removeAll()
         animationImages.forEach { $0.removeFromSuperview() }
