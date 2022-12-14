@@ -147,7 +147,6 @@ final class ChatViewController: UIViewController {
                     for: IndexPath(row: index, section: 0)) as? ChatCell else {
                     return UICollectionViewCell()
                 }
-                
                 cell.layoutChat(chat: chat)
                 
                 cell.profileImageButton.rx.tap

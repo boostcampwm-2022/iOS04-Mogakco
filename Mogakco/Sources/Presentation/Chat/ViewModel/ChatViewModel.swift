@@ -44,7 +44,6 @@ final class ChatViewModel: ViewModel {
         let alert: Signal<Alert>
     }
     
-    private var isFirst = true
     var chatRoomID: String = ""
     var chatUseCase: ChatUseCaseProtocol?
     var leaveStudyUseCase: LeaveStudyUseCaseProtocol?
@@ -141,10 +140,10 @@ final class ChatViewModel: ViewModel {
                 switch result {
                 case .success(let chat):
                     let chatID = try? newChats.value().last?.id
-                    if viewModel.isFirst == false && chat.id != chatID {
+                    let newChats = try? newChats.value().isEmpty
+                    
+                    if newChats != false && chat.id != chatID {
                         newChat.onNext(chat)
-                    } else {
-                        viewModel.isFirst = false
                     }
                 case .failure:
                     let alert = Alert(title: "메세지 로드 실패", message: "메세지 로드에 실패했어요! 다시 시도해주세요", observer: nil)
@@ -262,9 +261,7 @@ final class ChatViewModel: ViewModel {
         )
         .withUnretained(self)
         .flatMap { $0.0.unsubscribePushNotificationUseCase?.excute(topic: $0.0.chatRoomID) ?? .empty() }
-        .subscribe(onNext: { [weak self] _ in
-            self?.isFirst = true
-        })
+        .subscribe(onNext: { _ in })
         .disposed(by: disposeBag)
         
         // 채팅방 나갈 시 -> 푸쉬 알림 구독
@@ -275,8 +272,6 @@ final class ChatViewModel: ViewModel {
         .withUnretained(self)
         .flatMap { $0.0.subscribePushNotificationUseCase?.excute(topic: $0.0.chatRoomID) ?? .empty() }
         .subscribe(onNext: { [weak self] _ in
-            print("DEBUG : OBSERVE OUT")
-            self?.isFirst = true
             self?.chatUseCase?.stopObserving()
         })
         .disposed(by: disposeBag)
