@@ -22,10 +22,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     ) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         window = UIWindow(windowScene: windowScene)
-        DefaultImageCacheService.shared.configureCache(
-            with: CacheConstants.maximumMemoryCacheSize,
-            with: CacheConstants.maximumDiskCacheSize
-        )
         appCoordinator = AppCoordinator(window)
         appCoordinator?.start()
             .subscribe()
