@@ -112,7 +112,8 @@ class BaseProjectFactory: ProjectFactory {
                 infoPlist: .default,
                 sources: ["RxMGKfisher/Sources/**"],
                 dependencies: [
-                    .external(name: "RxSwift")
+                    .external(name: "RxSwift"),
+                    .external(name: "RxCocoa")
                 ]
             ),
             Target(
