@@ -8,6 +8,7 @@
 
 import UIKit
 
+import RxCocoa
 import RxSwift
 
 enum ImageCacheError: Error {
@@ -86,16 +87,21 @@ struct ImageCache { // 내부 (메모리) 캐시
     }
 }
 
-final class DefaultImageCacheService { // 외부 캐시 매니저
-    static let shared = DefaultImageCacheService()
+public final class MGKImageCacheService { // 외부 캐시 매니저
+    public static let shared = MGKImageCacheService()
     private var cache = ImageCache() // 메모리 캐시
-    private init () {}
+    private init () {
+        configureCache(
+            with: CacheConstants.maximumMemoryCacheSize,
+            with: CacheConstants.maximumDiskCacheSize
+        )
+    }
     
-    func configureCache(with maximumMemoryBytes: Int, with maximumDiskBytes: Int) { // 캐시 초기화
+    public func configureCache(with maximumMemoryBytes: Int, with maximumDiskBytes: Int) { // 캐시 초기화
         self.cache.configureCachePolicy(with: maximumMemoryBytes, with: maximumDiskBytes)
     }
     
-    func setImage(_ imageURL: URL) -> Observable<Data> { // 이미지 저장하기 위한 메서드
+    public func setImage(_ imageURL: URL) -> Observable<Data> { // 이미지 저장하기 위한 메서드
         
         guard let imageURL = URL(string: "\(imageURL)") else {
             return Observable.error(ImageCacheError.invalidURLError)
