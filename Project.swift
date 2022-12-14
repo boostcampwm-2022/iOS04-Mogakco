@@ -123,6 +123,10 @@ class BaseProjectFactory: ProjectFactory {
                 bundleId: "com.codershigh.boostcamp.\(projectName).Mogakmation",
                 deploymentTarget: deploymentTarget,
                 sources: ["Mogakmation/Sources/**"]
+                ,
+                dependencies: [
+                    .external(name: "SnapKit")
+                ]
             )
         ]
     }
