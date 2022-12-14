@@ -140,9 +140,7 @@ final class ChatViewModel: ViewModel {
                 switch result {
                 case .success(let chat):
                     let chatID = try? newChats.value().last?.id
-                    let newChats = try? newChats.value().isEmpty
-                    
-                    if newChats != false && chat.id != chatID {
+                    if chat.id != chatID {
                         newChat.onNext(chat)
                     }
                 case .failure:
