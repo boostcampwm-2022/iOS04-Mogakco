@@ -36,9 +36,17 @@ struct UserUseCase: UserUseCaseProtocol {
     }
     
     func studyRatingList(studyIDs: [String]) -> Observable<[(String, Int)]> {
-        return studyRepository?.list(ids: studyIDs)
+        return (studyRepository?.list(ids: studyIDs) ?? .empty())
             .map { $0.map { $0.category } }
             .map { $0.countDictionary }
-            .map { $0.sorted { $0.value < $1.value }.map { ($0.key, $0.value) } } ?? .empty()
+            .map { $0.sorted {
+                if $0.value != $1.value {
+                    return $0.value < $1.value
+                } else {
+                    return $0.key < $1.key
+                }
+            }.map {
+                ($0.key, $0.value) }
+            }
     }
 }
