@@ -45,6 +45,7 @@ struct ChatUseCase: ChatUseCaseProtocol {
                     chat.isFromCurrentUser = chatUser.id == myUser.id
                     return chat
                 }
+                .catchAndReturn(chat)
             } ?? .empty()
     }
     
