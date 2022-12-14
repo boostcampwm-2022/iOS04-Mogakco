@@ -57,6 +57,7 @@ final class AnimationView: UIView {
     }
     
     private func addImages() {
+        guard animationImages.isEmpty && timers.isEmpty else { return }
         [
             Language.swift.id,
             Language.cpp.id,
