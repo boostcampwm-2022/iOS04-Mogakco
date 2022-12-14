@@ -29,7 +29,8 @@ class BaseProjectFactory: ProjectFactory {
         .external(name: "FirebaseMessaging"),
         .external(name: "Swinject"),
         .target(name: "RxMogakcoYa"),
-        .target(name: "RxMGKfisher")
+        .target(name: "RxMGKfisher"),
+        .target(name: "Mogakmation")
     ]
     
     let infoPlist: [String: InfoPlist.Value] = [
@@ -113,6 +114,14 @@ class BaseProjectFactory: ProjectFactory {
                 dependencies: [
                     .external(name: "RxSwift")
                 ]
+            ),
+            Target(
+                name: "Mogakmation",
+                platform: .iOS,
+                product: .framework,
+                bundleId: "com.codershigh.boostcamp.\(projectName).Mogakmation",
+                deploymentTarget: deploymentTarget,
+                sources: ["Mogakmation/Sources/**"]
             )
         ]
     }
