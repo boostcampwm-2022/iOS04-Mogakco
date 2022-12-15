@@ -72,6 +72,7 @@ final class StudyCell: UICollectionViewCell, Identifiable {
     
     private let participantsView = StudyInfoView(frame: .zero).then {
         $0.textLabel.text = "2/3 참여"
+        $0.imageView.image = UIImage(systemName: "person.fill")
     }
     
     private lazy var midStackView = UIStackView().then { stack in
