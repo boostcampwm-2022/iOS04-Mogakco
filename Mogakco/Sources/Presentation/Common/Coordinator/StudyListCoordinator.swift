@@ -33,21 +33,21 @@ final class StudyListCoordinator: BaseCoordinator<StudyListCoordinatorResult> {
                 switch $0 {
                 case .create:
                     self?.showCreateStudy()
-                case .detail(let id):
+                case let .detail(id):
                     self?.showStudyDetail(id: id)
-                case .sort:
-                    self?.showStudySort(sortObserver: viewModel.sort.asObserver())
-                case .languageFilter:
+                case let .sort(observer):
+                    self?.showStudySort(sortObserver: observer)
+                case let .languageFilter(hashtags, observer):
                     self?.showHashtag(
                         kind: .language,
-                        selectedHashtag: [],
-                        hashtagObserver: viewModel.languageFilter.asObserver()
+                        selectedHashtag: hashtags,
+                        hashtagObserver: observer
                     )
-                case .categoryFilter:
+                case let .categoryFilter(hashtags, observer):
                     self?.showHashtag(
                         kind: .category,
-                        selectedHashtag: [],
-                        hashtagObserver: viewModel.categoryFilter.asObserver()
+                        selectedHashtag: hashtags,
+                        hashtagObserver: observer
                     )
                 }
             })
