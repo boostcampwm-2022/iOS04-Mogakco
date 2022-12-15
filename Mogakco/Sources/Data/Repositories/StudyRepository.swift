@@ -103,60 +103,56 @@ struct StudyRepository: StudyRepositoryProtocol {
     }
     
     func join(user: User, id: String) -> Observable<Void> {
-        
         return Observable<Void>.create { emitter in
-            let canJoinStudy = (studyDataSource?.detail(id: id).map { $0.toDomain() } ?? .empty())
-                .do(onNext: { study in
+            
+            let join = PublishSubject<Study>()
+            
+            studyDataSource?.detail(id: id)
+                .map { $0.toDomain() }
+                .subscribe(onNext: { study in
                     if study.userIDs.count >= study.maxUserCount &&
-                      !study.userIDs.contains(user.id) {
+                        !study.userIDs.contains(user.id) {
                         emitter.onError(StudyRepositoryError.max)
+                    } else {
+                        join.onNext(study)
                     }
                 })
-                .filter { study in
-                    return study.userIDs.count < study.maxUserCount ||
-                        study.userIDs.contains(user.id)
-                }
-                .map { _ in () }
+                .disposed(by: disposeBag)
             
-            let updateUser = (remoteUserDataSource?.updateIDs(
-                id: user.id,
-                request: UpdateStudyIDsRequestDTO(
-                    chatRoomIDs: Array(Set(user.chatRoomIDs + [id])),
-                    studyIDs: Array(Set(user.studyIDs + [id]))
-                )
-            ) ?? .empty())
-
-            let updateStudy = (studyDataSource?.detail(id: id).map { $0.toDomain() } ?? .empty())
-                .flatMap { study in
-                    studyDataSource?.updateIDs(
-                        id: study.id,
-                        request: UpdateUserIDsRequestDTO(
-                            userIDs: Array(Set(study.userIDs + [user.id]))
+            join
+                .flatMap {
+                    let updateUser = remoteUserDataSource?.updateIDs(
+                        id: user.id,
+                        request: UpdateStudyIDsRequestDTO(
+                            chatRoomIDs: Array(Set(user.chatRoomIDs + [id])),
+                            studyIDs: Array(Set(user.studyIDs + [id]))
                         )
                     ) ?? .empty()
-                }
-
-            let updateChatRoom = (chatRoomDataSource?.detail(id: id).map { $0.toDomain() } ?? .empty())
-                .flatMap { chatRoom in
-                    chatRoomDataSource?.updateIDs(
-                        id: chatRoom.id,
+                    
+                    let updateStudy = studyDataSource?.updateIDs(
+                        id: $0.id,
                         request: UpdateUserIDsRequestDTO(
-                            userIDs: Array(Set(chatRoom.userIDs + [user.id]))
+                            userIDs: Array(Set($0.userIDs + [user.id]))
                         )
                     ) ?? .empty()
+                    
+                    let updateChatRoom = chatRoomDataSource?.detail(id: id)
+                        .map { $0.toDomain() }
+                        .flatMap { chatRoom in
+                            chatRoomDataSource?.updateIDs(
+                                id: chatRoom.id,
+                                request: UpdateUserIDsRequestDTO(
+                                    userIDs: Array(Set(chatRoom.userIDs + [user.id]))
+                                )
+                            ) ?? .empty()
+                        } ?? .empty()
+                    
+                    return Observable.combineLatest(updateUser, updateStudy, updateChatRoom)
                 }
-                .map { _ in () }
-
-            Observable
-                .zip(
-                    updateUser,
-                    updateStudy,
-                    updateChatRoom
-                )
-                .subscribe { _ in
+                .subscribe(onNext: { _ in
                     emitter.onNext(())
-                }
-                .disposed(by: self.disposeBag)
+                })
+                .disposed(by: disposeBag)
             
             return Disposables.create()
         }
