@@ -66,7 +66,7 @@ final class StudyListViewModel: ViewModel {
     
     func bindRefresh(input: Input) {
         refresh
-            .debounce(.seconds(1), scheduler: MainScheduler.instance)
+            .debounce(.milliseconds(500), scheduler: MainScheduler.instance)
             .withLatestFrom(Observable.combineLatest(sort, filters)) { ($0, $1) }
             .flatMap { [weak self] delay, arguments -> Observable<Result<[Study], Error>> in
                 let (sort, filters) = arguments
@@ -110,7 +110,7 @@ final class StudyListViewModel: ViewModel {
     
     func bindFilterSort(input: Input) {
         Observable.combineLatest(sort.skip(1), filters.skip(1))
-            .debounce(.milliseconds(500), scheduler: MainScheduler.instance)
+            .debounce(.milliseconds(100), scheduler: MainScheduler.instance)
             .map { _ in return 0 }
             .withUnretained(self)
             .subscribe(onNext: { $0.0.refresh.onNext($0.1) })
