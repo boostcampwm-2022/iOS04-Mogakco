@@ -9,5 +9,5 @@
 import RxSwift
 
 protocol AutoLoginUseCaseProtocol {
-    func load() -> Observable<Bool>
+    func load() -> Observable<Authorization>
 }
