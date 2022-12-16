@@ -109,16 +109,11 @@ final class StudyListViewModel: ViewModel {
     }
     
     func bindFilterSort(input: Input) {
-        sort
-            .skip(1)
+        Observable.combineLatest(sort.skip(1), filters.skip(1))
+            .debounce(.milliseconds(500), scheduler: MainScheduler.instance)
             .map { _ in return 0 }
-            .bind(to: refresh)
-            .disposed(by: disposeBag)
-        
-        filters
-            .skip(1)
-            .map { _ in return 0 }
-            .bind(to: refresh)
+            .withUnretained(self)
+            .subscribe(onNext: { $0.0.refresh.onNext($0.1) })
             .disposed(by: disposeBag)
         
         input.resetButtonTapped
