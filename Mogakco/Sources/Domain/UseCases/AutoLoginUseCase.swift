@@ -13,8 +13,7 @@ struct AutoLoginUseCase: AutoLoginUseCaseProtocol {
     var tokenRepository: TokenRepositoryProtocol?
     private let disposeBag = DisposeBag()
 
-    func load() -> Observable<Bool> {
-        return tokenRepository?.load()
-            .map { $0 != nil } ?? .empty()
+    func load() -> Observable<Authorization> {
+        return tokenRepository?.load() ?? .empty()
     }
 }

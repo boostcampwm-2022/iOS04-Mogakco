@@ -31,9 +31,9 @@ final class LoginViewModel: ViewModel {
         let presentAlert: Signal<Alert>
     }
     
+    let navigation = PublishSubject<LoginNavigation>()
     var autoLoginUseCase: AutoLoginUseCaseProtocol?
     var loginUseCase: LoginUseCaseProtocol?
-    let navigation = PublishSubject<LoginNavigation>()
     var disposeBag = DisposeBag()
     
     func transform(input: Input) -> Output {
@@ -43,13 +43,14 @@ final class LoginViewModel: ViewModel {
         
         input.viewWillAppear
             .withUnretained(self)
-            .flatMap { $0.0.autoLoginUseCase?.load() ?? .empty() }
+            .flatMap { $0.0.autoLoginUseCase?.load().asResult() ?? .empty() }
             .delay(.seconds(2), scheduler: MainScheduler.instance)
             .withUnretained(self)
             .subscribe(onNext: { viewModel, result in
-                if result {
+                switch result {
+                case .success:
                     viewModel.navigation.onNext(.finish)
-                } else {
+                case .failure:
                     presentLogin.onNext(())
                 }
             })

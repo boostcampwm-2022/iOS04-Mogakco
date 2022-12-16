@@ -20,7 +20,6 @@ struct LoginUseCase: LoginUseCaseProtocol {
     func login(emailLogin: EmailLogin) -> Observable<Void> {
         return (authRepository?.login(emailLogin: emailLogin) ?? .empty())
             .flatMap { tokenRepository?.save($0) ?? .empty() }
-            .compactMap { $0?.localId }
             .map { _ in () }
     }
 }
