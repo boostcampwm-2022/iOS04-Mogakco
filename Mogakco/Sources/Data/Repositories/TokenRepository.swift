@@ -12,46 +12,53 @@ import RxSwift
 
 struct TokenRepository: TokenRepositoryProtocol {
     
+    enum TokenError: Error {
+        case noToken
+        case saveFail
+        case deleteFail
+        case decode
+    }
+    
     var keychainManager: KeychainManagerProtocol?
     
-    func save(_ auth: Authorization) -> Observable<Authorization?> {
+    func save(_ auth: Authorization) -> Observable<Authorization> {
         return Observable.create { emitter in
-            
             guard let data = try? JSONEncoder().encode(auth) else {
-                emitter.onNext(nil)
+                emitter.onError(TokenError.decode)
                 return Disposables.create()
             }
             
             guard keychainManager?.save(key: .authorization, data: data) ?? false ||
                     keychainManager?.update(key: .authorization, data: data) ?? false else {
-                emitter.onNext(nil)
+                emitter.onError(TokenError.saveFail)
                 return Disposables.create()
             }
-            print("DEBUG : TokenRepository save Auth is \(auth)")
+            
             emitter.onNext(auth)
             return Disposables.create()
         }
     }
     
-    func load() -> Observable<Authorization?> {
+    func load() -> Observable<Authorization> {
         return Observable.create { emitter in
-            
             guard let data = keychainManager?.load(key: .authorization),
                   let auth = try? JSONDecoder().decode(Authorization.self, from: data) else {
-                print("DEBUG : TokenRepository load fail. Auth is nil")
-                emitter.onNext(nil)
+                emitter.onError(TokenError.noToken)
                 return Disposables.create()
             }
-            print("DEBUG : TokenRepository load success. Auth is \(auth)")
+            
             emitter.onNext(auth)
             return Disposables.create()
         }
     }
     
-    func delete() -> Observable<Bool> {
+    func delete() -> Observable<Void> {
         return Observable.create { emitter in
-            let result = keychainManager?.delete(key: .authorization) ?? false
-            emitter.onNext(result)
+            if keychainManager?.delete(key: .authorization) ?? false {
+                emitter.onNext(())
+            } else {
+                emitter.onError(TokenError.deleteFail)
+            }
             return Disposables.create()
         }
     }
