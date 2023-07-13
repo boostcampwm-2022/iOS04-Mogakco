@@ -1,5 +1,6 @@
 ### Custom ###
 .xcuserstate
+GoogleService-Info.plist
 
 ### macOS ###
 # General
@@ -73,3 +74,6 @@ Derived/
 Tuist/Dependencies
 
 
+branch_structure.json
+temp_auto_push.bat
+temp_interactive_push.bat
